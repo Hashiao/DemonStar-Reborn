@@ -15,7 +15,7 @@
       if(!loop){
         const same=this.active.filter(s=>s.kind===kind),limit=['proton','ion','plasma'].includes(kind)?2:1;
         if(same.length>=limit)this.stopSource(same[0]);
-        if(this.active.length>=3){const weakest=this.active.reduce((a,b)=>a.priority>b.priority?a:b);if(weakest.priority<priority)return null;this.stopSource(weakest);}
+        if(this.active.length>=3){const weakest=this.active.reduce((a,b)=>a.priority>b.priority?a:b);if(weakest.priority<=priority)return null;this.stopSource(weakest);}
       }
       const buffer=this.buffers[kind]||this.makeBuffer(kind),source=this.ctx.createBufferSource(),gain=this.ctx.createGain();source.buffer=buffer;source.loop=loop;source.kind=kind;source.priority=priority;
       gain.gain.value=volume*(this.missionSource&&!RADIO.includes(kind)?.4:1);source.connect(gain);gain.connect(this.master);

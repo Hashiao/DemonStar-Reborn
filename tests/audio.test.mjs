@@ -39,7 +39,7 @@ test('every bundled clip and PCM bank matches the supplied-audio provenance hash
 });
 test('equipment, bombs, ground explosions and radio use their original distinct resources',()=>{
   const a=new StarfallAudio();a.unlock();
-  for(const item of ['energy','crystal','medal','shield']){a.effect('pickup',{item});assert.equal(started.at(-1).buffer,a.buffers[item]);}
+  for(const item of ['energy','crystal','medal','shield']){a.stopAll();a.effect('pickup',{item});assert.equal(started.at(-1).buffer,a.buffers[item]);}
   a.effect('pickup',{item:'homing'});assert.equal(started.at(-1).buffer,a.buffers.pickup);
   a.effect('pickup',{item:'full'});assert.equal(started.at(-1).buffer,a.buffers.fullPowerA);
   a.effect('pickup',{item:'full'});assert.equal(started.at(-1).buffer,a.buffers.fullPowerB);
@@ -64,4 +64,9 @@ test('enemy gun families use original sound bindings and silent types stay silen
 test('completion radio sequence follows stage and cancels on a new mission',()=>{
   const a=new StarfallAudio();a.unlock();a.effect('cleared',{stage:1});a.update(1,true);assert.equal(a.missionSource,null);a.update(.3,true);assert.equal(a.missionSource.kind,'stagePraise');a.update(1.4,true);assert.equal(a.missionSource.kind,'missionComplete');
   a.effect('cleared',{stage:2});a.update(1.3,true);assert.equal(a.missionSource.kind,'fullPowerB');a.effect('stage');assert.equal(a.cues.length,0);
+});
+
+test('equal-priority incoming effects do not evict an already playing radio',()=>{
+  const a=new StarfallAudio();a.unlock();a.sample('groundExplosion');a.sample('nova');a.radio('bossWarning');const voice=a.missionSource;assert.ok(voice);assert.equal(a.active.length,3);
+  assert.equal(a.sample('megaBomb'),null);assert.equal(a.missionSource,voice);assert.equal(voice.finished,undefined);
 });
