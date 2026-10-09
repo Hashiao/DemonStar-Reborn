@@ -31,7 +31,7 @@
   function pause(){if(!game.pause())return;audio.suspend();saveScore();dialog('游戏已暂停','暂时停靠',`<p>战机已悬停。准备好了就继续。</p><div class="dialog-setting">背景音乐 <button class="secondary" id="music-toggle">${saved.music?'开启':'关闭'}</button></div>`,[['继续飞行',resume],['返回主菜单',()=>dialog('返回主菜单','结束本次飞行？','<p>最高分与已解锁关卡会保留，本次战斗进度将结束。</p>',[['继续飞行',resume],['结束并返回',showMenu,true]]),true]]);$('music-toggle').onclick=()=>{saved.music=!saved.music;audio.music=saved.music;$('music-toggle').textContent=saved.music?'开启':'关闭';persist();};}
   function showHelp(){
     dialogReturn=game.phase==='playing'?'playing':game.phase;if(dialogReturn==='playing')game.pause();
-    dialog('游戏说明','飞行指南','<ul class="guide"><li><b>移动</b>　左侧虚拟摇杆移动；<span class="keyboard-help">电脑使用 WASD 或方向键。</span>按住右侧 A 开火，松开停止；电脑按住 Z / J。</li><li><b>炸弹</b>　点击右侧 B <span class="keyboard-help">或按空格。</span>清除弹幕并对 Boss 造成伤害。</li><li><b>补给</b>　彩色 S 切换或升级武器，E 补满能量，蓝色晶体恢复 2 格能量，I 护盾，B 补充炸弹。部分补给会变换类型，接触拾取。</li><li><b>躲避</b>　避开敌机与弹幕，装甲耗尽会损失生命并重置火力。</li><li><b>暂停</b>　点击 Ⅱ <span class="keyboard-help">或按 Esc / P。</span>切到后台会自动暂停。</li></ul><p class="dialog-footer">原作 18 关地图 · 4 档难度 · 离线存档<br>非官方 DemonStar 同人重制 · v0.2.1</p>',[['准备起飞',()=>{if(dialogReturn==='playing')resume();else hideDialog();}]]);
+    dialog('游戏说明','飞行指南','<ul class="guide"><li><b>移动</b>　左侧虚拟摇杆移动；<span class="keyboard-help">电脑使用 WASD 或方向键。</span>按住右侧 A 开火，松开停止；电脑按住 Z / J。</li><li><b>炸弹</b>　点击右侧 B <span class="keyboard-help">或按空格。</span>清除弹幕并对 Boss 造成伤害。</li><li><b>补给</b>　彩色球同色升档、换色回最低档；三色 S 直接满火力，满级再吃 S 或同色球触发清屏弹。E 补满能量，晶体恢复 2 格，M 导弹，B 炸弹。部分补给循环换色，接触拾取。</li><li><b>躲避</b>　避开敌机与弹幕，装甲耗尽会损失生命并重置火力。</li><li><b>暂停</b>　点击 Ⅱ <span class="keyboard-help">或按 Esc / P。</span>切到后台会自动暂停。</li></ul><p class="dialog-footer">原作 18 关地图 · 4 档难度 · 离线存档<br>非官方 DemonStar 同人重制 · v0.2.1</p>',[['准备起飞',()=>{if(dialogReturn==='playing')resume();else hideDialog();}]]);
   }
   function showMissions(){
     dialog('原版战役','选择出击点',`<div class="mission-grid">${STAGES.map(s=>`<button data-stage="${s.id}" ${s.id>saved.unlocked[saved.difficulty]?'disabled':''}>${String(s.id).padStart(2,'0')}<small>${s.name}</small></button>`).join('')}</div><p class="dialog-footer">通过上一关即可解锁。各难度单独保存进度。</p>`,[['返回机库',()=>{hideDialog();},true]]);
@@ -57,7 +57,7 @@
     label('bomb-stock',`炸弹 ${p.bombs} 枚，后拾取先使用`);label('energy',`能量 ${Math.ceil(p.energy)} / ${p.maxEnergy}`);
     if(!$('energy').children.length)$('energy').innerHTML='<i aria-hidden="true"></i>'.repeat(16);
     Array.from($('energy').children).forEach((segment,i)=>segment.classList.toggle('filled',i<Math.ceil(p.energy)));
-    text('weapon',p.defaultWeapon?'双联机炮':`${WEAPONS[p.weapon]} · ${p.power} 级`);text('shield-label',p.shield>0?'护盾已开启':'左摇杆移动 · 按住 A 开火');text('bomb-count',String(p.bombs));$('bomb').disabled=p.bombs<=0;label('bomb',`B 释放炸弹，剩余 ${p.bombs} 枚`);
+    text('weapon',p.defaultWeapon?'双联机炮':`${WEAPONS[p.weapon]} · ${p.power} 级`);text('shield-label',p.shield>0?'护盾已开启':'左摇杆移动 · 按住 A 开火');text('bomb-count',String(p.bombs));$('bomb').disabled=p.bombs<=0||p.bombCooldown>1e-9||p.respawn>0;label('bomb',`B 释放炸弹，剩余 ${p.bombs} 枚`);
     $('boss-hud').hidden=!game.boss;if(game.boss){text('boss-name',game.stage.boss);$('boss-health').style.width=`${Math.max(0,game.boss.hp/game.boss.maxHp*100)}%`;}
   }
   function frame(t){
@@ -72,6 +72,7 @@
       audio.effect(e.type,e);
       if(e.type==='stage')toast(`任务开始 · 第 ${String(e.stage).padStart(2,'0')} 关`);
       if(e.type==='boss')toast(`警报 · ${e.name}`,2.8);
+      if(e.type==='nova')toast(['质子清屏','离子清屏','等离子清屏','磁力清屏'][e.weapon],1);
       if(e.type==='pickup')toast({power:'火力升级',weapon:'质子武器',ion:'离子炮',plasma:'等离子炮',magnetic:'磁力脉冲',energy:'装甲修复',full:'火力全满',shield:'能量护盾',bomb:'超级炸弹',scatter:'散射炸弹',mega:'超级脉冲',missile:'导弹补给',homing:'追踪导弹',side:'侧向火力',rear:'后向火力',medal:'获得勋章',crystal:'能量 +2'}[e.item]||'获得补给',1);
     }
     if(game.phase!==lastPhase){if(['cleared','victory','gameover'].includes(game.phase))results();lastPhase=game.phase;}

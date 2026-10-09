@@ -3,7 +3,7 @@
   const {W,H,STEP,DROPS,rng}=StarfallCore;
   const load=src=>{const im=new Image();im.src=src;return im;};
   class Renderer {
-    constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.time=0;this.ships=load('assets/ships-hd.png');this.bosses=load('assets/bosses-07-18-hd.png');this.hangar=load('assets/hangar-hd.png');this.mission1=load('assets/mission1-hd.png');this.weapons=load('assets/weapons-hd.png');this.pickups=load('assets/pickups-hd.png');this.playerMotion=load('assets/player-motion-hd.png');this.terrain=[load('assets/terrain-01-06-hd.png'),load('assets/terrain-07-12-hd.png'),load('assets/terrain-13-18-hd.png')];this.mission1Names=['S_ENEMY14','S_ENEMY20','S_ENEMY21','S_ENEMY34A','S_ASTER1A','S_ASTER2A','S_ASTER3A','S_ENBON1','S_ENBON3','S_SPTNKRA','S_ENEMY22','S_ENEMY28A','S_PIPE1','S_PIPE2','S_PIPE3','S_BHOLE1A'];const r=rng(654);this.stars=Array.from({length:100},()=>[r()*W,r()*H,r()*1.3+.3]);this.resize();}
+    constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.time=0;this.ships=load('assets/ships-hd.png');this.bosses=load('assets/bosses-07-18-hd.png');this.hangar=load('assets/hangar-hd.png');this.mission1=load('assets/mission1-hd.png');this.weapons=load('assets/weapons-hd.png');this.pickups=load('assets/pickups-hd.png');this.playerMotion=load('assets/player-motion-hd.png');this.carriers=load('assets/supply-carriers-hd.png');this.terrain=[load('assets/terrain-01-06-hd.png'),load('assets/terrain-07-12-hd.png'),load('assets/terrain-13-18-hd.png')];this.mission1Names=['S_ENEMY14','S_ENEMY20','S_ENEMY21','S_ENEMY34A','S_ASTER1A','S_ASTER2A','S_ASTER3A','S_ENBON1','S_ENBON3','S_SPTNKRA','S_ENEMY22','S_ENEMY28A','S_PIPE1','S_PIPE2','S_PIPE3','S_BHOLE1A'];const r=rng(654);this.stars=Array.from({length:100},()=>[r()*W,r()*H,r()*1.3+.3]);this.resize();}
     resize(){
       const screen=this.canvas.parentElement,w=screen.clientWidth,h=screen.clientHeight,wide=w>h&&w>=600;
       const controlHeight=Math.min(180,Math.max(124,h*.19)),side=Math.min(170,Math.max(108,w*.14));
@@ -18,6 +18,7 @@
     terrainDraw(stage,scroll){const c=this.c,idx=stage-1,im=this.terrain[Math.floor(idx/6)],cell=idx%6;if(im?.complete&&im.naturalWidth){const cw=im.naturalWidth/3,ch=im.naturalHeight/2,sy=Math.floor(cell/3)*ch,sx=cell%3*cw,y=scroll%H;c.drawImage(im,sx,sy,cw,ch,0,y-H,W,H);c.drawImage(im,sx,sy,cw,ch,0,y,W,H);}else{c.fillStyle='#010205';c.fillRect(0,0,W,H);for(const [x,y,s] of this.stars){c.fillStyle='#9aa293';c.globalAlpha=s*.4;c.fillRect(x,(y+scroll)%H,s,s);}c.globalAlpha=1;}}
     shipCell(name){if(name.startsWith('S_ENEMY1A'))return 2;if(name==='S_ENEMY2')return 3;if(name==='S_ENEMY4')return 4;if(name==='S_ENEMY10')return 5;if(name==='S_ENEMY18')return 6;if(name==='S_ENEMY21')return 7;if(name.startsWith('G_TNK')||name.includes('TURRET')||name.includes('TUR1'))return 14;if(name.includes('ROTA')||name.includes('ROTB'))return 15;const n=Number((name.match(/(?:ENEMY|SHIP)(\d+)/)||[])[1]||1);return [2,3,4,5,6,7][n%6];}
     object(e){const c=this.c,d=e.def,w=d.width,h=d.height;
+      const carrier=['S_ENBON1','S_ENBON2','S_ENBON3','S_ENBON4'].indexOf(d.sprite);if(carrier>=0&&this.cell(this.carriers,carrier,2,2,e.x,e.y,w*1.2,h*1.2))return;
       const originalCell=this.mission1Names.indexOf(d.sprite);if(originalCell>=0&&this.cell(this.mission1,originalCell,4,4,e.x,e.y,w*1.1,h*1.1))return;
       if(e.scenery){this.scenery(e);return;}
       c.save();if(e.hit>0){c.globalAlpha=.65;}
@@ -52,13 +53,14 @@
         for(const e of game.enemies.filter(e=>!e.scenery&&!e.ground))object(e);
         for(const item of game.pickups){const at=position(item);this.cell(this.pickups,item.id??DROPS.indexOf(item.type),4,5,at.x,at.y,32,32);}
         for(const b of game.bullets){
+          if(b.nova!==undefined){const at=position(b);this.cell(this.weapons,[6,11,12,7][b.nova],4,4,at.x,at.y,b.nova===3?15:10,b.nova===3?15:10);continue;}
           const sprite=b.missile?(b.homing?9:8):b.friendly?[0,3,4,7][b.style%4]:b.style===1?11:10;
           const width=b.defaultShot?4:b.missile?8:b.friendly?(b.style===3?12:7):9,height=b.defaultShot?13:b.missile?17:b.friendly?(b.style===2?24:b.style===3?12:18):9;
           const angle=b.friendly||b.missile?Math.atan2(b.vx,-b.vy):0;
           const at=position(b);if(this.cell(this.weapons,sprite,4,4,at.x,at.y,width,height,angle))continue;
           c.fillStyle=b.friendly?['#ffd85d','#80bdff','#ff99ac','#ffad39'][b.style%4]:'#ffa958';c.fillRect(at.x-2,at.y-5,4,8);
         }
-        const p=game.player,at=position(p);if(game.phase!=='gameover'&&(p.invincible<=0||Math.floor(this.time*14)%2===0))this.player(at.x,at.y,p.power,this.time,1,p);
+        const p=game.player,at=position(p);if(game.phase!=='gameover'&&p.respawn<=0&&(p.invincible<=0||Math.floor(this.time*14)%2===0))this.player(at.x,at.y,p.power,this.time,1,p);
         if(p.shield>0){c.strokeStyle='#83d8ffb0';c.lineWidth=2;c.beginPath();c.arc(at.x,at.y,23,0,Math.PI*2);c.stroke();}
         for(const v of game.particles){c.globalAlpha=Math.max(0,v.life/v.maxLife);c.fillStyle=v.color;c.fillRect(v.x,v.y,v.size,v.size);}c.globalAlpha=1;
         if(game.bombRing>0){c.strokeStyle=`rgba(255,210,120,${game.bombRing})`;c.lineWidth=10;c.beginPath();c.arc(p.x,p.y,(.8-game.bombRing)*1100+10,0,Math.PI*2);c.stroke();}

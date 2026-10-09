@@ -14,7 +14,7 @@ ROOT=Path(__file__).resolve().parents[1]
 RATE=11025
 SOUNDS={'proton':'W_PSHOT1','ion':'W_PSHOT2','plasma':'W_PSHOT3','hit':'W_HITSHIP',
         'explosion':'W_EXPLOSION1','heavyExplosion':'W_EXPLOSION2','bomb':'W_MEGABOMB',
-        'pickup':'W_GETSHOT','menu':'W_MENUCLICK','magnetic':'W_PULSAR2'}
+        'pickup':'W_GETSHOT','menu':'W_MENUCLICK','magnetic':'W_PULSAR2','nova':'W_SHOTEXP'}
 
 def read_wave(path):
     with wave.open(str(path),'rb') as wav:

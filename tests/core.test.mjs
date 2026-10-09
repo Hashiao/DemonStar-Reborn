@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 await import('../web/js/campaign.js');
+await import('../web/js/player-rules.js');
 await import('../web/js/original-rules.js');
 const {Game,Gun,STAGES,STEP,TICK,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,intersects}=globalThis.StarfallCore;
 const campaign=globalThis.DemonStarCampaign;
@@ -33,7 +34,7 @@ test('weapon switching resets power, matching upgrades cap at six',()=>{
   const g=new Game(1);g.start();g.player.power=5;g.collect({type:'ion',time:0});assert.equal(g.player.weapon,1);assert.equal(g.player.power,1);for(let i=0;i<10;i++)g.collect({type:'ion',time:0});assert.equal(g.player.power,6);assert.ok(g.bullets.length>0);
 });
 test('armor loss, spare lives, invulnerability and game over',()=>{
-  const g=new Game(1);g.start();g.player.invincible=0;g.hitPlayer(2);assert.equal(g.player.energy,14);g.hitPlayer(2);assert.equal(g.player.energy,14);g.player.invincible=0;g.hitPlayer(100);assert.equal(g.player.lives,3);assert.equal(g.player.energy,16);g.player.lives=1;g.player.invincible=0;g.hitPlayer(100);assert.equal(g.phase,'gameover');
+  const g=new Game(1);g.start();g.player.invincible=0;g.hitPlayer(2);assert.equal(g.player.energy,14);g.hitPlayer(2);assert.equal(g.player.energy,14);g.player.invincible=0;g.hitPlayer(100);assert.equal(g.player.lives,3);assert.equal(g.player.energy,16);g.player.lives=1;g.player.invincible=0;g.player.respawn=0;g.hitPlayer(100);assert.equal(g.phase,'gameover');
 });
 test('deterministic campaign simulation reaches each original boss without NaNs',()=>{
   for(let stage=1;stage<=18;stage++){
@@ -67,7 +68,7 @@ test('all original drop IDs, crystal healing, no invented extra-life drop',()=>{
 test('mixed bomb inventory has capacity six and consumes newest first',()=>{
   const g=new Game(1);g.start();g.collect({type:'scatter'});g.collect({type:'mega'});g.collect({type:'bomb'});g.collect({type:'scatter'});
   assert.deepEqual(g.player.bombInventory,[0,0,0,1,2,0]);g.drainEvents();
-  for(let i=0;i<6;i++)assert.ok(g.useBomb());assert.equal(g.useBomb(),false);
+  g.recordEvents=[];for(let i=0;i<6;i++){assert.ok(g.useBomb());assert.equal(g.useBomb(),false);for(let t=0;t<35;t++)g.update(STEP);}assert.equal(g.useBomb(),false);
   assert.deepEqual(g.drainEvents().filter(e=>e.type==='bomb').map(e=>e.bombType),[0,2,1,0,0,0]);
 });
 
@@ -112,4 +113,68 @@ test('bank and thrust follow input and settle, preserving original 17-pose range
   for(let i=0;i<16;i++)g.update(STEP,{x:1,y:1});assert.equal(g.player.bank,16);assert.equal(g.player.thrust,-1);
   for(let i=0;i<8;i++)g.update(STEP);assert.equal(g.player.bank,8);assert.equal(g.player.thrust,0);
   assert.ok(PLAYER_STEP_X>4&&PLAYER_STEP_Y>4);assert.equal((400-32)/PLAYER_STEP_X,72);
+});
+
+test('base cannons remain active with every enhanced color and exact max-tier shot IDs',()=>{
+  const expected=[[15,15,17,17,22,23,24,25],[15,15,28,28,28,28],[15,15,50,37],[15,15,59]];
+  for(let weapon=0;weapon<4;weapon++){const g=new Game(1);g.start();g.collect({type:['weapon','ion','plasma','magnetic'][weapon]});g.collect({type:'full'});g.firePlayer();assert.equal(g.player.power,6);assert.deepEqual(g.bullets.map(b=>b.shotType),expected[weapon]);assert.equal(g.bullets[0].damage,50);assert.equal(g.bullets[0].vy,-24*TICK);}
+});
+
+test('same color upgrades, different color loses the previous tier, full S preserves color',()=>{
+  const g=new Game(1);g.start();assert.equal(g.player.power,0);g.collect({type:'ion'});assert.equal(g.player.power,1);g.collect({type:'ion'});assert.equal(g.player.power,2);
+  g.collect({type:'full'});assert.equal(g.player.power,6);assert.equal(g.player.weapon,1);g.collect({type:'plasma'});assert.equal(g.player.power,1);g.collect({type:'ion'});assert.equal(g.player.power,1);
+  const fresh=new Game(1);fresh.start();fresh.collect({type:'full'});assert.equal(fresh.player.weapon,0);assert.equal(fresh.player.power,6);assert.equal(fresh.player.defaultWeapon,false);
+});
+
+test('primary and enhancement retain distinct original held-fire cadences',()=>{
+  const g=new Game(1);g.start();g.recordEvents=[];g.collect({type:'ion'});for(let i=0;i<8;i++)g.update(STEP,{fire:true});
+  assert.equal(g.shotsFired,12);assert.equal(g.bullets.filter(b=>b.shotType===15).length,4);assert.equal(g.bullets.filter(b=>b.shotType===26).length,8);
+});
+
+test('missile pickup switches one 50-volley inventory and launches a homing pair',()=>{
+  const g=new Game(1);g.start();g.recordEvents=[];g.collect({type:'missile'});assert.equal(g.player.missileAmmo,50);g.collect({type:'missile'});assert.equal(g.player.missileAmmo,100);
+  g.collect({type:'homing'});assert.equal(g.player.missileAmmo,50);assert.equal(g.player.missileType,9);g.update(STEP,{fire:true});const shots=g.bullets.filter(b=>b.missile);assert.equal(shots.length,2);assert.ok(shots.every(b=>b.homing&&b.damage===200));assert.equal(g.player.missileAmmo,49);
+  g.collect({type:'missile'});assert.equal(g.player.missileAmmo,50);assert.equal(g.player.missileType,8);
+});
+
+test('side and rear upgrades persist without a countdown and clear on death',()=>{
+  const g=new Game(1);g.start();g.recordEvents=[];for(let i=0;i<4;i++){g.collect({type:'side'});g.collect({type:'rear'});}assert.equal(g.player.side,4);assert.equal(g.player.rear,4);
+  for(let i=0;i<1000;i++)g.update(STEP);assert.equal(g.player.side,4);g.collect({type:'ion'});assert.equal(g.player.rear,4);
+  g.player.invincible=0;g.hitPlayer(100);assert.equal(g.player.side,0);assert.equal(g.player.rear,0);
+});
+
+test('death drops one colored orb, or two at max, then resets to base guns',()=>{
+  for(const [weapon,id] of [[0,2],[1,3],[2,4]])for(const power of [1,2,3,4,5,6]){
+    const g=new Game(1);g.start();g.recordEvents=[];g.player.weapon=weapon;g.player.defaultWeapon=false;g.player.power=power;g.player.invincible=0;g.hitPlayer(100);
+    assert.deepEqual(g.pickups.map(p=>p.id),Array(power===6?2:1).fill(id));assert.equal(g.player.power,0);assert.ok(g.player.defaultWeapon);assert.equal(g.player.bombs,3);assert.ok(g.player.respawn>0);
+    g.update(STEP,{fire:true});assert.equal(g.shotsFired,0);assert.equal(g.pickups.length,power===6?2:1);
+  }
+});
+
+test('damage at critical energy downgrades color once; spare supplies drop at death',()=>{
+  const g=new Game(1);g.start();g.player.defaultWeapon=false;g.player.weapon=1;g.player.power=6;g.player.energy=4;g.player.invincible=0;g.hitPlayer(1);assert.equal(g.player.power,5);
+  g.player.bombInventory=[0,0,0,1];g.player.missileAmmo=50;g.player.invincible=0;g.hitPlayer(100);assert.deepEqual(g.pickups.map(p=>p.id),[8,6,3]);assert.equal(g.player.missileAmmo,0);
+});
+
+test('max-tier same color and full S each launch distinct gold, blue and red novas',()=>{
+  for(const [weapon,count,damage] of [[0,16,355],[1,32,400],[2,64,405]])for(const pickup of ['full',['weapon','ion','plasma'][weapon]]){
+    const g=new Game(1);g.start();g.player.defaultWeapon=false;g.player.weapon=weapon;g.player.power=6;g.collect({type:pickup});
+    assert.equal(g.bullets.length,count);assert.ok(g.bullets.every(b=>b.nova===weapon&&b.damage===damage));assert.equal(g.player.power,6);assert.equal(g.player.weapon,weapon);assert.equal(g.player.bombs,3);
+  }
+});
+
+test('nova clears hostile projectiles along its path instead of deleting the whole field',()=>{
+  const g=new Game(1);g.start();g.recordEvents=[];g.player.x=200;g.player.y=300;g.player.defaultWeapon=false;g.player.power=6;
+  g.addBullet(200,282,0,0,false);g.addBullet(20,20,0,0,false);g.triggerNova();g.update(STEP);g.update(STEP);
+  const hostile=g.bullets.filter(b=>!b.friendly);assert.equal(hostile.length,1);assert.equal(hostile[0].x,20);
+});
+
+test('all original fixed drop records retain their content; non-target scenery stays non-target',()=>{
+  let fixed=0;for(const stage of campaign.levels)for(const r of stage.events){if(r[5]<0)continue;fixed++;const g=new Game(1);g.start(1,stage.id);g.spawnRecord(r);const e=g.enemies.at(-1);e.x=200;e.y=150;g.killEnemy(e);
+    if(e.scenery)assert.equal(g.pickups.length,0);else assert.equal(g.pickups[0].id,r[5]);}
+  assert.equal(fixed,411);
+});
+
+test('boss live health uses the original spawn-time doubling rule',()=>{
+  const g=new Game(1);g.start();const r=g.stage.map.events.find(r=>campaign.definitions[campaign.byId[r[2]]].flags&1);g.spawnRecord(r);assert.equal(g.boss.hp,g.boss.def.hp*2);
 });

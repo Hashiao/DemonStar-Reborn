@@ -9,7 +9,7 @@ const browser=await chromium.launch({channel:'chrome',headless:true});
 const errors=[],failed=[],report=[];
 async function open(context){
   const page=await context.newPage();page.on('pageerror',e=>errors.push(String(e)));page.on('response',r=>{if(r.status()>=400)failed.push(r.url()+':'+r.status());});
-  await page.goto(url);await page.waitForFunction(()=>StarfallApp.renderer.hangar.naturalWidth&&StarfallApp.renderer.ships.naturalWidth&&StarfallApp.renderer.pickups.naturalWidth&&StarfallApp.renderer.weapons.naturalWidth&&StarfallApp.renderer.playerMotion.naturalWidth&&DemonStarSounds.missionStart);
+  await page.goto(url);await page.waitForFunction(()=>StarfallApp.renderer.hangar.naturalWidth&&StarfallApp.renderer.ships.naturalWidth&&StarfallApp.renderer.pickups.naturalWidth&&StarfallApp.renderer.weapons.naturalWidth&&StarfallApp.renderer.playerMotion.naturalWidth&&StarfallApp.renderer.carriers.naturalWidth&&DemonStarSounds.missionStart);
   await page.evaluate(()=>{window.audioEvents=[];const sample=StarfallAudio.prototype.sample;StarfallAudio.prototype.sample=function(...args){const source=sample.apply(this,args);if(source)audioEvents.push(args[0]);return source;};});
   return page;
 }

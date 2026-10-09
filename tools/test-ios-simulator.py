@@ -34,7 +34,7 @@ for family in ('iPhone','iPad'):
     assert probe.get('shotsFired',0)>=2 and probe.get('playerX',0)>200,probe
     assert probe.get('bombs')==2 and probe.get('lives')==4 and probe.get('energy')==16,probe
     assert probe.get('releaseStops'),probe
-    assert probe.get('motionReady') and probe.get('soundbankReady') and probe.get('bankAfterRelease')==8,probe
+    assert probe.get('motionReady') and probe.get('carriersReady') and probe.get('soundbankReady') and probe.get('bankAfterRelease')==8,probe
     run(['xcrun','simctl','io',uid,'screenshot',str(out/(family+'.png'))])
     report['devices'].append({'family':family,'name':device['name'],'runtime':runtime,'wkwebview_probe':probe,'status':'passed'})
     run(['xcrun','simctl','shutdown',uid])

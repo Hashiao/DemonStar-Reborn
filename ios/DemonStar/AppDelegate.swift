@@ -60,12 +60,12 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
           var timer=setInterval(function(){try{
             var g=StarfallApp.game,renderer=StarfallApp.renderer,l=renderer.layout,nextSize=l.w+','+l.h;
             if(nextSize===size)stable++;else{size=nextSize;stable=0;}
-            if(document.hidden||stable<10||l.w<100||l.h<100||!renderer.ships.naturalWidth||!renderer.pickups.naturalWidth)return;
+            if(document.hidden||stable<10||l.w<100||l.h<100||!renderer.ships.naturalWidth||!renderer.pickups.naturalWidth||!renderer.carriers.naturalWidth)return;
             if(phase===0){StarfallApp.start(1);phase=1;return;}
             if(phase===1){if(g.frame<6)return;pointer('fire','pointerdown',.5);pointer('joystick','pointerdown',.8);startFrame=g.frame;phase=2;return;}
             if(phase===2){if(g.frame-startFrame<20)return;pointer('fire','pointerup',.5);pointer('joystick','pointerup',.5);document.getElementById('bomb').click();releasedX=g.player.x;releasedShots=g.shotsFired;startFrame=g.frame;phase=3;return;}
             if(g.frame-startFrame<10)return;
-            var result={phase:g.phase,score:g.score,stage:g.stage.id,elapsed:g.totalTime,bullets:g.bullets.length,shotsFired:g.shotsFired,playerX:g.player.x,lives:g.player.lives,energy:g.player.energy,bombs:g.player.bombs,releaseStops:g.player.x===releasedX&&g.shotsFired===releasedShots,assetsReady:!!renderer.pickups.naturalWidth,motionReady:!!renderer.playerMotion.naturalWidth,soundbankReady:!!DemonStarSounds.missionStart,bankAfterRelease:g.player.bank,viewport:[innerWidth,innerHeight],frozenAfterProbe:true};
+            var result={phase:g.phase,score:g.score,stage:g.stage.id,elapsed:g.totalTime,bullets:g.bullets.length,shotsFired:g.shotsFired,playerX:g.player.x,lives:g.player.lives,energy:g.player.energy,bombs:g.player.bombs,releaseStops:g.player.x===releasedX&&g.shotsFired===releasedShots,assetsReady:!!renderer.pickups.naturalWidth,motionReady:!!renderer.playerMotion.naturalWidth,carriersReady:!!renderer.carriers.naturalWidth,soundbankReady:!!DemonStarSounds.missionStart,bankAfterRelease:g.player.bank,viewport:[innerWidth,innerHeight],frozenAfterProbe:true};
             g.pause();window.smokeResult=JSON.stringify(result);clearInterval(timer);
           }catch(error){window.smokeResult=JSON.stringify({error:String(error)});clearInterval(timer);}},50);
         })();

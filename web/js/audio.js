@@ -29,6 +29,7 @@
       if(type==='explosion'){if(now-this.lastExplosion<.035)return;this.lastExplosion=now;this.sample(event.heavy?'heavyExplosion':'explosion',.7);}
       if(type==='pickup')this.sample('pickup',1.2);
       if(type==='bomb')this.sample('bomb',1.1);
+      if(type==='nova')this.sample('nova',1.1);
       if(type==='hit')this.sample('hit',1.1);
       if(type==='menu')this.sample('menu',.8);
       if(type==='boss'){this.sample('heavyExplosion',.4);this.tone(80,.8,'sawtooth',.12,48);}
