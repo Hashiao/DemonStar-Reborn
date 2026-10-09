@@ -1,0 +1,17 @@
+/Deamon Star/
+.local/
+node_modules/
+dist/
+artifacts/
+local.properties
+.gradle/
+build/
+*.keystore
+*.p12
+*.mobileprovision
+*.xcuserstate
+xcuserdata/
+.DS_Store
+__pycache__/
+/android/app/src/main/assets/
+/ios/DemonStar/Web/

@@ -1,0 +1,20 @@
+{
+  "name": "demonstar-reborn",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "An original, offline arcade shooter inspired by classic DemonStar, for Android, iOS and browsers.",
+  "license": "MIT",
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "build": "node tools/sync.mjs",
+    "test:browser": "node tests/browser.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}

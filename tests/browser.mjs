@@ -1,0 +1,36 @@
+import { createRequire } from 'node:module';
+import { mkdir, writeFile } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const require=createRequire(import.meta.url);
+const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
+await mkdir('artifacts',{recursive:true});
+const browser=await chromium.launch({channel:process.env.BROWSER_CHANNEL||'chrome',headless:true});
+const errors=[],failed=[];const report=[];
+try{
+  const context=await browser.newContext({viewport:{width:1440,height:1000},deviceScaleFactor:1});
+  const page=await context.newPage();page.on('pageerror',e=>errors.push(String(e)));page.on('response',r=>{if(r.status()>=400)failed.push(r.url()+':'+r.status());});
+  await page.goto(process.env.GAME_URL||'http://127.0.0.1:4173');
+  await page.waitForFunction(()=>StarfallApp.renderer.ships.complete&&StarfallApp.renderer.ships.naturalWidth>0&&StarfallApp.renderer.terrain.every(i=>i.complete&&i.naturalWidth>0));
+  await page.screenshot({path:'artifacts/desktop-menu.png'});
+  await page.locator('#start').click();await page.waitForFunction(()=>StarfallApp.game.phase==='playing');
+  const x=await page.evaluate(()=>StarfallApp.game.player.x);await page.keyboard.down('ArrowRight');await page.waitForTimeout(220);await page.keyboard.up('ArrowRight');assert.ok(await page.evaluate(()=>StarfallApp.game.player.x)>x);
+  await page.locator('#pause').click();const t=await page.evaluate(()=>StarfallApp.game.totalTime);await page.waitForTimeout(250);assert.equal(await page.evaluate(()=>StarfallApp.game.totalTime),t);
+  await page.getByRole('button',{name:'继续飞行',exact:true}).click();const bombs=await page.evaluate(()=>StarfallApp.game.player.bombs);await page.locator('#bomb').click();assert.equal(await page.evaluate(()=>StarfallApp.game.player.bombs),bombs-1);
+  await page.evaluate(()=>{StarfallApp.game.player.invincible=100;for(let i=0;i<900;i++)StarfallApp.game.update(1/60);});await page.screenshot({path:'artifacts/desktop-game.png'});
+  report.push({surface:'desktop',menu:true,movement:true,pause:true,bomb:true});
+  const mobile=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
+  const phone=await mobile.newPage();phone.on('pageerror',e=>errors.push(String(e)));await phone.goto(process.env.GAME_URL||'http://127.0.0.1:4173');await phone.waitForFunction(()=>StarfallApp.renderer.ships.naturalWidth>0);
+  await phone.screenshot({path:'artifacts/mobile-menu.png'});await phone.locator('#start').tap();
+  const before=await phone.evaluate(()=>StarfallApp.game.player.x);
+  await phone.evaluate(()=>{const e=document.getElementById('screen');e.dispatchEvent(new PointerEvent('pointerdown',{pointerId:1,clientX:100,clientY:450,bubbles:true}));e.dispatchEvent(new PointerEvent('pointermove',{pointerId:1,clientX:155,clientY:420,bubbles:true}));e.dispatchEvent(new PointerEvent('pointerup',{pointerId:1,bubbles:true}));});
+  assert.ok(await phone.evaluate(()=>StarfallApp.game.player.x)>before);await phone.evaluate(()=>{StarfallApp.background();});assert.equal(await phone.evaluate(()=>StarfallApp.game.phase),'paused');await phone.getByRole('button',{name:'继续飞行',exact:true}).tap();
+  await phone.evaluate(()=>{StarfallApp.game.player.invincible=100;for(let i=0;i<1000;i++)StarfallApp.game.update(1/60);});await phone.screenshot({path:'artifacts/mobile-game.png'});
+  const bounds=await phone.locator('#screen').boundingBox();assert.ok(bounds.x>=-1&&bounds.y>=-1&&bounds.x+bounds.width<=391&&bounds.y+bounds.height<=845);
+  report.push({surface:'mobile390x844',drag:true,backgroundPause:true,withinViewport:true});
+  const legacy=await browser.newContext({viewport:{width:375,height:812},isMobile:true,hasTouch:true});await legacy.addInitScript(()=>{delete window.PointerEvent;delete Element.prototype.replaceChildren;});
+  const old=await legacy.newPage();old.on('pageerror',e=>errors.push(String(e)));await old.goto(process.env.GAME_URL||'http://127.0.0.1:4173');await old.locator('#start').tap();
+  await old.evaluate(()=>{const el=document.getElementById('screen');const send=(name,x,y)=>{const ev=new Event(name,{bubbles:true,cancelable:true});Object.defineProperty(ev,'changedTouches',{value:[{identifier:8,target:el,clientX:x,clientY:y}]});el.dispatchEvent(ev);};send('touchstart',120,400);send('touchmove',155,420);send('touchend',155,420);});assert.ok(await old.evaluate(()=>StarfallApp.game.player.x)>200);
+  await old.locator('#pause').tap();assert.equal(await old.evaluate(()=>StarfallApp.game.phase),'paused');report.push({surface:'legacyAPI-fallback-in-Chromium',touchFallback:true,replaceChildrenFallback:true,actualIOS12:false});
+  assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);
+  await writeFile('artifacts/browser-verification.json',JSON.stringify({status:'passed',report,errors,failed},null,2));console.log(JSON.stringify(report));
+}finally{await browser.close();}

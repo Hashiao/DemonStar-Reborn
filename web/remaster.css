@@ -1,0 +1,15 @@
+:root{--orange:#f07855}
+body{min-height:100vh}
+.screen{aspect-ratio:5/8}
+.title h2{font-size:43px;font-weight:900;letter-spacing:-2.4px;color:#ef362b;text-shadow:0 2px 0 #6c1412,0 4px 14px #000}
+.title h2 span{color:#ef362b}
+.title p{letter-spacing:5px;font-size:12px}
+.title .eyebrow{color:#a7aaa9}
+.menu{background:linear-gradient(#081019ee,transparent 33%,transparent 56%,#080e16f5 78%)}
+.controls{background:#0b141eea;padding:12px 20px 10px}
+.controls button{width:58px;height:58px}
+.hud{background:#0b141eea;padding:12px 17px 8px}
+.hud strong{font-size:20px}
+#boss-hud{position:absolute;top:71px;left:20px;right:20px;padding:7px;background:#101016b0}
+.stage-track{margin-top:8px}
+@media(max-width:600px),(max-height:650px){body,.layout{height:100vh;height:var(--app-height,100vh)}.title h2{font-size:41px}.title{margin-top:20px}.menu{padding:19px 23px}.menu-bottom .primary{padding:15px 17px}.menu-hint{font-size:8px}.menu-options{margin-top:9px}.menu-options button{padding:9px 4px}.menu-hint{margin-top:13px}}

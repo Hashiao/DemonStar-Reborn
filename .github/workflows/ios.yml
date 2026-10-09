@@ -1,0 +1,54 @@
+name: iOS build and simulator smoke test
+on:
+  push:
+    branches: [main]
+    paths: ['web/**', 'ios/**', 'tools/sync.mjs', 'tools/generate-ios-project.py', 'tools/test-ios-simulator.py', 'tests/**', '.github/workflows/ios.yml', 'package.json', 'pnpm-lock.yaml']
+  pull_request:
+    paths: ['web/**', 'ios/**', 'tools/**', 'tests/**', '.github/workflows/ios.yml', 'package.json']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Select existing Xcode 16 baseline when available
+        run: |
+          python3 - <<'PY'
+          import os,pathlib,re
+          choices=[p for p in pathlib.Path('/Applications').glob('Xcode_16*.app') if 'beta' not in p.name.lower()]
+          if choices:
+              p=max(choices,key=lambda p:tuple(map(int,re.findall(r'\d+',p.name))))
+              with open(os.environ['GITHUB_ENV'],'a') as f:f.write('DEVELOPER_DIR='+str(p/'Contents/Developer')+'\n')
+          PY
+      - name: Install build dependencies
+        run: npm install --ignore-scripts
+      - name: Build compatible game bundle and Xcode project
+        run: |
+          mkdir -p .local
+          node tools/sync.mjs
+          python3 tools/generate-ios-project.py
+          node --test tests/*.test.mjs
+      - name: Build ARM64 iPhoneOS app with iOS 12 deployment target
+        run: |
+          xcodebuild -project ios/DemonStar.xcodeproj -scheme DemonStar -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath .local/ios-device CODE_SIGNING_ALLOWED=NO build > .local/device-build.log 2>&1
+          mkdir -p artifacts/Payload
+          cp -R .local/ios-device/Build/Products/Release-iphoneos/DemonStar.app artifacts/Payload/
+          cd artifacts && zip -qr DemonStar-Reborn-iOS-unsigned.ipa Payload
+      - name: Build and launch on an existing iPhone simulator
+        run: python3 tools/test-ios-simulator.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: DemonStar-Reborn-iOS
+          path: |
+            artifacts/*.ipa
+            artifacts/*.png
+            artifacts/*.json
+            .local/*build.log
+          if-no-files-found: error
