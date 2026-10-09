@@ -17,7 +17,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 - 普通敌机击毁新增逐帧爆炸；蓝红强化弹按原弹型使用大命中火花，黄色维持小火花。Boss 最终爆炸后才进入结算。
 - 指定地面目标保留焦黑残骸；奖励按剩余炸弹 ×1000、勋章 ×2000 计算且只入账一次。死亡/换关清零勋章。
 
-80 项引擎/声音回归通过。本版双端安装包验收完成后更新构建记录。
+80 项回归、六组浏览器及 Android/iPhone/iPad 模拟器验收通过，版本 0.2.5（7）。详细环境和边界见下方测试记录及 [本版报告](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.5/verification.json)。
 
 [原作证据与边界](docs/M2_5_RESEARCH.md) · [母舰出击](docs/screenshots/carrier-launch.png) · [命中与击毁](docs/screenshots/hits-and-blasts.png) · [地面残骸](docs/screenshots/ground-remnants.png) · [关末奖励](docs/screenshots/stage-bonus.png) · [内置 imagegen 图集与提示词](docs/ART_M2_5.md)。母舰以本地 4.04 灰色 88 原型为准；特效关键帧和残骸家族仍为重绘近似。
 
@@ -125,7 +125,7 @@ open ios/DemonStar.xcodeproj
 
 ## 测试
 
-M2.4 的 69 项引擎/声音回归与五组浏览器检查通过，覆盖四档难度伤害、连续中弹、撞击双方扣血、重生保护、6→5及后续降档、正确机型、32向炮台、24帧岩石和显示比例。Android Debug/签名 Release、Lint（0 错误、3 提示）及现有 Android 17 / API37 AVD 操作、旋转、后台和设置检查通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/37981829747) 通过 iPhoneOS ARM64 编译和 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) WKWebView 检查，包括音乐播放时钟与全部新图集加载。两包版本0.2.4（6），游戏脚本、图集与音频资源核验一致；HTML/CSS仅存在平台换行差异，包内路径ASCII。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.4/verification.json)。
+M2.5 的 80 项引擎/声音回归与六组浏览器检查通过，覆盖出击冻结/恢复、广播时序、命中与击毁特效、底栏五种尺寸、残骸、原作奖励及 M2.4 伤害规则。Android Debug/签名 Release、Lint（0 错误、3 提示）及现有 Android 17 / API37 AVD 出击、摇杆/A/B、旋转、后台和设置检查通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/37989366559) 通过 iPhoneOS ARM64 编译和 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) WKWebView 检查，包括实际经过出击阶段、新图集加载、移动/开火和 BGM 播放。两包版本 0.2.5（7），全部游戏脚本、图集和音频内容核验一致；HTML/CSS 仅有平台换行差异，包内路径 ASCII。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.5/verification.json)。
 
 原始 HP/主武器伤害表与 v0.2.1 一致。最低系统、手机扬声器和原机逐样本 A/B 仍未实测；独立激光启动音 W_PULSE 已定位在 Game3.glb，尚未包含在用户提供的 MP3 清单，“脉冲炮一”是另一资源 W_PULSAR。
 
