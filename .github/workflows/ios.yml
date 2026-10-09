@@ -52,3 +52,4 @@ jobs:
             artifacts/*.json
             .local/*build.log
           if-no-files-found: error
+          include-hidden-files: true

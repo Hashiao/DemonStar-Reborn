@@ -61,6 +61,7 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
           var timer=setInterval(function(){try{
             var g=StarfallApp.game,renderer=StarfallApp.renderer,l=renderer.layout,nextSize=l.w+','+l.h;
             if(nextSize===size)stable++;else{size=nextSize;stable=0;}
+            window.smokeProgress={probePhase:phase,gamePhase:g.phase,frame:g.frame||0,hidden:document.hidden,stable:stable,size:nextSize,ships:!!renderer.ships.naturalWidth,pickups:!!renderer.pickups.naturalWidth,carriers:!!renderer.carriers.naturalWidth,effects:!!renderer.effects.naturalWidth,musicReady:StarfallApp.music.audio.readyState,musicTime:StarfallApp.music.audio.currentTime,musicPaused:StarfallApp.music.audio.paused,musicError:StarfallApp.music.error,audioState:StarfallApp.audio.ctx?StarfallApp.audio.ctx.state:null};
             if(document.hidden||stable<10||l.w<100||l.h<100||!renderer.ships.naturalWidth||!renderer.pickups.naturalWidth||!renderer.carriers.naturalWidth||!renderer.effects.naturalWidth)return;
             if(phase===0){StarfallApp.start(1);phase=1;return;}
             if(phase===1){if(g.frame<6)return;pointer('fire','pointerdown',.5);pointer('joystick','pointerdown',.8);startFrame=g.frame;phase=2;return;}
@@ -71,14 +72,18 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
           }catch(error){window.smokeResult=JSON.stringify({error:String(error)});clearInterval(timer);}},50);
         })();
         """
-        webView.evaluateJavaScript(script) { [weak self] _, _ in self?.collectSmokeResult(attempts: 60) }
+        webView.evaluateJavaScript(script) { [weak self] _, _ in self?.collectSmokeResult(attempts: 180) }
     }
     private func collectSmokeResult(attempts: Int) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.web.evaluateJavaScript("window.smokeResult || null") { result, error in
                 if let text = result as? String { self?.saveSmokeResult(text) }
                 else if attempts > 0 { self?.collectSmokeResult(attempts: attempts - 1) }
-                else { self?.saveSmokeResult("{\"error\":\"Timed out waiting for stable WKWebView input probe\"}") }
+                else {
+                    self?.web.evaluateJavaScript("JSON.stringify({error:'Timed out waiting for stable WKWebView input probe',progress:window.smokeProgress||null})") { progress, _ in
+                        self?.saveSmokeResult(progress as? String ?? "{\"error\":\"WKWebView probe did not respond\"}")
+                    }
+                }
             }
         }
     }

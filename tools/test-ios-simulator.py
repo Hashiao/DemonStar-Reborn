@@ -23,14 +23,19 @@ for family in ('iPhone','iPad'):
     if device.get('state')!='Booted':run(['xcrun','simctl','boot',uid])
     run(['xcrun','simctl','bootstatus',uid,'-b'])
     run(['xcrun','simctl','install',uid,str(root/'.local/ios-simulator/Build/Products/Release-iphonesimulator/DemonStar.app')])
-    run(['xcrun','simctl','launch',uid,'io.github.hashiao.demonstar','--smoke-test'])
     container=pathlib.Path(run(['xcrun','simctl','get_app_container',uid,'io.github.hashiao.demonstar','data']))
     result=container/'Documents/smoke.json'
-    for _ in range(40):
+    if result.exists():result.unlink()
+    subprocess.run(['xcrun','simctl','terminate',uid,'io.github.hashiao.demonstar'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=False,timeout=30)
+    run(['xcrun','simctl','launch',uid,'io.github.hashiao.demonstar','--smoke-test'])
+    for _ in range(120):
         if result.exists():break
         time.sleep(1)
     if not result.exists():raise RuntimeError('WKWebView did not complete functional probe')
-    probe=json.loads(result.read_text());assert probe.get('phase')=='playing',probe;assert probe.get('assetsReady'),probe;assert probe.get('score',0)>=0,probe
+    probe=json.loads(result.read_text())
+    (out/(family+'-probe.json')).write_text(json.dumps(probe,indent=2))
+    run(['xcrun','simctl','io',uid,'screenshot',str(out/(family+'.png'))])
+    assert probe.get('phase')=='playing',probe;assert probe.get('assetsReady'),probe;assert probe.get('score',0)>=0,probe
     assert probe.get('shotsFired',0)>=2 and probe.get('playerX',0)>200,probe
     assert probe.get('bombs')==2 and probe.get('lives')==4 and probe.get('energy')==16,probe
     assert probe.get('releaseStops'),probe
