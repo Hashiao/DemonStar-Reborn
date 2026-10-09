@@ -6,7 +6,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 首个里程碑仅提供中文界面，后续再加入英文语言包。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点、联网权限或内购。
 
-**当前 M2.1（v0.2.1）修正经典 HUD、初始双发与双手操作，仍不是已验收的完整 1:1 移植。** 原版 1–18 关优先；19–25 关尚未开发。完整的确认项、推断值与差异见 [还原状态](docs/FIDELITY.md)。
+**当前 M2.1（v0.2.1）修正原版装备、主机飞行与声音，仍不是已验收的完整 1:1 移植。** 原版 1–18 关优先；19–25 关尚未开发。完整的确认项、推断值与差异见 [还原状态](docs/FIDELITY.md)。
 
 ![Menu](docs/screenshots/menu.png)
 
@@ -27,7 +27,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 - 逻辑采用原作代码中的 35 毫秒基础节拍，绘制插值保持平滑；敌方移动/射击与关卡滚动统一计时，Boss 出场按原版采用两倍基础 HP（纠正 v0.2.0 的误改）。尚未完成原作录像逐帧速度验收。
 - 原作机库菜单、主机、十八关背景、全部 Boss、第一关主要敌机/地物与武器弹体已有 AI 高清素材；尚未覆盖的敌机和地物仍有近似图形。原版音乐、双人、联网、地图编辑器未包含。
 
-[Android 竖屏实测画面](docs/screenshots/android-game.png) · [横屏实测画面](docs/screenshots/android-landscape.png) · [M2 补给重绘记录](docs/ART_COMBAT.md)
+[Android 竖屏实测画面](docs/screenshots/android-game.png) · [横屏实测画面](docs/screenshots/android-landscape.png) · [满级等离子清屏](docs/screenshots/nova-plasma.png) · [补给舱高清图集](docs/ART_SUPPLY.md) · [主机姿态图集](docs/ART_MOTION.md)
 
 ## 安装
 
@@ -91,7 +91,9 @@ open ios/DemonStar.xcodeproj
 
 M2.1 的 34 项引擎与音频回归通过，覆盖 18 关 Boss、开局双发、全部掉落编号、混合库存、轮换周期及不同刷新率的一致性。浏览器通过真实双指移动/开火、松手停止、禁止战场拖动瞬移、横竖屏及展开尺寸、暂停和旧 API 回退检查。
 
-Android Debug/签名 Release 编译及两种 Lint 通过；现有 Android 17 / API 37 AVD 上通过摇杆、A/B、旋转保持库存、系统返回和后台暂停验收，最终重建 APK 与实测包哈希一致。[Apple CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/37907161109) 通过 iPhoneOS ARM64 编译，以及 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11 英寸 (M4) 实际 WKWebView 输入探针：移动、双发、松手停止、初始生命/能量和炸弹消耗均通过。IPA 版本 0.2.0（2），包体与可执行文件最低系统检查为 12.0。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.0/verification.json)。
+Android Debug/签名 Release 编译及两种 Lint 通过（0 错误，3 项平台兼容提示）；复用 Android 17 / API 37 AVD 验收摇杆、A/B、旋转保持库存、系统返回和后台暂停，测试与发布使用同一 APK。[Apple CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/37924914574) 通过 iPhoneOS ARM64 编译，以及 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) 实际 WKWebView 输入探针：移动、双发、松手停止、初始生命/能量、炸弹消耗和新图集加载均通过。IPA 版本 0.2.1（3），包体与可执行文件最低系统检查为 12.0。两包内 22 个 MP3 均与用户提供源文件哈希一致，旧合成 WAV 已移除，包内文件名全部为 ASCII。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.1/verification.json)。
+
+浏览器已验证真实 AudioContext 的开场播报、命中及爆炸调度；Android 模拟器本轮关闭声音输出，未做手机扬声器听感验收。
 
 旧 API 回退测试在 Chromium 中模拟缺失接口，**不是 iOS 12 真机测试**。`artifacts/*-verification.json` 和 Release 说明记录实际测试情况。
 
