@@ -19,7 +19,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 HP、敌弹/撞击伤害和超级武器预算保持冻结。[原作证据与边界](docs/M2_3_RESEARCH.md) · [星弹画面](docs/screenshots/boss1-stars.png) · [蓝色激光](docs/screenshots/boss1-laser.png) · [旋转敌机六帧](docs/screenshots/spinner-poses.png) · [内置 imagegen 重绘与提示词](docs/ART_ENEMY_ATTACKS.md)。
 
-本版原生安装包验收完成后，将在此补充 Android 与 iOS 实际测试和下载校验记录。
+56 项回归及 Android、iPhone/iPad 模拟器验收通过，安装包版本 0.2.3（5）。详细环境与边界见下方测试记录和 [本版验收报告](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.3/verification.json)。
 
 ## M2.2 已完成内容
 
@@ -103,9 +103,9 @@ open ios/DemonStar.xcodeproj
 
 ## 测试
 
-M2.2 的 48 项引擎/声音回归通过。浏览器覆盖真实双指输入、全部拾取和 Boss 无中央遮挡、装备栏多尺寸布局、血条开关、三种炸弹和红蓝档位，并检查全部 18 首 BGM 的解码、独立音效静音、暂停后音乐位置续播及入场声音顺序。
+M2.3 的 56 项引擎/声音回归通过。浏览器覆盖真实双指输入、全部拾取和 Boss 无中央遮挡、装备栏多尺寸布局、血条开关、三种炸弹和红蓝档位，并检查全部 18 首 BGM 的解码、独立音效静音、暂停后音乐位置续播及入场声音顺序。
 
-Android Debug/签名 Release、Lint 通过（0 错误，3 项平台兼容提示）；复用 Android 17 / API 37 AVD 完成操作、旋转、后台、血条和音乐开关检查。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/37942842301) 通过 iPhoneOS ARM64 编译和 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) WKWebView 检查，包含 BGM 加载和播放时钟推进。最终包版本 0.2.2（4），39 个音效和 18 首独立 BGM 哈希及游戏脚本在两包中一致，包内名称全部 ASCII。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.2/verification.json)。
+本版 56 项引擎/声音回归与四组浏览器检查通过，覆盖旧存档音乐迁移、真实 BGM 播放、流星锁定、陀螺加速及首关三轮激光。Android Debug/签名 Release、Lint（0 错误、3 提示）及现有 Android 17 / API 37 AVD 操作、旋转、后台和设置检查通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/37974187884) 通过 iPhoneOS ARM64 编译和 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) WKWebView 检查，包括 BGM 时钟推进与新图集加载。版本 0.2.3（5），两个包的游戏代码与素材核对通过（HTML/CSS 仅有平台换行差异），音频哈希匹配、包内路径 ASCII。[验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.3/verification.json)。
 
 原始 HP/主武器伤害表与 v0.2.1 一致。最低系统、手机扬声器和原机逐样本 A/B 仍未实测；独立激光启动音 W_PULSE 已定位在 Game3.glb，尚未包含在用户提供的 MP3 清单，“脉冲炮一”是另一资源 W_PULSAR。
 
