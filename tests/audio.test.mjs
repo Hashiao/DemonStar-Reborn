@@ -55,3 +55,13 @@ test('original three-slot sound priority prevents an impact wall and preserves r
   a.radio('bossWarning');for(let i=0;i<40;i++){a.ctx.currentTime+=.06;a.effect('shot');}assert.ok(a.active.length<=3);assert.ok(a.missionSource);assert.equal(a.missionSource.kind,'bossWarning');
   a.stopAll();assert.equal(a.active.length,0);assert.equal(a.ambient,null);
 });
+
+test('enemy gun families use original sound bindings and silent types stay silent',()=>{
+  const a=new StarfallAudio();a.unlock();
+  for(const [type,kind] of [[1,'enemyShot'],[40,'enemyShot'],[7,'scatterBomb'],[41,'scatterBomb'],[8,'enemyMissile'],[43,'enemyMissile'],[44,'enemyMissile'],[9,'enemyLaser'],[10,'megaBomb'],[11,'enemyPulsar1'],[42,'enemyPulsar2']]){a.stopAll();a.effect('enemy-shot',{shotType:type});assert.equal(started.at(-1).buffer,a.buffers[kind]);}
+  a.stopAll();const n=started.length;a.effect('enemy-shot',{shotType:0});a.effect('enemy-shot',{shotType:12});assert.equal(started.length,n);
+});
+test('completion radio sequence follows stage and cancels on a new mission',()=>{
+  const a=new StarfallAudio();a.unlock();a.effect('cleared',{stage:1});a.update(1,true);assert.equal(a.missionSource,null);a.update(.3,true);assert.equal(a.missionSource.kind,'stagePraise');a.update(1.4,true);assert.equal(a.missionSource.kind,'missionComplete');
+  a.effect('cleared',{stage:2});a.update(1.3,true);assert.equal(a.missionSource.kind,'fullPowerB');a.effect('stage');assert.equal(a.cues.length,0);
+});

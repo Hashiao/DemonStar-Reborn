@@ -18,7 +18,7 @@ const bindings={proton:'W_PSHOT1',ion:'W_PSHOT2',plasma:'W_PSHOT3',hit:'W_HITSHI
   bomb:'W_MEGABOMB',scatterBomb:'W_SHOT2',megaBomb:'W_LASER2',pickup:'W_GETSHOT',
   menu:'W_MENUCLICK',nova:'W_SHOTEXP',missionStart:'W_RADIO12',bossWarning:'W_RADIO1',bossFall:'W_BOSSFALL',missionComplete:'W_RADIO11',
   fullPowerA:'W_RADIO10',fullPowerB:'W_RADIO9',crystal:'W_GETCRYSTAL',energy:'W_GETENERGY',
-  medal:'W_GETMEDAL',shield:'W_GETSHIELD',shieldLost:'W_LOSESHIELD',stageAmbience:'W_GLOOP',menuAmbience:'W_ILOOP',playerLaunch:'W_PLAYERLNCH',bossEngine1:'W_BOSS',bossEngine2:'W_BOSS2',bossEngine3:'W_BOSS3',bossEngine4:'W_BOSS4',bossEngine5:'W_BOSS5',bossEngine6:'W_BOSS6'};
+  medal:'W_GETMEDAL',shield:'W_GETSHIELD',shieldLost:'W_LOSESHIELD',stageAmbience:'W_GLOOP',menuAmbience:'W_ILOOP',playerLaunch:'W_PLAYERLNCH',bossEngine1:'W_BOSS',bossEngine2:'W_BOSS2',bossEngine3:'W_BOSS3',bossEngine4:'W_BOSS4',bossEngine5:'W_BOSS5',bossEngine6:'W_BOSS6',enemyShot:'W_SHOT1',enemyMissile:'W_MISSLE',enemyLaser:'W_LASER',enemyPulsar1:'W_PULSAR',enemyPulsar2:'W_PULSAR2',stagePraise:'W_RADIO6'};
 if(entries.some(e=>e.resource==='W_PULSE'))bindings.pulseCharge='W_PULSE';
 const audit=JSON.parse(await readFile(path.join(root,'docs/audio-bindings.json'),'utf8'));
 const priorities=Object.fromEntries(audit.bindings.map(b=>[b.resource,b.priority]));

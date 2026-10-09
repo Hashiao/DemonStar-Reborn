@@ -40,6 +40,9 @@ try{
     await page.setViewportSize(size);await page.waitForTimeout(80);const r=await page.evaluate(()=>{const b=document.querySelector('.weapon-status').getBoundingClientRect(),l=StarfallApp.renderer.layout;return {x:b.x,y:b.y,right:b.right,bottom:b.bottom,w:innerWidth,h:innerHeight,fieldBottom:l.y+480*l.scale,fieldLeft:l.x,wide:l.wide};});
     assert.ok(r.x>=-1&&r.y>=-1&&r.right<=r.w+1&&r.bottom<=r.h+1,JSON.stringify(r));assert.ok(r.wide?r.right<=r.fieldLeft+1:r.y>=r.fieldBottom-1,JSON.stringify(r));
   }
+  await page.evaluate(()=>{StarfallApp.game.phase='cleared';});await page.waitForFunction(()=>document.getElementById('dialog-title').textContent==='防线已突破');
+  await page.evaluate(()=>StarfallApp.background());assert.equal(await page.evaluate(()=>StarfallApp.music.paused),true);
+  await page.getByRole('button',{name:'下一关 →',exact:true}).click();await page.waitForFunction(()=>StarfallApp.music.track==='MDS_SLOWRKET'&&StarfallApp.music.audio.currentTime>.2&&!StarfallApp.music.paused);
   const source=JSON.parse(await readFile('docs/music-manifest.json','utf8'));
   const musicFiles=[...new Map(source.inventory.map(e=>[e.asset,e])).values()];
   const decoded=await page.evaluate(async files=>{
@@ -49,6 +52,6 @@ try{
   },musicFiles);
   for(const clip of decoded)assert.ok(Math.abs(clip.duration-clip.expected)<.15,JSON.stringify(clip));
   assert.deepEqual(errors,[]);
-  const report={status:'passed',checks:['real-BGM-playback','launch-before-radio','no-menu-click-on-start','pause-resume-BGM-position','independent-SFX-mute','all-pickups-without-overlay','Boss-without-overlay','health-toggle','red-blue-tier-art','Boss-burning-and-falling','three-superweapon-appearances','equipment-outside-field-in-four-layouts','all-18-BGM-files-browser-decode'],decoded,errors};
+  const report={status:'passed',checks:['real-BGM-playback','launch-before-radio','no-menu-click-on-start','pause-resume-BGM-position','independent-SFX-mute','all-pickups-without-overlay','Boss-without-overlay','health-toggle','red-blue-tier-art','Boss-burning-and-falling','three-superweapon-appearances','equipment-outside-field-in-four-layouts','all-18-BGM-files-browser-decode','next-stage-after-background-resumes-BGM'],decoded,errors};
   await writeFile('artifacts/feedback-verification.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
 }finally{await browser.close();}

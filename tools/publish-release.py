@@ -4,7 +4,7 @@ Creates a draft first, validates every uploaded digest, then publishes. Never
 replaces an asset or tag belonging to an existing published release.
 """
 import argparse, hashlib, json, pathlib, plistlib, subprocess, sys, urllib.error, urllib.parse, urllib.request, zipfile
-from github_api import GitHub
+from github_api import GitHub, read_download
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 REPO='Hashiao/DemonStar-Reborn'
@@ -35,13 +35,15 @@ def main():
         data=file.read_bytes();expected='sha256:'+hashlib.sha256(data).hexdigest();asset=next((a for a in release['assets'] if a['name']==file.name),None)
         if asset is None:
             if not release['draft']:raise RuntimeError('Published release is missing an asset; create a new version.')
+            print('Uploading '+file.name+' ('+str(len(data))+' bytes)',flush=True)
             asset=api.request(release['upload_url'].split('{')[0]+'?name='+urllib.parse.quote(file.name),'POST',data,'application/octet-stream')
         if asset.get('size')!=len(data) or asset.get('digest')!=expected:raise RuntimeError('Asset verification failed: '+file.name)
     if release['draft']:release=api.request(base+'/releases/'+str(release['id']),'PATCH',{'draft':False,'body':notes,'make_latest':'true'})
     for file in paths:
         url='https://github.com/'+REPO+'/releases/download/'+args.tag+'/'+urllib.parse.quote(file.name)
-        with urllib.request.urlopen(url,timeout=120) as response:actual=hashlib.file_digest(response,'sha256').hexdigest()
+        actual=hashlib.sha256(read_download(url,file.name)).hexdigest()
         if actual!=hashlib.sha256(file.read_bytes()).hexdigest():raise RuntimeError('Public download checksum mismatch: '+file.name)
+        print('Public SHA-256 verified: '+file.name,flush=True)
     print(json.dumps({'release':release['html_url'],'assets':[p.name for p in paths]}))
 
 if __name__=='__main__':

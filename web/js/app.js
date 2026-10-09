@@ -52,7 +52,7 @@
     if(won){saved.unlocked[game.difficulty]=Math.max(saved.unlocked[game.difficulty],Math.min(18,game.stage.id+1));persist();}
     const accuracy=game.shotsFired?Math.min(100,Math.round(game.shotsHit/game.shotsFired*100)):0;
     const content=`<div class="result-score">${fmt(game.score)}</div><div class="stat-row">击落敌机<b>${game.kills}</b></div><div class="stat-row">命中率<b>${accuracy}%</b></div><div class="stat-row">飞行时间<b>${Math.floor(game.totalTime/60)}:${String(Math.floor(game.totalTime%60)).padStart(2,'0')}</b></div><div class="stat-row">当前关卡<b>${game.stage.id} / 18</b></div>`;
-    const actions=game.phase==='cleared'?[['下一关 →',()=>{game.nextStage();hideDialog();lastPhase='playing';updateHud();}]]:[['再次出击',()=>start(game.phase==='victory'?1:game.stage.id)]];
+    const actions=game.phase==='cleared'?[['下一关 →',()=>{game.nextStage();music.stage(game.stage.id);music.resume();hideDialog();lastPhase='playing';updateHud();}]]:[['再次出击',()=>start(game.phase==='victory'?1:game.stage.id)]];
     actions.push(['返回机库',showMenu,true]);
     dialog(won?'任务完成':'战斗记录',game.phase==='victory'?'星海已重获自由':won?'防线已突破':'任务结束',content,actions);
   }
@@ -84,8 +84,8 @@
       accumulator+=dt;
       const input={x:stick.x+Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a')),y:stick.y+Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w')),fire:firePointers.size>0||keys.has('z')||keys.has('j')||firePulse};
       let ticks=0;const oldFrame=game.frame;while(accumulator>=1/60&&ticks++<6){game.update(1/60,input);accumulator-=1/60;}if(game.frame!==oldFrame)firePulse=false;
-      audio.update(dt,game.phase==='playing');
     }else accumulator=0;
+    audio.update(dt,game.phase!=='paused'&&game.phase!=='menu'&&!document.hidden);
     for(const e of game.drainEvents()){
       audio.effect(e.type,e);
       if(e.type==='stage'){music.stage(e.stage);toast(`任务开始 · 第 ${String(e.stage).padStart(2,'0')} 关`);}

@@ -1,5 +1,37 @@
 """Minimal GitHub API helper using the existing Git credential manager session."""
-import json, os, subprocess, urllib.error, urllib.parse, urllib.request
+import json, os, subprocess, urllib.error, urllib.parse, urllib.request, concurrent.futures, re
+
+def read_download(url, label='Download'):
+    """Bounded parallel byte ranges for large, already-authorized package reads.
+
+    No credential headers are forwarded. Each range and final length are checked;
+    callers still validate archive contents or the complete SHA-256 digest.
+    """
+    probe=urllib.request.Request(url,headers={'Range':'bytes=0-0'})
+    with urllib.request.urlopen(probe,timeout=120) as response:
+        if response.status!=206:return response.read()
+        match=re.fullmatch(r'bytes 0-0/(\d+)',response.headers.get('Content-Range',''))
+        if not match:raise RuntimeError('Invalid download range response')
+        size=int(match.group(1))
+        if len(response.read())!=1:raise RuntimeError('Incomplete range probe')
+    if size<=0:raise RuntimeError('Empty download')
+    count=min(6,max(1,(size+8*1024*1024-1)//(8*1024*1024)));width=(size+count-1)//count
+    def part(index):
+        start=index*width;end=min(size-1,start+width-1)
+        request=urllib.request.Request(url,headers={'Range':f'bytes={start}-{end}'})
+        with urllib.request.urlopen(request,timeout=120) as response:
+            if response.status!=206 or response.headers.get('Content-Range')!=f'bytes {start}-{end}/{size}':raise RuntimeError('Mismatched download range')
+            data=response.read()
+        if len(data)!=end-start+1:raise RuntimeError('Incomplete download range')
+        return index,data
+    chunks=[None]*count
+    with concurrent.futures.ThreadPoolExecutor(max_workers=count) as pool:
+        futures=[pool.submit(part,i) for i in range(count)]
+        for done,future in enumerate(concurrent.futures.as_completed(futures),1):
+            index,data=future.result();chunks[index]=data;print(f'{label}: {done}/{count} parts received',flush=True)
+    data=b''.join(chunks)
+    if len(data)!=size:raise RuntimeError('Incomplete download')
+    return data
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl): return None
@@ -22,4 +54,4 @@ class GitHub:
             if e.code!=302:raise
             # The GitHub signed storage URL is fetched without any Authorization header.
             url=e.headers['Location']
-            with urllib.request.urlopen(url,timeout=120) as response:destination.write_bytes(response.read())
+            destination.write_bytes(read_download(url,'CI artifact'))

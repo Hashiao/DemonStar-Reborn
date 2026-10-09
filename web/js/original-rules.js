@@ -28,7 +28,7 @@
       if(this.arc<=0){this.angle=(this.angle+r[9])&2047;if(this.gaps<=1)this.arc=9999;else this.gaps--;return;}
       const x=enemy.x-enemy.def.width/2+r[0],y=enemy.y-enemy.def.height/2+r[1];
       if(this.aim){this.angle=(Math.atan2(game.player.x-x,-(game.player.y-y))*1024/Math.PI+r[8])&2047;this.aim=false;}
-      if(enemy.y>=0&&enemy.y<H+enemy.r&&game.enemyFireLock<=0&&!enemy.dying){const a=this.angle*Math.PI/1024,s=Math.max(1,r[12])*TICK;game.addBullet(x,y,Math.sin(a)*s,-Math.cos(a)*s,false,1+(r[2]>=7?1:0),r[2]%3,{shotType:r[2]});}
+      if(enemy.y>=0&&enemy.y<H+enemy.r&&game.enemyFireLock<=0&&!enemy.dying){const a=this.angle*Math.PI/1024,s=Math.max(1,r[12])*TICK;game.addBullet(x,y,Math.sin(a)*s,-Math.cos(a)*s,false,1+(r[2]>=7?1:0),r[2]%3,{shotType:r[2]});game.events?.push({type:'enemy-shot',shotType:r[2]});}
       this.angle=(this.angle+r[9])&2047;this.arc--;
     }
   }
@@ -214,7 +214,7 @@
       }
       this.specials=this.specials.filter(s=>!s.exploded||s.remaining>0);
     }
-    defeatBoss(){if(this.phase!=='playing')return;const b=this.boss;if(b)this.explode(b.x,b.y,'#ffd894',85);this.boss=null;this.bullets=[];this.flash=.6;this.phase=this.stage.id===18?'victory':'cleared';this.events.push({type:this.phase});}
+    defeatBoss(){if(this.phase!=='playing')return;const b=this.boss;if(b)this.explode(b.x,b.y,'#ffd894',85);this.boss=null;this.bullets=[];this.flash=.6;this.phase=this.stage.id===18?'victory':'cleared';this.events.push({type:this.phase,stage:this.stage.id});}
     update(dt,input={}){
       if(this.phase!=='playing'||!Number.isFinite(dt))return;
       this.pendingTime+=clamp(dt,0,.25);

@@ -92,7 +92,7 @@ open ios/DemonStar.xcodeproj
 
 ## 测试
 
-M2.2 的 45 项引擎/声音回归通过。浏览器覆盖真实双指输入、全部拾取和 Boss 无中央遮挡、装备栏多尺寸布局、血条开关、三种炸弹和红蓝档位，并检查全部 18 首 BGM 的解码、独立音效静音、暂停后音乐位置续播及入场声音顺序。
+M2.2 的 47 项引擎/声音回归通过。浏览器覆盖真实双指输入、全部拾取和 Boss 无中央遮挡、装备栏多尺寸布局、血条开关、三种炸弹和红蓝档位，并检查全部 18 首 BGM 的解码、独立音效静音、暂停后音乐位置续播及入场声音顺序。
 
 本轮原生安装包验收结果将在完成 Android 构建/Lint/已有 AVD 和 macOS iPhone/iPad WKWebView 检查后更新，并附入 v0.2.2 Release 的 verification.json。
 
@@ -106,7 +106,7 @@ M2.2 的 45 项引擎/声音回归通过。浏览器覆盖真实双指输入、�
 
 [格式记录](docs/FORMAT.md) · [还原差异](docs/FIDELITY.md) · [imagegen 提示词与素材来源](docs/ART.md) · [第三方声明](THIRD_PARTY_NOTICES.md) · [M2.2 武器图集与提示词](docs/ART_EFFECTS.md)
 
-原始 `Deamon Star/`、参考图、EXE、GLB、MAP、音乐与帮助文件不进入仓库。导入器可从用户自己的原版安装中重建关卡数据：
+原始 `Deamon Star/`、参考图、EXE、GLB、MAP 与帮助文件不进入仓库。用户提供的音效和 BGM MP3 副本按声音/音乐清单记录来源与哈希。导入器可从用户自己的原版安装中重建关卡数据：
 
 ```sh
 python tools/import-campaign.py "/path/to/your/DemonStar"

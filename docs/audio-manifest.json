@@ -35,7 +35,13 @@
     "bossEngine3": "W_BOSS3",
     "bossEngine4": "W_BOSS4",
     "bossEngine5": "W_BOSS5",
-    "bossEngine6": "W_BOSS6"
+    "bossEngine6": "W_BOSS6",
+    "enemyShot": "W_SHOT1",
+    "enemyMissile": "W_MISSLE",
+    "enemyLaser": "W_LASER",
+    "enemyPulsar1": "W_PULSAR",
+    "enemyPulsar2": "W_PULSAR2",
+    "stagePraise": "W_RADIO6"
   },
   "inventory": [
     {
@@ -405,7 +411,11 @@
       "frames": 6635,
       "rate": 11025,
       "seconds": 0.6018140589569161,
-      "keys": []
+      "keys": [
+        "enemyLaser"
+      ],
+      "asset": "web/assets/audio/W_LASER.mp3",
+      "pcmSha256": "aa6ecaecd006b788f057461f56290883f732ee0f9c39d78628dc632cedb75180"
     },
     {
       "resource": "W_LASER2",
@@ -476,7 +486,11 @@
       "frames": 12217,
       "rate": 11025,
       "seconds": 1.1081179138321995,
-      "keys": []
+      "keys": [
+        "enemyMissile"
+      ],
+      "asset": "web/assets/audio/W_MISSLE.mp3",
+      "pcmSha256": "cd00be7b4c97513641af92b524f32c2562cf6dfea9c8881dbf9b3a188e55ee67"
     },
     {
       "resource": "W_NEWSHIP",
@@ -558,7 +572,11 @@
       "frames": 5856,
       "rate": 11025,
       "seconds": 0.531156462585034,
-      "keys": []
+      "keys": [
+        "enemyPulsar1"
+      ],
+      "asset": "web/assets/audio/W_PULSAR.mp3",
+      "pcmSha256": "b1f78b504eda6e634bda12555cd32d772bbf4bc52c2f41224a5e916555fb8ff3"
     },
     {
       "resource": "W_PULSAR2",
@@ -569,7 +587,11 @@
       "frames": 6763,
       "rate": 11025,
       "seconds": 0.6134240362811791,
-      "keys": []
+      "keys": [
+        "enemyPulsar2"
+      ],
+      "asset": "web/assets/audio/W_PULSAR2.mp3",
+      "pcmSha256": "baa73f9128d49d2e31e3685516c8873d47480493436a434ab1c5214488e028af"
     },
     {
       "resource": "W_RADIO1",
@@ -684,7 +706,11 @@
       "frames": 14479,
       "rate": 11025,
       "seconds": 1.3132879818594105,
-      "keys": []
+      "keys": [
+        "stagePraise"
+      ],
+      "asset": "web/assets/audio/W_RADIO6.mp3",
+      "pcmSha256": "92ffdc122cafd5737e554af6fb948fadbbc785e3740b7b560311b9add9e03eea"
     },
     {
       "resource": "W_RADIO7",
@@ -743,7 +769,11 @@
       "frames": 13309,
       "rate": 11025,
       "seconds": 1.2071655328798185,
-      "keys": []
+      "keys": [
+        "enemyShot"
+      ],
+      "asset": "web/assets/audio/W_SHOT1.mp3",
+      "pcmSha256": "a674aca75f8b9e4a50f4208bfa759a8bcf3c69240acb178567e09bec425a4578"
     },
     {
       "resource": "W_SHOT2",
