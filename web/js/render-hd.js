@@ -3,7 +3,12 @@
   const {W,H,STEP,DROPS,rng}=StarfallCore;
   const load=src=>{const im=new Image();im.src=src;return im;};
   class Renderer {
-    constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.time=0;this.effects=load('assets/combat-effects-hd.png');this.tintCache=new Map();this.enemyHealthBars=true;this.ships=load('assets/ships-hd.png');this.bosses=load('assets/bosses-07-18-hd.png');this.hangar=load('assets/hangar-hd.png');this.mission1=load('assets/mission1-hd.png');this.weapons=load('assets/weapons-hd.png');this.pickups=load('assets/pickups-hd.png');this.playerMotion=load('assets/player-motion-hd.png');this.carriers=load('assets/supply-carriers-hd.png');this.terrain=[load('assets/terrain-01-06-hd.png'),load('assets/terrain-07-12-hd.png'),load('assets/terrain-13-18-hd.png')];this.mission1Names=['S_ENEMY14','S_ENEMY20','S_ENEMY21','S_ENEMY34A','S_ASTER1A','S_ASTER2A','S_ASTER3A','S_ENBON1','S_ENBON3','S_SPTNKRA','S_ENEMY22','S_ENEMY28A','S_PIPE1','S_PIPE2','S_PIPE3','S_BHOLE1A'];const r=rng(654);this.stars=Array.from({length:100},()=>[r()*W,r()*H,r()*1.3+.3]);this.resize();}
+    constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.time=0;this.effects=load('assets/combat-effects-hd.png');this.attacks=load('assets/enemy-attacks-hd.png');this.tintCache=new Map();this.enemyHealthBars=true;this.ships=load('assets/ships-hd.png');this.bosses=load('assets/bosses-07-18-hd.png');this.hangar=load('assets/hangar-hd.png');this.mission1=load('assets/mission1-hd.png');this.weapons=load('assets/weapons-hd.png');this.pickups=load('assets/pickups-hd.png');this.playerMotion=load('assets/player-motion-hd.png');this.carriers=load('assets/supply-carriers-hd.png');this.terrain=[load('assets/terrain-01-06-hd.png'),load('assets/terrain-07-12-hd.png'),load('assets/terrain-13-18-hd.png')];this.mission1Names=['S_ENEMY14','S_ENEMY20','S_ENEMY21','S_ENEMY34A','S_ASTER1A','S_ASTER2A','S_ASTER3A','S_ENBON1','S_ENBON3','S_SPTNKRA','S_ENEMY22','S_ENEMY28A','S_PIPE1','S_PIPE2','S_PIPE3','S_BHOLE1A'];const r=rng(654);this.stars=Array.from({length:100},()=>[r()*W,r()*H,r()*1.3+.3]);this.resize();}
+    attackCell(index,x,y,w,h,red=false){
+      if(!this.attacks)this.attacks=load('assets/enemy-attacks-hd.png');
+      if(!this.attacks.naturalWidth)return false;
+      this.c.drawImage(red?this.redImage(this.attacks):this.attacks,...DemonStarCombatVisuals.attackCells[index],x-w/2,y-h/2,w,h);return true;
+    }
     resize(){
       const screen=this.canvas.parentElement,w=screen.clientWidth,h=screen.clientHeight,wide=w>h&&w>=600;
       const controlHeight=Math.min(180,Math.max(124,h*.19)),side=Math.min(170,Math.max(108,w*.14));
@@ -27,6 +32,7 @@
       if(this.enemyHealthBars&&!e.scenery&&!e.boss&&!e.dead&&(w>=48||h>=48)&&e.entered){const width=Math.min(52,Math.max(24,w*.8)),x=e.x-width/2,y=e.y-h*.6-5;c.fillStyle='#080c12dc';c.fillRect(x-1,y-1,width+2,4);c.fillStyle=e.critical?'#ff5343':'#88b6ca';c.fillRect(x,y,width*Math.max(0,e.hp/e.maxHp),2);}
     }
     objectBody(e,red){const c=this.c,d=e.def,w=d.width,h=d.height,im=image=>red?this.redImage(image):image;
+      if(d.sprite==='S_ENEMY28A'&&this.attackCell(e.animationFrame||0,e.x,e.y,w,h,red))return;
       const carrier=['S_ENBON1','S_ENBON2','S_ENBON3','S_ENBON4'].indexOf(d.sprite);if(carrier>=0&&this.cell(im(this.carriers),carrier,2,2,e.x,e.y,w*1.2,h*1.2))return;
       const originalCell=this.mission1Names.indexOf(d.sprite);if(originalCell>=0&&this.cell(im(this.mission1),originalCell,4,4,e.x,e.y,w*1.1,h*1.1))return;
       if(e.scenery){this.scenery(e);return;}
@@ -62,6 +68,8 @@
         for(const e of game.enemies.filter(e=>!e.scenery&&!e.ground))object(e);
         for(const item of game.pickups){const at=position(item);this.cell(this.pickups,item.id??DROPS.indexOf(item.type),4,5,at.x,at.y,32,32);}
         for(const b of game.bullets){
+          if(b.beam){const at=position(b),frame=Math.min(3,b.age||0),height=Math.max(0,H-at.y);this.attackCell(10+frame,at.x,at.y+height/2,[8,6,4,2][frame],height);this.attackCell(14+frame,at.x,at.y,8,8);continue;}
+          if(!b.friendly&&b.shotType===11){const at=position(b);if(this.attackCell(6+(b.age||0)%4,at.x,at.y,16,16))continue;}
           const visual=DemonStarCombatVisuals.shot(b.shotType);if(b.friendly&&visual){const at=position(b);this.effectCell(b.pulse?12+Math.floor(this.time*24)%4:visual.cell,at.x,at.y,visual.width,visual.height,Math.atan2(b.vx,-b.vy));continue;}
           if(b.nova!==undefined){const at=position(b);this.cell(this.weapons,[6,11,12,7][b.nova],4,4,at.x,at.y,b.nova===3?15:10,b.nova===3?15:10);continue;}
           const sprite=b.missile?(b.homing?9:8):b.friendly?[0,3,4,7][b.style%4]:b.style===1?11:10;

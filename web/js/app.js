@@ -5,16 +5,21 @@
   function hideDialog(){const el=$('dialog');el.hidden=true;el.setAttribute('aria-modal','false');el.setAttribute('aria-hidden','true');}
   const { Game, DIFFICULTIES, STAGES, WEAPONS, W, H, clamp } = StarfallCore;
   const game=new Game(), renderer=new StarfallRenderer($('game')), audio=new StarfallAudio(), music=new DemonStarMusicPlayer();
-  let saved={best:[0,0,0,0],unlocked:[1,1,1,1],difficulty:1,sound:true,music:true,enemyHealthBars:true,musicVolume:.35,soundVolume:1};
+  let saved={best:[0,0,0,0],unlocked:[1,1,1,1],difficulty:1,sound:true,music:true,musicPreferenceVersion:1,enemyHealthBars:true,musicVolume:.35,soundVolume:1};
   try { const s=JSON.parse(localStorage.getItem('demonstar-reborn-v1')||'null'); if(s && typeof s==='object'){
     saved.best=Array.from({length:4},(_,i)=>Math.max(0,Math.floor(Number(s.best?.[i])||0)));
     saved.unlocked=Array.from({length:4},(_,i)=>clamp(Math.floor(Number(s.unlocked?.[i])||1),1,18));
-    saved.difficulty=clamp(Math.floor(Number(s.difficulty)||0),0,3);saved.sound=s.sound!==false;saved.music=s.music!==false;saved.musicVolume=clamp(Number.isFinite(s.musicVolume)?s.musicVolume:.35,0,1);saved.soundVolume=clamp(Number.isFinite(s.soundVolume)?s.soundVolume:1,0,1);saved.enemyHealthBars=s.enemyHealthBars!==false;
+    saved.difficulty=clamp(Math.floor(Number(s.difficulty)||0),0,3);saved.sound=s.sound!==false;
+    // Enable BGM once when migrating pre-default-on saves. Later explicit
+    // mute choices remain persistent, including a deliberately zero volume.
+    saved.music=s.musicPreferenceVersion===1?s.music!==false:true;
+    saved.musicVolume=clamp(Number.isFinite(s.musicVolume)&&(s.musicPreferenceVersion===1||s.musicVolume>0)?s.musicVolume:.35,0,1);saved.soundVolume=clamp(Number.isFinite(s.soundVolume)?s.soundVolume:1,0,1);saved.enemyHealthBars=s.enemyHealthBars!==false;
   }} catch { /* Private browsing and corrupt saves are recoverable. */ }
   let selectedStage=1, pointer=null, previous=0, accumulator=0, toastTime=0, pickupTime=0, lastPhase='menu', hudTick=0, dialogReturn=null, firePulse=false;
   const stick={x:0,y:0},firePointers=new Set();
   const keys=new Set(); audio.enabled=saved.sound;music.setEnabled(saved.music);music.volume=saved.musicVolume;audio.volume=saved.soundVolume;renderer.enemyHealthBars=saved.enemyHealthBars;
   const persist=()=>{try{localStorage.setItem('demonstar-reborn-v1',JSON.stringify(saved));}catch{}};
+  persist();
   const fmt=n=>String(Math.floor(n)).padStart(7,'0');
   function menuInfo(){ $('best').textContent=fmt(saved.best[saved.difficulty]);$('difficulty').textContent=`难度 · ${DIFFICULTIES[saved.difficulty].name}`;$('unlock-label').textContent=`${String(saved.unlocked[saved.difficulty]).padStart(2,'0')} / 18`;$('sound').textContent=`音效 ${saved.sound?'开':'关'}`;$('sound').setAttribute('aria-pressed',String(saved.sound));$('start').innerHTML=`开始游戏 <span>关卡 ${String(selectedStage).padStart(2,'0')} →</span>`; }
   function saveScore(){if(game.score>saved.best[game.difficulty]){saved.best[game.difficulty]=game.score;persist();}}
@@ -41,7 +46,7 @@
   function pause(){if(!game.pause())return;audio.suspend();music.suspend();saveScore();dialog('游戏已暂停','暂时停靠',`<p>战机已悬停。准备好了就继续。</p>${settingsRows()}`,[['继续飞行',resume],['返回主菜单',()=>dialog('返回主菜单','结束本次飞行？','<p>最高分与已解锁关卡会保留，本次战斗进度将结束。</p>',[['继续飞行',resume],['结束并返回',showMenu,true]]),true]]);bindSettings();}
   function showHelp(){
     dialogReturn=game.phase==='playing'?'playing':game.phase;if(dialogReturn==='playing')game.pause();
-    dialog('游戏说明','飞行指南','<ul class="guide"><li><b>移动</b>　左侧虚拟摇杆移动；<span class="keyboard-help">电脑使用 WASD 或方向键。</span>按住右侧 A 开火，松开停止；电脑按住 Z / J。</li><li><b>炸弹</b>　点击右侧 B <span class="keyboard-help">或按空格。</span>清除弹幕并对 Boss 造成伤害。</li><li><b>补给</b>　彩色球同色升档、换色回最低档；三色 S 直接满火力，满级再吃 S 或同色球触发清屏弹。E 补满能量，晶体恢复 2 格，M 导弹，B 炸弹。部分补给循环换色，接触拾取。</li><li><b>躲避</b>　避开敌机与弹幕，装甲耗尽会损失生命并重置火力。</li><li><b>暂停</b>　点击 Ⅱ <span class="keyboard-help">或按 Esc / P。</span>切到后台会自动暂停。</li></ul><p class="dialog-footer">原作 18 关地图 · 4 档难度 · 离线存档<br>非官方 DemonStar 同人重制 · v0.2.2</p>',[['准备起飞',()=>{if(dialogReturn==='playing')resume();else hideDialog();}]]);
+    dialog('游戏说明','飞行指南','<ul class="guide"><li><b>移动</b>　左侧虚拟摇杆移动；<span class="keyboard-help">电脑使用 WASD 或方向键。</span>按住右侧 A 开火，松开停止；电脑按住 Z / J。</li><li><b>炸弹</b>　点击右侧 B <span class="keyboard-help">或按空格。</span>清除弹幕并对 Boss 造成伤害。</li><li><b>补给</b>　彩色球同色升档、换色回最低档；三色 S 直接满火力，满级再吃 S 或同色球触发清屏弹。E 补满能量，晶体恢复 2 格，M 导弹，B 炸弹。部分补给循环换色，接触拾取。</li><li><b>躲避</b>　避开敌机与弹幕，装甲耗尽会损失生命并重置火力。</li><li><b>暂停</b>　点击 Ⅱ <span class="keyboard-help">或按 Esc / P。</span>切到后台会自动暂停。</li></ul><p class="dialog-footer">原作 18 关地图 · 4 档难度 · 离线存档<br>非官方 DemonStar 同人重制 · v0.2.3</p>',[['准备起飞',()=>{if(dialogReturn==='playing')resume();else hideDialog();}]]);
   }
   function showMissions(){
     dialog('原版战役','选择出击点',`<div class="mission-grid">${STAGES.map(s=>`<button data-stage="${s.id}" ${s.id>saved.unlocked[saved.difficulty]?'disabled':''}>${String(s.id).padStart(2,'0')}<small>${s.name}</small></button>`).join('')}</div><p class="dialog-footer">通过上一关即可解锁。各难度单独保存进度。</p>`,[['返回机库',()=>{hideDialog();},true]]);

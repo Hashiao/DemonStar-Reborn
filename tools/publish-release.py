@@ -10,7 +10,7 @@ ROOT=pathlib.Path(__file__).resolve().parents[1]
 REPO='Hashiao/DemonStar-Reborn'
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--tag',required=True);p.add_argument('--build-sha',required=True);p.add_argument('--notes',type=pathlib.Path,required=True);args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--tag',required=True);p.add_argument('--build-sha',required=True);p.add_argument('--notes',type=pathlib.Path,required=True);p.add_argument('--title');args=p.parse_args()
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():raise RuntimeError('Commit milestone source and documentation before publishing.')
     head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     # Documentation/release tooling can be committed after the binary build.
@@ -30,7 +30,7 @@ def main():
     api=GitHub();base='/repos/'+REPO
     releases=api.request(base+'/releases?per_page=100');release=next((r for r in releases if r['tag_name']==args.tag),None)
     notes=args.notes.read_text(encoding='utf-8')+'\n\n源码提交：`'+head+'`\n构建与验收提交：`'+args.build_sha+'`\n'
-    if release is None:release=api.request(base+'/releases','POST',{'tag_name':args.tag,'target_commitish':head,'name':'恶魔之星·重生 '+args.tag+' · M2.2 战斗表现与原版 BGM','body':notes,'draft':True,'prerelease':False})
+    if release is None:release=api.request(base+'/releases','POST',{'tag_name':args.tag,'target_commitish':head,'name':args.title or '恶魔之星·重生 '+args.tag,'body':notes,'draft':True,'prerelease':False})
     for file in paths:
         data=file.read_bytes();expected='sha256:'+hashlib.sha256(data).hexdigest();asset=next((a for a in release['assets'] if a['name']==file.name),None)
         if asset is None:

@@ -28,7 +28,13 @@
       if(this.arc<=0){this.angle=(this.angle+r[9])&2047;if(this.gaps<=1)this.arc=9999;else this.gaps--;return;}
       const x=enemy.x-enemy.def.width/2+r[0],y=enemy.y-enemy.def.height/2+r[1];
       if(this.aim){this.angle=(Math.atan2(game.player.x-x,-(game.player.y-y))*1024/Math.PI+r[8])&2047;this.aim=false;}
-      if(enemy.y>=0&&enemy.y<H+enemy.r&&game.enemyFireLock<=0&&!enemy.dying){const a=this.angle*Math.PI/1024,s=Math.max(1,r[12])*TICK;game.addBullet(x,y,Math.sin(a)*s,-Math.cos(a)*s,false,1+(r[2]>=7?1:0),r[2]%3,{shotType:r[2]});game.events?.push({type:'enemy-shot',shotType:r[2]});}
+      if(enemy.y>=0&&enemy.y<H+enemy.r&&game.enemyFireLock<=0&&!enemy.dying){
+        const a=this.angle*Math.PI/1024,s=Math.max(1,r[12])*TICK;
+        // Type 9 is a four-frame beam attached to its emitter (0x429722),
+        // not a travelling bullet. Keep the existing two-point damage budget.
+        const beam=r[2]===9?{beam:true,owner:enemy.uid,offsetX:x-enemy.x,offsetY:y-enemy.y,age:0,life:4*STEP}:{};
+        game.addBullet(x,y,Math.sin(a)*s,-Math.cos(a)*s,false,1+(r[2]>=7?1:0),r[2]%3,{shotType:r[2],missile:r[2]===8,...beam});game.events?.push({type:'enemy-shot',shotType:r[2]});
+      }
       this.angle=(this.angle+r[9])&2047;this.arc--;
     }
   }
@@ -110,15 +116,27 @@
       const d=e.def;let speed=e.speed*TICK;
       if(e.scenery){e.y+=TICK*dt;return;}
       if(d.mode===9||d.mode===10){
-        if(e.pathFinished){if(d.pathFlags&1){const a=Math.atan2(this.player.y-e.y,this.player.x-e.x);e.x+=Math.cos(a)*speed*dt;e.y+=Math.sin(a)*speed*dt;}else e.y+=speed*dt;return;}
+        if(e.pathFinished){e.x+=(e.exitX||0)*speed*dt;e.y+=(e.exitY??1)*speed*dt;return;}
         const dx=e.pathX-e.x,dy=e.pathY-e.y,dist=Math.hypot(dx,dy);
-        if(dist<=speed*dt+1){e.x=e.pathX;e.y=e.pathY;if(e.pathIndex>=d.path.length){if((d.pathFlags&4)&&d.speedNode>=0){e.pathIndex=d.speedNode+1;e.pathX=e.loopX??e.originX;e.pathY=e.loopY??120;}else e.pathFinished=true;}else this.setPath(e);}
+        // 0x410934: move with the current speed, then approach exitSpeed by
+        // one unit per tick once the target's index reaches speedNode.
+        if(e.pathIndex-1>=d.speedNode&&d.speedNode>=0)e.speed+=Math.sign(Math.max(1,d.exitSpeed)-e.speed);
+        if(dist<=speed*dt+1){e.x=e.pathX;e.y=e.pathY;if(e.pathIndex>=d.path.length){if((d.pathFlags&4)&&d.speedNode>=0){e.pathIndex=d.speedNode+1;e.pathX=e.loopX??e.originX;e.pathY=e.loopY??120;}else this.finishPath(e);}else this.setPath(e);}
         else{e.x+=dx/dist*speed*dt;e.y+=dy/dist*speed*dt;}
-        if(e.pathIndex>d.speedNode&&d.speedNode>=0)e.speed=Math.max(1,d.exitSpeed);
       }else if(d.mode===3){e.x+=(e.originX<200?1:-1)*speed*dt;}
       else if(d.mode===5)e.y-=speed*dt;
       else if(d.mode===8){e.y=Math.min(d.height/2+42,e.y+speed*dt);}
       else{e.y+=speed*dt;}
+    }
+    finishPath(e){
+      e.pathFinished=true;
+      if(e.def.pathFlags&1){
+        // 0x410a03 snapshots the player exactly once, then enters state 2.
+        // Subsequent updates only advance along this stored heading.
+        const a=Math.atan2(this.player.y-e.y,this.player.x-e.x);
+        e.exitX=Math.cos(a);e.exitY=Math.sin(a);
+      }else if(e.def.pathFlags&2){e.exitX=0;e.exitY=1;}
+      else e.dead=true; // Original path end removes the object without a kill.
     }
     explode(x,y,color='#ffb05c',amount=16){for(let i=0;i<amount;i++){const a=this.random()*Math.PI*2,s=20+this.random()*110,life=.2+this.random()*.45;if(this.particles.length<350)this.particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life,maxLife:life,color,size:1+this.random()*3});}}
     spawnPickup(id,x,y,death=false){
@@ -144,6 +162,7 @@
     killEnemy(e){if(e.dead||e.dying||e.scenery)return;if(e.boss){e.hp=0;e.dying=true;e.deathTicks=0;e.fall=0;e.fallSpeed=.25;this.events.push({type:'boss-dying'});return;}this.finishEnemy(e);}
     finishEnemy(e){if(e.dead)return;e.dead=true;this.kills++;this.score+=e.def.score;this.explode(e.x,e.y,'#ffb05c',e.boss?85:16);this.events.push({type:'explosion',heavy:!!e.boss,ground:!!(e.def.flags&0x40)});this.spawnPickup(e.record[5],e.x,e.y);if(e.def.flags&0x200)this.automaticDrops(e);if(e.boss)this.defeatBoss();}
     updateEnemyState(e){
+      if(e.def.sprite==='S_ENEMY28A'&&!e.dying)e.animationFrame=((e.animationFrame||0)+1)%6;
       if(e.x>=0&&e.x<W&&e.y>=0&&e.y<H)e.entered=true;
       // Original warnings compare against base HP, including for doubled Boss HP.
       e.critical=e.hp>0&&e.hp<Math.floor(e.def.hp/4);e.burning=e.boss&&(e.dying||e.hp<Math.floor(e.def.hp/16));
@@ -244,8 +263,17 @@
       for(const e of this.enemies){if(e.dead)continue;e.time+=dt;e.hit=Math.max(0,e.hit-dt);if(!e.dying)this.moveEnemy(e,dt);this.updateEnemyState(e);if(e.dead||e.dying)continue;for(const gun of e.guns)gun.tick(e,this);if(!e.scenery&&!e.ground&&e.y>0&&Math.hypot(e.x-p.x,e.y-p.y)<e.r+p.r)this.hitPlayer(3);}
       this.updateSpecials();
       for(const b of this.bullets){
+        if(b.beam){
+          const owner=this.enemies.find(e=>e.uid===b.owner&&!e.dead&&!e.dying);
+          if(!owner||b.dead||++b.age>=4){b.dead=true;continue;}
+          b.px=b.x;b.py=b.y;b.x=owner.x+b.offsetX;b.y=owner.y+b.offsetY;b.life-=dt;
+          // Original 0x428a77: vertical rectangle eight pixels wide, reaching
+          // 480 pixels below the muzzle. Hitting does not consume the beam.
+          if(p.respawn<=0&&Math.abs(p.x-b.x)<=p.r+4&&p.y+p.r>=b.y&&p.y-p.r<=b.y+480)this.hitPlayer(b.damage);
+          continue;
+        }
         if(b.homing){const targets=this.enemies.filter(e=>this.targetable(e));let target=null,dist=Infinity;for(const e of targets){const n=Math.hypot(e.x-b.x,e.y-b.y);if(n<dist){dist=n;target=e;}}if(target){const a=Math.atan2(target.y-b.y,target.x-b.x),s=Math.hypot(b.vx,b.vy);b.vx+=(Math.cos(a)*s-b.vx)*Math.min(1,dt*6);b.vy+=(Math.sin(a)*s-b.vy)*Math.min(1,dt*6);}}
-        b.px=b.x;b.py=b.y;b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;
+        b.age=(b.age||0)+1;b.px=b.x;b.py=b.y;b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;
         if(b.nova!==undefined)for(const hostile of this.bullets){if(!hostile.friendly&&!hostile.dead&&intersects(b.px,b.py,b.x,b.y,hostile.x,hostile.y,b.r+hostile.r+4))hostile.dead=true;}
         if(b.friendly){for(const e of this.enemies){if(!this.targetable(e)||b.hitEnemies?.includes(e.uid))continue;if(intersects(b.px,b.py,b.x,b.y,e.x,e.y,e.r+b.r)){e.hp-=b.damage;e.hit=.06;if(b.hitEnemies)b.hitEnemies.push(e.uid);else b.dead=true;this.shotsHit++;if(e.hp<=0)this.killEnemy(e);else this.events.push({type:'enemy-hit'});if(b.dead)break;}}}
         else if(!b.dead&&p.respawn<=0&&intersects(b.px,b.py,b.x,b.y,p.x,p.y,p.r+b.r)){b.dead=true;this.hitPlayer(b.damage);}
