@@ -70,3 +70,11 @@ test('equal-priority incoming effects do not evict an already playing radio',()=
   const a=new StarfallAudio();a.unlock();a.sample('groundExplosion');a.sample('nova');a.radio('bossWarning');const voice=a.missionSource;assert.ok(voice);assert.equal(a.active.length,3);
   assert.equal(a.sample('megaBomb'),null);assert.equal(a.missionSource,voice);assert.equal(voice.finished,undefined);
 });
+
+test('animated launch waits for carrier completion, and debrief does not replay radio cues',()=>{
+  const a=new StarfallAudio();a.unlock();a.effect('stage',{deferredLaunch:true});a.update(10,true);assert.equal(a.missionSource,null);assert.equal(a.launchPending,false);
+  a.effect('launch');a.update(.035,true);assert.ok(a.buffers.playerLaunch);a.update(10,true);assert.equal(a.missionSource,null);
+  a.effect('mission-start');a.update(.035,true);assert.equal(a.missionSource.kind,'missionStart');
+  a.effect('stage-complete',{stage:1});a.update(1.3,true);assert.equal(a.missionSource.kind,'stagePraise');const pending=a.cues[0].delay;
+  a.effect('cleared',{stage:1,completionAnnounced:true});assert.equal(a.cues[0].delay,pending);a.update(1.4,true);assert.equal(a.missionSource.kind,'missionComplete');
+});

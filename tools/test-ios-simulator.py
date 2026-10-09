@@ -35,6 +35,7 @@ for family in ('iPhone','iPad'):
     probe=json.loads(result.read_text())
     (out/(family+'-probe.json')).write_text(json.dumps(probe,indent=2))
     run(['xcrun','simctl','io',uid,'screenshot',str(out/(family+'.png'))])
+    assert probe.get('launchSeen') and probe.get('presentationReady'),probe
     assert probe.get('phase')=='playing',probe;assert probe.get('assetsReady'),probe;assert probe.get('score',0)>=0,probe
     assert probe.get('shotsFired',0)>=2 and probe.get('playerX',0)>200,probe
     assert probe.get('bombs')==2 and probe.get('lives')==4 and probe.get('energy')==16,probe

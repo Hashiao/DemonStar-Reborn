@@ -57,3 +57,16 @@ body{background:#080a10}
 .screen[data-wide='true'] #aux-equipment{flex-wrap:wrap;height:auto;min-height:18px}
 .screen[data-wide='true'] .weapon-status small{display:block;font-size:8px}
 @media(max-height:450px) and (orientation:landscape){.screen[data-wide='true'] .weapon-status{top:8px}.screen[data-wide='true'] #pickup-status{display:none}}
+
+/* Readable bottom HUD and tightly cropped, already-redrawn icons. */
+.classic-status{--u:var(--hud-unit)}
+.classic-status .hud-sprite{width:calc(14 * var(--u));height:calc(14 * var(--u));margin-right:calc(3 * var(--u))}
+.classic-status .energy-row>.ship-icon{width:calc(14 * var(--u));height:calc(12 * var(--u))}
+#bomb-stock{height:calc(19 * var(--u));margin-left:calc(17 * var(--u))}
+#energy{gap:0}#energy i{margin-right:var(--u)}#energy i:last-child{margin-right:0}
+#lives .ship-icon{width:calc(11 * var(--u));height:calc(10 * var(--u));margin-right:calc(4 * var(--u));margin-top:calc(3 * var(--u))}
+.hud-sprite.ship-icon{background-size:701.2500000% 1023.3576642%;background-position:6.7567568% 91.4624506%;}
+.hud-sprite.bomb-icon-0{background-size:967.2413793% 1229.8245614%;background-position:36.1829026% 91.2267081%;}
+.hud-sprite.bomb-icon-1{background-size:967.2413793% 1229.8245614%;background-position:64.5129225% 91.2267081%;}
+.hud-sprite.bomb-icon-2{background-size:897.6000000% 1198.2905983%;background-position:91.7753260% 91.2062257%;}
+.result-bonus{border-bottom:1px solid #40505d;padding-bottom:8px;margin-bottom:8px}.result-bonus .stat-row{animation:bonus-reveal .25s both}.result-bonus .stat-row:nth-child(2){animation-delay:.525s}.result-bonus .stat-row:nth-child(3){animation-delay:1.05s}@keyframes bonus-reveal{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}

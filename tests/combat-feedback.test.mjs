@@ -48,7 +48,7 @@ test('Boss arrival radio waits 60 ticks, destruction animates before score and s
   for(let i=0;i<59;i++)g.update(STEP);assert.ok(!g.drainEvents().some(e=>e.type==='boss-radio'));g.update(STEP);assert.equal(g.drainEvents().filter(e=>e.type==='boss-radio').length,1);
   const b=g.boss;b.hp=0;g.killEnemy(b);assert.equal(g.phase,'playing');assert.equal(g.score,0);assert.ok(b.dying);
   g.pause();const fall=b.fall;g.update(1);assert.equal(b.fall,fall);g.resume();for(let i=0;i<50;i++)g.update(STEP);
-  assert.equal(g.phase,'cleared');assert.equal(g.score,b.def.score);g.killEnemy(b);assert.equal(g.score,b.def.score);
+  assert.equal(g.phase,'cleared');assert.equal(g.score,b.def.score+3000);g.killEnemy(b);assert.equal(g.score,b.def.score+3000);
 });
 test('red six-tier width and blue three-tier length come from distinct original sprites',()=>{
   assert.deepEqual([29,30,31,48,49,50].map(t=>DemonStarCombatVisuals.shot(t).width),[1.5,4.5,7.5,13.5,16.5,19.5]);

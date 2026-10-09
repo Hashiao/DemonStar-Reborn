@@ -30,7 +30,9 @@
     radio(kind){this.stopMission();this.missionSource=this.sample(kind,.95);}
     effect(type,event={}){
       const now=this.ctx?.currentTime||0;
-      if(type==='stage'){this.stopAll();this.setScene('stage');this.pendingMission=this.enabled;this.launchPending=this.enabled;this.lastShot=this.lastHit=this.lastExplosion=-Infinity;}
+      if(type==='stage'){this.stopAll();this.setScene('stage');this.pendingMission=this.enabled&&!event.deferredLaunch;this.launchPending=this.enabled&&!event.deferredLaunch;this.lastShot=this.lastHit=this.lastExplosion=-Infinity;}
+      if(type==='launch')this.launchPending=this.enabled;
+      if(type==='mission-start'){this.pendingMission=this.enabled;this.missionDelay=0;}
       if(type==='shot'){if(now-this.lastShot<.055)return;this.lastShot=now;this.sample(['proton','ion','plasma','proton'][event.weapon||0],1.1);}
       if(type==='enemy-shot'&&ENEMY[event.shotType])this.sample(ENEMY[event.shotType],.8);
       if(type==='enemy-hit'){if(now-this.lastHit<.035)return;this.lastHit=now;this.sample('hit',.65);}
@@ -46,7 +48,7 @@
       if(type==='boss-radio')this.radio('bossWarning');
       if(type==='boss-engine')this.sample('bossEngine'+event.variant,.55);
       if(type==='boss-dying'){this.stopMission();this.sample('bossFall',.8);}
-      if(type==='cleared'||type==='victory'){this.setScene('results');this.stopMission();const index=((event.stage||1)-1)%4;this.cues=[{delay:(type==='victory'?25:35)*.035,kind:index===1?'fullPowerB':index===3?'fullPowerA':'stagePraise'},{delay:75*.035,kind:'missionComplete'}];}
+      if(type==='stage-complete'||(type==='cleared'||type==='victory')&&!event.completionAnnounced){this.setScene('results');this.stopMission();const index=((event.stage||1)-1)%4;this.cues=[{delay:(type==='victory'||event.final?25:35)*.035,kind:index===1?'fullPowerB':index===3?'fullPowerA':'stagePraise'},{delay:75*.035,kind:'missionComplete'}];}
       if(type==='gameover'){this.stopAll();this.setScene('results');}
     }
     update(dt,active){

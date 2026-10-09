@@ -22,7 +22,7 @@ async function bounds(page){
   for(const r of result.controls){assert.ok(r.x>=-1&&r.y>=-1&&r.x+r.w<=result.w+1&&r.y+r.h<=result.h+1,JSON.stringify(result));}
   const {l}=result;assert.ok(l.x>=-1&&l.y>=-1&&l.x+400*l.scale<=result.w+1&&l.y+480*l.scale<=result.h+1);return result;
 }
-async function resetArena(page){await page.evaluate(()=>{const g=StarfallApp.game;g.recordEvents=[];g.enemies=[];g.bullets=[];g.player.invincible=100;});}
+async function resetArena(page){await page.waitForFunction(()=>StarfallApp.game.phase==='playing');await page.evaluate(()=>{const g=StarfallApp.game;g.recordEvents=[];g.enemies=[];g.bullets=[];g.player.invincible=100;});}
 try{
   const desktop=await browser.newContext({viewport:{width:1280,height:900}}),page=await open(desktop);
   await page.locator('#start').click();await resetArena(page);await page.waitForTimeout(200);

@@ -23,6 +23,7 @@ run('shell','am','force-stop','io.github.hashiao.demonstar')
 run('shell','am','start','-n','io.github.hashiao.demonstar/.MainActivity');time.sleep(2)
 assert '开始游戏' in node('start').get('text','')
 capture('android-menu.png');tap('start');time.sleep(2)
+capture('android-launch.png');time.sleep(7)
 assert '关卡' in node('stage-label').get('text','')
 first=capture('android-game-before.png');time.sleep(.7);second=capture('android-game.png');assert first!=second,'Game rendering did not advance'
 stick=node('joystick');x1,y1,x2,y2=map(int,re.findall(r'\d+',stick.get('bounds')))

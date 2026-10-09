@@ -1,6 +1,6 @@
 {
   "name": "demonstar-reborn",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "private": true,
   "type": "module",
   "description": "An original, offline arcade shooter inspired by classic DemonStar, for Android, iOS and browsers.",
