@@ -4,7 +4,7 @@
   const $ = id => document.getElementById(id);
   const { Game, DIFFICULTIES, STAGES, WEAPONS, W, H, clamp } = StarfallCore;
   const game=new Game(), renderer=new StarfallRenderer($('game')), audio=new StarfallAudio();
-  let saved={best:[0,0,0,0],unlocked:[1,1,1,1],difficulty:1,sound:true,music:true};
+  let saved={best:[0,0,0,0],unlocked:[1,1,1,1],difficulty:1,sound:true,music:false};
   try { const s=JSON.parse(localStorage.getItem('demonstar-reborn-v1')||'null'); if(s && typeof s==='object'){
     saved.best=Array.from({length:4},(_,i)=>Math.max(0,Math.floor(Number(s.best?.[i])||0)));
     saved.unlocked=Array.from({length:4},(_,i)=>clamp(Math.floor(Number(s.unlocked?.[i])||1),1,18));
@@ -14,7 +14,7 @@
   const keys=new Set(); audio.enabled=saved.sound;audio.music=saved.music;
   const persist=()=>{try{localStorage.setItem('demonstar-reborn-v1',JSON.stringify(saved));}catch{}};
   const fmt=n=>String(Math.floor(n)).padStart(7,'0');
-  function menuInfo(){ $('best').textContent=fmt(saved.best[saved.difficulty]);$('difficulty').textContent=`难度 · ${DIFFICULTIES[saved.difficulty].name}`;$('unlock-label').textContent=`${String(saved.unlocked[saved.difficulty]).padStart(2,'0')} / 18`;$('sound').textContent=`声音 ${saved.sound?'开':'关'}`;$('sound').setAttribute('aria-pressed',String(saved.sound));$('start').innerHTML=`出击 <span>MISSION ${String(selectedStage).padStart(2,'0')} →</span>`; }
+  function menuInfo(){ $('best').textContent=fmt(saved.best[saved.difficulty]);$('difficulty').textContent=`难度 · ${DIFFICULTIES[saved.difficulty].name}`;$('unlock-label').textContent=`${String(saved.unlocked[saved.difficulty]).padStart(2,'0')} / 18`;$('sound').textContent=`声音 ${saved.sound?'开':'关'}`;$('sound').setAttribute('aria-pressed',String(saved.sound));$('start').innerHTML=`开始游戏 <span>关卡 ${String(selectedStage).padStart(2,'0')} →</span>`; }
   function saveScore(){if(game.score>saved.best[game.difficulty]){saved.best[game.difficulty]=game.score;persist();}}
   function clearInput(){keys.clear();pointer=null;}
   function toast(text,seconds=2){$('toast').textContent=text;$('toast').hidden=false;toastTime=seconds;}
@@ -26,13 +26,13 @@
     $('dialog').hidden=false;requestAnimationFrame(()=>$('dialog-buttons').querySelector('button')?.focus({preventScroll:true}));
   }
   function resume(){game.resume();$('dialog').hidden=true;previous=0;accumulator=0;clearInput();audio.unlock();}
-  function pause(){if(!game.pause())return;saveScore();dialog('FLIGHT ON HOLD','暂时停靠',`<p>战机已悬停。准备好了就继续。</p><div class="dialog-setting">背景音乐 <button class="secondary" id="music-toggle">${saved.music?'开启':'关闭'}</button></div>`,[['继续飞行',resume],['返回主菜单',()=>dialog('ABANDON MISSION','结束本次飞行？','<p>最高分与已解锁关卡会保留，本次战斗进度将结束。</p>',[['继续飞行',resume],['结束并返回',showMenu,true]]),true]]);$('music-toggle').onclick=()=>{saved.music=!saved.music;audio.music=saved.music;$('music-toggle').textContent=saved.music?'开启':'关闭';persist();};}
+  function pause(){if(!game.pause())return;saveScore();dialog('游戏已暂停','暂时停靠',`<p>战机已悬停。准备好了就继续。</p><div class="dialog-setting">背景音乐 <button class="secondary" id="music-toggle">${saved.music?'开启':'关闭'}</button></div>`,[['继续飞行',resume],['返回主菜单',()=>dialog('返回主菜单','结束本次飞行？','<p>最高分与已解锁关卡会保留，本次战斗进度将结束。</p>',[['继续飞行',resume],['结束并返回',showMenu,true]]),true]]);$('music-toggle').onclick=()=>{saved.music=!saved.music;audio.music=saved.music;$('music-toggle').textContent=saved.music?'开启':'关闭';persist();};}
   function showHelp(){
     dialogReturn=game.phase==='playing'?'playing':game.phase;if(dialogReturn==='playing')game.pause();
-    dialog('FLIGHT MANUAL','飞行指南','<ul class="guide"><li><b>移动</b>　单指拖动战场；电脑使用 WASD 或方向键。战机会自动开火。</li><li><b>炸弹</b>　点击右下角 ✦ 或按空格。清除弹幕并对 Boss 造成伤害。</li><li><b>补给</b>　P 升级火力，I 离子火力，S 护盾，B 炸弹，＋ 增加生命。接触补给拾取。</li><li><b>躲避</b>　避开敌机与弹幕，装甲耗尽会损失生命并重置火力。</li><li><b>暂停</b>　点击 Ⅱ 或按 Esc / P。切到后台会自动暂停。</li></ul><p class="dialog-footer">原作 18 关地图 · 4 档难度 · 离线存档<br>非官方 DemonStar 同人重制 · v0.1.0</p>',[['准备起飞',()=>{if(dialogReturn==='playing')resume();else $('dialog').hidden=true;}]]);
+    dialog('游戏说明','飞行指南','<ul class="guide"><li><b>移动</b>　单指拖动战场；<span class="keyboard-help">电脑使用 WASD 或方向键。</span>战机会自动开火。</li><li><b>炸弹</b>　点击右下角 ✦ <span class="keyboard-help">或按空格。</span>清除弹幕并对 Boss 造成伤害。</li><li><b>补给</b>　P 升级火力，I 离子火力，S 护盾，B 炸弹，＋ 增加生命。接触补给拾取。</li><li><b>躲避</b>　避开敌机与弹幕，装甲耗尽会损失生命并重置火力。</li><li><b>暂停</b>　点击 Ⅱ <span class="keyboard-help">或按 Esc / P。</span>切到后台会自动暂停。</li></ul><p class="dialog-footer">原作 18 关地图 · 4 档难度 · 离线存档<br>非官方 DemonStar 同人重制 · v0.1.0</p>',[['准备起飞',()=>{if(dialogReturn==='playing')resume();else $('dialog').hidden=true;}]]);
   }
   function showMissions(){
-    dialog('CAMPAIGN SELECT','选择出击点',`<div class="mission-grid">${STAGES.map(s=>`<button data-stage="${s.id}" ${s.id>saved.unlocked[saved.difficulty]?'disabled':''}>${String(s.id).padStart(2,'0')}<small>${s.name}</small></button>`).join('')}</div><p class="dialog-footer">通过上一关即可解锁。各难度单独保存进度。</p>`,[['返回机库',()=>{$('dialog').hidden=true;},true]]);
+    dialog('原版战役','选择出击点',`<div class="mission-grid">${STAGES.map(s=>`<button data-stage="${s.id}" ${s.id>saved.unlocked[saved.difficulty]?'disabled':''}>${String(s.id).padStart(2,'0')}<small>${s.name}</small></button>`).join('')}</div><p class="dialog-footer">通过上一关即可解锁。各难度单独保存进度。</p>`,[['返回机库',()=>{$('dialog').hidden=true;},true]]);
     document.querySelectorAll('[data-stage]').forEach(b=>b.onclick=()=>{selectedStage=Number(b.dataset.stage);$('dialog').hidden=true;menuInfo();});
   }
   function results(){
@@ -42,13 +42,13 @@
     const content=`<div class="result-score">${fmt(game.score)}</div><div class="stat-row">击落敌机<b>${game.kills}</b></div><div class="stat-row">命中率<b>${accuracy}%</b></div><div class="stat-row">飞行时间<b>${Math.floor(game.totalTime/60)}:${String(Math.floor(game.totalTime%60)).padStart(2,'0')}</b></div><div class="stat-row">当前关卡<b>${game.stage.id} / 18</b></div>`;
     const actions=game.phase==='cleared'?[['下一关 →',()=>{game.nextStage();$('dialog').hidden=true;lastPhase='playing';updateHud();}]]:[['再次出击',()=>start(game.phase==='victory'?1:game.stage.id)]];
     actions.push(['返回机库',showMenu,true]);
-    dialog(won?'MISSION COMPLETE':'FLIGHT REPORT',game.phase==='victory'?'星海已重获自由':won?'防线已突破':'任务结束',content,actions);
+    dialog(won?'任务完成':'战斗记录',game.phase==='victory'?'星海已重获自由':won?'防线已突破':'任务结束',content,actions);
   }
   function updateHud(){
     if(!game.player)return;
-    const p=game.player;$('score').textContent=fmt(game.score);$('lives').textContent='◆ '.repeat(p.lives).trim();$('lives').setAttribute('aria-label',`剩余 ${p.lives} 条生命`);$('stage-label').textContent=`MISSION ${String(game.stage.id).padStart(2,'0')}`;
-    $('weapon').textContent=`${WEAPONS[p.weapon]} · LV.${p.power}`;$('shield-label').textContent=`装甲 ${Math.ceil(p.energy)} / ${p.maxEnergy}${p.shield>0?' · 护盾':''}`;$('bomb-count').textContent=String(p.bombs).padStart(2,'0');$('bomb').disabled=p.bombs<=0;
-    $('progress').style.width=`${Math.min(100,game.elapsed/game.stage.duration*100)}%`;$('combo').textContent=game.combo>=5?`${game.combo} CHAIN · ×${1+Math.floor(game.combo/10)}`:'';
+    const p=game.player;$('score').textContent=fmt(game.score);$('lives').textContent='◆ '.repeat(p.lives).trim();$('lives').setAttribute('aria-label',`剩余 ${p.lives} 条生命`);$('stage-label').textContent=`关卡 ${String(game.stage.id).padStart(2,'0')}`;
+    $('weapon').textContent=`${WEAPONS[p.weapon]} · ${p.power} 级`;$('shield-label').textContent=`装甲 ${Math.ceil(p.energy)} / ${p.maxEnergy}${p.shield>0?' · 护盾':''}`;$('bomb-count').textContent=String(p.bombs).padStart(2,'0');$('bomb').disabled=p.bombs<=0;
+    $('progress').style.width=`${Math.min(100,game.elapsed/game.stage.duration*100)}%`;$('combo').textContent=game.combo>=5?`${game.combo} 连击 · ×${1+Math.floor(game.combo/10)}`:'';
     $('boss-hud').hidden=!game.boss;if(game.boss){$('boss-name').textContent=game.stage.boss;$('boss-health').style.width=`${Math.max(0,game.boss.hp/game.boss.maxHp*100)}%`;}
   }
   function frame(t){
@@ -60,8 +60,8 @@
       audio.update(dt,game.phase==='playing');
     }else accumulator=0;
     for(const e of game.drainEvents()){
-      audio.effect(e.type);
-      if(e.type==='stage')toast(`MISSION ${String(e.stage).padStart(2,'0')} · ${game.stage.name}`);
+      audio.effect(e.type,e);
+      if(e.type==='stage')toast(`进入第 ${String(e.stage).padStart(2,'0')} 关`);
       if(e.type==='boss')toast(`警报 · ${e.name}`,2.8);
       if(e.type==='pickup')toast({power:'火力升级',weapon:'质子武器',ion:'离子炮',plasma:'等离子炮',magnetic:'磁力脉冲',energy:'装甲修复',full:'火力全满',shield:'能量护盾',bomb:'超级炸弹',scatter:'散射炸弹',mega:'超级脉冲',missile:'导弹补给',homing:'追踪导弹',side:'侧向火力',rear:'后向火力',medal:'勋章 +1000',life:'备用战机 +1'}[e.item]||'获得补给',1);
     }
@@ -78,10 +78,12 @@
   });
   $('screen').addEventListener('pointermove',e=>{if(!pointer||pointer.id!==e.pointerId||game.phase!=='playing')return;const rect=$('screen').getBoundingClientRect();game.move((e.clientX-pointer.x)*W/rect.width,(e.clientY-pointer.y)*640/rect.height);pointer.x=e.clientX;pointer.y=e.clientY;e.preventDefault();});
   for(const event of ['pointerup','pointercancel','lostpointercapture'])$('screen').addEventListener(event,e=>{if(pointer?.id===e.pointerId)pointer=null;});
+  $('screen').addEventListener('pointerup',e=>{if(game.phase==='menu'&&$('dialog').hidden&&!$('menu').hidden&&!e.target.closest('button'))start();});
   window.addEventListener('keydown',e=>{
     const key=e.key.length===1?e.key.toLowerCase():e.key;
     if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(key)&&game.phase==='playing')e.preventDefault();
     if(e.repeat)return;
+    if(key==='Enter'&&game.phase==='menu'&&$('dialog').hidden){e.preventDefault();start();return;}
     if(key==='Escape'||key==='p'){if(game.phase==='playing')pause();else if(game.phase==='paused')resume();else if(!$('dialog').hidden)$('dialog').hidden=true;return;}
     if(key===' '&&game.phase==='playing'){game.useBomb();return;}keys.add(key);
   });
@@ -90,5 +92,6 @@
   document.addEventListener('visibilitychange',()=>{if(document.hidden)background();else previous=0;});window.addEventListener('blur',background);
   window.addEventListener('pagehide',()=>{saveScore();background();});
   globalThis.StarfallApp={game,background,back:()=>{if(game.phase==='playing')pause();else if(game.phase==='paused')resume();else if(!$('dialog').hidden)$('dialog').hidden=true;},start,showMenu,renderer};
+  document.addEventListener('click',e=>{if(e.target.closest('button')&&saved.sound){audio.unlock();audio.effect('menu');}});
   menuInfo();requestAnimationFrame(frame);
 })();

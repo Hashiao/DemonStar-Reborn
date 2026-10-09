@@ -4,13 +4,13 @@
 
 DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12+**。保留红色战机和经典工业科幻风格，参考本地原版素材用 imagegen 重绘，游戏实现代码开放。
 
-An unofficial mobile HD recreation of classic DemonStar 4.04. Android and iOS share an offline Canvas game engine, hosted by Android WebView and iOS UIKit/WKWebView. No ads, accounts, analytics, network permission or in-app purchases.
+首个里程碑仅提供中文界面，后续再加入英文语言包。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点、联网权限或内购。
 
 **当前 M1 是可玩的数据驱动 Alpha，不是已验收的完整 1:1 移植。** 原版 1–18 关优先；19–25 关尚未开发。完整的确认项、推断值与差异见 [还原状态](docs/FIDELITY.md)。
 
 ![Menu](docs/screenshots/menu.png)
 
-## 当前里程碑 / Milestone
+## 当前里程碑
 
 - 导入原版 **18 关、8,368 条放置记录、387 条对象定义**，按稳定 ID 绑定对象；保留血量、速度、分数、路径、炮位和地图原始附加字段。
 - 敌方炮位解释器支持原数据中的延迟、连射、瞄准、角度、弹速、次数；18 位 Boss 使用各自的原始定义和高清外形。
@@ -18,7 +18,7 @@ An unofficial mobile HD recreation of classic DemonStar 4.04. Android and iOS sh
 - 相对拖动、自动射击、炸弹按钮、键盘控制、暂停、切后台自动暂停、离线最高分与关卡解锁。
 - 原作主机、十八关背景和全部 Boss 已有 AI 高清素材；尚未覆盖的敌机和地物仍有近似图形。原版音乐、双人、联网、地图编辑器未包含。
 
-## 安装 / Installation
+## 安装
 
 | 平台 | 最低部署目标 | 交付形式 |
 |---|---|---|
@@ -29,7 +29,7 @@ An unofficial mobile HD recreation of classic DemonStar 4.04. Android and iOS sh
 
 每个完成的里程碑都提交对应源码并发布 APK、IPA 与 `SHA256SUMS.txt`；不覆盖已有版本标签。GitHub Release 与 README 会明确列出实际测试的系统版本和仍未完成的事项。
 
-## 操作 / Controls
+## 操作
 
 | 动作 | 手机 / 平板 | 电脑 |
 |---|---|---|
@@ -40,7 +40,7 @@ An unofficial mobile HD recreation of classic DemonStar 4.04. Android and iOS sh
 
 接触补给拾取，持续躲避弹幕并留意装甲。当前各难度分别保存最高分与解锁进度。
 
-## 构建 / Build
+## 构建
 
 开发需要 Node.js 22+。构建包使用 esbuild 转译至 Safari 12 / Chrome 74，并提供旧 WebKit 触摸、视口布局和 DOM API 回退。
 
@@ -74,7 +74,7 @@ open ios/DemonStar.xcodeproj
 
 在 Xcode 选择自己的 Team 后真机安装。无 Mac 可使用 [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/workflows/ios.yml)：在 macOS 编译 ARM64 未签名 IPA，复用已安装的 iPhone/iPad 模拟器，记录实际系统和 WKWebView 探针结果。不会把模拟器包改名冒充 IPA。
 
-## 测试 / Verification
+## 测试
 
 当前本地：9 项引擎/原数据/炮位/18 关 Boss 回归通过；桌面、390×844 触屏及旧 API 回退浏览器检查通过；Android Debug 构建、Debug/Release Lint 通过。Release 安装验证与 Apple CI 结果将在本次里程碑发布前补齐。
 

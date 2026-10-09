@@ -1,0 +1,23 @@
+/* Original hangar composition and compact arcade menu, adapted for touch. */
+body{background:#08090e}
+.desktop-header,.desktop-footer,.intro,.telemetry{display:none}
+.layout{min-height:100vh;min-height:var(--app-height,100vh);padding:14px;align-items:center}
+.cabinet{background:#37373d;border-color:#65626b}
+.cabinet-label{color:#9a9597}
+.menu{padding:23px 20px;background:linear-gradient(#0005,transparent 28%,#0003 60%,#000a)}
+.menu-top{justify-content:flex-end}.menu-top .pill{display:none}.sound-button{color:#b7b0a8;font-size:10px}
+.title{text-align:center;margin-top:7px}
+.title .eyebrow{font-size:8px;letter-spacing:4px;color:#c4b1a5}
+.title h2{font-family:Impact,Haettenschweiler,'Arial Black',sans-serif;font-size:51px;font-weight:900;letter-spacing:-1px;margin:10px 0 9px;color:#ed322a;text-shadow:0 2px #73100d,0 4px #360707,2px 5px 4px #000}
+.title h2 span{color:#ed322a}.title p{color:#c9b7a7;font-size:11px;letter-spacing:4px;text-shadow:1px 2px #000}
+.menu-bottom{position:absolute;top:49%;left:25px;right:25px;text-align:center;margin:0}
+.menu-bottom .record{position:absolute;top:calc(100% + 30px);left:0;right:0;color:#b5aea3;font-size:8px;text-shadow:1px 1px #000}
+.menu-bottom .primary{display:block;background:none;color:#fff3dd;font:bold 24px 'Arial Black','Microsoft YaHei',sans-serif;padding:8px 5px;text-align:center;text-shadow:2px 3px 2px #000;letter-spacing:1px}
+.menu-bottom .primary::before{content:'▸ ';color:#f74c32}.menu-bottom .primary span{display:none}
+.menu-options{display:flex;flex-direction:column;gap:0;align-items:stretch;margin-top:0}
+.menu-options button{display:block;flex:none;background:none;border:0;color:#e3dcd0;font:bold 17px 'Arial Black','Microsoft YaHei',sans-serif;padding:7px 0;letter-spacing:1px;text-shadow:2px 2px 2px #000}
+.menu-options button:hover,.menu-bottom .primary:hover{color:#ff5b3c;filter:none}
+.menu-hint{font:bold 9px Arial,sans-serif;letter-spacing:.8px;color:#f4412c;line-height:1.6;margin:24px 0 0;text-shadow:1px 2px #000}
+.dialog-card{border:2px solid #726b66;background:#161719f5}.dialog .primary{background:#85372e;color:#fff2db}.dialog .eyebrow{color:#b9aca0}
+@media(pointer:coarse){.keyboard-help{display:none}}
+@media(max-width:600px),(max-height:650px){.layout{padding:var(--safe-top) 0 var(--safe-bottom)}.menu{padding:20px 18px}.title{margin-top:5px}.title h2{font-size:48px}.menu-bottom{top:49%;left:20px;right:20px}.menu-options button{font-size:17px;padding:7px 0}.menu-bottom .primary{padding:8px 0}.menu-hint{margin-top:21px}}

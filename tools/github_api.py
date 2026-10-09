@@ -23,4 +23,3 @@ class GitHub:
             # The GitHub signed storage URL is fetched without any Authorization header.
             url=e.headers['Location']
             with urllib.request.urlopen(url,timeout=120) as response:destination.write_bytes(response.read())
-

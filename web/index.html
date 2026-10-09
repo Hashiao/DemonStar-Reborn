@@ -9,34 +9,35 @@
   <link rel="icon" type="image/svg+xml" href="icon.svg">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="remaster.css">
+  <link rel="stylesheet" href="classic-menu.css">
 </head>
 <body>
-  <div class="desktop-header"><a class="wordmark" href="./"><span class="mark">✦</span> DEMONSTAR <span class="edition">ARCADE / 01</span></a><span class="header-note"><i></i> OFFLINE READY <span>经典街机，重新起飞。</span></span></div>
+  <div class="desktop-header"><a class="wordmark" href="./"><span class="mark">✦</span> DEMONSTAR <span class="edition">街机复刻 / 01</span></a><span class="header-note"><i></i> 离线就绪 <span>经典街机，重新起飞。</span></span></div>
   <main class="layout">
-    <aside class="intro"><p class="eyebrow">THE ARCADE NEVER ENDS</p><h1>再一次，<br>冲破天际。</h1><p class="intro-copy">经典的 DemonStar，<br>在掌心重新起飞。</p><div class="intro-line"></div><p class="spec"><b>18</b> 道防线 <span>／</span> <b>18</b> 位旗舰</p><p class="small">原版地图编排 · AI 高清重绘<br>Unofficial DemonStar HD recreation</p><button class="text-button" id="desktop-help">操作指南 <span>↗</span></button></aside>
+    <aside class="intro"><p class="eyebrow">经典从未落幕</p><h1>再一次，<br>冲破天际。</h1><p class="intro-copy">经典的 DemonStar，<br>在掌心重新起飞。</p><div class="intro-line"></div><p class="spec"><b>18</b> 道防线 <span>／</span> <b>18</b> 位旗舰</p><p class="small">原版地图编排 · AI 高清重绘<br>非官方恶魔之星高清重制</p><button class="text-button" id="desktop-help">操作指南 <span>↗</span></button></aside>
     <section class="cabinet" aria-label="恶魔之星重生游戏">
       <div class="screen" id="screen">
         <canvas id="game" aria-label="飞行战场，拖动移动战机" role="img"></canvas>
         <div id="hud" class="hud" hidden>
-          <div class="hud-top"><div><span class="tiny">SCORE</span><strong id="score">0000000</strong></div><div class="hud-center"><span id="stage-label">MISSION 01</span><span id="lives" aria-label="剩余生命">◆ ◆ ◆</span></div><button id="pause" class="icon-button" aria-label="暂停游戏">Ⅱ</button></div>
+          <div class="hud-top"><div><span class="tiny">得分</span><strong id="score">0000000</strong></div><div class="hud-center"><span id="stage-label">关卡 01</span><span id="lives" aria-label="剩余生命">◆ ◆ ◆</span></div><button id="pause" class="icon-button" aria-label="暂停游戏">Ⅱ</button></div>
           <div class="stage-track"><div id="progress"></div></div>
           <div id="boss-hud" hidden><span id="boss-name">铁翼守卫</span><div class="boss-track"><div id="boss-health"></div></div></div>
           <span id="combo" class="combo"></span>
         </div>
         <div id="menu" class="menu overlay">
           <div class="menu-top"><span class="pill">非官方高清重制 · V0.1</span><button id="sound" class="sound-button" aria-label="切换声音" aria-pressed="true">声音 开</button></div>
-          <div class="title"><span class="eyebrow">DEMONSTAR REBORN</span><h2>DEMON<span>STAR</span></h2><p>恶 魔 之 星 · 重 生</p></div>
-          <div class="menu-bottom"><div class="record"><span>最高纪录 <b id="best">0000000</b></span><span id="unlock-label">01 / 18</span></div><button id="start" class="primary">出击 <span>LAUNCH MISSION →</span></button><div class="menu-options"><button id="difficulty">难度 · 经典</button><button id="missions">选择关卡</button><button id="help">怎么玩 ↗</button></div><p class="menu-hint">拖动战机移动 · 自动射击 · 点击炸弹清屏</p></div>
+          <div class="title"><span class="eyebrow">恶魔之星 · 高清重制</span><h2>DEMON<span>STAR</span></h2><p>恶 魔 之 星 · 重 生</p></div>
+          <div class="menu-bottom"><div class="record"><span>最高纪录 <b id="best">0000000</b></span><span id="unlock-label">01 / 18</span></div><button id="start" class="primary">出击 <span>开始任务 →</span></button><div class="menu-options"><button id="difficulty">难度 · 经典</button><button id="missions">选择关卡</button><button id="help">怎么玩 ↗</button></div><p class="menu-hint">轻触屏幕以开始游戏</p></div>
         </div>
-        <div id="controls" class="controls" hidden><div><span class="tiny">WEAPON SYSTEM</span><strong id="weapon">脉冲炮 · LV.1</strong><small id="shield-label">核心已就绪</small></div><button id="bomb" aria-label="释放炸弹"><span class="bomb-symbol">✦</span><span>炸弹 <b id="bomb-count">03</b></span></button></div>
+        <div id="controls" class="controls" hidden><div><span class="tiny">武器系统</span><strong id="weapon">质子激光 · 1 级</strong><small id="shield-label">核心已就绪</small></div><button id="bomb" aria-label="释放炸弹"><span class="bomb-symbol">✦</span><span>炸弹 <b id="bomb-count">03</b></span></button></div>
         <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
         <section id="dialog" class="dialog overlay" aria-modal="true" role="dialog" aria-labelledby="dialog-title" hidden><div class="dialog-card"><p id="dialog-tag" class="eyebrow"></p><h2 id="dialog-title"></h2><div id="dialog-content"></div><div id="dialog-buttons"></div></div></section>
       </div>
-      <div class="cabinet-label"><span><i></i> RAPTOR-X / TERRAN FLEET</span><span>INSERT NO COIN</span></div>
+      <div class="cabinet-label"><span><i></i> 猛禽战机 / 地球舰队</span><span>无需投币</span></div>
     </section>
-    <aside class="telemetry"><p class="eyebrow">FLIGHT MANUAL</p><div class="manual-row"><kbd>↔ ↕</kbd><div><b>保持移动</b><span>方向键 / WASD / 拖动</span></div></div><div class="manual-row"><kbd>✦</kbd><div><b>绝境突围</b><span>空格键 / 点击炸弹</span></div></div><div class="manual-row"><kbd>P</kbd><div><b>短暂停靠</b><span>Esc / P 暂停游戏</span></div></div><div class="intro-line"></div><p class="eyebrow">FIELD SUPPLIES</p><div class="supply"><b class="gold">P</b><span>升级火力</span><b class="purple" >I</b><span>离子火力</span><b class="cyan">S</b><span>能量护盾</span><b class="orange">B</b><span>补充炸弹</span></div><p class="aside-note">接触补给即可拾取。<br>保持机动，留意装甲能量。</p></aside>
+    <aside class="telemetry"><p class="eyebrow">操作说明</p><div class="manual-row"><kbd>↔ ↕</kbd><div><b>保持移动</b><span>方向键 / WASD / 拖动</span></div></div><div class="manual-row"><kbd>✦</kbd><div><b>绝境突围</b><span>空格键 / 点击炸弹</span></div></div><div class="manual-row"><kbd>P</kbd><div><b>短暂停靠</b><span>Esc / P 暂停游戏</span></div></div><div class="intro-line"></div><p class="eyebrow">战场补给</p><div class="supply"><b class="gold">P</b><span>升级火力</span><b class="purple" >I</b><span>离子火力</span><b class="cyan">S</b><span>能量护盾</span><b class="orange">B</b><span>补充炸弹</span></div><p class="aside-note">接触补给即可拾取。<br>保持机动，留意装甲能量。</p></aside>
   </main>
-  <footer class="desktop-footer"><span>OPEN SOURCE. ALL SYSTEMS YOURS.</span><span>无广告 · 无内购 · 无需联网</span><span>v0.1.0</span></footer>
+  <footer class="desktop-footer"><span>游戏代码开放，欢迎共同完善。</span><span>无广告 · 无内购 · 无需联网</span><span>v0.1.0</span></footer>
   <script src="js/compat.js"></script><script src="js/campaign.js"></script><script src="js/original-rules.js"></script><script src="js/render-hd.js"></script><script src="js/audio.js"></script><script src="js/app.js"></script>
 </body>
 </html>
