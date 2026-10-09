@@ -16,7 +16,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 - 敌方炮位解释器支持原数据中的延迟、连射、瞄准、角度、弹速、次数；18 位 Boss 使用各自的原始定义和高清外形。
 - 主机四类武器、六级火力、导弹、追踪导弹、侧/后向射击、超级武器、装甲修复、护盾与生命系统；部分数值和特殊效果仍需原作运行对照。
 - 相对拖动、自动射击、炸弹按钮、键盘控制、暂停、切后台自动暂停、离线最高分与关卡解锁。
-- 原作主机、十八关背景和全部 Boss 已有 AI 高清素材；尚未覆盖的敌机和地物仍有近似图形。原版音乐、双人、联网、地图编辑器未包含。
+- 原作机库菜单、主机、十八关背景、全部 Boss、第一关主要敌机/地物与武器弹体已有 AI 高清素材；尚未覆盖的敌机和地物仍有近似图形。原版音乐、双人、联网、地图编辑器未包含。
 
 ## 安装
 
@@ -76,7 +76,7 @@ open ios/DemonStar.xcodeproj
 
 ## 测试
 
-当前本地：9 项引擎/原数据/炮位/18 关 Boss 回归通过；桌面、390×844 触屏及旧 API 回退浏览器检查通过；Android Debug 构建、Debug/Release Lint 通过。Release 安装验证与 Apple CI 结果将在本次里程碑发布前补齐。
+M1 验证：9 项引擎/原数据/炮位/18 关 Boss 回归通过；桌面、390×844 触屏及旧 API 回退检查通过；Android Debug / 签名 Release 构建与两种 Lint 通过，Android 17 / API 37 的现成只读 AVD 上通过安装、中文菜单、画面推进、拖动、炸弹、暂停、原生返回和后台暂停检查。[对应 Apple CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/37896404165) 的 iPhoneOS ARM64 构建，以及 iOS 18.5 的 iPhone 16 Pro / iPad Pro 启动与 WKWebView 运行探针通过。IPA 与主程序最低版本均检查为 12.0。
 
 旧 API 回退测试在 Chromium 中模拟缺失接口，**不是 iOS 12 真机测试**。`artifacts/*-verification.json` 和 Release 说明记录实际测试情况。
 
