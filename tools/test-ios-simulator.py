@@ -26,8 +26,8 @@ for family in ('iPhone','iPad'):
     container=pathlib.Path(run(['xcrun','simctl','get_app_container',uid,'io.github.hashiao.demonstar','data']))
     result=container/'Documents/smoke.json'
     if result.exists():result.unlink()
-    subprocess.run(['xcrun','simctl','terminate',uid,'io.github.hashiao.demonstar'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=False,timeout=30)
-    run(['xcrun','simctl','launch',uid,'io.github.hashiao.demonstar','--smoke-test'])
+    # Launch handles both a stopped app and an existing process in one operation.
+    run(['xcrun','simctl','launch','--terminate-running-process',uid,'io.github.hashiao.demonstar','--smoke-test'])
     for _ in range(120):
         if result.exists():break
         time.sleep(1)
