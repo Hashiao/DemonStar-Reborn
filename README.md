@@ -30,7 +30,7 @@ M2.1 的固定掉落、换色归零、死亡掉球、满级三色清屏继续保
 - 逻辑采用原作代码中的 35 毫秒基础节拍，绘制插值保持平滑；敌方移动/射击与关卡滚动统一计时，Boss 出场按原版采用两倍基础 HP（纠正 v0.2.0 的误改）。尚未完成原作录像逐帧速度验收。
 - 原作机库菜单、主机、十八关背景、全部 Boss、第一关主要敌机/地物与武器弹体已有 AI 高清素材；尚未覆盖的敌机和地物仍有近似图形。原版 BGM 已按用户提供 MP3 接入；双人、联网、地图编辑器未包含。
 
-[Android 竖屏实测画面](docs/screenshots/android-game.png) · [横屏实测画面](docs/screenshots/android-landscape.png) · [满级等离子清屏](docs/screenshots/nova-plasma.png) · [补给舱高清图集](docs/ART_SUPPLY.md) · [主机姿态图集](docs/ART_MOTION.md)
+[装备栏与红色六档](docs/screenshots/plasma-level6.png) · [顶栏 Boss 血条与燃烧](docs/screenshots/boss-burning.png) · [Android 竖屏实测画面](docs/screenshots/android-game.png) · [横屏实测画面](docs/screenshots/android-landscape.png) · [满级等离子清屏](docs/screenshots/nova-plasma.png) · [补给舱高清图集](docs/ART_SUPPLY.md) · [主机姿态图集](docs/ART_MOTION.md)
 
 ## 安装
 
@@ -94,7 +94,9 @@ open ios/DemonStar.xcodeproj
 
 M2.2 的 48 项引擎/声音回归通过。浏览器覆盖真实双指输入、全部拾取和 Boss 无中央遮挡、装备栏多尺寸布局、血条开关、三种炸弹和红蓝档位，并检查全部 18 首 BGM 的解码、独立音效静音、暂停后音乐位置续播及入场声音顺序。
 
-本轮原生安装包验收结果将在完成 Android 构建/Lint/已有 AVD 和 macOS iPhone/iPad WKWebView 检查后更新，并附入 v0.2.2 Release 的 verification.json。
+Android Debug/签名 Release、Lint 通过（0 错误，3 项平台兼容提示）；复用 Android 17 / API 37 AVD 完成操作、旋转、后台、血条和音乐开关检查。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/37942842301) 通过 iPhoneOS ARM64 编译和 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) WKWebView 检查，包含 BGM 加载和播放时钟推进。最终包版本 0.2.2（4），39 个音效和 18 首独立 BGM 哈希及游戏脚本在两包中一致，包内名称全部 ASCII。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.2/verification.json)。
+
+原始 HP/主武器伤害表与 v0.2.1 一致。最低系统、手机扬声器和原机逐样本 A/B 仍未实测；独立激光启动音 W_PULSE 已定位在 Game3.glb，尚未包含在用户提供的 MP3 清单，“脉冲炮一”是另一资源 W_PULSAR。
 
 旧 API 回退测试在 Chromium 中模拟缺失接口，**不是 iOS 12 真机测试**。`artifacts/*-verification.json` 和 Release 说明记录实际测试情况。
 

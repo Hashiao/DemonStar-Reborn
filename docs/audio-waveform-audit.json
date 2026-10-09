@@ -1,0 +1,243 @@
+{
+  "status": "passed",
+  "method": "Local Pearson correlation between original mono WAV and the decoded supplied MP3 bank, sample-aligned with equal rate/frame count. Scalar statistics only; no audio sent to a transcription provider.",
+  "minimum_correlation": 0.984474,
+  "recordings": [
+    {
+      "key": "proton",
+      "resource": "W_PSHOT1",
+      "frames": 2885,
+      "correlation": 0.994622
+    },
+    {
+      "key": "ion",
+      "resource": "W_PSHOT2",
+      "frames": 2568,
+      "correlation": 0.998914
+    },
+    {
+      "key": "plasma",
+      "resource": "W_PSHOT3",
+      "frames": 2568,
+      "correlation": 0.997296
+    },
+    {
+      "key": "hit",
+      "resource": "W_HITSHIP",
+      "frames": 12065,
+      "correlation": 0.996219
+    },
+    {
+      "key": "explosion",
+      "resource": "W_EXPLOSION1",
+      "frames": 24790,
+      "correlation": 0.996382
+    },
+    {
+      "key": "heavyExplosion",
+      "resource": "W_EXPLOSION2",
+      "frames": 43239,
+      "correlation": 0.994207
+    },
+    {
+      "key": "groundExplosion",
+      "resource": "W_GRDEXP1",
+      "frames": 24645,
+      "correlation": 0.995799
+    },
+    {
+      "key": "bomb",
+      "resource": "W_MEGABOMB",
+      "frames": 12032,
+      "correlation": 0.998106
+    },
+    {
+      "key": "scatterBomb",
+      "resource": "W_SHOT2",
+      "frames": 7510,
+      "correlation": 0.994189
+    },
+    {
+      "key": "megaBomb",
+      "resource": "W_LASER2",
+      "frames": 3884,
+      "correlation": 0.986802
+    },
+    {
+      "key": "pickup",
+      "resource": "W_GETSHOT",
+      "frames": 1876,
+      "correlation": 0.999327
+    },
+    {
+      "key": "menu",
+      "resource": "W_MENUCLICK",
+      "frames": 5021,
+      "correlation": 0.99903
+    },
+    {
+      "key": "nova",
+      "resource": "W_SHOTEXP",
+      "frames": 20670,
+      "correlation": 0.991882
+    },
+    {
+      "key": "missionStart",
+      "resource": "W_RADIO12",
+      "frames": 12680,
+      "correlation": 0.993624
+    },
+    {
+      "key": "bossWarning",
+      "resource": "W_RADIO1",
+      "frames": 26141,
+      "correlation": 0.992267
+    },
+    {
+      "key": "bossFall",
+      "resource": "W_BOSSFALL",
+      "frames": 34464,
+      "correlation": 0.995739
+    },
+    {
+      "key": "missionComplete",
+      "resource": "W_RADIO11",
+      "frames": 25794,
+      "correlation": 0.99154
+    },
+    {
+      "key": "fullPowerA",
+      "resource": "W_RADIO10",
+      "frames": 19055,
+      "correlation": 0.984474
+    },
+    {
+      "key": "fullPowerB",
+      "resource": "W_RADIO9",
+      "frames": 15380,
+      "correlation": 0.985173
+    },
+    {
+      "key": "crystal",
+      "resource": "W_GETCRYSTAL",
+      "frames": 6419,
+      "correlation": 0.993846
+    },
+    {
+      "key": "energy",
+      "resource": "W_GETENERGY",
+      "frames": 5513,
+      "correlation": 0.998944
+    },
+    {
+      "key": "medal",
+      "resource": "W_GETMEDAL",
+      "frames": 7167,
+      "correlation": 0.998166
+    },
+    {
+      "key": "shield",
+      "resource": "W_GETSHIELD",
+      "frames": 9943,
+      "correlation": 0.996785
+    },
+    {
+      "key": "shieldLost",
+      "resource": "W_LOSESHIELD",
+      "frames": 9942,
+      "correlation": 0.998571
+    },
+    {
+      "key": "stageAmbience",
+      "resource": "W_GLOOP",
+      "frames": 30803,
+      "correlation": 0.992254
+    },
+    {
+      "key": "menuAmbience",
+      "resource": "W_ILOOP",
+      "frames": 95906,
+      "correlation": 0.997819
+    },
+    {
+      "key": "playerLaunch",
+      "resource": "W_PLAYERLNCH",
+      "frames": 35712,
+      "correlation": 0.99263
+    },
+    {
+      "key": "bossEngine1",
+      "resource": "W_BOSS",
+      "frames": 14402,
+      "correlation": 0.997995
+    },
+    {
+      "key": "bossEngine2",
+      "resource": "W_BOSS2",
+      "frames": 36845,
+      "correlation": 0.994326
+    },
+    {
+      "key": "bossEngine3",
+      "resource": "W_BOSS3",
+      "frames": 37510,
+      "correlation": 0.993235
+    },
+    {
+      "key": "bossEngine4",
+      "resource": "W_BOSS4",
+      "frames": 18777,
+      "correlation": 0.993737
+    },
+    {
+      "key": "bossEngine5",
+      "resource": "W_BOSS5",
+      "frames": 35359,
+      "correlation": 0.998217
+    },
+    {
+      "key": "bossEngine6",
+      "resource": "W_BOSS6",
+      "frames": 25269,
+      "correlation": 0.989251
+    },
+    {
+      "key": "enemyShot",
+      "resource": "W_SHOT1",
+      "frames": 13309,
+      "correlation": 0.991907
+    },
+    {
+      "key": "enemyMissile",
+      "resource": "W_MISSLE",
+      "frames": 12217,
+      "correlation": 0.990941
+    },
+    {
+      "key": "enemyLaser",
+      "resource": "W_LASER",
+      "frames": 6635,
+      "correlation": 0.994775
+    },
+    {
+      "key": "enemyPulsar1",
+      "resource": "W_PULSAR",
+      "frames": 5856,
+      "correlation": 0.994601
+    },
+    {
+      "key": "enemyPulsar2",
+      "resource": "W_PULSAR2",
+      "frames": 6763,
+      "correlation": 0.995937
+    },
+    {
+      "key": "stagePraise",
+      "resource": "W_RADIO6",
+      "frames": 14479,
+      "correlation": 0.992871
+    }
+  ],
+  "source_archive_sha256": "7107bc6ee9b64944ad5d1c7275b399e1af69195eee34adfd2e75fdddda2d93e9",
+  "supplied_manifest_sha256": "f1fd974838c09b14a4b5795277d59794302b625f33e1b5ad39e0a60420db1dd8"
+}
