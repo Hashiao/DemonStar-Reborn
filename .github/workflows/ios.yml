@@ -39,7 +39,7 @@ jobs:
           xcodebuild -project ios/DemonStar.xcodeproj -scheme DemonStar -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath .local/ios-device CODE_SIGNING_ALLOWED=NO build > .local/device-build.log 2>&1
           mkdir -p artifacts/Payload
           cp -R .local/ios-device/Build/Products/Release-iphoneos/DemonStar.app artifacts/Payload/
-          cd artifacts && zip -qr DemonStar-Reborn-iOS-unsigned.ipa Payload
+          cd artifacts && zip -qr DemonStar.ipa Payload
       - name: Build and launch on an existing iPhone simulator
         run: python3 tools/test-ios-simulator.py
       - uses: actions/upload-artifact@v4

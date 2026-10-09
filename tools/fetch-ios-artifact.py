@@ -14,7 +14,7 @@ def main():
             if not (destination/item.filename).resolve().is_relative_to(destination.resolve()):raise RuntimeError('Unsafe archive path')
         z.extractall(destination)
     output=ROOT/'artifacts';output.mkdir(exist_ok=True)
-    for name in ['DemonStar-Reborn-iOS-unsigned.ipa','ios-verification.json','iPhone.png','iPad.png']:
+    for name in ['DemonStar.ipa','ios-verification.json','iPhone.png','iPad.png']:
         files=list(destination.rglob(name))
         if len(files)!=1:raise RuntimeError('Missing or ambiguous artifact: '+name)
         shutil.copyfile(files[0],output/name)

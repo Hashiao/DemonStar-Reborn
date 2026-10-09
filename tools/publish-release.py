@@ -16,7 +16,7 @@ def main():
     # Documentation/release tooling can be committed after the binary build.
     changed=subprocess.check_output(['git','diff','--name-only',args.build_sha,head,'--','web','android','ios','package.json','pnpm-lock.yaml','tools/sync.mjs','tools/generate-ios-project.py'],cwd=ROOT,text=True).strip()
     if changed:raise RuntimeError('Application source changed after the verified binary build.')
-    paths=[ROOT/'artifacts/DemonStar-Reborn-release.apk',ROOT/'artifacts/DemonStar-Reborn-iOS-unsigned.ipa',ROOT/'artifacts/verification.json']
+    paths=[ROOT/'artifacts/DemonStar-Reborn-release.apk',ROOT/'artifacts/DemonStar.ipa',ROOT/'artifacts/verification.json']
     if not all(p.is_file() for p in paths):raise RuntimeError('Both APK and IPA plus verification.json are required.')
     verification=json.loads(paths[2].read_text(encoding='utf-8'))
     if verification.get('status')!='passed' or verification.get('source_commit')!=args.build_sha:raise RuntimeError('Verification does not match the build commit.')
@@ -30,7 +30,7 @@ def main():
     api=GitHub();base='/repos/'+REPO
     releases=api.request(base+'/releases?per_page=100');release=next((r for r in releases if r['tag_name']==args.tag),None)
     notes=args.notes.read_text(encoding='utf-8')+'\n\n源码提交：`'+head+'`\n构建与验收提交：`'+args.build_sha+'`\n'
-    if release is None:release=api.request(base+'/releases','POST',{'tag_name':args.tag,'target_commitish':head,'name':'恶魔之星·重生 '+args.tag+' · M1 中文可玩版','body':notes,'draft':True,'prerelease':False})
+    if release is None:release=api.request(base+'/releases','POST',{'tag_name':args.tag,'target_commitish':head,'name':'恶魔之星·重生 '+args.tag+' · M2 经典战斗与双手操作','body':notes,'draft':True,'prerelease':False})
     for file in paths:
         data=file.read_bytes();expected='sha256:'+hashlib.sha256(data).hexdigest();asset=next((a for a in release['assets'] if a['name']==file.name),None)
         if asset is None:

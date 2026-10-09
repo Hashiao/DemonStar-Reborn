@@ -1,21 +1,25 @@
 # DemonStar Reborn / 恶魔之星·重生
 
-**[下载 Android APK](https://github.com/Hashiao/DemonStar-Reborn/releases/latest/download/DemonStar-Reborn-release.apk)** · **[下载 iPhone / iPad IPA（未签名）](https://github.com/Hashiao/DemonStar-Reborn/releases/latest/download/DemonStar-Reborn-iOS-unsigned.ipa)** · [全部里程碑](https://github.com/Hashiao/DemonStar-Reborn/releases)
+**[下载 Android APK](https://github.com/Hashiao/DemonStar-Reborn/releases/latest/download/DemonStar-Reborn-release.apk)** · **[下载 iPhone / iPad IPA（未签名）](https://github.com/Hashiao/DemonStar-Reborn/releases/latest/download/DemonStar.ipa)** · [全部里程碑](https://github.com/Hashiao/DemonStar-Reborn/releases)
 
 DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12+**。保留红色战机和经典工业科幻风格，参考本地原版素材用 imagegen 重绘，游戏实现代码开放。
 
 首个里程碑仅提供中文界面，后续再加入英文语言包。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点、联网权限或内购。
 
-**当前 M1 是可玩的数据驱动 Alpha，不是已验收的完整 1:1 移植。** 原版 1–18 关优先；19–25 关尚未开发。完整的确认项、推断值与差异见 [还原状态](docs/FIDELITY.md)。
+**当前 M2（v0.2.0）修正经典 HUD、初始双发与双手操作，仍不是已验收的完整 1:1 移植。** 原版 1–18 关优先；19–25 关尚未开发。完整的确认项、推断值与差异见 [还原状态](docs/FIDELITY.md)。
 
 ![Menu](docs/screenshots/menu.png)
 
-## 当前里程碑
+## 当前里程碑 M2
 
 - 导入原版 **18 关、8,368 条放置记录、387 条对象定义**，按稳定 ID 绑定对象；保留血量、速度、分数、路径、炮位和地图原始附加字段。
 - 敌方炮位解释器支持原数据中的延迟、连射、瞄准、角度、弹速、次数；18 位 Boss 使用各自的原始定义和高清外形。
 - 主机四类武器、六级火力、导弹、追踪导弹、侧/后向射击、超级武器、装甲修复、护盾与生命系统；部分数值和特殊效果仍需原作运行对照。
-- 相对拖动、自动射击、炸弹按钮、键盘控制、暂停、切后台自动暂停、离线最高分与关卡解锁。
+- 恢复七位得分、备用战机图标、16 格蓝色能量条和逐枚炸弹库存；开局 4 条命、3 枚炸弹，默认机炮左右双发。
+- 左摇杆控制有上限的移动速度，按住 A 开火，B 释放炸弹；最多 6 枚、混合类型、后拾取先使用。支持多指、暂停/切后台释放输入。
+- 手机竖屏不强制左右边框；折叠屏、平板和手机横屏重排控制区域，战场保持等比。
+- 修正全部 16 类补给编号及已核实的轮换关系，使用新生成的高清图标；能量晶体恢复 2 格。
+- 逻辑采用原作代码中的 35 毫秒基础节拍，绘制插值保持平滑；敌方移动/射击与关卡滚动统一计时，Boss 血量取消旧版额外两倍倍率。尚未完成原作录像逐帧速度验收。
 - 原作机库菜单、主机、十八关背景、全部 Boss、第一关主要敌机/地物与武器弹体已有 AI 高清素材；尚未覆盖的敌机和地物仍有近似图形。原版音乐、双人、联网、地图编辑器未包含。
 
 ## 安装
@@ -27,7 +31,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 **IPA 需要用自己的 Apple 身份签名后才能安装，下载不等于可直接安装。当前没有 TestFlight 邀请。** 仓库不包含账号、证书、配置描述文件或签名私钥。最低部署目标不代表已在最低版本实机验收。
 
-若导入工具提示 `invalid ipa name`，可尝试 M1 的纯字母文件名副本 [DemonStar.ipa](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.1.0/DemonStar.ipa)（[SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.1.0/DemonStar.ipa.sha256)）。它与原 IPA 字节一致，仍需签名；安装器兼容性尚待复测。
+M2 的 IPA 文件名统一为纯字母 `DemonStar.ipa`；包内目录及可执行文件也是英文，桌面显示名保留中文。此前安装器报错的确切原因尚未确认，文件命名调整不代表所有签名/安装工具均已验收。
 
 每个完成的里程碑都提交对应源码并发布 APK、IPA 与 `SHA256SUMS.txt`；不覆盖已有版本标签。GitHub Release 与 README 会明确列出实际测试的系统版本和仍未完成的事项。
 
@@ -35,9 +39,9 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 | 动作 | 手机 / 平板 | 电脑 |
 |---|---|---|
-| 移动 | 单指相对拖动战场 | WASD / 方向键 / 拖动 |
-| 开火 | 自动 | 自动 |
-| 超级武器 | 右下角 ✦ | 空格 |
+| 移动 | 左侧虚拟摇杆 | WASD / 方向键 |
+| 开火 | 按住右侧 A，松开停止 | 按住 Z / J |
+| 超级武器 | 右侧 B | 空格 / X / K |
 | 暂停 | Ⅱ / 系统返回 | Esc / P |
 
 接触补给拾取，持续躲避弹幕并留意装甲。当前各难度分别保存最高分与解锁进度。
@@ -78,7 +82,7 @@ open ios/DemonStar.xcodeproj
 
 ## 测试
 
-M1 验证：9 项引擎/原数据/炮位/18 关 Boss 回归通过；桌面、390×844 触屏及旧 API 回退检查通过；Android Debug / 签名 Release 构建与两种 Lint 通过，Android 17 / API 37 的现成只读 AVD 上通过安装、中文菜单、画面推进、拖动、炸弹、暂停、原生返回和后台暂停检查。[对应 Apple CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/37896404165) 的 iPhoneOS ARM64 构建，以及 iOS 18.5 的 iPhone 16 Pro / iPad Pro 启动与 WKWebView 运行探针通过。IPA 与主程序最低版本均检查为 12.0。
+M2 当前 14 项引擎回归通过，覆盖 18 关 Boss、开局双发、全部掉落编号、混合库存、轮换周期及不同刷新率的一致性。浏览器通过真实双指移动/开火、松手停止、禁止战场拖动瞬移、横竖屏及展开尺寸、暂停和旧 API 回退检查。Android/iOS 原生包的最终验收记录随本版本 Release 发布。
 
 旧 API 回退测试在 Chromium 中模拟缺失接口，**不是 iOS 12 真机测试**。`artifacts/*-verification.json` 和 Release 说明记录实际测试情况。
 
@@ -86,7 +90,7 @@ M1 验证：9 项引擎/原数据/炮位/18 关 Boss 回归通过；桌面、390
 
 ## 原作数据与素材
 
-最新 [原版战斗与布局取证](docs/ORIGINAL_COMBAT_RESEARCH.md) 已确认开局双发、16 点能量、经典 HUD 和掉落编号差异，并记录手机竖屏、折叠屏/平板横屏及左摇杆右 A/B 的后续目标。这些修正尚未进入 M1 安装包。
+最新 [原版战斗与布局取证](docs/ORIGINAL_COMBAT_RESEARCH.md) 已确认开局双发、16 点能量、经典 HUD 和掉落编号差异，并记录手机竖屏、折叠屏/平板横屏及左摇杆右 A/B 的后续目标。M1 安装包保持原样；本次修正属于 M2。
 
 [格式记录](docs/FORMAT.md) · [还原差异](docs/FIDELITY.md) · [imagegen 提示词与素材来源](docs/ART.md) · [第三方声明](THIRD_PARTY_NOTICES.md)
 

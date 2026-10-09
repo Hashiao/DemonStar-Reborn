@@ -12,7 +12,3 @@ if(!window.PointerEvent){
     screen.addEventListener('touchcancel',function(e){convert('pointercancel',e);},{passive:false});
   })();
 }
-(function(){
-  function fit(){var h=window.innerHeight,w=window.innerWidth;document.documentElement.style.setProperty('--app-height',h+'px');var box=document.querySelector('.cabinet');if(w<=600||h<=650){var size=Math.min(w,h*400/640);box.style.width=size+'px';document.getElementById('screen').style.height=(size*640/400)+'px';}else{var size=Math.max(342,Math.min(432,(h-154)*400/640));box.style.width=size+'px';document.getElementById('screen').style.height=((size-16)*640/400)+'px';}}
-  window.addEventListener('resize',fit);fit();
-})();
