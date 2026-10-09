@@ -1,3 +1,4 @@
+import '../web/js/enemy-art.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 await import('../web/js/campaign.js');
@@ -34,7 +35,7 @@ test('weapon switching resets power, matching upgrades cap at six',()=>{
   const g=new Game(1);g.start();g.player.power=5;g.collect({type:'ion',time:0});assert.equal(g.player.weapon,1);assert.equal(g.player.power,1);for(let i=0;i<10;i++)g.collect({type:'ion',time:0});assert.equal(g.player.power,6);assert.ok(g.bullets.length>0);
 });
 test('armor loss, spare lives, invulnerability and game over',()=>{
-  const g=new Game(1);g.start();g.player.invincible=0;g.hitPlayer(2);assert.equal(g.player.energy,14);g.hitPlayer(2);assert.equal(g.player.energy,14);g.player.invincible=0;g.hitPlayer(100);assert.equal(g.player.lives,3);assert.equal(g.player.energy,16);g.player.lives=1;g.player.invincible=0;g.player.respawn=0;g.hitPlayer(100);assert.equal(g.phase,'gameover');
+  const g=new Game(1);g.start();g.player.invincible=0;g.hitPlayer(2);assert.equal(g.player.energy,14);g.hitPlayer(2);assert.equal(g.player.energy,12);g.player.invincible=0;g.hitPlayer(100);assert.equal(g.player.lives,3);assert.equal(g.player.energy,16);g.player.lives=1;g.player.invincible=0;g.player.respawn=0;g.hitPlayer(100);assert.equal(g.phase,'gameover');
 });
 test('deterministic campaign simulation reaches each original boss without NaNs',()=>{
   for(let stage=1;stage<=18;stage++){

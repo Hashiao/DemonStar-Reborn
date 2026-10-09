@@ -1,3 +1,4 @@
+import '../web/js/enemy-art.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import '../web/js/campaign.js';
@@ -48,7 +49,7 @@ test('first Boss keeps original star, twin missile and finite three laser volley
   assert.equal(shots[0].shotType,11);assert.equal(shots[0].tick,225);
   assert.equal(shots.filter(s=>s.shotType===8).length,16);
   const beams=shots.filter(s=>s.shotType===9);assert.deepEqual(beams.map(s=>s.tick),[621,622,623,624,625,786,787,788,789,790,951,952,953,954,955]);
-  assert.ok(beams.every(s=>s.beam&&s.damage===2));assert.equal(d.hp,8000);
+  assert.ok(beams.every(s=>s.beam&&s.damage===4));assert.equal(d.hp,8000);
   assert.ok(shots.some(s=>s.shotType===11&&s.tick>955),'star attacks continue after lasers end');
 });
 
@@ -56,7 +57,7 @@ test('blue laser stays on moving muzzle, covers the column, and expires',()=>{
   const g=create(),e=spawn(g,40);e.x=200;e.y=64;e.entered=true;e.pathFinished=true;e.exitX=0;e.exitY=0;e.guns=[];
   const raw=e.def.guns[2].slice();raw[4]=0;const gun=new Gun(raw);gun.tick(e,g);
   const b=g.bullets[0];assert.ok(b.beam);e.x=230;g.player.x=229;g.player.y=400;g.player.invincible=0;
-  g.update(STEP);assert.equal(g.player.energy,14);assert.equal(b.x,229);assert.ok(!b.dead);assert.ok(b.y<110);
+  g.update(STEP);assert.equal(g.player.energy,12);assert.equal(b.x,229);assert.ok(!b.dead);assert.ok(b.y<110);
   g.update(STEP);g.update(STEP);g.update(STEP);assert.ok(!g.bullets.includes(b));
 });
 

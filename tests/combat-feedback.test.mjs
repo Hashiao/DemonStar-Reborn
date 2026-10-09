@@ -1,3 +1,4 @@
+import '../web/js/enemy-art.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 await import('../web/js/campaign.js');await import('../web/js/player-rules.js');await import('../web/js/combat-visuals.js');await import('../web/js/original-rules.js');await import('../web/js/music-bank.js');

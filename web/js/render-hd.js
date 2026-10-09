@@ -1,9 +1,18 @@
 /* SPDX-License-Identifier: MIT. See docs/ART.md for generated asset provenance. */
 (() => {
   const {W,H,STEP,DROPS,rng}=StarfallCore;
+  const enemyArt=DemonStarEnemyArt;
   const load=src=>{const im=new Image();im.src=src;return im;};
   class Renderer {
-    constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.time=0;this.effects=load('assets/combat-effects-hd.png');this.attacks=load('assets/enemy-attacks-hd.png');this.tintCache=new Map();this.enemyHealthBars=true;this.ships=load('assets/ships-hd.png');this.bosses=load('assets/bosses-07-18-hd.png');this.hangar=load('assets/hangar-hd.png');this.mission1=load('assets/mission1-hd.png');this.weapons=load('assets/weapons-hd.png');this.pickups=load('assets/pickups-hd.png');this.playerMotion=load('assets/player-motion-hd.png');this.carriers=load('assets/supply-carriers-hd.png');this.terrain=[load('assets/terrain-01-06-hd.png'),load('assets/terrain-07-12-hd.png'),load('assets/terrain-13-18-hd.png')];this.mission1Names=['S_ENEMY14','S_ENEMY20','S_ENEMY21','S_ENEMY34A','S_ASTER1A','S_ASTER2A','S_ASTER3A','S_ENBON1','S_ENBON3','S_SPTNKRA','S_ENEMY22','S_ENEMY28A','S_PIPE1','S_PIPE2','S_PIPE3','S_BHOLE1A'];const r=rng(654);this.stars=Array.from({length:100},()=>[r()*W,r()*H,r()*1.3+.3]);this.resize();}
+    constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.time=0;this.effects=load('assets/combat-effects-hd.png');this.attacks=load('assets/enemy-attacks-hd.png');this.enemyAtlases={};for(const name in enemyArt.sprites)this.enemyAtlases[name]=load(enemyArt.sprites[name].asset);this.tintCache=new Map();this.enemyHealthBars=true;this.ships=load('assets/ships-hd.png');this.bosses=load('assets/bosses-07-18-hd.png');this.hangar=load('assets/hangar-hd.png');this.mission1=load('assets/mission1-hd.png');this.weapons=load('assets/weapons-hd.png');this.pickups=load('assets/pickups-hd.png');this.playerMotion=load('assets/player-motion-hd.png');this.carriers=load('assets/supply-carriers-hd.png');this.terrain=[load('assets/terrain-01-06-hd.png'),load('assets/terrain-07-12-hd.png'),load('assets/terrain-13-18-hd.png')];this.mission1Names=['S_ENEMY14','S_ENEMY20','S_ENEMY21','S_ENEMY34A','S_ASTER1A','S_ASTER2A','S_ASTER3A','S_ENBON1','S_ENBON3','S_SPTNKRA','S_ENEMY22','S_ENEMY28A','S_PIPE1','S_PIPE2','S_PIPE3','S_BHOLE1A'];const r=rng(654);this.stars=Array.from({length:100},()=>[r()*W,r()*H,r()*1.3+.3]);this.resize();}
+    enemyArtReady(){return Object.keys(enemyArt.sprites).every(name=>this.enemyAtlases[name].naturalWidth>0);}
+    framedObject(e,red){
+      const spec=enemyArt.sprites[e.def.sprite],image=this.enemyAtlases[e.def.sprite];
+      if(!spec||!image.naturalWidth)return false;
+      const frame=spec.directional?(e.facing??16):(e.animation?.frame||0),b=spec.frames[frame],scale=1.1;
+      this.c.drawImage(red?this.redImage(image):image,b[0],b[1],b[2],b[3],e.x+(b[4]-b[6]/2)*scale,e.y+(b[5]-b[7]/2)*scale,b[6]*scale,b[7]*scale);
+      return true;
+    }
     attackCell(index,x,y,w,h,red=false){
       if(!this.attacks)this.attacks=load('assets/enemy-attacks-hd.png');
       if(!this.attacks.naturalWidth)return false;
@@ -25,13 +34,14 @@
     terrainDraw(stage,scroll){const c=this.c,idx=stage-1,im=this.terrain[Math.floor(idx/6)],cell=idx%6;if(im?.complete&&im.naturalWidth){const cw=im.naturalWidth/3,ch=im.naturalHeight/2,sy=Math.floor(cell/3)*ch,sx=cell%3*cw,y=scroll%H;c.drawImage(im,sx,sy,cw,ch,0,y-H,W,H);c.drawImage(im,sx,sy,cw,ch,0,y,W,H);}else{c.fillStyle='#010205';c.fillRect(0,0,W,H);for(const [x,y,s] of this.stars){c.fillStyle='#9aa293';c.globalAlpha=s*.4;c.fillRect(x,(y+scroll)%H,s,s);}c.globalAlpha=1;}}
     shipCell(name){if(name.startsWith('S_ENEMY1A'))return 2;if(name==='S_ENEMY2')return 3;if(name==='S_ENEMY4')return 4;if(name==='S_ENEMY10')return 5;if(name==='S_ENEMY18')return 6;if(name==='S_ENEMY21')return 7;if(name.startsWith('G_TNK')||name.includes('TURRET')||name.includes('TUR1'))return 14;if(name.includes('ROTA')||name.includes('ROTB'))return 15;const n=Number((name.match(/(?:ENEMY|SHIP)(\d+)/)||[])[1]||1);return [2,3,4,5,6,7][n%6];}
     object(e){const c=this.c,d=e.def,w=d.width,h=d.height;
-      c.save();c.translate(e.x,e.y);if(e.dying){c.translate((d.flags&0x40)?0:e.fall*.12,e.fall*.55);c.rotate((d.flags&0x40)?0:e.fall*.004);}else if(e.facing!==undefined)c.rotate((e.facing-16)*Math.PI/16);c.translate(-e.x,-e.y);
+      c.save();c.translate(e.x,e.y);if(e.dying){c.translate((d.flags&0x40)?0:e.fall*.12,e.fall*.55);c.rotate((d.flags&0x40)?0:e.fall*.004);}else if(e.facing!==undefined&&!enemyArt.sprites[d.sprite]?.directional)c.rotate((e.facing-16)*Math.PI/16);c.translate(-e.x,-e.y);
       const red=e.critical&&e.criticalTicks%10<3;
       this.objectBody(e,red);c.restore();
       if(e.burning){const n=e.dying?9:5;for(let i=0;i<n;i++){const x=e.x+Math.sin(i*2.4)*w*.34,y=e.y+Math.cos(i*3.1)*h*.3+(e.dying?e.fall*.55:0);this.effectCell(16+((Math.floor(e.time*12)+i)%2),x,y,18+Math.sin(e.time*23+i)*3,28+Math.sin(e.time*19+i)*5);}}
       if(this.enemyHealthBars&&!e.scenery&&!e.boss&&!e.dead&&(w>=48||h>=48)&&e.entered){const width=Math.min(52,Math.max(24,w*.8)),x=e.x-width/2,y=e.y-h*.6-5;c.fillStyle='#080c12dc';c.fillRect(x-1,y-1,width+2,4);c.fillStyle=e.critical?'#ff5343':'#88b6ca';c.fillRect(x,y,width*Math.max(0,e.hp/e.maxHp),2);}
     }
     objectBody(e,red){const c=this.c,d=e.def,w=d.width,h=d.height,im=image=>red?this.redImage(image):image;
+      if(this.framedObject(e,red))return;
       if(d.sprite==='S_ENEMY28A'&&this.attackCell(e.animationFrame||0,e.x,e.y,w,h,red))return;
       const carrier=['S_ENBON1','S_ENBON2','S_ENBON3','S_ENBON4'].indexOf(d.sprite);if(carrier>=0&&this.cell(im(this.carriers),carrier,2,2,e.x,e.y,w*1.2,h*1.2))return;
       const originalCell=this.mission1Names.indexOf(d.sprite);if(originalCell>=0&&this.cell(im(this.mission1),originalCell,4,4,e.x,e.y,w*1.1,h*1.1))return;

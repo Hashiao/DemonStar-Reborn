@@ -1,6 +1,7 @@
 /Deamon Star/
 /audio/
 .local/
+.codex-remote-attachments/
 node_modules/
 dist/
 artifacts/

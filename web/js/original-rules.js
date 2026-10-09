@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT. Reimplemented from the documented 4.04 record format. */
 (() => {
   'use strict';
-  const C=globalThis.DemonStarCampaign,P=globalThis.DemonStarPlayerRules;
+  const C=globalThis.DemonStarCampaign,P=globalThis.DemonStarPlayerRules,A=globalThis.DemonStarEnemyArt;
   // 4.04's base wait is 35 ms (0x41ae07). Rendering remains independent.
   const W=400,H=480,STEP=.035,TICK=1/STEP;
   // Match the classic 320x400 visible-area traversal in our 400x480 playfield.
@@ -10,7 +10,10 @@
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const rng=seed=>{let a=seed>>>0;return()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};};
   const intersects=(x1,y1,x2,y2,x,y,r)=>{const dx=x2-x1,dy=y2-y1,t=clamp(((x-x1)*dx+(y-y1)*dy)/(dx*dx+dy*dy||1),0,1);return(x1+dx*t-x)**2+(y1+dy*t-y)**2<=r*r;};
-  const DIFFICULTIES=[{name:'容易',key:'easy',fire:1.3,damage:.7},{name:'一般',key:'normal',fire:1,damage:1},{name:'较难',key:'hard',fire:.85,damage:1.25},{name:'疯狂',key:'insane',fire:.7,damage:1.5}];
+  const DIFFICULTIES=[{name:'容易',key:'easy',fire:1.3},{name:'一般',key:'normal',fire:1},{name:'较难',key:'hard',fire:.85},{name:'疯狂',key:'insane',fire:.7}];
+  // Original collision and projectile handlers use different rules.
+  const projectileDamage=(base,difficulty)=>base<=0?base:difficulty===0?Math.max(1,Math.floor(base/2)):base+(difficulty===2?1:difficulty===3?2:0);
+  const collisionDamage=width=>width<=16?4:width<=32?12:16;
   const BIOMES=Array.from({length:18},(_,i)=>({name:`第 ${String(i+1).padStart(2,'0')} 关`,color:['#8badca','#b6916c','#709bbb','#a69a89','#c06153','#b34c34','#5784b0','#426ca0','#9aa1c4','#997657','#497bb4','#98968e','#68a770','#3d793c','#ac7343','#6a737b','#be4c46','#868d94'][i],bg:'#030508',ground:'#1a2329',accent:'#414d55'}));
   const STAGES=C.levels.map((l,i)=>({id:l.id,biome:i,name:BIOMES[i].name,subtitle:'原版战役',duration:Math.max(...l.events.map(e=>e[1]))/TICK,boss:`第 ${i+1} 关旗舰`,map:l}));
   const WEAPONS=['质子激光','离子炮','等离子炮','磁力脉冲'];
@@ -31,9 +34,9 @@
       if(enemy.y>=0&&enemy.y<H+enemy.r&&game.enemyFireLock<=0&&!enemy.dying){
         const a=this.angle*Math.PI/1024,s=Math.max(1,r[12])*TICK;
         // Type 9 is a four-frame beam attached to its emitter (0x429722),
-        // not a travelling bullet. Keep the existing two-point damage budget.
+        // not a travelling bullet. Damage comes from its original template.
         const beam=r[2]===9?{beam:true,owner:enemy.uid,offsetX:x-enemy.x,offsetY:y-enemy.y,age:0,life:4*STEP}:{};
-        game.addBullet(x,y,Math.sin(a)*s,-Math.cos(a)*s,false,1+(r[2]>=7?1:0),r[2]%3,{shotType:r[2],missile:r[2]===8,...beam});game.events?.push({type:'enemy-shot',shotType:r[2]});
+        game.addBullet(x,y,Math.sin(a)*s,-Math.cos(a)*s,false,P.damage[r[2]],r[2]%3,{shotType:r[2],missile:r[2]===8,...beam});game.events?.push({type:'enemy-shot',shotType:r[2]});
       }
       this.angle=(this.angle+r[9])&2047;this.arc--;
     }
@@ -102,6 +105,8 @@
       if(d.mode===9||d.mode===10){this.setPath(e,true);}else if(d.mode===3){e.x=record[0]<200?-d.width:W+d.width;e.y=100;}
       else if(d.mode===5){e.y=H+d.height;e.vy=-e.speed;}
       if(scenery)e.y=-d.height/2;
+      const animation=A.animations[d.id];
+      if(animation)e.animation={frame:animation.start,wait:animation.interval,pause:animation.pause,cycles:animation.cycles,direction:1};
       this.enemies.push(e);if(boss){this.boss=e;this.bossSpawned=true;this.bossRadioTicks=60;this.events.push({type:'boss',name:this.stage.boss});}
     }
     setPath(e,first=false){
@@ -163,6 +168,7 @@
     finishEnemy(e){if(e.dead)return;e.dead=true;this.kills++;this.score+=e.def.score;this.explode(e.x,e.y,'#ffb05c',e.boss?85:16);this.events.push({type:'explosion',heavy:!!e.boss,ground:!!(e.def.flags&0x40)});this.spawnPickup(e.record[5],e.x,e.y);if(e.def.flags&0x200)this.automaticDrops(e);if(e.boss)this.defeatBoss();}
     updateEnemyState(e){
       if(e.def.sprite==='S_ENEMY28A'&&!e.dying)e.animationFrame=((e.animationFrame||0)+1)%6;
+      if(e.animation&&!e.dying)this.updateEnemyAnimation(e);
       if(e.x>=0&&e.x<W&&e.y>=0&&e.y<H)e.entered=true;
       // Original warnings compare against base HP, including for doubled Boss HP.
       e.critical=e.hp>0&&e.hp<Math.floor(e.def.hp/4);e.burning=e.boss&&(e.dying||e.hp<Math.floor(e.def.hp/16));
@@ -174,6 +180,21 @@
         const current=e.facing===undefined?16:e.facing,difference=(target-current+32)%32;
         e.facing=(current+(difference===0?0:difference<=16?1:-1)+32)%32;
       }else if(e.def.flags&0x100){const dx=e.x-e.px,dy=e.y-e.py;if(dx||dy)e.facing=(Math.round(Math.atan2(dx,-dy)*16/Math.PI)+32)%32;}
+    }
+    updateEnemyAnimation(e){
+      const state=e.animation,rule=A.animations[e.def.id];
+      if(state.cycles<=0||rule.loopFrames<2)return;
+      if(state.pause>0){state.pause--;return;}
+      if(state.wait>0){state.wait--;return;}
+      const last=A.sprites[e.def.sprite].frames.length-1;
+      state.frame+=state.direction;
+      if(rule.pingPong&&state.frame<0){state.frame=0;state.direction=1;state.pause=rule.pauseStart;}
+      if(state.frame>last){
+        if(rule.pingPong){state.frame=last;state.direction=-1;state.pause=rule.pauseEnd;}
+        else state.frame=last-rule.loopFrames+1;
+        if(state.cycles<999)state.cycles--;
+      }
+      state.wait=rule.interval;
     }
     collect(item){
       const p=this.player,t=item.type;
@@ -192,9 +213,18 @@
       const p=this.player;if(p.missileAmmo>39)this.spawnPickup(8,p.x,p.y,true);if(p.bombs>3)this.spawnPickup(6,p.x,p.y,true);
       if(!p.defaultWeapon){const id=[2,3,4,4][p.weapon];if(p.power===6)this.spawnPickup(id,p.x,p.y,true);this.spawnPickup(id,p.x,p.y,true);}
     }
-    hitPlayer(damage=1){
-      const p=this.player;if(p.respawn>0||p.invincible>0||p.shield>0||this.phase!=='playing')return;
-      p.energy-=damage*this.rules.damage;p.invincible=.65;this.shake=3;this.events.push({type:'hit'});
+    collideEnemy(e){
+      const p=this.player;
+      if(e.dead||e.dying||e.scenery||e.ground||p.respawn>0||p.invincible>0||this.phase!=='playing')return false;
+      this.hitPlayer(collisionDamage(e.def.width),'collision');
+      e.hp-=305;e.hit=.06;if(e.hp<=0)this.killEnemy(e);
+      return true;
+    }
+    hitPlayer(damage=1,source='projectile'){
+      const p=this.player;if(p.respawn>0||p.invincible>0||this.phase!=='playing')return false;
+      if(p.shield>0)return true;
+      const loss=source==='collision'?damage:projectileDamage(damage,this.difficulty);
+      p.energy-=loss;this.shake=3;this.events.push({type:'hit',damage:loss,source});
       if(p.energy>0&&p.energy<4&&!p.defaultWeapon&&p.weapon<3&&p.power>1)p.power--;
       if(p.energy<=0){
         this.deathDrops();this.explode(p.x,p.y,'#ff8552',35);this.events.push({type:'explosion',heavy:true});
@@ -202,6 +232,7 @@
         p.respawn=45*STEP;p.invincible=135*STEP;p.x=p.px=W/2;p.y=p.py=H-70;p.bank=8;p.thrust=0;
         if(p.lives<=0){this.phase='gameover';this.events.push({type:'gameover'});}
       }
+      return true;
     }
     useBomb(){
       const p=this.player;if(this.phase!=='playing'||p.respawn>0||p.bombCooldown>1e-9||p.bombs<=0)return false;
@@ -260,7 +291,7 @@
       }
       if(!this.bossSpawned)this.scroll+=dt*TICK;
       while(this.cursor<this.recordEvents.length&&this.recordEvents[this.cursor][1]<=this.scroll){this.spawnRecord(this.recordEvents[this.cursor++]);}
-      for(const e of this.enemies){if(e.dead)continue;e.time+=dt;e.hit=Math.max(0,e.hit-dt);if(!e.dying)this.moveEnemy(e,dt);this.updateEnemyState(e);if(e.dead||e.dying)continue;for(const gun of e.guns)gun.tick(e,this);if(!e.scenery&&!e.ground&&e.y>0&&Math.hypot(e.x-p.x,e.y-p.y)<e.r+p.r)this.hitPlayer(3);}
+      for(const e of this.enemies){if(e.dead)continue;e.time+=dt;e.hit=Math.max(0,e.hit-dt);if(!e.dying)this.moveEnemy(e,dt);this.updateEnemyState(e);if(e.dead||e.dying)continue;for(const gun of e.guns)gun.tick(e,this);if(!e.scenery&&!e.ground&&e.y>0&&Math.hypot(e.x-p.x,e.y-p.y)<e.r+p.r)this.collideEnemy(e);}
       this.updateSpecials();
       for(const b of this.bullets){
         if(b.beam){
@@ -276,7 +307,7 @@
         b.age=(b.age||0)+1;b.px=b.x;b.py=b.y;b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;
         if(b.nova!==undefined)for(const hostile of this.bullets){if(!hostile.friendly&&!hostile.dead&&intersects(b.px,b.py,b.x,b.y,hostile.x,hostile.y,b.r+hostile.r+4))hostile.dead=true;}
         if(b.friendly){for(const e of this.enemies){if(!this.targetable(e)||b.hitEnemies?.includes(e.uid))continue;if(intersects(b.px,b.py,b.x,b.y,e.x,e.y,e.r+b.r)){e.hp-=b.damage;e.hit=.06;if(b.hitEnemies)b.hitEnemies.push(e.uid);else b.dead=true;this.shotsHit++;if(e.hp<=0)this.killEnemy(e);else this.events.push({type:'enemy-hit'});if(b.dead)break;}}}
-        else if(!b.dead&&p.respawn<=0&&intersects(b.px,b.py,b.x,b.y,p.x,p.y,p.r+b.r)){b.dead=true;this.hitPlayer(b.damage);}
+        else if(!b.dead&&p.respawn<=0&&intersects(b.px,b.py,b.x,b.y,p.x,p.y,p.r+b.r)){if(this.hitPlayer(b.damage))b.dead=true;}
         if(this.phase!=='playing')break;
       }
       for(const item of this.pickups){item.time+=dt;this.updatePickup(item);if(p.respawn<=0&&item.speed<=2&&Math.abs(item.x-p.x)<16&&Math.abs(item.y-p.y)<16)this.collect(item);}
@@ -286,5 +317,5 @@
       this.pickups=this.pickups.filter(i=>!i.dead&&i.y<H+30);this.particles=this.particles.filter(v=>v.life>0);
     }
   }
-  globalThis.StarfallCore={W,H,TICK,STEP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects};
+  globalThis.StarfallCore={W,H,TICK,STEP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};
 })();
