@@ -26,8 +26,11 @@ capture('android-menu.png');tap('start');time.sleep(2)
 assert '关卡' in node('stage-label').get('text','')
 first=capture('android-game-before.png');time.sleep(.7);second=capture('android-game.png');assert first!=second,'Game rendering did not advance'
 stick=node('joystick');x1,y1,x2,y2=map(int,re.findall(r'\d+',stick.get('bounds')))
-x=str(int(x1+(x2-x1)*.8));y=str((y1+y2)//2)
-run('shell','input','swipe',x,y,x,y,'500');capture('android-stick.png')
+# Park at the left edge, outside the opening straight-flying enemies' lanes.
+# UIAutomator dumps take real time; a parked ship in a carrier lane can die
+# immediately after resume and legitimately reset the bomb inventory.
+x=str(int(x1+(x2-x1)*.05));y=str((y1+y2)//2)
+run('shell','input','swipe',x,y,x,y,'1500');capture('android-stick.png')
 fire=node('fire');x1,y1,x2,y2=map(int,re.findall(r'\d+',fire.get('bounds')));x=str((x1+x2)//2);y=str((y1+y2)//2)
 run('shell','input','swipe',x,y,x,y,'900');capture('android-fire.png')
 tap('bomb');capture('android-after-bomb.png');bomb_node=node('bomb');assert '剩余 2 枚' in (bomb_node.get('text','')+bomb_node.get('content-desc',''))

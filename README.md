@@ -19,7 +19,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 敌机基础 HP、主机伤害表及超级武器旧预算保持原值。[原作伤害与动画证据](docs/M2_4_RESEARCH.md) · [正确敌机](docs/screenshots/fighter-corrected.png) · [网架炮台](docs/screenshots/net-turrets.png) · [岩石翻滚帧](docs/screenshots/asteroid-24-poses.png) · [受伤降档](docs/screenshots/damage-tier-five.png) · [imagegen 图集与完整提示词](docs/ART_M2_4.md)。
 
-本版双端安装包验收完成后更新构建记录。
+69 项回归、五组浏览器与 Android/iPhone/iPad 模拟器验收通过，版本 0.2.4（6）。环境及边界见下方测试记录和 [本版报告](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.4/verification.json)。
 
 ## M2.3 已完成内容
 
@@ -114,9 +114,7 @@ open ios/DemonStar.xcodeproj
 
 ## 测试
 
-M2.3 的 56 项引擎/声音回归通过。浏览器覆盖真实双指输入、全部拾取和 Boss 无中央遮挡、装备栏多尺寸布局、血条开关、三种炸弹和红蓝档位，并检查全部 18 首 BGM 的解码、独立音效静音、暂停后音乐位置续播及入场声音顺序。
-
-本版 56 项引擎/声音回归与四组浏览器检查通过，覆盖旧存档音乐迁移、真实 BGM 播放、流星锁定、陀螺加速及首关三轮激光。Android Debug/签名 Release、Lint（0 错误、3 提示）及现有 Android 17 / API 37 AVD 操作、旋转、后台和设置检查通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/37974187884) 通过 iPhoneOS ARM64 编译和 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) WKWebView 检查，包括 BGM 时钟推进与新图集加载。版本 0.2.3（5），两个包的游戏代码与素材核对通过（HTML/CSS 仅有平台换行差异），音频哈希匹配、包内路径 ASCII。[验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.3/verification.json)。
+M2.4 的 69 项引擎/声音回归与五组浏览器检查通过，覆盖四档难度伤害、连续中弹、撞击双方扣血、重生保护、6→5及后续降档、正确机型、32向炮台、24帧岩石和显示比例。Android Debug/签名 Release、Lint（0 错误、3 提示）及现有 Android 17 / API37 AVD 操作、旋转、后台和设置检查通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/37981829747) 通过 iPhoneOS ARM64 编译和 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) WKWebView 检查，包括音乐播放时钟与全部新图集加载。两包版本0.2.4（6），游戏脚本、图集与音频资源核验一致；HTML/CSS仅存在平台换行差异，包内路径ASCII。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.4/verification.json)。
 
 原始 HP/主武器伤害表与 v0.2.1 一致。最低系统、手机扬声器和原机逐样本 A/B 仍未实测；独立激光启动音 W_PULSE 已定位在 Game3.glb，尚未包含在用户提供的 MP3 清单，“脉冲炮一”是另一资源 W_PULSAR。
 
