@@ -34,7 +34,8 @@ body{background:#080a10}
 .controls .action-buttons button{width:var(--button-size);height:var(--button-size);border-radius:50%;border:2px solid #8c6855b3;background:radial-gradient(circle at 35% 20%,#655447,#2c2726 70%);color:#ffdfb3;touch-action:none;box-shadow:inset 0 0 0 3px #13161b99,0 3px 12px #0006;gap:0;transform:none}
 .controls .action-buttons #fire{width:calc(var(--button-size) + 10px);height:calc(var(--button-size) + 10px);margin-top:-25px;margin-left:14px;border-color:#bc5746;background:radial-gradient(circle at 35% 20%,#a74e40,#462021 72%);color:#fff0de}
 .controls .action-buttons button b{font:bold 26px 'Arial Black',sans-serif;margin:0;line-height:1.1}.controls .action-buttons button span{font-size:10px;margin-top:3px}.controls em{font-style:normal}.controls button.held{filter:brightness(1.4);box-shadow:inset 0 0 15px #000a}
-.screen[data-wide='true'] .weapon-status{left:var(--field-x);right:auto;width:var(--field-w);bottom:4px}
+.screen[data-wide='true'] .weapon-status{left:0;right:auto;width:var(--field-x);top:calc(var(--stick-y) - 40px);bottom:auto}
+.screen[data-wide='true'] .weapon-status small{display:none}
 .screen[data-wide='true'] .action-buttons{flex-direction:column-reverse}.screen[data-wide='true'] .action-buttons #fire{margin-top:0;margin-left:0;margin-bottom:20px}
 .menu{left:50%;right:auto;transform:translateX(-50%);width:100%;max-width:480px}
 .dialog-card{max-width:480px}.toast{left:var(--field-x);width:var(--field-w);right:auto;top:calc(var(--field-y) + var(--field-h) * .35);padding:12px;font-size:12px;letter-spacing:1px}

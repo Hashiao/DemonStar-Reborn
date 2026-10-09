@@ -12,6 +12,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import java.io.ByteArrayInputStream;
 
 /** Offline game host. No JavaScript bridge, network permission, accounts or trackers. */
@@ -46,14 +47,18 @@ public final class MainActivity extends Activity {
                 return new WebResourceResponse("text/plain", "UTF-8", new ByteArrayInputStream(new byte[0]));
             }
         });
+        FrameLayout host = new FrameLayout(this);
+        host.setBackgroundColor(0xff08121d);
+        host.addView(web, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         if (Build.VERSION.SDK_INT >= 30) {
-            web.setOnApplyWindowInsetsListener((v, insets) -> {
+            host.setOnApplyWindowInsetsListener((v, insets) -> {
                 android.graphics.Insets bars = insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
                 v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
                 return insets;
             });
         }
-        setContentView(web);
+        setContentView(host);
+        host.requestApplyInsets();
         if (Build.VERSION.SDK_INT >= 33) getOnBackInvokedDispatcher().registerOnBackInvokedCallback(0, this::gameBack);
         web.loadUrl("file:///android_asset/index.html");
     }
