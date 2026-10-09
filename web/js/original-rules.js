@@ -4,6 +4,9 @@
   const C=globalThis.DemonStarCampaign;
   // 4.04's base wait is 35 ms (0x41ae07). Rendering remains independent.
   const W=400,H=480,STEP=.035,TICK=1/STEP;
+  // Match the classic 320x400 visible-area traversal in our 400x480 playfield.
+  // This is mobile control calibration, not a change to enemy/world timing.
+  const PLAYER_STEP_X=4*(W-32)/(320-32),PLAYER_STEP_Y=4*(H-104)/(400-104);
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const rng=seed=>{let a=seed>>>0;return()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};};
   const intersects=(x1,y1,x2,y2,x,y,r)=>{const dx=x2-x1,dy=y2-y1,t=clamp(((x-x1)*dx+(y-y1)*dy)/(dx*dx+dy*dy||1),0,1);return(x1+dx*t-x)**2+(y1+dy*t-y)**2<=r*r;};
@@ -33,12 +36,12 @@
     constructor(seed=Date.now()){this.seed=seed;this.random=rng(seed);this.events=[];this.phase='menu';}
     start(difficulty=1,stage=1){
       this.difficulty=clamp(Math.floor(difficulty),0,3);this.rules=DIFFICULTIES[this.difficulty];this.random=rng(this.seed);
-      this.score=0;this.kills=0;this.combo=0;this.shotsFired=0;this.shotsHit=0;this.totalTime=0;this.events=[];
-      this.player={x:200,y:400,r:10,lives:4,energy:16,maxEnergy:16,bombInventory:[0,0,0],medals:0,defaultWeapon:true,power:1,weapon:0,shield:0,invincible:2.5,fire:0,missiles:0,homing:0,side:0,rear:0,mega:0,missileTimer:0};
+      this.score=0;this.kills=0;this.combo=0;this.shotsFired=0;this.shotsHit=0;this.totalTime=0;this.events=[];this.supplyIndex=0;this.supplyBombIndex=0;
+      this.player={x:200,y:400,r:10,lives:4,energy:16,maxEnergy:16,bombInventory:[0,0,0],medals:0,defaultWeapon:true,power:1,weapon:0,bank:8,thrust:0,shield:0,invincible:2.5,fire:0,missiles:0,homing:0,side:0,rear:0,mega:0,missileTimer:0};
       Object.defineProperty(this.player,'bombs',{enumerable:true,get(){return this.bombInventory.length;}});
       this.loadStage(clamp(Math.floor(stage),1,18));
     }
-    loadStage(id){this.stage=STAGES[id-1];this.elapsed=0;this.scroll=0;this.previousScroll=0;this.cursor=0;this.frame=0;this.pendingTime=0;this.dropSequence=0;this.recordEvents=[...this.stage.map.events].sort((a,b)=>a[1]-b[1]);this.enemies=[];this.bullets=[];this.pickups=[];this.particles=[];this.boss=null;this.bossSpawned=false;this.flash=0;this.shake=0;this.bombRing=0;this.phase='playing';this.player.x=this.player.px=200;this.player.y=this.player.py=H-70;this.player.invincible=2.5;this.events.push({type:'stage',stage:id});}
+    loadStage(id){this.stage=STAGES[id-1];this.elapsed=0;this.scroll=0;this.previousScroll=0;this.cursor=0;this.frame=0;this.pendingTime=0;this.dropSequence=0;this.recordEvents=[...this.stage.map.events].sort((a,b)=>a[1]-b[1]);this.enemies=[];this.bullets=[];this.pickups=[];this.particles=[];this.boss=null;this.bossSpawned=false;this.flash=0;this.shake=0;this.bombRing=0;this.phase='playing';this.player.x=this.player.px=200;this.player.y=this.player.py=H-70;this.player.invincible=2.5;this.player.bank=8;this.player.thrust=0;this.events.push({type:'stage',stage:id});}
     nextStage(){if(this.phase!=='cleared'||this.stage.id>=18)return false;this.loadStage(this.stage.id+1);return true;}
     pause(){if(this.phase==='playing'){this.phase='paused';return true;}return false;}
     resume(){if(this.phase==='paused'){this.pendingTime=0;this.phase='playing';return true;}return false;}
@@ -99,7 +102,15 @@
       const a=item.angle*Math.PI/1024;item.x+=Math.sin(a)*item.speed;item.y-=Math.cos(a)*item.speed;
       if(item.speed>2)item.speed--;else{if(item.angle>512&&item.angle<1536)item.y++;if(item.x<45)item.x++;else if(item.x>W-45)item.x--;}
     }
-    killEnemy(e){if(e.dead||e.scenery)return;e.dead=true;this.kills++;this.score+=e.def.score;this.explode(e.x,e.y);this.events.push({type:'explosion'});this.spawnPickup(e.record[5],e.x,e.y);if(e.boss)this.defeatBoss();}
+    automaticDrops(e){
+      // Enemy flag 0x200 calls 0x423c70 independently of its map drop field.
+      const sequence=[2,3,4,13,14],limit=this.stage.id<=6?3:5;
+      const weapon=sequence[this.supplyIndex];this.supplyIndex=(this.supplyIndex+1)%limit;
+      if(this.player.bombs<[6,3,2,1][this.difficulty]){this.spawnPickup([5,6,15][this.supplyBombIndex],e.x,e.y);this.supplyBombIndex=(this.supplyBombIndex+1)%3;}
+      if(this.player.energy<12)this.spawnPickup(this.player.energy<4?1:11,e.x,e.y);
+      this.spawnPickup(weapon,e.x,e.y);
+    }
+    killEnemy(e){if(e.dead||e.scenery)return;e.dead=true;this.kills++;this.score+=e.def.score;this.explode(e.x,e.y);this.events.push({type:'explosion',heavy:!!e.boss});this.spawnPickup(e.record[5],e.x,e.y);if(e.def.flags&0x200)this.automaticDrops(e);if(e.boss)this.defeatBoss();}
     collect(item){
       const p=this.player,t=item.type;
       if(['weapon','ion','plasma','magnetic'].includes(t)){const next=['weapon','ion','plasma','magnetic'].indexOf(t);if(next===p.weapon&&!p.defaultWeapon){if(p.power>=6){for(let i=0;i<24;i++){const a=i/24*Math.PI*2;this.addBullet(p.x,p.y,Math.sin(a)*300,Math.cos(a)*300,true,130,p.weapon);}}else p.power++;}else{p.weapon=next;p.power=1;}p.defaultWeapon=false;}
@@ -128,7 +139,9 @@
       for(const obj of [this.player,...this.enemies,...this.pickups]){obj.px=obj.x;obj.py=obj.y;}
       const p=this.player;this.flash=Math.max(0,this.flash-dt);this.bombRing=Math.max(0,this.bombRing-dt);this.shake=Math.max(0,this.shake-dt*25);
       for(const k of ['invincible','shield','side','rear','mega'])p[k]=Math.max(0,p[k]-dt);
-      let dx=Number.isFinite(input.x)?input.x:0,dy=Number.isFinite(input.y)?input.y:0,mag=Math.hypot(dx,dy);if(mag>1){dx/=mag;dy/=mag;}this.move(dx*4,dy*4);
+      const dx=clamp(Number.isFinite(input.x)?input.x:0,-1,1),dy=clamp(Number.isFinite(input.y)?input.y:0,-1,1);
+      this.move(dx*PLAYER_STEP_X,dy*PLAYER_STEP_Y);
+      p.bank+=clamp(8+dx*8-p.bank,-1,1);p.thrust+=clamp(-dy-p.thrust,-.25,.25);
       p.fire=Math.max(0,p.fire-dt);if(input.fire&&p.fire<=1e-9){this.firePlayer();p.fire=p.defaultWeapon?4*STEP:p.weapon===2?.075:.15;}
       p.missileTimer=Math.max(0,p.missileTimer-dt);if(input.fire&&p.missileTimer<=0&&(p.missiles>0||p.homing>0)){const home=p.homing>0;p[home?'homing':'missiles']--;this.addBullet(p.x,p.y-12,0,-330,true,280,3,{homing:home,missile:true});p.missileTimer=.4;}
       if(!this.bossSpawned)this.scroll+=dt*TICK;
@@ -137,7 +150,7 @@
       for(const b of this.bullets){
         if(b.homing){const targets=this.enemies.filter(e=>!e.dead&&!e.scenery&&e.y>0&&e.y<H);let target=null,dist=Infinity;for(const e of targets){const n=Math.hypot(e.x-b.x,e.y-b.y);if(n<dist){dist=n;target=e;}}if(target){const a=Math.atan2(target.y-b.y,target.x-b.x),s=Math.hypot(b.vx,b.vy);b.vx+=(Math.cos(a)*s-b.vx)*Math.min(1,dt*6);b.vy+=(Math.sin(a)*s-b.vy)*Math.min(1,dt*6);}}
         b.px=b.x;b.py=b.y;b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;
-        if(b.friendly){for(const e of this.enemies){if(e.dead||e.scenery)continue;if(intersects(b.px,b.py,b.x,b.y,e.x,e.y,e.r+b.r)){e.hp-=b.damage;e.hit=.06;b.dead=true;this.shotsHit++;if(e.hp<=0)this.killEnemy(e);break;}}}
+        if(b.friendly){for(const e of this.enemies){if(e.dead||e.scenery)continue;if(intersects(b.px,b.py,b.x,b.y,e.x,e.y,e.r+b.r)){e.hp-=b.damage;e.hit=.06;b.dead=true;this.shotsHit++;if(e.hp<=0)this.killEnemy(e);else this.events.push({type:'enemy-hit'});break;}}}
         else if(intersects(b.px,b.py,b.x,b.y,p.x,p.y,p.r+b.r)){b.dead=true;this.hitPlayer(b.damage);}
         if(this.phase!=='playing')break;
       }
@@ -148,5 +161,5 @@
       this.pickups=this.pickups.filter(i=>!i.dead&&i.y<H+30);this.particles=this.particles.filter(v=>v.life>0);
     }
   }
-  globalThis.StarfallCore={W,H,TICK,STEP,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects};
+  globalThis.StarfallCore={W,H,TICK,STEP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects};
 })();

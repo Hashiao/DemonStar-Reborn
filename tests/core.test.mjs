@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 await import('../web/js/campaign.js');
 await import('../web/js/original-rules.js');
-const {Game,Gun,STAGES,STEP,TICK,DROPS,DROP_NEXT,intersects}=globalThis.StarfallCore;
+const {Game,Gun,STAGES,STEP,TICK,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,intersects}=globalThis.StarfallCore;
 const campaign=globalThis.DemonStarCampaign;
 
 test('18 original maps retain all 8368 placements and 387 definitions',()=>{
@@ -82,7 +82,34 @@ test('pickup cycles use original first delay and 110-tick subsequent delay',()=>
 test('35 ms simulation is independent of render cadence and caps joystick speed',()=>{
   const simulate=rate=>{const g=new Game(33);g.start();g.recordEvents=[];for(let i=0;i<rate*2;i++)g.update(1/rate,{x:.2,y:-.2,fire:true});return g;};
   const a=simulate(60),b=simulate(120);assert.equal(a.frame,b.frame);assert.equal(a.shotsFired,b.shotsFired);assert.equal(a.scroll,b.scroll);assert.equal(a.player.x,b.player.x);assert.equal(a.player.y,b.player.y);
-  const g=new Game(1);g.start();g.recordEvents=[];const x=g.player.x,y=g.player.y;g.update(STEP,{x:1000,y:-1000});assert.ok(Math.abs(Math.hypot(g.player.x-x,g.player.y-y)-4)<1e-9);
+  const g=new Game(1);g.start();g.recordEvents=[];const x=g.player.x,y=g.player.y;g.update(STEP,{x:1000,y:-1000});assert.ok(Math.abs(g.player.x-x-PLAYER_STEP_X)<1e-9);assert.ok(Math.abs(y-g.player.y-PLAYER_STEP_Y)<1e-9);
   assert.equal(g.scroll,1);assert.equal(g.frame,1);
   const e={x:100,y:0,speed:3,def:{mode:0}};g.moveEnemy(e,STEP);assert.equal(e.y,3);
+});
+
+test('opening square supply ships drop weapons even with map drop -1',()=>{
+  const g=new Game(5);g.start(1,1);const records=g.recordEvents.filter(r=>campaign.definitions[campaign.byId[r[2]]].sprite==='S_ENEMY14').slice(0,2);
+  assert.equal(records.length,2);for(const r of records){assert.equal(r[5],-1);g.spawnRecord(r);const e=g.enemies.at(-1);e.y=100;g.killEnemy(e);g.killEnemy(e);}
+  assert.deepEqual(g.pickups.map(p=>p.id),[2,3]);assert.equal(g.kills,2);
+});
+
+test('automatic supply drops honor difficulty, low energy and campaign sequence',()=>{
+  const g=new Game(5);g.start(1,1);g.player.bombInventory=[];g.player.energy=3;g.automaticDrops({x:100,y:100});
+  assert.deepEqual(g.pickups.map(p=>p.id),[5,1,2]);g.player.energy=9;g.automaticDrops({x:120,y:100});assert.deepEqual(g.pickups.slice(3).map(p=>p.id),[6,11,3]);
+  g.player.energy=16;g.player.bombInventory=[0,0,0];g.pickups=[];g.automaticDrops({x:100,y:100});g.automaticDrops({x:100,y:100});assert.deepEqual(g.pickups.map(p=>p.id),[4,2]);
+});
+
+test('nonfatal enemy hit emits impact audio separately from player damage and death',()=>{
+  const g=new Game(9);g.start();g.recordEvents=[];g.player.invincible=100;g.drainEvents();
+  g.spawnRecord(g.stage.map.events.find(r=>campaign.definitions[campaign.byId[r[2]]].sprite==='S_ENEMY14'));
+  const e=g.enemies[0];e.x=200;e.y=200;e.pathFinished=true;e.speed=0;
+  g.addBullet(200,210,0,-400,true,1);g.update(STEP);let events=g.drainEvents();assert.ok(events.some(e=>e.type==='enemy-hit'));assert.ok(!events.some(e=>e.type==='hit'||e.type==='explosion'));
+  g.addBullet(200,210,0,-400,true,5000);g.update(STEP);events=g.drainEvents();assert.equal(events.filter(e=>e.type==='explosion').length,1);
+});
+
+test('bank and thrust follow input and settle, preserving original 17-pose range',()=>{
+  const g=new Game(1);g.start();g.recordEvents=[];for(let i=0;i<8;i++)g.update(STEP,{x:-1,y:-1});assert.equal(g.player.bank,0);assert.equal(g.player.thrust,1);
+  for(let i=0;i<16;i++)g.update(STEP,{x:1,y:1});assert.equal(g.player.bank,16);assert.equal(g.player.thrust,-1);
+  for(let i=0;i<8;i++)g.update(STEP);assert.equal(g.player.bank,8);assert.equal(g.player.thrust,0);
+  assert.ok(PLAYER_STEP_X>4&&PLAYER_STEP_Y>4);assert.equal((400-32)/PLAYER_STEP_X,72);
 });

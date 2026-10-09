@@ -8,4 +8,4 @@
 - Android Gradle Plugin and Android platform SDK are third-party build/runtime components with their respective licenses; they are not redistributed here.
 - esbuild is MIT licensed: https://github.com/evanw/esbuild/blob/main/LICENSE.md
 - Apple UIKit/WebKit are platform frameworks, not redistributed as source.
-- No original music or sound effects are included. `web/js/audio.js` synthesizes the sounds used by this implementation.
+- No original music or recorded PCM is included. M2.1 effects are reconstructed from coarse local reference band-energy summaries using new random excitation; the radio line is newly generated with an installed offline Windows voice and signal processing. `web/js/audio.js` plays this bank and synthesizes optional music. Audio assets and underlying sound designs are outside the MIT code grant; this project does not grant third-party rights. See `docs/AUDIO_MOTION.md` for precise provenance and limitations.
