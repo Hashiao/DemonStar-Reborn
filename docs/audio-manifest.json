@@ -1,0 +1,724 @@
+{
+  "provenance": "User supplied J:\\DemonStar\\audio and explicitly authorized these MP3s for game sound effects on 2026-10-09. License evidence is the user statement; no independent license verification is claimed.",
+  "decoder": "Existing local Chrome Web Audio, 11025 Hz mono signed 16-bit PCM; no synthesis, TTS, normalization or filtering; supplied MP3 copies remain byte-identical.",
+  "mappingSha256": "117be2a65295fe02d9aef19c900841d4bdfe66330a0f2f32b211b9e292f72302",
+  "bindings": {
+    "proton": "W_PSHOT1",
+    "ion": "W_PSHOT2",
+    "plasma": "W_PSHOT3",
+    "hit": "W_HITSHIP",
+    "explosion": "W_EXPLOSION1",
+    "heavyExplosion": "W_EXPLOSION2",
+    "groundExplosion": "W_GRDEXP1",
+    "bomb": "W_SHOT2",
+    "scatterBomb": "W_MEGABOMB",
+    "megaBomb": "W_LASER2",
+    "pickup": "W_GETSHOT",
+    "menu": "W_MENUCLICK",
+    "nova": "W_SHOTEXP",
+    "missionStart": "W_RADIO12",
+    "bossWarning": "W_RADIO11",
+    "fullPowerA": "W_RADIO10",
+    "fullPowerB": "W_RADIO9",
+    "crystal": "W_GETCRYSTAL",
+    "energy": "W_GETENERGY",
+    "medal": "W_GETMEDAL",
+    "shield": "W_GETSHIELD",
+    "shieldLost": "W_LOSESHIELD"
+  },
+  "inventory": [
+    {
+      "resource": "W_BOSS",
+      "filename": "首领音效一.mp3",
+      "expectedSeconds": 1.306,
+      "sourceSha256": "e33dd213fb808ba916ecd86416aef518f42ed1ede6dfae23a074c170d89ba8db",
+      "bytes": 12119,
+      "frames": 14402,
+      "rate": 11025,
+      "seconds": 1.3063038548752834,
+      "keys": []
+    },
+    {
+      "resource": "W_BOSS2",
+      "filename": "首领音效二.mp3",
+      "expectedSeconds": 3.342,
+      "sourceSha256": "cea2e9bd720ead03e0f56746a532668c76941f3202cdf4f99ae81ee85383601c",
+      "bytes": 28002,
+      "frames": 36845,
+      "rate": 11025,
+      "seconds": 3.341950113378685,
+      "keys": []
+    },
+    {
+      "resource": "W_BOSS3",
+      "filename": "首领音效三.mp3",
+      "expectedSeconds": 3.402,
+      "sourceSha256": "6ce327683d98101f151f4a79ede5788608966cd9e257b59cb472cff1a1e760d2",
+      "bytes": 28838,
+      "frames": 37510,
+      "rate": 11025,
+      "seconds": 3.402267573696145,
+      "keys": []
+    },
+    {
+      "resource": "W_BOSS4",
+      "filename": "首领音效四.mp3",
+      "expectedSeconds": 1.703,
+      "sourceSha256": "7b76695447cf71612bcec29f5696cb53220bd015d438d2cd766e07f8134a3a73",
+      "bytes": 15045,
+      "frames": 18777,
+      "rate": 11025,
+      "seconds": 1.7031292517006802,
+      "keys": []
+    },
+    {
+      "resource": "W_BOSS5",
+      "filename": "首领音效五.mp3",
+      "expectedSeconds": 3.207,
+      "sourceSha256": "7426f68f1e6434033e17e1fccc609cd102a576085c6f3498c25910509acb54d2",
+      "bytes": 27166,
+      "frames": 35359,
+      "rate": 11025,
+      "seconds": 3.2071655328798188,
+      "keys": []
+    },
+    {
+      "resource": "W_BOSS6",
+      "filename": "首领音效六.mp3",
+      "expectedSeconds": 2.292,
+      "sourceSha256": "6898d850de54c2016b3001d7f746a70ef75fc9b532e7864462d67799a2323270",
+      "bytes": 19643,
+      "frames": 25269,
+      "rate": 11025,
+      "seconds": 2.291972789115646,
+      "keys": []
+    },
+    {
+      "resource": "W_BOSSFALL",
+      "filename": "首领坠落.mp3",
+      "expectedSeconds": 3.126,
+      "sourceSha256": "2e2e9e2dd99869edebb170ff765341a9da0429084f52f0d671565d10ac32057e",
+      "bytes": 26330,
+      "frames": 34464,
+      "rate": 11025,
+      "seconds": 3.125986394557823,
+      "keys": []
+    },
+    {
+      "resource": "W_BOSSGRD",
+      "filename": "首领地面音效.mp3",
+      "expectedSeconds": 2.326,
+      "sourceSha256": "59ce83d6adcc41929cee291ea708997713b7579323503bfba09609bf01006e73",
+      "bytes": 20061,
+      "frames": 25640,
+      "rate": 11025,
+      "seconds": 2.3256235827664398,
+      "keys": []
+    },
+    {
+      "resource": "W_BOSSOPEN",
+      "filename": "首领开启.mp3",
+      "expectedSeconds": 1.559,
+      "sourceSha256": "14a03624fb0896b9f316dc56c7128b650475a2c57c2db98ae003ff24677f7b8b",
+      "bytes": 13791,
+      "frames": 17192,
+      "rate": 11025,
+      "seconds": 1.5593650793650793,
+      "keys": []
+    },
+    {
+      "resource": "W_DEMONSTAR",
+      "filename": "恶魔之星.mp3",
+      "expectedSeconds": 3.012,
+      "sourceSha256": "b23556682c92d73b70efc4cb205710bac5dbc4dcb92de3d56761af15ae3a572e",
+      "bytes": 25494,
+      "frames": 33207,
+      "rate": 11025,
+      "seconds": 3.0119727891156463,
+      "keys": []
+    },
+    {
+      "resource": "W_DOORCLANK",
+      "filename": "舱门撞击.mp3",
+      "expectedSeconds": 4.348,
+      "sourceSha256": "74f6fc3a016e03c3e54555b5c82117d60d6308dad0083304c0ee43f1acde06f4",
+      "bytes": 36361,
+      "frames": 47932,
+      "rate": 11025,
+      "seconds": 4.347573696145124,
+      "keys": []
+    },
+    {
+      "resource": "W_DOORDOWN",
+      "filename": "舱门下降.mp3",
+      "expectedSeconds": 2.339,
+      "sourceSha256": "68b0af41dffecfb309c911eeb8b134dbc77c8c1dd768048af8690609ee540da8",
+      "bytes": 20061,
+      "frames": 25792,
+      "rate": 11025,
+      "seconds": 2.3394104308390022,
+      "keys": []
+    },
+    {
+      "resource": "W_DOORUP",
+      "filename": "舱门升起.mp3",
+      "expectedSeconds": 1.998,
+      "sourceSha256": "8f0b921e7f2ee54a62b97b1e87159c2f7303944e8ea6dde9baf8cfd2c96e0805",
+      "bytes": 17553,
+      "frames": 22026,
+      "rate": 11025,
+      "seconds": 1.9978231292517006,
+      "keys": []
+    },
+    {
+      "resource": "W_EXPLOSION1",
+      "filename": "普通爆炸.mp3",
+      "expectedSeconds": 2.249,
+      "sourceSha256": "5671d8862dc0b1b8938d7c51b2a2918e0d0e5526e83f02f19274f337ffb64281",
+      "bytes": 19643,
+      "frames": 24790,
+      "rate": 11025,
+      "seconds": 2.2485260770975057,
+      "keys": [
+        "explosion"
+      ],
+      "asset": "web/assets/audio/W_EXPLOSION1.mp3",
+      "pcmSha256": "22ed825ebc959902edf503696846b180a61c456a6b9a5eb8aeb71e1ddbb8582f"
+    },
+    {
+      "resource": "W_EXPLOSION2",
+      "filename": "大型爆炸.mp3",
+      "expectedSeconds": 3.922,
+      "sourceSha256": "d34442b547b14469d396c94e6bb3c4796ffee54cb3efb9f80d9c15862b803511",
+      "bytes": 33017,
+      "frames": 43239,
+      "rate": 11025,
+      "seconds": 3.921904761904762,
+      "keys": [
+        "heavyExplosion"
+      ],
+      "asset": "web/assets/audio/W_EXPLOSION2.mp3",
+      "pcmSha256": "effefe132e60b80e8731500d5f200f4d5ad3ee4b4e5f088fce80ae35d0629aec"
+    },
+    {
+      "resource": "W_FADEINC",
+      "filename": "淡入音效.mp3",
+      "expectedSeconds": 2.502,
+      "sourceSha256": "f5f9980dc738bb69582c39c6e266405a76ffe128e7c1cc552670288cb4c6136e",
+      "bytes": 21314,
+      "frames": 27586,
+      "rate": 11025,
+      "seconds": 2.5021315192743763,
+      "keys": []
+    },
+    {
+      "resource": "W_FADEOUTC",
+      "filename": "淡出音效.mp3",
+      "expectedSeconds": 2.146,
+      "sourceSha256": "79aa470065df77e6ee02db80fefd921b91f3fe21c1a71449ced06904f0217a59",
+      "bytes": 18807,
+      "frames": 23665,
+      "rate": 11025,
+      "seconds": 2.1464852607709752,
+      "keys": []
+    },
+    {
+      "resource": "W_GETCRYSTAL",
+      "filename": "拾取水晶.mp3",
+      "expectedSeconds": 0.582,
+      "sourceSha256": "69030dca4d55aa312b8199e5b2e40a405135d5f06eebd69f96bfa26289029ea5",
+      "bytes": 6268,
+      "frames": 6419,
+      "rate": 11025,
+      "seconds": 0.5822222222222222,
+      "keys": [
+        "crystal"
+      ],
+      "asset": "web/assets/audio/W_GETCRYSTAL.mp3",
+      "pcmSha256": "dcfb591459e2bfe51fd776fdedb5e2dea10abb7074fd477b5c0093ecd2ecd439"
+    },
+    {
+      "resource": "W_GETENERGY",
+      "filename": "拾取能量.mp3",
+      "expectedSeconds": 0.5,
+      "sourceSha256": "6eb50b1462058d62a9bf4457174354bcb78aae1f5e471c5dda788e3c8f7d1adf",
+      "bytes": 5432,
+      "frames": 5513,
+      "rate": 11025,
+      "seconds": 0.5000453514739229,
+      "keys": [
+        "energy"
+      ],
+      "asset": "web/assets/audio/W_GETENERGY.mp3",
+      "pcmSha256": "6b7abb1820f1edd01bf3a867ba28fbdfa253597a949c1490e53b1c353941f357"
+    },
+    {
+      "resource": "W_GETMEDAL",
+      "filename": "拾取勋章.mp3",
+      "expectedSeconds": 0.65,
+      "sourceSha256": "04a3402ccea8f718b2455a5758328d4fc94611356d1c6b6f522dc2d69365be67",
+      "bytes": 6686,
+      "frames": 7167,
+      "rate": 11025,
+      "seconds": 0.6500680272108843,
+      "keys": [
+        "medal"
+      ],
+      "asset": "web/assets/audio/W_GETMEDAL.mp3",
+      "pcmSha256": "eec57868421f1c710b88c1aae5a4d07b17fb92f167a99141dd9b0ea428d5d970"
+    },
+    {
+      "resource": "W_GETSHIELD",
+      "filename": "拾取护盾.mp3",
+      "expectedSeconds": 0.902,
+      "sourceSha256": "1b153ab1c02a965f09f6ef8a7e4cd974e870bbaf307fe97cf8eeafa323332323",
+      "bytes": 8776,
+      "frames": 9943,
+      "rate": 11025,
+      "seconds": 0.901859410430839,
+      "keys": [
+        "shield"
+      ],
+      "asset": "web/assets/audio/W_GETSHIELD.mp3",
+      "pcmSha256": "5dd451b9c2aba593198acaf1fffda59a10677cb9299958502249a441528ba5d9"
+    },
+    {
+      "resource": "W_GETSHOT",
+      "filename": "拾取火力补给.mp3",
+      "expectedSeconds": 0.17,
+      "sourceSha256": "22d90280eb18123f2598a0ec4ca7b8b62ae91d07f299e9959897a1ec38051f19",
+      "bytes": 2924,
+      "frames": 1876,
+      "rate": 11025,
+      "seconds": 0.17015873015873015,
+      "keys": [
+        "pickup"
+      ],
+      "asset": "web/assets/audio/W_GETSHOT.mp3",
+      "pcmSha256": "1212460b3b3145159685764fd0be61c84f2935c97e7adb977dff04a3a9cf9294"
+    },
+    {
+      "resource": "W_GLOOP",
+      "filename": "循环音效一.mp3",
+      "expectedSeconds": 2.794,
+      "sourceSha256": "5cddc10118f8527ff89fe972a6c0501889cf943b02faa07c637381a0c46811e4",
+      "bytes": 23822,
+      "frames": 30803,
+      "rate": 11025,
+      "seconds": 2.793922902494331,
+      "keys": []
+    },
+    {
+      "resource": "W_GRDEXP1",
+      "filename": "地面爆炸.mp3",
+      "expectedSeconds": 2.235,
+      "sourceSha256": "e6c864d70725ddf0deff4144aad6bf01c78494de4bfd62dcd9c430ed6b6ecd68",
+      "bytes": 19225,
+      "frames": 24645,
+      "rate": 11025,
+      "seconds": 2.235374149659864,
+      "keys": [
+        "groundExplosion"
+      ],
+      "asset": "web/assets/audio/W_GRDEXP1.mp3",
+      "pcmSha256": "9f34df75649edbb74ef849749f6157255b5df5ce99a5863bee406268f584a004"
+    },
+    {
+      "resource": "W_HITSHIP",
+      "filename": "战机中弹.mp3",
+      "expectedSeconds": 1.094,
+      "sourceSha256": "0eb862751a1395224d09cdf579747dab406bc5c7db0a3fc53835fd90d36a1b20",
+      "bytes": 10030,
+      "frames": 12065,
+      "rate": 11025,
+      "seconds": 1.0943310657596372,
+      "keys": [
+        "hit"
+      ],
+      "asset": "web/assets/audio/W_HITSHIP.mp3",
+      "pcmSha256": "530bac6cf042df6dba7c51c141ff3ee93d447a8be64e9867d15c9a5cd57904c5"
+    },
+    {
+      "resource": "W_ILOOP",
+      "filename": "循环音效二.mp3",
+      "expectedSeconds": 8.699,
+      "sourceSha256": "505b0f6e027e045dfa99285993ec066035093d6c3e9d7f27986aaa7161d50189",
+      "bytes": 71052,
+      "frames": 95906,
+      "rate": 11025,
+      "seconds": 8.698956916099773,
+      "keys": []
+    },
+    {
+      "resource": "W_LASER",
+      "filename": "激光一.mp3",
+      "expectedSeconds": 0.602,
+      "sourceSha256": "367386934ae0b16addd2df7fa5c68d03973e927617f33acd5ce8be67b83f8d9c",
+      "bytes": 6268,
+      "frames": 6635,
+      "rate": 11025,
+      "seconds": 0.6018140589569161,
+      "keys": []
+    },
+    {
+      "resource": "W_LASER2",
+      "filename": "激光二.mp3",
+      "expectedSeconds": 0.352,
+      "sourceSha256": "08725f41b5b5e0ffb086e913d1f6fc1de3975e1a46299f8325759350d505aa60",
+      "bytes": 4178,
+      "frames": 3884,
+      "rate": 11025,
+      "seconds": 0.35229024943310655,
+      "keys": [
+        "megaBomb"
+      ],
+      "asset": "web/assets/audio/W_LASER2.mp3",
+      "pcmSha256": "a6f600f8941f36640d4c480d8043fcb2436b60fbe345ad0c6a5708109d5e6cc4"
+    },
+    {
+      "resource": "W_LOSESHIELD",
+      "filename": "护盾消失.mp3",
+      "expectedSeconds": 0.902,
+      "sourceSha256": "4cea55959a38fa6cbb96e1bd4c55745403f9eeb108a47f5582a2c9cb6d6aec3c",
+      "bytes": 8776,
+      "frames": 9942,
+      "rate": 11025,
+      "seconds": 0.9017687074829932,
+      "keys": [
+        "shieldLost"
+      ],
+      "asset": "web/assets/audio/W_LOSESHIELD.mp3",
+      "pcmSha256": "62caaad0aed5ac0c364fb55c5e80d4fc3f8e2e54aff9a0ca9cd6a91ffe911d3d"
+    },
+    {
+      "resource": "W_MEGABOMB",
+      "filename": "超级炸弹.mp3",
+      "expectedSeconds": 1.091,
+      "sourceSha256": "6add4a6e0ea2f766b87577e0e8f8a7521cea8443ac3dd73a526c85b3f03c02cf",
+      "bytes": 10030,
+      "frames": 12032,
+      "rate": 11025,
+      "seconds": 1.0913378684807256,
+      "keys": [
+        "scatterBomb"
+      ],
+      "asset": "web/assets/audio/W_MEGABOMB.mp3",
+      "pcmSha256": "248143c27a89a42c6a12357df05dc01d18280e250a0d16cfc46ceaddfd313f80"
+    },
+    {
+      "resource": "W_MENUCLICK",
+      "filename": "菜单点击.mp3",
+      "expectedSeconds": 0.455,
+      "sourceSha256": "5838d542a80d977a2828792c97a9e6d03bf643271dc858a17ee0e96b01b1a187",
+      "bytes": 5014,
+      "frames": 5021,
+      "rate": 11025,
+      "seconds": 0.4554195011337869,
+      "keys": [
+        "menu"
+      ],
+      "asset": "web/assets/audio/W_MENUCLICK.mp3",
+      "pcmSha256": "c3081f406b59fda42d50afd1fd95ed02041595e7676fdf6c2c62c4852ff2b9f3"
+    },
+    {
+      "resource": "W_MISSLE",
+      "filename": "导弹.mp3",
+      "expectedSeconds": 1.108,
+      "sourceSha256": "70a59eab060d6cf1ad08d5431922bdc119e69704b9ec83a277776dd87e5f5279",
+      "bytes": 10448,
+      "frames": 12217,
+      "rate": 11025,
+      "seconds": 1.1081179138321995,
+      "keys": []
+    },
+    {
+      "resource": "W_NEWSHIP",
+      "filename": "新增战机.mp3",
+      "expectedSeconds": 1.675,
+      "sourceSha256": "ae7120ec9d08d4f4d3e7419f3e4b24118af6f3b40591aaf2f9f81f3b87c9297b",
+      "bytes": 15045,
+      "frames": 18468,
+      "rate": 11025,
+      "seconds": 1.6751020408163266,
+      "keys": []
+    },
+    {
+      "resource": "W_PLAYERLNCH",
+      "filename": "玩家战机出击.mp3",
+      "expectedSeconds": 3.239,
+      "sourceSha256": "6458b0fd7415ceab6d309d152d2cd0af7370a4849707af595eb00df6cc72f605",
+      "bytes": 27166,
+      "frames": 35712,
+      "rate": 11025,
+      "seconds": 3.239183673469388,
+      "keys": []
+    },
+    {
+      "resource": "W_PSHOT1",
+      "filename": "玩家射击一.mp3",
+      "expectedSeconds": 0.262,
+      "sourceSha256": "d30c85a7dfe9b4717ec8b27b052532f4c8d4d61fccc3564a4dbba1464dad33b7",
+      "bytes": 3760,
+      "frames": 2885,
+      "rate": 11025,
+      "seconds": 0.2616780045351474,
+      "keys": [
+        "proton"
+      ],
+      "asset": "web/assets/audio/W_PSHOT1.mp3",
+      "pcmSha256": "f997529569430867c9ae99fa3be4d0106233cd86d144e4ff1ce1679620ea433b"
+    },
+    {
+      "resource": "W_PSHOT2",
+      "filename": "玩家射击二.mp3",
+      "expectedSeconds": 0.233,
+      "sourceSha256": "34ed171c6f67e9bfe7e586ac5a48d17f5e6817da78545bd2dcea3b4aa47fb3f8",
+      "bytes": 3342,
+      "frames": 2568,
+      "rate": 11025,
+      "seconds": 0.2329251700680272,
+      "keys": [
+        "ion"
+      ],
+      "asset": "web/assets/audio/W_PSHOT2.mp3",
+      "pcmSha256": "0a3491960583b004d97ddb4431c4023176258fefc77e0acf244add63bede88a8"
+    },
+    {
+      "resource": "W_PSHOT3",
+      "filename": "玩家射击三.mp3",
+      "expectedSeconds": 0.233,
+      "sourceSha256": "47e4e3e71965a071d69dddac1097099516ccfcfdf5661dc8d19b965bee5bd75c",
+      "bytes": 3342,
+      "frames": 2568,
+      "rate": 11025,
+      "seconds": 0.2329251700680272,
+      "keys": [
+        "plasma"
+      ],
+      "asset": "web/assets/audio/W_PSHOT3.mp3",
+      "pcmSha256": "800d73801368db2501fed2d1b47e46fd5b85612d50868203019d36d3df795a98"
+    },
+    {
+      "resource": "W_PULSAR",
+      "filename": "脉冲炮一.mp3",
+      "expectedSeconds": 0.531,
+      "sourceSha256": "726eee94ec1f326da04d1ae92aade6777af4cd58687028783601c31dd4ea2810",
+      "bytes": 5850,
+      "frames": 5856,
+      "rate": 11025,
+      "seconds": 0.531156462585034,
+      "keys": []
+    },
+    {
+      "resource": "W_PULSAR2",
+      "filename": "脉冲炮二.mp3",
+      "expectedSeconds": 0.613,
+      "sourceSha256": "0ef7309ddb9786ff757963e53e3d10ee3b4dd30253fc4cc0aef254501b409284",
+      "bytes": 6268,
+      "frames": 6763,
+      "rate": 11025,
+      "seconds": 0.6134240362811791,
+      "keys": []
+    },
+    {
+      "resource": "W_RADIO1",
+      "filename": "无线电一.mp3",
+      "expectedSeconds": 2.371,
+      "sourceSha256": "2537a764356816aad5f76247e0b60e4fc374674726e3d0b7595313bb82344c21",
+      "bytes": 20479,
+      "frames": 26141,
+      "rate": 11025,
+      "seconds": 2.371065759637188,
+      "keys": []
+    },
+    {
+      "resource": "W_RADIO10",
+      "filename": "无线电十.mp3",
+      "expectedSeconds": 1.728,
+      "sourceSha256": "86a3935a70fa28c48bfbd0b00788838a2b277346dee65b9f3f5dab57d8c06c2d",
+      "bytes": 15463,
+      "frames": 19055,
+      "rate": 11025,
+      "seconds": 1.728344671201814,
+      "keys": [
+        "fullPowerA"
+      ],
+      "asset": "web/assets/audio/W_RADIO10.mp3",
+      "pcmSha256": "ed3ad9c7819595f184d8a1871a001f91f5fd8a2a94ad5eb734098944035dd3ed"
+    },
+    {
+      "resource": "W_RADIO11",
+      "filename": "无线电十一.mp3",
+      "expectedSeconds": 2.34,
+      "sourceSha256": "840e9f284e475562fe6f41dff56e24ce4b580cf5ea0ea84fbd58af53b439a180",
+      "bytes": 20061,
+      "frames": 25794,
+      "rate": 11025,
+      "seconds": 2.339591836734694,
+      "keys": [
+        "bossWarning"
+      ],
+      "asset": "web/assets/audio/W_RADIO11.mp3",
+      "pcmSha256": "951d465b78bebff997964ce8de289366a71cee46fdac432d30c637503cf97add"
+    },
+    {
+      "resource": "W_RADIO12",
+      "filename": "无线电十二.mp3",
+      "expectedSeconds": 1.15,
+      "sourceSha256": "ea015299b75e5b9132c833721cc03cf86dfe986241bbe86338fcc1898f713fbb",
+      "bytes": 10866,
+      "frames": 12680,
+      "rate": 11025,
+      "seconds": 1.1501133786848072,
+      "keys": [
+        "missionStart"
+      ],
+      "asset": "web/assets/audio/W_RADIO12.mp3",
+      "pcmSha256": "6ab05fa6046bc93303363389d20c8daad60e6a6ddf3c68fb0927331ba931b417"
+    },
+    {
+      "resource": "W_RADIO2",
+      "filename": "无线电二.mp3",
+      "expectedSeconds": 2.813,
+      "sourceSha256": "f845a7a75cd2027feee885a28f7e6d75b8ac077e903173e6b24a4a6beebf7c34",
+      "bytes": 23822,
+      "frames": 31015,
+      "rate": 11025,
+      "seconds": 2.8131519274376418,
+      "keys": []
+    },
+    {
+      "resource": "W_RADIO3",
+      "filename": "无线电三.mp3",
+      "expectedSeconds": 3.342,
+      "sourceSha256": "016d6f1353388bde7e2a51a9ca2f9f450bf0a17f800044446617103bcd7c7012",
+      "bytes": 28002,
+      "frames": 36842,
+      "rate": 11025,
+      "seconds": 3.3416780045351473,
+      "keys": []
+    },
+    {
+      "resource": "W_RADIO4",
+      "filename": "无线电四.mp3",
+      "expectedSeconds": 2.224,
+      "sourceSha256": "bfc5e5a4ec9ef3da90f3468b5ec06c6c77ecca9a20e7ecdaae8513e8c2e80d33",
+      "bytes": 19225,
+      "frames": 24525,
+      "rate": 11025,
+      "seconds": 2.2244897959183674,
+      "keys": []
+    },
+    {
+      "resource": "W_RADIO5",
+      "filename": "无线电五.mp3",
+      "expectedSeconds": 1.952,
+      "sourceSha256": "6d4ffee15721b51ef83f6beb5457ee2176a0dce5485c3bd9575470685820748b",
+      "bytes": 17135,
+      "frames": 21522,
+      "rate": 11025,
+      "seconds": 1.952108843537415,
+      "keys": []
+    },
+    {
+      "resource": "W_RADIO6",
+      "filename": "无线电六.mp3",
+      "expectedSeconds": 1.313,
+      "sourceSha256": "bc9d55fd51dd8eb2c8155e093df4d9675248827d3d11a1cc3b0d7218cafe767a",
+      "bytes": 12119,
+      "frames": 14479,
+      "rate": 11025,
+      "seconds": 1.3132879818594105,
+      "keys": []
+    },
+    {
+      "resource": "W_RADIO7",
+      "filename": "无线电七.mp3",
+      "expectedSeconds": 0.819,
+      "sourceSha256": "6672c50688a43b1de3e36c4b9fdf2fffe77b0cc7eb08b9792d7cfa1fa1ed0938",
+      "bytes": 7940,
+      "frames": 9030,
+      "rate": 11025,
+      "seconds": 0.819047619047619,
+      "keys": []
+    },
+    {
+      "resource": "W_RADIO8",
+      "filename": "无线电八.mp3",
+      "expectedSeconds": 0.745,
+      "sourceSha256": "0d267fc39cf1b1ab8e02c058a925a4eae3a822cdbb6388321c061e2ba141fbbc",
+      "bytes": 7522,
+      "frames": 8211,
+      "rate": 11025,
+      "seconds": 0.7447619047619047,
+      "keys": []
+    },
+    {
+      "resource": "W_RADIO9",
+      "filename": "无线电九.mp3",
+      "expectedSeconds": 1.395,
+      "sourceSha256": "fe31870c25985a33b8920a24f9bce11757f97a89fc9cc7909c2ae81ec5092993",
+      "bytes": 12537,
+      "frames": 15380,
+      "rate": 11025,
+      "seconds": 1.3950113378684807,
+      "keys": [
+        "fullPowerB"
+      ],
+      "asset": "web/assets/audio/W_RADIO9.mp3",
+      "pcmSha256": "7db812015f2b51b27f9a57dfdc71b49ca364bdc7eebc6769069ba027d7137ae7"
+    },
+    {
+      "resource": "W_SECRET1",
+      "filename": "隐藏音效.mp3",
+      "expectedSeconds": 5.919,
+      "sourceSha256": "f9c34096f5dc3df474e5b730bd80342aef0f6b609260cc75cfd5241c5828bfa1",
+      "bytes": 48900,
+      "frames": 65262,
+      "rate": 11025,
+      "seconds": 5.919455782312925,
+      "keys": []
+    },
+    {
+      "resource": "W_SHOT1",
+      "filename": "射击一.mp3",
+      "expectedSeconds": 1.207,
+      "sourceSha256": "7d66dad0534e421502c5a5e147343df32e1a45fcc2b60bb27a1651114e74ac2e",
+      "bytes": 11283,
+      "frames": 13309,
+      "rate": 11025,
+      "seconds": 1.2071655328798185,
+      "keys": []
+    },
+    {
+      "resource": "W_SHOT2",
+      "filename": "射击二.mp3",
+      "expectedSeconds": 0.681,
+      "sourceSha256": "d8eea33de4a18cb3574fff39ca0efcbffaff8112956f6ffda943d8d540aa26b9",
+      "bytes": 7104,
+      "frames": 7510,
+      "rate": 11025,
+      "seconds": 0.6811791383219955,
+      "keys": [
+        "bomb"
+      ],
+      "asset": "web/assets/audio/W_SHOT2.mp3",
+      "pcmSha256": "f70ea4cfefcc05d211a85719dd26536bb679b1f750da71c0397359cc0b97f9e4"
+    },
+    {
+      "resource": "W_SHOTEXP",
+      "filename": "弹丸爆炸.mp3",
+      "expectedSeconds": 1.875,
+      "sourceSha256": "b72e0c4d57ad9e364f87012a068adb148fb53dfc53505c11cbb61ae04e17e29f",
+      "bytes": 16299,
+      "frames": 20670,
+      "rate": 11025,
+      "seconds": 1.874829931972789,
+      "keys": [
+        "nova"
+      ],
+      "asset": "web/assets/audio/W_SHOTEXP.mp3",
+      "pcmSha256": "2042b248dd6dbe0976e54ab8b9bf182a19ac2c65e34f2512392038d83484230b"
+    }
+  ]
+}

@@ -141,7 +141,7 @@
       if(this.player.energy<12)this.spawnPickup(this.player.energy<4?1:11,e.x,e.y);
       this.spawnPickup(weapon,e.x,e.y);
     }
-    killEnemy(e){if(e.dead||e.scenery)return;e.dead=true;this.kills++;this.score+=e.def.score;this.explode(e.x,e.y);this.events.push({type:'explosion',heavy:!!e.boss});this.spawnPickup(e.record[5],e.x,e.y);if(e.def.flags&0x200)this.automaticDrops(e);if(e.boss)this.defeatBoss();}
+    killEnemy(e){if(e.dead||e.scenery)return;e.dead=true;this.kills++;this.score+=e.def.score;this.explode(e.x,e.y);this.events.push({type:'explosion',heavy:!!e.boss,ground:!!(e.def.flags&0x40)});this.spawnPickup(e.record[5],e.x,e.y);if(e.def.flags&0x200)this.automaticDrops(e);if(e.boss)this.defeatBoss();}
     collect(item){
       const p=this.player,t=item.type;
       if(['weapon','ion','plasma','magnetic'].includes(t))this.upgradeWeapon(['weapon','ion','plasma','magnetic'].indexOf(t));
@@ -182,7 +182,9 @@
       this.previousScroll=this.scroll;
       for(const obj of [this.player,...this.enemies,...this.pickups]){obj.px=obj.x;obj.py=obj.y;}
       const p=this.player;this.flash=Math.max(0,this.flash-dt);this.bombRing=Math.max(0,this.bombRing-dt);this.shake=Math.max(0,this.shake-dt*25);
+      const hadShield=p.shield>0;
       for(const k of ['invincible','shield','mega','respawn','bombCooldown'])p[k]=Math.max(0,p[k]-dt);
+      if(hadShield&&p.shield===0)this.events.push({type:'shield-lost'});
       const dx=clamp(Number.isFinite(input.x)?input.x:0,-1,1),dy=clamp(Number.isFinite(input.y)?input.y:0,-1,1);
       if(p.respawn<=0)this.move(dx*PLAYER_STEP_X,dy*PLAYER_STEP_Y);
       p.bank+=clamp(8+dx*8-p.bank,-1,1);p.thrust+=clamp(-dy-p.thrust,-.25,.25);

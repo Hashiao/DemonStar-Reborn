@@ -1,6 +1,6 @@
 # M2.1 原版补给、飞行与声音核对
 
-适用于本地 DemonStar 4.04，程序哈希与地址基准沿用 `ORIGINAL_COMBAT_RESEARCH.md`。这里只把已查明的事实列为原版行为；移动端调校和重新录制均另行说明。
+适用于本地 DemonStar 4.04，程序哈希与地址基准沿用 `ORIGINAL_COMBAT_RESEARCH.md`。这里只把已查明的事实列为原版行为；移动端调校和音源来源均另行说明。
 
 ## 方形敌机的掉落
 
@@ -18,33 +18,43 @@ M2.1 将主机满杆移动按可移动视口跨度折算：水平每步 `4×368/
 
 原版 `PLAYER1A` 至 `PLAYER1Q` 为 17 张左右侧身图，中性帧为 I；喷焰 `PLCHFLMA`～`PLCHFLMF` 使用黄白核心、橙色边缘。新素材 `web/assets/player-motion-hd.png` 由内置 imagegen 参考本地原图生成，5×4 图集的前 17 格为姿态，后三格为怠速、前进、减速尾焰。左右转向逐步侧身，松手回正；前后移动改变喷焰长度、形态和闪烁。具体提示词见 `ART_MOTION.md`。
 
-## 声音资源与事件
+## 用户提供的授权 MP3
 
-| 场景 | 原作绑定 | 本次处理 |
+用户于 2026-10-09 明确提供 `J:\DemonStar\audio`，并要求使用其中的授权 MP3 作为游戏音效。按这次明确授权，当前版本已替换此前的包络重合成音效和离线 TTS，直接播放这些录音。授权来源记录为用户声明，没有声称独立核验其授权合同；音频不属于项目 MIT 代码许可的授权范围。
+
+目录包含 55 个 MP3 及资源名对照表。全部在本地用现有 Chrome 的 Web Audio 解码，均为 11025 Hz 单声道，时长与对照表相符。当前接入 22 个用途已核实的片段。其余 33 个只记录在清单中，待对应 Boss 行为、门动作等实现并核实后接入，避免按中文文件名猜触发事件。
+
+| 场景 | 提供音频对应的原作资源 | 依据 / 当前接法 |
 |---|---|---|
-| 默认机炮 | W_PSHOT1，约 0.262 秒；初始化 `0x42c802`，经复制句柄绑定 `0x5c9958` | 新频段噪声重合成，替换旧版固定振荡器 |
-| 子弹命中敌机 | W_HITSHIP，约 1.094 秒；`0x4115da` | 修复缺失的 `enemy-hit` 事件，独立于主机受伤 |
-| 普通敌机爆炸 | W_EXPLOSION1，约 2.249 秒；`0x41124f` | 按瞬态及衰减包络重新合成 |
-| 大型爆炸 | W_EXPLOSION2，约 3.922 秒 | 单独音源，避免所有爆炸共用一种声响 |
-| 开场无线电 | W_RADIO12，约 1.150 秒；`0x42ce35` 绑定 `0x5c98ec`，`0x425766` 起播放 | 新录制 “Mission start”，约 1.158 秒，窄频滤波、非线性压缩、颤动及首尾电流声 |
+| 默认 / 质子、离子、等离子开火 | W_PSHOT1 / 2 / 3 | 原始播放句柄；磁力通用开火沿用 W_PSHOT1 |
+| 敌机命中 / 主机受伤 | W_HITSHIP | `0x4115da` / `0x42658a`；独立命中事件 |
+| 普通 / 大型爆炸 | W_EXPLOSION1 / 2 | `0x41124f` / `0x4111e2` |
+| 地面爆炸 | W_GRDEXP1 | `0x411228` 的对象标志 0x40 分支；其他特殊状态分支仍待还原 |
+| 普通 / 散射炸弹 | W_SHOT2 / W_MEGABOMB | 原始弹型 13 / 14 的构造分支；修正此前统一用 MEGABOMB |
+| 超级脉冲 | W_LASER2 | `0x42790f`；当前超级武器时序仍简化，不能宣称逐帧一致 |
+| 满级清屏弹 | W_SHOTEXP | `0x42a0a0` 等清屏弹构造分支 |
+| 普通装备 / 水晶 / 能量 / 勋章 / 护盾 | W_GETSHOT / GETCRYSTAL / GETENERGY / GETMEDAL / GETSHIELD | 使用不同拾取音源 |
+| 护盾结束 / 菜单 | W_LOSESHIELD / W_MENUCLICK | 护盾计时结束 / 菜单点击 |
+| 开场无线电 | W_RADIO12（无线电十二.mp3） | `0x425766`，约 1.150 秒，直接使用提供录音 |
+| Boss 警报 | W_RADIO11 | `0x41009b` |
+| 满火力 S 播报 | W_RADIO10 / W_RADIO9 | 按原始交替选择播放 |
 
-原作 WAV 都是本地参考，没有作为原始录音、原始 PCM 或原始相位上传。`tools/synthesize-audio.py` 只取 24 个粗频段、20 ms 节点的能量包络，以独立随机噪声重新激励并量化；没有复制波形。新声音保存在 `web/assets/audio/`，同时编码为 `web/js/soundbank.js`，保证离线 WebView 不依赖 fetch、网络、系统在线语音或音频编解码加载时序。
+`docs/audio-manifest.json` 保存所有源文件的名字、资源对应、SHA-256、时长和采样数，以及已接入片段的 PCM 哈希。`web/assets/audio/W_*.mp3` 是逐字节相同的源文件副本，包内仅用 ASCII 名称。根目录 `audio/` 保持本地忽略且不修改。
 
-播报由本机已安装的 Microsoft Zira Desktop 离线合成，再做无线电处理，**不是原作配音演员的录音**。英文短句按用户明确要求保留，界面文字仍为中文。
+`web/js/soundbank.js` 是所选 MP3 解码后的单声道 16 位 PCM。未重新合成、换配音、归一化或额外滤波。游戏使用该离线 PCM 避免 WebView 首次加载时的异步解码竞态；运行时仅做音量、混音压缩和无线电期间的音效压低。英文短句保留，界面仍为中文。
 
-语音会等待 AudioContext 成功解锁，只播一次；暂停会冻结音频，重开/返回菜单会取消旧播报；语音期间新触发音效适当压低，并使用总线压缩限制叠加峰值。
+开场播报等待 AudioContext 解锁且只播一次；暂停冻结音频，重开/返回菜单停止旧播报。无线电不受普通音效并发上限阻挡。
 
-### 重建
+### 重新导入
 
-普通构建直接使用仓库中的重制音源，不需要语音组件。需要重新制作音源时，在有相应离线声音的 Windows 上运行：
+普通构建直接使用仓库中的音源和声音库，无需解码工具。维护者重新导入时，使用已安装的 Playwright 和 Chrome：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File tools/create-radio-voice.ps1
-python tools/synthesize-audio.py "Deamon Star" --voice .local/mission-start-voice.wav
+# PLAYWRIGHT_PATH 可指向现成的 Playwright 包；不安装浏览器或 SDK。
+node tools/import-authorized-audio.mjs "J:\DemonStar\audio"
+node tools/sync.mjs
 ```
-
-Python 使用已有 numpy/scipy；不下载 SDK、AVD 或语音模型。
 
 ### 验证边界
 
-已验证资源绑定、事件触发、采样率、时长、能量包络、有限样本值、首次音效和延迟解锁，以及浏览器真实 AudioContext 播放调度。原版录音读入会话被自动审批拒绝，因此没有完成会话内 A/B 听感比对；不能宣称原音色或配音完全一致。仍需结合用户实听继续校准。
+已检查 55 个 MP3 完整本地解码、时长、22 个资源绑定、源文件/PCM 哈希、首次开火、延迟解锁、播报取消及浏览器真实 AudioContext 调度。当前音源为用户提供录音；原版程序运行时的混音、声像、重叠策略尚未逐帧/逐样本比对，也未完成手机扬声器听感验收。
