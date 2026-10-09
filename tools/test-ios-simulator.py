@@ -33,6 +33,7 @@ for family in ('iPhone','iPad'):
     probe=json.loads(result.read_text());assert probe.get('phase')=='playing',probe;assert probe.get('assetsReady'),probe;assert probe.get('score',0)>=0,probe
     assert probe.get('shotsFired',0)>=2 and probe.get('playerX',0)>200,probe
     assert probe.get('bombs')==2 and probe.get('lives')==4 and probe.get('energy')==16,probe
+    assert probe.get('releaseStops'),probe
     run(['xcrun','simctl','io',uid,'screenshot',str(out/(family+'.png'))])
     report['devices'].append({'family':family,'name':device['name'],'runtime':runtime,'wkwebview_probe':probe,'status':'passed'})
     run(['xcrun','simctl','shutdown',uid])
