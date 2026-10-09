@@ -2,7 +2,7 @@ name: iOS build and simulator smoke test
 on:
   push:
     branches: [main]
-    paths: ['web/**', 'ios/**', 'tools/sync.mjs', 'tools/generate-ios-project.py', 'tools/test-ios-simulator.py', 'tests/**', '.github/workflows/ios.yml', 'package.json', 'pnpm-lock.yaml']
+    paths: ['web/**', 'ios/**', 'tools/sync.mjs', 'tools/generate-ios-project.py', 'tools/test-ios-simulator.py', 'tests/*.test.mjs', '.github/workflows/ios.yml', 'package.json', 'pnpm-lock.yaml']
   pull_request:
     paths: ['web/**', 'ios/**', 'tools/**', 'tests/**', '.github/workflows/ios.yml', 'package.json']
   workflow_dispatch:

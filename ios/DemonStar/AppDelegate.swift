@@ -51,7 +51,7 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
         guard ProcessInfo.processInfo.arguments.contains("--smoke-test") else { return }
         webView.evaluateJavaScript("StarfallApp.start(1)", completionHandler: nil)
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-            self?.web.evaluateJavaScript("JSON.stringify({phase:StarfallApp.game.phase,score:StarfallApp.game.score,stage:StarfallApp.game.stage.id,assetsReady:StarfallApp.renderer.ships.complete&&StarfallApp.renderer.ships.naturalWidth>0,viewport:[innerWidth,innerHeight]})") { result, error in
+            self?.web.evaluateJavaScript("(function(){var g=StarfallApp.game,r={phase:g.phase,score:g.score,stage:g.stage.id,elapsed:g.totalTime,bullets:g.bullets.length,assetsReady:StarfallApp.renderer.ships.complete&&StarfallApp.renderer.ships.naturalWidth>0,viewport:[innerWidth,innerHeight],frozenAfterProbe:true};g.pause();return JSON.stringify(r);})()") { result, error in
                 let text = result as? String ?? "{\"error\":\"JavaScript probe failed\"}"
                 if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
                     try? text.write(to: dir.appendingPathComponent("smoke.json"), atomically: true, encoding: .utf8)

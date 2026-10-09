@@ -17,12 +17,16 @@ import java.io.ByteArrayInputStream;
 /** Offline game host. No JavaScript bridge, network permission, accounts or trackers. */
 public final class MainActivity extends Activity {
     private WebView web;
+    private boolean foreground;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         web = new WebView(this);
+        if ((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
         web.setBackgroundColor(0xff08121d);
         WebSettings settings = web.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -58,9 +62,10 @@ public final class MainActivity extends Activity {
     @SuppressLint("GestureBackNavigation")
     @Override public void onBackPressed() { gameBack(); }
     @Override protected void onPause() {
-        if (web != null) { final WebView current = web; current.evaluateJavascript("window.StarfallApp && StarfallApp.background()", result -> { if (web == current) current.onPause(); }); }
+        foreground = false;
+        if (web != null) { final WebView current = web; current.evaluateJavascript("window.StarfallApp && StarfallApp.background()", result -> { if (!foreground && web == current) current.onPause(); }); }
         super.onPause();
     }
-    @Override protected void onResume() { super.onResume(); if (web != null) web.onResume(); }
+    @Override protected void onResume() { super.onResume(); foreground = true; if (web != null) web.onResume(); }
     @Override protected void onDestroy() { if (web != null) { web.stopLoading(); web.destroy(); web = null; } super.onDestroy(); }
 }
