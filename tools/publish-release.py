@@ -30,7 +30,7 @@ def main():
     api=GitHub();base='/repos/'+REPO
     releases=api.request(base+'/releases?per_page=100');release=next((r for r in releases if r['tag_name']==args.tag),None)
     notes=args.notes.read_text(encoding='utf-8')+'\n\n源码提交：`'+head+'`\n构建与验收提交：`'+args.build_sha+'`\n'
-    if release is None:release=api.request(base+'/releases','POST',{'tag_name':args.tag,'target_commitish':head,'name':'恶魔之星·重生 '+args.tag+' · M2.1 原版装备与音效修正','body':notes,'draft':True,'prerelease':False})
+    if release is None:release=api.request(base+'/releases','POST',{'tag_name':args.tag,'target_commitish':head,'name':'恶魔之星·重生 '+args.tag+' · M2.2 战斗表现与原版 BGM','body':notes,'draft':True,'prerelease':False})
     for file in paths:
         data=file.read_bytes();expected='sha256:'+hashlib.sha256(data).hexdigest();asset=next((a for a in release['assets'] if a['name']==file.name),None)
         if asset is None:

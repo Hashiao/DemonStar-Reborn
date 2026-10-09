@@ -1,6 +1,6 @@
 # 原版掉落、换色、档位与死亡规则
 
-依据本地 DemonStar 4.04 的地图和程序。数值表可由 `tools/audit-drops.py`、`tools/import-player-rules.py` 重建；普通构建不需要原作或反汇编工具。原始程序、图片、录音均不进入仓库。
+依据本地 DemonStar 4.04 的地图和程序。数值表可由 `tools/audit-drops.py`、`tools/import-player-rules.py` 重建；普通构建不需要原作或反汇编工具。原始程序、图片不进入仓库。用户明确提供并授权使用的 MP3 音效/BGM 另按声音清单处理。
 
 ## 全战役装备来源
 

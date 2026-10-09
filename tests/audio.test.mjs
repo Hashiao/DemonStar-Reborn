@@ -20,8 +20,8 @@ test('distinct impact and explosion samples, first shot is never throttled away'
   a.effect('enemy-hit');assert.equal(started.at(-1).buffer,a.buffers.hit);a.effect('explosion');assert.equal(started.at(-1).buffer,a.buffers.explosion);assert.notEqual(a.buffers.hit.length,a.buffers.explosion.length);
 });
 test('mission radio survives delayed audio unlock, plays once and stops on restart/menu',()=>{
-  const a=new StarfallAudio();a.effect('stage');a.update(.02,true);assert.ok(a.pendingMission);a.unlock();a.update(.02,true);const voice=a.missionSource;assert.ok(voice);assert.equal(a.buffers.missionStart.sampleRate,11025);
-  const n=started.length;a.update(.1,true);assert.equal(started.length,n);a.suspend();a.effect('stage');a.update(.1,true);assert.equal(a.missionSource,null);assert.ok(a.pendingMission);a.unlock();a.update(.1,true);assert.ok(a.missionSource);a.stopMission();assert.equal(a.missionSource,null);assert.equal(a.pendingMission,false);
+  const a=new StarfallAudio();a.effect('stage');a.update(.02,true);assert.ok(a.pendingMission);a.unlock();a.update(.02,true);assert.ok(a.buffers.playerLaunch);a.update(4,true);const voice=a.missionSource;assert.ok(voice);assert.equal(a.buffers.missionStart.sampleRate,11025);
+  const n=started.length;a.update(.1,true);assert.equal(started.length,n);a.suspend();a.effect('stage');a.update(.1,true);assert.equal(a.missionSource,null);assert.ok(a.pendingMission);a.unlock();a.update(.1,true);a.update(4,true);assert.ok(a.missionSource);a.stopMission();assert.equal(a.missionSource,null);assert.equal(a.pendingMission,false);
 });
 test('bundled authorized samples are finite and have no fetch dependency',()=>{
   const a=new StarfallAudio();a.unlock();for(const kind of ['proton','hit','explosion','missionStart']){const b=a.makeBuffer(kind);assert.ok(b.length>1000);assert.ok(b.getChannelData(0).every(Number.isFinite));assert.ok(b.getChannelData(0).some(n=>Math.abs(n)>.02));}
@@ -30,7 +30,7 @@ test('bundled authorized samples are finite and have no fetch dependency',()=>{
 test('every bundled clip and PCM bank matches the supplied-audio provenance hashes',async()=>{
   const manifest=JSON.parse(await readFile(new URL('../docs/audio-manifest.json',import.meta.url),'utf8'));
   const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
-  assert.equal(manifest.inventory.length,55);assert.equal(Object.keys(DemonStarSounds).length,22);
+  assert.ok(manifest.inventory.length>=55);assert.equal(Object.keys(DemonStarSounds).length,Object.keys(manifest.bindings).length);assert.ok(Object.keys(DemonStarSounds).length>=33);
   for(const entry of manifest.inventory.filter(e=>e.asset)){
     assert.match(entry.asset,/\/W_[A-Z0-9]+\.mp3$/);
     assert.equal(hash(await readFile(new URL('../'+entry.asset,import.meta.url))),entry.sourceSha256);
@@ -43,9 +43,15 @@ test('equipment, bombs, ground explosions and radio use their original distinct 
   a.effect('pickup',{item:'homing'});assert.equal(started.at(-1).buffer,a.buffers.pickup);
   a.effect('pickup',{item:'full'});assert.equal(started.at(-1).buffer,a.buffers.fullPowerA);
   a.effect('pickup',{item:'full'});assert.equal(started.at(-1).buffer,a.buffers.fullPowerB);
-  a.effect('boss');assert.equal(started.at(-1).buffer,a.buffers.bossWarning);
-  for(const [bombType,key] of ['bomb','scatterBomb','megaBomb'].entries()){a.effect('bomb',{bombType});assert.equal(started.at(-1).buffer,a.buffers[key]);}
+  a.effect('boss-radio');assert.equal(started.at(-1).buffer,a.buffers.bossWarning);
+  for(const [bombType,key] of ['bomb','scatterBomb','megaBomb'].entries()){a.stopAll();a.effect(bombType===2?'super-pulse':'bomb',{bombType});assert.equal(started.at(-1).buffer,a.buffers[key]);}
   a.effect('explosion',{ground:true});assert.equal(started.at(-1).buffer,a.buffers.groundExplosion);
   a.effect('shield-lost');assert.equal(started.at(-1).buffer,a.buffers.shieldLost);
   a.stopMission();assert.equal(a.missionSource,null);
+});
+
+test('original three-slot sound priority prevents an impact wall and preserves radio',()=>{
+  const a=new StarfallAudio();a.unlock();for(let i=0;i<40;i++){a.ctx.currentTime+=.04;a.effect('enemy-hit');}assert.equal(a.active.filter(s=>s.kind==='hit').length,1);
+  a.radio('bossWarning');for(let i=0;i<40;i++){a.ctx.currentTime+=.06;a.effect('shot');}assert.ok(a.active.length<=3);assert.ok(a.missionSource);assert.equal(a.missionSource.kind,'bossWarning');
+  a.stopAll();assert.equal(a.active.length,0);assert.equal(a.ambient,null);
 });

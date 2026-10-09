@@ -12,13 +12,16 @@ const source=path.resolve(process.argv[2]||path.join(root,'audio'));
 const output=path.join(root,'web/assets/audio');
 const mapping=await readFile(path.join(source,'音频文件名对照表.txt'),'utf8');
 const entries=[...mapping.matchAll(/^(W_\w+)\.wav\t([^\t\r\n]+\.mp3)\t([\d.]+)/gm)].map(m=>({resource:m[1],filename:m[2],expectedSeconds:Number(m[3])}));
-if(entries.length!==55)throw new Error('Expected the supplied 55-entry filename mapping');
+if(entries.length<55)throw new Error('The base 55-entry supplied filename mapping is incomplete');
 const bindings={proton:'W_PSHOT1',ion:'W_PSHOT2',plasma:'W_PSHOT3',hit:'W_HITSHIP',
   explosion:'W_EXPLOSION1',heavyExplosion:'W_EXPLOSION2',groundExplosion:'W_GRDEXP1',
-  bomb:'W_SHOT2',scatterBomb:'W_MEGABOMB',megaBomb:'W_LASER2',pickup:'W_GETSHOT',
-  menu:'W_MENUCLICK',nova:'W_SHOTEXP',missionStart:'W_RADIO12',bossWarning:'W_RADIO11',
+  bomb:'W_MEGABOMB',scatterBomb:'W_SHOT2',megaBomb:'W_LASER2',pickup:'W_GETSHOT',
+  menu:'W_MENUCLICK',nova:'W_SHOTEXP',missionStart:'W_RADIO12',bossWarning:'W_RADIO1',bossFall:'W_BOSSFALL',missionComplete:'W_RADIO11',
   fullPowerA:'W_RADIO10',fullPowerB:'W_RADIO9',crystal:'W_GETCRYSTAL',energy:'W_GETENERGY',
-  medal:'W_GETMEDAL',shield:'W_GETSHIELD',shieldLost:'W_LOSESHIELD'};
+  medal:'W_GETMEDAL',shield:'W_GETSHIELD',shieldLost:'W_LOSESHIELD',stageAmbience:'W_GLOOP',menuAmbience:'W_ILOOP',playerLaunch:'W_PLAYERLNCH',bossEngine1:'W_BOSS',bossEngine2:'W_BOSS2',bossEngine3:'W_BOSS3',bossEngine4:'W_BOSS4',bossEngine5:'W_BOSS5',bossEngine6:'W_BOSS6'};
+if(entries.some(e=>e.resource==='W_PULSE'))bindings.pulseCharge='W_PULSE';
+const audit=JSON.parse(await readFile(path.join(root,'docs/audio-bindings.json'),'utf8'));
+const priorities=Object.fromEntries(audit.bindings.map(b=>[b.resource,b.priority]));
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const browser=await chromium.launch({channel:'chrome',headless:true});
 const bank={},inventory=[];
@@ -45,7 +48,7 @@ try{
     if(decoded.rate!==11025||Math.abs(seconds-entry.expectedSeconds)>.002)throw new Error('Unexpected decoded duration: '+entry.resource+' '+seconds);
     const keys=Object.keys(bindings).filter(k=>bindings[k]===entry.resource);
     if(keys.length)await copyFile(path.join(source,entry.filename),path.join(output,entry.resource+'.mp3'));
-    for(const key of keys)bank[key]={rate:decoded.rate,pcm:decoded.pcm};
+    for(const key of keys)bank[key]={rate:decoded.rate,pcm:decoded.pcm,priority:priorities[entry.resource]??4};
     inventory.push({...entry,sourceSha256:hash(bytes),bytes:bytes.length,frames:decoded.frames,rate:decoded.rate,seconds,keys,
       ...(keys.length?{asset:'web/assets/audio/'+entry.resource+'.mp3',pcmSha256:hash(Buffer.from(decoded.pcm,'base64'))}:{})});
   }

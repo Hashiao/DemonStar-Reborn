@@ -21,14 +21,14 @@ test('pause freezes score, position, spawning and timers',()=>{
 });
 test('gun honors initial delay, fixed angle and finite cycle count',()=>{
   const raw=[8,18,1,0,3,0,7,1,1024,0,0,0,7,0,0,0,2,0],gun=new Gun(raw),shots=[];
-  const game={rules:{fire:1},player:{x:200,y:400},addBullet:(...a)=>shots.push(a)};
+  const game={enemyFireLock:0,rules:{fire:1},player:{x:200,y:400},addBullet:(...a)=>shots.push(a)};
   const e={x:200,y:100,r:15,def:{width:32,height:32}};
   for(let i=0;i<3;i++)gun.tick(e,game);assert.equal(shots.length,0);
   for(let i=0;i<50;i++)gun.tick(e,game);assert.equal(shots.length,2);assert.ok(Math.abs(shots[0][2])<.0001);assert.equal(shots[0][3],7*TICK);
 });
 test('swept hit detects fast bullets crossing a small target',()=>{assert.ok(intersects(0,0,0,100,0,45,3));assert.ok(!intersects(0,0,0,100,8,45,3));});
 test('bomb clears hostile fire and consumes exactly one bomb',()=>{
-  const g=new Game(1);g.start();g.addBullet(100,100,0,60,false);g.addBullet(110,110,0,-60,true);assert.ok(g.useBomb());assert.equal(g.player.bombs,2);assert.ok(g.bullets.every(b=>b.friendly));g.pause();assert.equal(g.useBomb(),false);assert.equal(g.player.bombs,2);
+  const g=new Game(1);g.start();g.addBullet(100,100,0,60,false);g.addBullet(110,110,0,-60,true);assert.ok(g.useBomb());assert.equal(g.player.bombs,2);for(let i=0;i<11;i++)g.update(STEP);assert.ok(g.bullets.every(b=>b.friendly));g.pause();assert.equal(g.useBomb(),false);assert.equal(g.player.bombs,2);
 });
 test('weapon switching resets power, matching upgrades cap at six',()=>{
   const g=new Game(1);g.start();g.player.power=5;g.collect({type:'ion',time:0});assert.equal(g.player.weapon,1);assert.equal(g.player.power,1);for(let i=0;i<10;i++)g.collect({type:'ion',time:0});assert.equal(g.player.power,6);assert.ok(g.bullets.length>0);
@@ -43,7 +43,7 @@ test('deterministic campaign simulation reaches each original boss without NaNs'
     assert.ok(g.bossSpawned,`stage ${stage} never spawned boss`);assert.ok(g.boss,`stage ${stage} boss missing`);
     for(let i=0;i<900;i++){g.player.invincible=100;g.player.fire=100;g.update(1/60);for(const e of g.enemies){assert.ok(Number.isFinite(e.x)&&Number.isFinite(e.y));}}
     assert.ok(g.boss.y>-100&&g.boss.y<480,`stage ${stage} boss left field: ${g.boss.y}`);
-    assert.ok(g.bullets.length<1802);g.boss.hp=0;g.killEnemy(g.boss);assert.equal(g.phase,stage===18?'victory':'cleared');
+    assert.ok(g.bullets.length<1802);g.boss.hp=0;g.killEnemy(g.boss);assert.equal(g.phase,'playing');for(let t=0;t<60&&g.phase==='playing';t++)g.update(STEP);assert.equal(g.phase,stage===18?'victory':'cleared');
     if(stage<18){assert.ok(g.nextStage());assert.equal(g.stage.id,stage+1);}else assert.equal(g.nextStage(),false);
   }
 });

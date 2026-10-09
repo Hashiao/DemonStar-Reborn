@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#101c24">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; media-src 'self'; object-src 'none'; base-uri 'self'">
   <title>恶魔之星·重生 · DemonStar Reborn</title>
   <link rel="icon" type="image/svg+xml" href="icon.svg">
   <link rel="stylesheet" href="style.css">
@@ -26,12 +26,12 @@
           <div id="boss-hud" hidden><span id="boss-name">铁翼守卫</span><div class="boss-track"><div id="boss-health"></div></div></div>
         </div>
         <div id="menu" class="menu overlay">
-          <div class="menu-top"><span class="pill">非官方高清重制 · V0.2</span><button id="sound" class="sound-button" aria-label="切换声音" aria-pressed="true">声音 开</button></div>
+          <div class="menu-top"><span class="pill">非官方高清重制 · V0.2</span><button id="settings" class="sound-button">设置</button><button id="sound" class="sound-button" aria-label="切换声音" aria-pressed="true">声音 开</button></div>
           <div class="title"><span class="eyebrow">恶魔之星 · 高清重制</span><h2>DEMON<span>STAR</span></h2><p>恶 魔 之 星 · 重 生</p></div>
           <div class="menu-bottom"><div class="record"><span>最高纪录 <b id="best">0000000</b></span><span id="unlock-label">01 / 18</span></div><button id="start" class="primary">出击 <span>开始任务 →</span></button><div class="menu-options"><button id="difficulty">难度 · 经典</button><button id="missions">选择关卡</button><button id="help">怎么玩 ↗</button></div><p class="menu-hint">轻触屏幕以开始游戏</p></div>
         </div>
         <div id="controls" class="controls" hidden>
-          <div class="weapon-status"><strong id="weapon">双联机炮</strong><small id="shield-label">能量已就绪</small></div>
+          <div class="weapon-status"><div class="weapon-row"><i id="weapon-icon" class="gear-icon" aria-hidden="true"></i><strong id="weapon">双联机炮</strong><span id="power-meter" aria-label="增强等级"><i></i><i></i><i></i><i></i><i></i><i></i></span></div><small id="shield-label">拾取颜色球选择武器</small><div id="aux-equipment"></div><span id="pickup-status" role="status" aria-live="polite"></span></div>
           <div id="joystick" role="group" aria-label="移动摇杆"><span class="stick-cross" aria-hidden="true"></span><span id="stick-knob" aria-hidden="true"></span><span class="stick-caption">移动</span></div>
           <div class="action-buttons"><button id="bomb" aria-label="B 炸弹"><b>B</b><span>炸弹 <em id="bomb-count">3</em></span></button><button id="fire" aria-label="A 按住开火"><b>A</b><span>开火</span></button></div>
         </div>
@@ -42,7 +42,7 @@
     </section>
     <aside class="telemetry"><p class="eyebrow">操作说明</p><div class="manual-row"><kbd>↔ ↕</kbd><div><b>保持移动</b><span>方向键 / WASD / 摇杆</span></div></div><div class="manual-row"><kbd>✦</kbd><div><b>绝境突围</b><span>空格键 / B 炸弹 · Z / A 开火</span></div></div><div class="manual-row"><kbd>P</kbd><div><b>短暂停靠</b><span>Esc / P 暂停游戏</span></div></div><div class="intro-line"></div><p class="eyebrow">战场补给</p><div class="supply"><b class="gold">P</b><span>升级火力</span><b class="purple" >I</b><span>离子火力</span><b class="cyan">S</b><span>能量护盾</span><b class="orange">B</b><span>补充炸弹</span></div><p class="aside-note">接触补给即可拾取。<br>保持机动，留意装甲能量。</p></aside>
   </main>
-  <footer class="desktop-footer"><span>游戏代码开放，欢迎共同完善。</span><span>无广告 · 无内购 · 无需联网</span><span>v0.2.1</span></footer>
-  <script src="js/compat.js"></script><script src="js/campaign.js"></script><script src="js/player-rules.js"></script><script src="js/original-rules.js"></script><script src="js/render-hd.js"></script><script src="js/soundbank.js"></script><script src="js/audio.js"></script><script src="js/app.js"></script>
+  <footer class="desktop-footer"><span>游戏代码开放，欢迎共同完善。</span><span>无广告 · 无内购 · 无需联网</span><span>v0.2.2</span></footer>
+  <script src="js/compat.js"></script><script src="js/campaign.js"></script><script src="js/player-rules.js"></script><script src="js/combat-visuals.js"></script><script src="js/original-rules.js"></script><script src="js/render-hd.js"></script><script src="js/soundbank.js"></script><script src="js/audio.js"></script><script src="js/music-bank.js"></script><script src="js/music.js"></script><script src="js/app.js"></script>
 </body>
 </html>

@@ -21,7 +21,9 @@ body{background:#080a10}
 #energy{display:flex;gap:calc(1 * var(--u));height:calc(9 * var(--u))}
 #energy i{width:calc(4 * var(--u));height:100%;background:#08244c;border:calc(1 * var(--u)) solid #08244c;box-shadow:inset 0 0 0 calc(.2 * var(--u)) #32608d}
 #energy i.filled{background:#6ca8e0;box-shadow:inset 0 calc(1 * var(--u)) #b1dafb}
-#boss-hud{top:calc(42 * var(--u));left:calc(90 * var(--u));right:calc(90 * var(--u));font-size:9px;margin:0;padding:4px;background:#100c12a0;text-align:center;letter-spacing:0}
+#boss-hud{top:calc(10 * var(--u));left:calc(105 * var(--u));right:calc(106 * var(--u));font-size:calc(7 * var(--u));line-height:1;margin:0;padding:0;background:none;text-align:center;letter-spacing:0}
+#boss-hud .boss-track{margin-top:calc(3 * var(--u));height:calc(3 * var(--u));background:#18232dcc;box-shadow:0 0 0 1px #06090e99}
+#boss-hud #boss-health{height:100%}
 .boss-track,.boss-track #boss-health{height:3px}
 .controls{top:0;right:0;bottom:0;left:0;padding:0;background:none;display:block;pointer-events:none}
 .weapon-status{position:absolute;bottom:calc(var(--control-height) + 8px);left:0;right:0;text-align:center;color:#a9b5c3;text-shadow:1px 1px #000}
@@ -40,3 +42,18 @@ body{background:#080a10}
 .menu{left:50%;right:auto;transform:translateX(-50%);width:100%;max-width:480px}
 .dialog-card{max-width:480px}.toast{left:var(--field-x);width:var(--field-w);right:auto;top:calc(var(--field-y) + var(--field-h) * .35);padding:12px;font-size:12px;letter-spacing:1px}
 @media(orientation:landscape) and (max-height:560px){.menu{max-width:650px;padding-top:8px}.menu-top{position:absolute;right:15px;top:8px}.title{position:absolute;left:10px;top:25%;width:45%}.title h2{font-size:40px}.title .eyebrow{letter-spacing:2px}.menu-bottom{left:52%;right:15px;top:16%}.menu-bottom .record{top:calc(100% + 12px)}.menu-options button{font-size:15px;padding:6px 0}.menu-hint{margin-top:12px}.dialog{padding:10px}.dialog-card{max-height:none}.dialog h2{font-size:24px;margin:10px 0}}
+
+/* Equipment feedback lives outside the playfield, above the touch controls. */
+.weapon-status{height:64px;bottom:calc(var(--control-height) + 4px);font-size:10px}
+.weapon-row{display:flex;justify-content:center;align-items:center;height:22px}
+.gear-icon{display:inline-block;width:20px;height:20px;flex:none;vertical-align:middle;background-image:url('assets/pickups-hd.png');background-size:400% 500%;background-repeat:no-repeat;margin-right:3px}
+.gear-icon.collected{filter:brightness(1.65)}
+#power-meter{display:flex;margin-left:6px}#power-meter i{display:block;width:5px;height:10px;margin-left:2px;background:#263342;border:1px solid #536474}#power-meter i.filled{background:currentColor;border-color:currentColor}
+#aux-equipment{height:18px;display:flex;justify-content:center;align-items:center;font-size:9px;color:#bcc6d2}#aux-equipment>span{white-space:nowrap;margin:0 4px}#aux-equipment .gear-icon{width:15px;height:15px}
+.gear-7{background-position:100% 25%}.gear-8{background-position:0 50%}.gear-9{background-position:33.333% 50%}.gear-12{background-position:0 75%}.gear-13{background-position:33.333% 75%}
+#pickup-status{font-size:9px;color:#d4e4f1;line-height:13px;letter-spacing:0}
+.screen[data-wide='true'] .weapon-status{top:calc(var(--stick-y) - 105px);padding:0 4px;height:98px}
+.screen[data-wide='true'] .weapon-row{flex-wrap:wrap;height:auto;min-height:38px}
+.screen[data-wide='true'] #aux-equipment{flex-wrap:wrap;height:auto;min-height:18px}
+.screen[data-wide='true'] .weapon-status small{display:block;font-size:8px}
+@media(max-height:450px) and (orientation:landscape){.screen[data-wide='true'] .weapon-status{top:8px}.screen[data-wide='true'] #pickup-status{display:none}}

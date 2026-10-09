@@ -28,7 +28,7 @@
       if(this.arc<=0){this.angle=(this.angle+r[9])&2047;if(this.gaps<=1)this.arc=9999;else this.gaps--;return;}
       const x=enemy.x-enemy.def.width/2+r[0],y=enemy.y-enemy.def.height/2+r[1];
       if(this.aim){this.angle=(Math.atan2(game.player.x-x,-(game.player.y-y))*1024/Math.PI+r[8])&2047;this.aim=false;}
-      if(enemy.y>=0&&enemy.y<H+enemy.r){const a=this.angle*Math.PI/1024,s=Math.max(1,r[12])*TICK;game.addBullet(x,y,Math.sin(a)*s,-Math.cos(a)*s,false,1+(r[2]>=7?1:0),r[2]%3,{shotType:r[2]});}
+      if(enemy.y>=0&&enemy.y<H+enemy.r&&game.enemyFireLock<=0&&!enemy.dying){const a=this.angle*Math.PI/1024,s=Math.max(1,r[12])*TICK;game.addBullet(x,y,Math.sin(a)*s,-Math.cos(a)*s,false,1+(r[2]>=7?1:0),r[2]%3,{shotType:r[2]});}
       this.angle=(this.angle+r[9])&2047;this.arc--;
     }
   }
@@ -41,7 +41,7 @@
       Object.defineProperty(this.player,'bombs',{enumerable:true,get(){return this.bombInventory.length;}});
       this.loadStage(clamp(Math.floor(stage),1,18));
     }
-    loadStage(id){this.stage=STAGES[id-1];this.elapsed=0;this.scroll=0;this.previousScroll=0;this.cursor=0;this.frame=0;this.pendingTime=0;this.dropSequence=0;this.enemySerial=0;this.recordEvents=[...this.stage.map.events].sort((a,b)=>a[1]-b[1]);this.enemies=[];this.bullets=[];this.pickups=[];this.particles=[];this.boss=null;this.bossSpawned=false;this.flash=0;this.shake=0;this.bombRing=0;this.phase='playing';this.player.x=this.player.px=200;this.player.y=this.player.py=H-70;this.player.invincible=2.5;this.player.bank=8;this.player.thrust=0;this.events.push({type:'stage',stage:id});}
+    loadStage(id){this.stage=STAGES[id-1];this.elapsed=0;this.scroll=0;this.previousScroll=0;this.cursor=0;this.frame=0;this.pendingTime=0;this.dropSequence=0;this.enemySerial=0;this.recordEvents=[...this.stage.map.events].sort((a,b)=>a[1]-b[1]);this.enemies=[];this.bullets=[];this.specials=[];this.enemyFireLock=0;this.bossRadioTicks=0;this.pickups=[];this.particles=[];this.boss=null;this.bossSpawned=false;this.flash=0;this.shake=0;this.bombRing=0;this.phase='playing';this.player.x=this.player.px=200;this.player.y=this.player.py=H-70;this.player.invincible=2.5;this.player.bank=8;this.player.thrust=0;this.events.push({type:'stage',stage:id});}
     nextStage(){if(this.phase!=='cleared'||this.stage.id>=18)return false;this.loadStage(this.stage.id+1);return true;}
     pause(){if(this.phase==='playing'){this.phase='paused';return true;}return false;}
     resume(){if(this.phase==='paused'){this.pendingTime=0;this.phase='playing';return true;}return false;}
@@ -64,7 +64,6 @@
           this.emitPlayerShot(type,p.x-16+x,p.y-16+y,angle);
         }
       }
-      if(part!=='enhancement'&&p.mega>0)for(let i=-1;i<=1;i++)this.addBullet(p.x+i*7,p.y-20,0,-950,true,240,2);
       this.events.push({type:'shot',weapon:p.weapon});
     }
     fireAuxiliary(){
@@ -97,7 +96,7 @@
       if(d.mode===9||d.mode===10){this.setPath(e,true);}else if(d.mode===3){e.x=record[0]<200?-d.width:W+d.width;e.y=100;}
       else if(d.mode===5){e.y=H+d.height;e.vy=-e.speed;}
       if(scenery)e.y=-d.height/2;
-      this.enemies.push(e);if(boss){this.boss=e;this.bossSpawned=true;this.events.push({type:'boss',name:this.stage.boss});}
+      this.enemies.push(e);if(boss){this.boss=e;this.bossSpawned=true;this.bossRadioTicks=60;this.events.push({type:'boss',name:this.stage.boss});}
     }
     setPath(e,first=false){
       const d=e.def,point=d.path[e.pathIndex];if(!point){e.pathFinished=true;return;}
@@ -141,7 +140,22 @@
       if(this.player.energy<12)this.spawnPickup(this.player.energy<4?1:11,e.x,e.y);
       this.spawnPickup(weapon,e.x,e.y);
     }
-    killEnemy(e){if(e.dead||e.scenery)return;e.dead=true;this.kills++;this.score+=e.def.score;this.explode(e.x,e.y);this.events.push({type:'explosion',heavy:!!e.boss,ground:!!(e.def.flags&0x40)});this.spawnPickup(e.record[5],e.x,e.y);if(e.def.flags&0x200)this.automaticDrops(e);if(e.boss)this.defeatBoss();}
+    targetable(e){const d=e.def,inside=e.x>=0&&e.x<W&&e.y>=0&&e.y<H;return !e.dead&&!e.dying&&!e.scenery&&(e.entered||inside)&&e.x+d.width/2>0&&e.x-d.width/2<W&&e.y+d.height/2>0&&e.y-d.height/2<H;}
+    killEnemy(e){if(e.dead||e.dying||e.scenery)return;if(e.boss){e.hp=0;e.dying=true;e.deathTicks=0;e.fall=0;e.fallSpeed=.25;this.events.push({type:'boss-dying'});return;}this.finishEnemy(e);}
+    finishEnemy(e){if(e.dead)return;e.dead=true;this.kills++;this.score+=e.def.score;this.explode(e.x,e.y,'#ffb05c',e.boss?85:16);this.events.push({type:'explosion',heavy:!!e.boss,ground:!!(e.def.flags&0x40)});this.spawnPickup(e.record[5],e.x,e.y);if(e.def.flags&0x200)this.automaticDrops(e);if(e.boss)this.defeatBoss();}
+    updateEnemyState(e){
+      if(e.x>=0&&e.x<W&&e.y>=0&&e.y<H)e.entered=true;
+      // Original warnings compare against base HP, including for doubled Boss HP.
+      e.critical=e.hp>0&&e.hp<Math.floor(e.def.hp/4);e.burning=e.boss&&(e.dying||e.hp<Math.floor(e.def.hp/16));
+      e.criticalTicks=e.critical?(e.criticalTicks||0)+1:0;
+      if(e.dying){e.deathTicks++;e.fall+=e.fallSpeed;e.fallSpeed=Math.min(4,e.fallSpeed+.25);if(e.fall>120)this.finishEnemy(e);return;}
+      if((e.def.flags&0x800)&&e.entered){e.engineTicks=(e.engineTicks||0)-1;if(e.engineTicks<=0){e.engineTicks=120;const f=e.def.flags,variant=f&0x100000?2:f&0x200000?3:f&0x400000?4:f&0x800000?5:f&0x4000000?6:1;this.events.push({type:'boss-engine',variant});}}
+      if(e.def.flags&0x400){
+        const target=(Math.round(Math.atan2(this.player.x-e.x,-(this.player.y-e.y))*16/Math.PI)+32)%32;
+        const current=e.facing===undefined?16:e.facing,difference=(target-current+32)%32;
+        e.facing=(current+(difference===0?0:difference<=16?1:-1)+32)%32;
+      }else if(e.def.flags&0x100){const dx=e.x-e.px,dy=e.y-e.py;if(dx||dy)e.facing=(Math.round(Math.atan2(dx,-dy)*16/Math.PI)+32)%32;}
+    }
     collect(item){
       const p=this.player,t=item.type;
       if(['weapon','ion','plasma','magnetic'].includes(t))this.upgradeWeapon(['weapon','ion','plasma','magnetic'].indexOf(t));
@@ -170,7 +184,36 @@
         if(p.lives<=0){this.phase='gameover';this.events.push({type:'gameover'});}
       }
     }
-    useBomb(){const p=this.player;if(this.phase!=='playing'||p.respawn>0||p.bombCooldown>1e-9||p.bombs<=0)return false;const type=p.bombInventory.pop();p.bombCooldown=35*STEP;p.invincible=Math.max(p.invincible,1);this.bullets=this.bullets.filter(b=>b.friendly);this.flash=.5;this.bombRing=.8;this.shake=5;if(type===2)p.mega=4;else for(const e of this.enemies){if(e.scenery||e.dead||e.y<0||e.y>H)continue;e.hp-=type===1?2400:4500;if(e.hp<=0)this.killEnemy(e);}this.events.push({type:'bomb',bombType:type});return true;}
+    useBomb(){
+      const p=this.player;if(this.phase!=='playing'||p.respawn>0||p.bombCooldown>1e-9||p.bombs<=0)return false;
+      const type=p.bombInventory.pop();p.bombCooldown=35*STEP;p.invincible=Math.max(p.invincible,1);
+      if(type===2){p.mega=4;p.megaTick=0;}else{
+        const hits=[],count=type===0?1:32;
+        for(let i=0;i<count;i++){const speed=type===0?8:4+Math.floor(this.random()*6);this.specials.push({type,x:p.x,y:p.y-10,px:p.x,py:p.y-10,angle:i/count*Math.PI*2,speed,ticks:0,fuse:type===0?10:18+Math.floor(this.random()*14),hits});}
+      }
+      this.events.push({type:'bomb',bombType:type});return true;
+    }
+    updateSpecials(){
+      if(this.phase!=='playing')return;
+      const p=this.player;
+      // Keep the existing 4 s duration and 3*240 damage per four-tick burst frozen.
+      if(p.mega>0&&p.respawn<=0){if((p.megaTick++||0)%4===0){this.addBullet(p.x,p.y-20,0,-950,true,3*240,1,{shotType:61,pulse:true,r:18,hitEnemies:[]});this.events.push({type:'super-pulse'});}}
+      for(const s of this.specials){s.px=s.x;s.py=s.y;s.ticks++;
+        if(s.exploded){s.remaining--;continue;}
+        s.x+=Math.sin(s.angle)*s.speed;s.y-=Math.cos(s.angle)*s.speed;
+        if(s.type===1)s.speed=Math.max(1,s.speed-.25);
+        if(s.ticks<=s.fuse)continue;
+        s.exploded=true;s.remaining=s.type===0?30:14;s.radius=s.type===0?100:32;
+        this.enemyFireLock=Math.max(this.enemyFireLock,s.type===0?30:5);
+        this.bullets=this.bullets.filter(b=>b.friendly);this.shake=s.type===0?5:2;
+        for(const e of this.enemies){if(!this.targetable(e)||s.hits.includes(e.uid)||Math.hypot(e.x-s.x,e.y-s.y)>s.radius+e.r)continue;
+          // Frozen v0.2.1 per-enemy damage budgets; scatter siblings share the cap.
+          s.hits.push(e.uid);e.hp-=s.type===0?4500:2400;e.hit=.06;if(e.hp<=0)this.killEnemy(e);
+        }
+        this.events.push({type:'explosion',heavy:s.type===0});
+      }
+      this.specials=this.specials.filter(s=>!s.exploded||s.remaining>0);
+    }
     defeatBoss(){if(this.phase!=='playing')return;const b=this.boss;if(b)this.explode(b.x,b.y,'#ffd894',85);this.boss=null;this.bullets=[];this.flash=.6;this.phase=this.stage.id===18?'victory':'cleared';this.events.push({type:this.phase});}
     update(dt,input={}){
       if(this.phase!=='playing'||!Number.isFinite(dt))return;
@@ -181,7 +224,8 @@
       const dt=STEP;this.elapsed+=dt;this.totalTime+=dt;this.frame++;
       this.previousScroll=this.scroll;
       for(const obj of [this.player,...this.enemies,...this.pickups]){obj.px=obj.x;obj.py=obj.y;}
-      const p=this.player;this.flash=Math.max(0,this.flash-dt);this.bombRing=Math.max(0,this.bombRing-dt);this.shake=Math.max(0,this.shake-dt*25);
+      const p=this.player;this.flash=Math.max(0,this.flash-dt);this.bombRing=Math.max(0,this.bombRing-dt);this.shake=Math.max(0,this.shake-dt*25);this.enemyFireLock=Math.max(0,this.enemyFireLock-1);
+      if(this.bossRadioTicks>0&&--this.bossRadioTicks===0&&this.boss&&!this.boss.dying)this.events.push({type:'boss-radio'});
       const hadShield=p.shield>0;
       for(const k of ['invincible','shield','mega','respawn','bombCooldown'])p[k]=Math.max(0,p[k]-dt);
       if(hadShield&&p.shield===0)this.events.push({type:'shield-lost'});
@@ -197,12 +241,13 @@
       }
       if(!this.bossSpawned)this.scroll+=dt*TICK;
       while(this.cursor<this.recordEvents.length&&this.recordEvents[this.cursor][1]<=this.scroll){this.spawnRecord(this.recordEvents[this.cursor++]);}
-      for(const e of this.enemies){if(e.dead)continue;e.time+=dt;e.hit=Math.max(0,e.hit-dt);this.moveEnemy(e,dt);for(const gun of e.guns)gun.tick(e,this);if(!e.scenery&&!e.ground&&e.y>0&&Math.hypot(e.x-p.x,e.y-p.y)<e.r+p.r)this.hitPlayer(3);}
+      for(const e of this.enemies){if(e.dead)continue;e.time+=dt;e.hit=Math.max(0,e.hit-dt);if(!e.dying)this.moveEnemy(e,dt);this.updateEnemyState(e);if(e.dead||e.dying)continue;for(const gun of e.guns)gun.tick(e,this);if(!e.scenery&&!e.ground&&e.y>0&&Math.hypot(e.x-p.x,e.y-p.y)<e.r+p.r)this.hitPlayer(3);}
+      this.updateSpecials();
       for(const b of this.bullets){
-        if(b.homing){const targets=this.enemies.filter(e=>!e.dead&&!e.scenery&&e.y>0&&e.y<H);let target=null,dist=Infinity;for(const e of targets){const n=Math.hypot(e.x-b.x,e.y-b.y);if(n<dist){dist=n;target=e;}}if(target){const a=Math.atan2(target.y-b.y,target.x-b.x),s=Math.hypot(b.vx,b.vy);b.vx+=(Math.cos(a)*s-b.vx)*Math.min(1,dt*6);b.vy+=(Math.sin(a)*s-b.vy)*Math.min(1,dt*6);}}
+        if(b.homing){const targets=this.enemies.filter(e=>this.targetable(e));let target=null,dist=Infinity;for(const e of targets){const n=Math.hypot(e.x-b.x,e.y-b.y);if(n<dist){dist=n;target=e;}}if(target){const a=Math.atan2(target.y-b.y,target.x-b.x),s=Math.hypot(b.vx,b.vy);b.vx+=(Math.cos(a)*s-b.vx)*Math.min(1,dt*6);b.vy+=(Math.sin(a)*s-b.vy)*Math.min(1,dt*6);}}
         b.px=b.x;b.py=b.y;b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;
         if(b.nova!==undefined)for(const hostile of this.bullets){if(!hostile.friendly&&!hostile.dead&&intersects(b.px,b.py,b.x,b.y,hostile.x,hostile.y,b.r+hostile.r+4))hostile.dead=true;}
-        if(b.friendly){for(const e of this.enemies){if(e.dead||e.scenery||b.hitEnemies?.includes(e.uid))continue;if(intersects(b.px,b.py,b.x,b.y,e.x,e.y,e.r+b.r)){e.hp-=b.damage;e.hit=.06;if(b.hitEnemies)b.hitEnemies.push(e.uid);else b.dead=true;this.shotsHit++;if(e.hp<=0)this.killEnemy(e);else this.events.push({type:'enemy-hit'});if(b.dead)break;}}}
+        if(b.friendly){for(const e of this.enemies){if(!this.targetable(e)||b.hitEnemies?.includes(e.uid))continue;if(intersects(b.px,b.py,b.x,b.y,e.x,e.y,e.r+b.r)){e.hp-=b.damage;e.hit=.06;if(b.hitEnemies)b.hitEnemies.push(e.uid);else b.dead=true;this.shotsHit++;if(e.hp<=0)this.killEnemy(e);else this.events.push({type:'enemy-hit'});if(b.dead)break;}}}
         else if(!b.dead&&p.respawn<=0&&intersects(b.px,b.py,b.x,b.y,p.x,p.y,p.r+b.r)){b.dead=true;this.hitPlayer(b.damage);}
         if(this.phase!=='playing')break;
       }

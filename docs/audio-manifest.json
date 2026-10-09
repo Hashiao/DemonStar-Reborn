@@ -10,21 +10,32 @@
     "explosion": "W_EXPLOSION1",
     "heavyExplosion": "W_EXPLOSION2",
     "groundExplosion": "W_GRDEXP1",
-    "bomb": "W_SHOT2",
-    "scatterBomb": "W_MEGABOMB",
+    "bomb": "W_MEGABOMB",
+    "scatterBomb": "W_SHOT2",
     "megaBomb": "W_LASER2",
     "pickup": "W_GETSHOT",
     "menu": "W_MENUCLICK",
     "nova": "W_SHOTEXP",
     "missionStart": "W_RADIO12",
-    "bossWarning": "W_RADIO11",
+    "bossWarning": "W_RADIO1",
+    "bossFall": "W_BOSSFALL",
+    "missionComplete": "W_RADIO11",
     "fullPowerA": "W_RADIO10",
     "fullPowerB": "W_RADIO9",
     "crystal": "W_GETCRYSTAL",
     "energy": "W_GETENERGY",
     "medal": "W_GETMEDAL",
     "shield": "W_GETSHIELD",
-    "shieldLost": "W_LOSESHIELD"
+    "shieldLost": "W_LOSESHIELD",
+    "stageAmbience": "W_GLOOP",
+    "menuAmbience": "W_ILOOP",
+    "playerLaunch": "W_PLAYERLNCH",
+    "bossEngine1": "W_BOSS",
+    "bossEngine2": "W_BOSS2",
+    "bossEngine3": "W_BOSS3",
+    "bossEngine4": "W_BOSS4",
+    "bossEngine5": "W_BOSS5",
+    "bossEngine6": "W_BOSS6"
   },
   "inventory": [
     {
@@ -36,7 +47,11 @@
       "frames": 14402,
       "rate": 11025,
       "seconds": 1.3063038548752834,
-      "keys": []
+      "keys": [
+        "bossEngine1"
+      ],
+      "asset": "web/assets/audio/W_BOSS.mp3",
+      "pcmSha256": "58c8ab136eff2dc443efdf62c26ddc9d05675661b5187f2af9048739892827e2"
     },
     {
       "resource": "W_BOSS2",
@@ -47,7 +62,11 @@
       "frames": 36845,
       "rate": 11025,
       "seconds": 3.341950113378685,
-      "keys": []
+      "keys": [
+        "bossEngine2"
+      ],
+      "asset": "web/assets/audio/W_BOSS2.mp3",
+      "pcmSha256": "6e07b5103e9af9233aeb3ac643b6c8ccccecedfb0e3ee5a1ca68be4b572fca09"
     },
     {
       "resource": "W_BOSS3",
@@ -58,7 +77,11 @@
       "frames": 37510,
       "rate": 11025,
       "seconds": 3.402267573696145,
-      "keys": []
+      "keys": [
+        "bossEngine3"
+      ],
+      "asset": "web/assets/audio/W_BOSS3.mp3",
+      "pcmSha256": "f1e4a29e3e62e0e847844bc5e3ee5675c16090d73f1b3174de25de3dcaeecafc"
     },
     {
       "resource": "W_BOSS4",
@@ -69,7 +92,11 @@
       "frames": 18777,
       "rate": 11025,
       "seconds": 1.7031292517006802,
-      "keys": []
+      "keys": [
+        "bossEngine4"
+      ],
+      "asset": "web/assets/audio/W_BOSS4.mp3",
+      "pcmSha256": "5305b1f2d3d2d18fe111af93c43b308ad7877d9e75b9d70d635c8559f64d84f2"
     },
     {
       "resource": "W_BOSS5",
@@ -80,7 +107,11 @@
       "frames": 35359,
       "rate": 11025,
       "seconds": 3.2071655328798188,
-      "keys": []
+      "keys": [
+        "bossEngine5"
+      ],
+      "asset": "web/assets/audio/W_BOSS5.mp3",
+      "pcmSha256": "09a72d741ee7f037637d85117f1885f8ecb14815b0604795f010d0c426128fde"
     },
     {
       "resource": "W_BOSS6",
@@ -91,7 +122,11 @@
       "frames": 25269,
       "rate": 11025,
       "seconds": 2.291972789115646,
-      "keys": []
+      "keys": [
+        "bossEngine6"
+      ],
+      "asset": "web/assets/audio/W_BOSS6.mp3",
+      "pcmSha256": "060adb912fca27264b43520799e68ecb867f87e2075ef330994ea8491a236ad0"
     },
     {
       "resource": "W_BOSSFALL",
@@ -102,7 +137,11 @@
       "frames": 34464,
       "rate": 11025,
       "seconds": 3.125986394557823,
-      "keys": []
+      "keys": [
+        "bossFall"
+      ],
+      "asset": "web/assets/audio/W_BOSSFALL.mp3",
+      "pcmSha256": "dfdef974c6af1be16931cd321a94c6c541bf308cb1b5924b532a26fb6fa082c1"
     },
     {
       "resource": "W_BOSSGRD",
@@ -306,7 +345,11 @@
       "frames": 30803,
       "rate": 11025,
       "seconds": 2.793922902494331,
-      "keys": []
+      "keys": [
+        "stageAmbience"
+      ],
+      "asset": "web/assets/audio/W_GLOOP.mp3",
+      "pcmSha256": "cd85b61bdfa4ae74f16d2f01b45caa04a36c6e68d87c1a44319cde93c15365f8"
     },
     {
       "resource": "W_GRDEXP1",
@@ -347,7 +390,11 @@
       "frames": 95906,
       "rate": 11025,
       "seconds": 8.698956916099773,
-      "keys": []
+      "keys": [
+        "menuAmbience"
+      ],
+      "asset": "web/assets/audio/W_ILOOP.mp3",
+      "pcmSha256": "bcafd887d54397b40afeccf028180761149b89e64f49a5570a05890c6d7dbd85"
     },
     {
       "resource": "W_LASER",
@@ -400,7 +447,7 @@
       "rate": 11025,
       "seconds": 1.0913378684807256,
       "keys": [
-        "scatterBomb"
+        "bomb"
       ],
       "asset": "web/assets/audio/W_MEGABOMB.mp3",
       "pcmSha256": "248143c27a89a42c6a12357df05dc01d18280e250a0d16cfc46ceaddfd313f80"
@@ -451,7 +498,11 @@
       "frames": 35712,
       "rate": 11025,
       "seconds": 3.239183673469388,
-      "keys": []
+      "keys": [
+        "playerLaunch"
+      ],
+      "asset": "web/assets/audio/W_PLAYERLNCH.mp3",
+      "pcmSha256": "2ff5f111ae96b06e091ac97a454318f157dc692643e7e847f0746d66a205c40c"
     },
     {
       "resource": "W_PSHOT1",
@@ -529,7 +580,11 @@
       "frames": 26141,
       "rate": 11025,
       "seconds": 2.371065759637188,
-      "keys": []
+      "keys": [
+        "bossWarning"
+      ],
+      "asset": "web/assets/audio/W_RADIO1.mp3",
+      "pcmSha256": "5d5e7dd21ec52cafc71078c954be1a992ebe97b0dbe1f50e4d36402b51410858"
     },
     {
       "resource": "W_RADIO10",
@@ -556,7 +611,7 @@
       "rate": 11025,
       "seconds": 2.339591836734694,
       "keys": [
-        "bossWarning"
+        "missionComplete"
       ],
       "asset": "web/assets/audio/W_RADIO11.mp3",
       "pcmSha256": "951d465b78bebff997964ce8de289366a71cee46fdac432d30c637503cf97add"
@@ -700,7 +755,7 @@
       "rate": 11025,
       "seconds": 0.6811791383219955,
       "keys": [
-        "bomb"
+        "scatterBomb"
       ],
       "asset": "web/assets/audio/W_SHOT2.mp3",
       "pcmSha256": "f70ea4cfefcc05d211a85719dd26536bb679b1f750da71c0397359cc0b97f9e4"

@@ -1,0 +1,411 @@
+{
+  "source": "DemonStar 4.04 ds.exe 0x42c800 resource loader; cloned player-shot handles reuse the same recording. Priority 0 loops, positive priorities use the three-slot scheduler.",
+  "bindings": [
+    {
+      "resource": "W_PSHOT1",
+      "priority": 6,
+      "global": "0x5c995c",
+      "binding": "0x42c818",
+      "supplied": true
+    },
+    {
+      "resource": "W_PSHOT2",
+      "priority": 6,
+      "global": "0x5c9930",
+      "binding": "0x42c835",
+      "supplied": true
+    },
+    {
+      "resource": "W_PSHOT3",
+      "priority": 6,
+      "global": "0x5c9934",
+      "binding": "0x42c84f",
+      "supplied": true
+    },
+    {
+      "resource": "W_GLOOP",
+      "priority": 0,
+      "global": "0x5c9950",
+      "binding": "0x42c8a1",
+      "supplied": true
+    },
+    {
+      "resource": "W_EXPLOSION1",
+      "priority": 4,
+      "global": "0x5c9918",
+      "binding": "0x42c8be",
+      "supplied": true
+    },
+    {
+      "resource": "W_EXPLOSION2",
+      "priority": 4,
+      "global": "0x5c9914",
+      "binding": "0x42c8db",
+      "supplied": true
+    },
+    {
+      "resource": "W_SHOT1",
+      "priority": 5,
+      "global": "0x5c98c8",
+      "binding": "0x42c8f8",
+      "supplied": true
+    },
+    {
+      "resource": "W_SHOT2",
+      "priority": 5,
+      "global": "0x5c98d4",
+      "binding": "0x42c915",
+      "supplied": true
+    },
+    {
+      "resource": "W_HITSHIP",
+      "priority": 5,
+      "global": "0x5c9968",
+      "binding": "0x42c932",
+      "supplied": true
+    },
+    {
+      "resource": "W_MISSLE",
+      "priority": 3,
+      "global": "0x5c98b0",
+      "binding": "0x42c94f",
+      "supplied": true
+    },
+    {
+      "resource": "W_LASER",
+      "priority": 3,
+      "global": "0x5c9990",
+      "binding": "0x42c96c",
+      "supplied": true
+    },
+    {
+      "resource": "W_LASER2",
+      "priority": 1,
+      "global": "0x5c98e0",
+      "binding": "0x42c989",
+      "supplied": true
+    },
+    {
+      "resource": "W_PULSAR",
+      "priority": 3,
+      "global": "0x5c9904",
+      "binding": "0x42c9a6",
+      "supplied": true
+    },
+    {
+      "resource": "W_PULSAR2",
+      "priority": 3,
+      "global": "0x5c997c",
+      "binding": "0x42c9c3",
+      "supplied": true
+    },
+    {
+      "resource": "W_MEGABOMB",
+      "priority": 3,
+      "global": "0x5c9948",
+      "binding": "0x42c9e0",
+      "supplied": true
+    },
+    {
+      "resource": "W_GETCRYSTAL",
+      "priority": 2,
+      "global": "0x5c9938",
+      "binding": "0x42c9fd",
+      "supplied": true
+    },
+    {
+      "resource": "W_GETENERGY",
+      "priority": 2,
+      "global": "0x5c9908",
+      "binding": "0x42ca1a",
+      "supplied": true
+    },
+    {
+      "resource": "W_GETMEDAL",
+      "priority": 2,
+      "global": "0x5c98bc",
+      "binding": "0x42ca37",
+      "supplied": true
+    },
+    {
+      "resource": "W_GETSHOT",
+      "priority": 2,
+      "global": "0x5c98a0",
+      "binding": "0x42ca54",
+      "supplied": true
+    },
+    {
+      "resource": "W_GETSHIELD",
+      "priority": 2,
+      "global": "0x5c98fc",
+      "binding": "0x42ca71",
+      "supplied": true
+    },
+    {
+      "resource": "W_LOSESHIELD",
+      "priority": 2,
+      "global": "0x5c996c",
+      "binding": "0x42ca8e",
+      "supplied": true
+    },
+    {
+      "resource": "W_MENUCLICK",
+      "priority": 2,
+      "global": "0x5c98a8",
+      "binding": "0x42caab",
+      "supplied": true
+    },
+    {
+      "resource": "W_BOSS",
+      "priority": 4,
+      "global": "0x5c9900",
+      "binding": "0x42cac8",
+      "supplied": true
+    },
+    {
+      "resource": "W_BOSS2",
+      "priority": 4,
+      "global": "0x5c98d8",
+      "binding": "0x42cae5",
+      "supplied": true
+    },
+    {
+      "resource": "W_BOSS3",
+      "priority": 4,
+      "global": "0x5c98cc",
+      "binding": "0x42cb02",
+      "supplied": true
+    },
+    {
+      "resource": "W_BOSS4",
+      "priority": 4,
+      "global": "0x5c98d0",
+      "binding": "0x42cb1f",
+      "supplied": true
+    },
+    {
+      "resource": "W_BOSS5",
+      "priority": 4,
+      "global": "0x5c98c0",
+      "binding": "0x42cb3c",
+      "supplied": true
+    },
+    {
+      "resource": "W_BOSS6",
+      "priority": 4,
+      "global": "0x5c98c4",
+      "binding": "0x42cb59",
+      "supplied": true
+    },
+    {
+      "resource": "W_BOSSFALL",
+      "priority": 4,
+      "global": "0x5c9980",
+      "binding": "0x42cb7d",
+      "supplied": true
+    },
+    {
+      "resource": "W_BOSSOPEN",
+      "priority": 4,
+      "global": "0x5c9988",
+      "binding": "0x42cb93",
+      "supplied": true
+    },
+    {
+      "resource": "W_BOSSGRD",
+      "priority": 4,
+      "global": "0x5c9978",
+      "binding": "0x42cbb0",
+      "supplied": true
+    },
+    {
+      "resource": "W_FADEINC",
+      "priority": 2,
+      "global": "0x5c98b8",
+      "binding": "0x42cbcd",
+      "supplied": true
+    },
+    {
+      "resource": "W_FADEOUTC",
+      "priority": 2,
+      "global": "0x5c98ac",
+      "binding": "0x42cbea",
+      "supplied": true
+    },
+    {
+      "resource": "W_ILOOP",
+      "priority": 0,
+      "global": "0x5c990c",
+      "binding": "0x42cc07",
+      "supplied": true
+    },
+    {
+      "resource": "W_DEMONSTAR",
+      "priority": 1,
+      "global": "0x5c9984",
+      "binding": "0x42cc24",
+      "supplied": true
+    },
+    {
+      "resource": "W_DOORUP",
+      "priority": 2,
+      "global": "0x5c98f8",
+      "binding": "0x42cc41",
+      "supplied": true
+    },
+    {
+      "resource": "W_DOORDOWN",
+      "priority": 2,
+      "global": "0x5c98f0",
+      "binding": "0x42cc5e",
+      "supplied": true
+    },
+    {
+      "resource": "W_DOORCLANK",
+      "priority": 1,
+      "global": "0x5c991c",
+      "binding": "0x42cc7b",
+      "supplied": true
+    },
+    {
+      "resource": "W_PLAYERLNCH",
+      "priority": 1,
+      "global": "0x5c998c",
+      "binding": "0x42cc98",
+      "supplied": true
+    },
+    {
+      "resource": "W_NEWSHIP",
+      "priority": 1,
+      "global": "0x5c9910",
+      "binding": "0x42ccb5",
+      "supplied": true
+    },
+    {
+      "resource": "W_GRDEXP1",
+      "priority": 1,
+      "global": "0x5c98b4",
+      "binding": "0x42ccd2",
+      "supplied": true
+    },
+    {
+      "resource": "W_SHOTEXP",
+      "priority": 1,
+      "global": "0x5c9974",
+      "binding": "0x42ccef",
+      "supplied": true
+    },
+    {
+      "resource": "W_RADIO1",
+      "priority": 1,
+      "global": "0x5c9928",
+      "binding": "0x42cd0c",
+      "supplied": true
+    },
+    {
+      "resource": "W_RADIO2",
+      "priority": 1,
+      "global": "0x5c992c",
+      "binding": "0x42cd29",
+      "supplied": true
+    },
+    {
+      "resource": "W_RADIO3",
+      "priority": 1,
+      "global": "0x5c9920",
+      "binding": "0x42cd46",
+      "supplied": true
+    },
+    {
+      "resource": "W_RADIO4",
+      "priority": 1,
+      "global": "0x5c9924",
+      "binding": "0x42cd63",
+      "supplied": true
+    },
+    {
+      "resource": "W_RADIO5",
+      "priority": 1,
+      "global": "0x5c9944",
+      "binding": "0x42cd80",
+      "supplied": true
+    },
+    {
+      "resource": "W_RADIO6",
+      "priority": 1,
+      "global": "0x5c994c",
+      "binding": "0x42cd9d",
+      "supplied": true
+    },
+    {
+      "resource": "W_RADIO7",
+      "priority": 1,
+      "global": "0x5c993c",
+      "binding": "0x42cdba",
+      "supplied": true
+    },
+    {
+      "resource": "W_RADIO8",
+      "priority": 1,
+      "global": "0x5c9940",
+      "binding": "0x42cdd7",
+      "supplied": true
+    },
+    {
+      "resource": "W_RADIO9",
+      "priority": 1,
+      "global": "0x5c9954",
+      "binding": "0x42cdf4",
+      "supplied": true
+    },
+    {
+      "resource": "W_RADIO10",
+      "priority": 1,
+      "global": "0x5c98e8",
+      "binding": "0x42ce11",
+      "supplied": true
+    },
+    {
+      "resource": "W_RADIO11",
+      "priority": 1,
+      "global": "0x5c98e4",
+      "binding": "0x42ce2e",
+      "supplied": true
+    },
+    {
+      "resource": "W_RADIO12",
+      "priority": 1,
+      "global": "0x5c98ec",
+      "binding": "0x42ce4b",
+      "supplied": true
+    },
+    {
+      "resource": "W_STATIC1",
+      "priority": 1,
+      "global": "0x5c98dc",
+      "binding": "0x42ce68",
+      "supplied": false
+    },
+    {
+      "resource": "W_CHATSND",
+      "priority": 1,
+      "global": "0x5c98a4",
+      "binding": "0x42ce85",
+      "supplied": false
+    },
+    {
+      "resource": "W_PULSE",
+      "priority": 1,
+      "global": "0x5c9970",
+      "binding": "0x42cea2",
+      "supplied": false
+    },
+    {
+      "resource": "W_SECRET1",
+      "priority": 1,
+      "global": "0x5c98f4",
+      "binding": "0x42cebf",
+      "supplied": true
+    }
+  ]
+}

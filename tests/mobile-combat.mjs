@@ -32,7 +32,8 @@ try{
   assert.ok(await page.evaluate(()=>StarfallApp.game.shotsFired)>=2);assert.ok(await page.evaluate(()=>StarfallApp.game.player.x)>200);
   await page.locator('#pause').click();const frozen=await page.evaluate(()=>StarfallApp.game.totalTime);await page.waitForTimeout(120);assert.equal(await page.evaluate(()=>StarfallApp.game.totalTime),frozen);
   await page.getByRole('button',{name:'继续飞行',exact:true}).click();await page.locator('#bomb').click();assert.equal(await page.evaluate(()=>StarfallApp.game.player.bombs),2);await bounds(page);
-  await page.evaluate(()=>{const g=StarfallApp.game,r=g.stage.map.events.find(r=>DemonStarCampaign.definitions[DemonStarCampaign.byId[r[2]]].sprite==='S_ENEMY14');g.enemies=[];g.bullets=[];g.spawnRecord(r);const e=g.enemies[0];e.x=200;e.y=200;e.pathFinished=true;e.speed=0;e.guns=[];g.addBullet(200,210,0,-400,true,1);});
+  // Isolate impact routing from the higher-priority radio/menu/bomb voices tested separately.
+  await page.evaluate(()=>{StarfallApp.audio.stopAll();StarfallApp.game.specials=[];const g=StarfallApp.game,r=g.stage.map.events.find(r=>DemonStarCampaign.definitions[DemonStarCampaign.byId[r[2]]].sprite==='S_ENEMY14');g.enemies=[];g.bullets=[];g.spawnRecord(r);const e=g.enemies[0];e.x=200;e.y=200;e.pathFinished=true;e.speed=0;e.guns=[];g.addBullet(200,210,0,-400,true,1);});
   await page.waitForFunction(()=>audioEvents.includes('hit'));
   await page.evaluate(()=>{StarfallApp.game.addBullet(200,210,0,-400,true,5000);});await page.waitForFunction(()=>audioEvents.includes('explosion'));
   report.push({surface:'desktop',keyboardFire:true,movement:true,pause:true,bomb:true,missionVoiceOnce:true,enemyHitSound:true,explosionSound:true});

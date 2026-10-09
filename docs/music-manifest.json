@@ -1,0 +1,316 @@
+{
+  "provenance": "User supplied additional BGM MP3s and explicitly requested their use on 2026-10-09. Source renderer/GM soundfont disclosure is preserved in docs/MUSIC.md.",
+  "sourceExeSha256": "d3d9d0205b069e5d134fdedba7b9fbd74ebcafd9785b7c9ce3d2e5ed847691b2",
+  "songTable": [
+    "MDS_INTRO",
+    "MDS_ENDLEV",
+    "MDS_PHASER",
+    "MDS_SLOWRKET",
+    "MDS_8GALS",
+    "MDS_PHATTY",
+    "MDS_BLIP",
+    "MDS_8GALVAMP",
+    "MDS_SPACEBL",
+    "MDS_SMACK",
+    "MDS_PACE",
+    "MDS_SIMP",
+    "MDS_ASTEROID",
+    "MDS_DAVIS_C",
+    "MDS_SPACTOUT",
+    "MDS_NO_GOOD",
+    "MDS_WARP",
+    "MDS_HANGER"
+  ],
+  "stages": [
+    {
+      "stage": 1,
+      "songIndex": 2,
+      "resource": "MDS_PHASER",
+      "branch": "0x425694"
+    },
+    {
+      "stage": 2,
+      "songIndex": 3,
+      "resource": "MDS_SLOWRKET",
+      "branch": "0x42565c"
+    },
+    {
+      "stage": 3,
+      "songIndex": 4,
+      "resource": "MDS_8GALS",
+      "branch": "0x425674"
+    },
+    {
+      "stage": 4,
+      "songIndex": 5,
+      "resource": "MDS_PHATTY",
+      "branch": "0x425660"
+    },
+    {
+      "stage": 5,
+      "songIndex": 6,
+      "resource": "MDS_BLIP",
+      "branch": "0x42567c"
+    },
+    {
+      "stage": 6,
+      "songIndex": 1,
+      "resource": "MDS_ENDLEV",
+      "branch": "0x425664"
+    },
+    {
+      "stage": 7,
+      "songIndex": 9,
+      "resource": "MDS_SMACK",
+      "branch": "0x425668"
+    },
+    {
+      "stage": 8,
+      "songIndex": 14,
+      "resource": "MDS_SPACTOUT",
+      "branch": "0x42566c"
+    },
+    {
+      "stage": 9,
+      "songIndex": 3,
+      "resource": "MDS_SLOWRKET",
+      "branch": "0x42565c"
+    },
+    {
+      "stage": 10,
+      "songIndex": 11,
+      "resource": "MDS_SIMP",
+      "branch": "0x425670"
+    },
+    {
+      "stage": 11,
+      "songIndex": 4,
+      "resource": "MDS_8GALS",
+      "branch": "0x425674"
+    },
+    {
+      "stage": 12,
+      "songIndex": 12,
+      "resource": "MDS_ASTEROID",
+      "branch": "0x425678"
+    },
+    {
+      "stage": 13,
+      "songIndex": 6,
+      "resource": "MDS_BLIP",
+      "branch": "0x42567c"
+    },
+    {
+      "stage": 14,
+      "songIndex": 10,
+      "resource": "MDS_PACE",
+      "branch": "0x425680"
+    },
+    {
+      "stage": 15,
+      "songIndex": 8,
+      "resource": "MDS_SPACEBL",
+      "branch": "0x425684"
+    },
+    {
+      "stage": 16,
+      "songIndex": 13,
+      "resource": "MDS_DAVIS_C",
+      "branch": "0x425688"
+    },
+    {
+      "stage": 17,
+      "songIndex": 16,
+      "resource": "MDS_WARP",
+      "branch": "0x42568c"
+    },
+    {
+      "stage": 18,
+      "songIndex": 15,
+      "resource": "MDS_NO_GOOD",
+      "branch": "0x425690"
+    }
+  ],
+  "inventory": [
+    {
+      "resource": "MDS_INTRO",
+      "renderedResource": "MID_INTRO",
+      "filename": "背景音乐01_开场.mp3",
+      "seconds": 215.702,
+      "sha256": "8d15bce8a48bebce72fb8fb174246490a7752855c4df2dd0df4fbd8f815838d4",
+      "bytes": 5178513,
+      "asset": "web/assets/music/MDS_INTRO.mp3"
+    },
+    {
+      "resource": "MDS_LOSE",
+      "renderedResource": "MID_INTRO",
+      "filename": "背景音乐02_失败.mp3",
+      "seconds": 215.702,
+      "sha256": "8d15bce8a48bebce72fb8fb174246490a7752855c4df2dd0df4fbd8f815838d4",
+      "bytes": 5178513,
+      "asset": "web/assets/music/MDS_INTRO.mp3"
+    },
+    {
+      "resource": "MDS_WIN",
+      "renderedResource": "MID_INTRO",
+      "filename": "背景音乐03_胜利.mp3",
+      "seconds": 215.702,
+      "sha256": "8d15bce8a48bebce72fb8fb174246490a7752855c4df2dd0df4fbd8f815838d4",
+      "bytes": 5178513,
+      "asset": "web/assets/music/MDS_INTRO.mp3"
+    },
+    {
+      "resource": "MDS_ENDLEV",
+      "renderedResource": "MID_ENDLEV",
+      "filename": "背景音乐04_过关.mp3",
+      "seconds": 205.961,
+      "sha256": "488a523107a669db94429c2df80cea056420f24e8e25870c0570deed4044ab4f",
+      "bytes": 4944665,
+      "asset": "web/assets/music/MDS_ENDLEV.mp3"
+    },
+    {
+      "resource": "MDS_PHASER",
+      "renderedResource": "MID_PHASER",
+      "filename": "背景音乐05_相位.mp3",
+      "seconds": 254.259,
+      "sha256": "6f9ebf98c690520307da363b8acaa84fd611cd814894132c468d2aacc01e7ffb",
+      "bytes": 6103875,
+      "asset": "web/assets/music/MDS_PHASER.mp3"
+    },
+    {
+      "resource": "MDS_SLOWRKET",
+      "renderedResource": "MID_SLOWRKET",
+      "filename": "背景音乐06_慢速火箭.mp3",
+      "seconds": 392.22,
+      "sha256": "68fc5654125ba78a851d3c5f1c7e8c7d6ddb9bf1e37b1134c7dae920105e7cfe",
+      "bytes": 9414738,
+      "asset": "web/assets/music/MDS_SLOWRKET.mp3"
+    },
+    {
+      "resource": "MDS_8GALS",
+      "renderedResource": "MID_8GALS",
+      "filename": "背景音乐07.mp3",
+      "seconds": 184.018,
+      "sha256": "3f0ef0872c884cf3d93631245be991e9f32ab406fac82576389094ac180f146b",
+      "bytes": 4418036,
+      "asset": "web/assets/music/MDS_8GALS.mp3"
+    },
+    {
+      "resource": "MDS_PHATTY",
+      "renderedResource": "MID_PHATTY",
+      "filename": "背景音乐08.mp3",
+      "seconds": 157.733,
+      "sha256": "c2b29343b0a991017ea4259969c6cda3a6103027b6f07e32f573882409e22fb8",
+      "bytes": 3787336,
+      "asset": "web/assets/music/MDS_PHATTY.mp3"
+    },
+    {
+      "resource": "MDS_BLIP",
+      "renderedResource": "MID_BLIP",
+      "filename": "背景音乐09.mp3",
+      "seconds": 177.052,
+      "sha256": "a9dbaec5aaac55f49a76b10d187bc9220206245a81e3a1803fe9e5a65c969670",
+      "bytes": 4250644,
+      "asset": "web/assets/music/MDS_BLIP.mp3"
+    },
+    {
+      "resource": "MDS_8GALVAMP",
+      "renderedResource": "MID_8GALVAMP",
+      "filename": "背景音乐10.mp3",
+      "seconds": 31.463,
+      "sha256": "a1d466a999f45f4d81aecd64892cd0a7699cf503e21668dbb9ed77cafb099ac8",
+      "bytes": 756714,
+      "asset": "web/assets/music/MDS_8GALVAMP.mp3"
+    },
+    {
+      "resource": "MDS_SPACEBL",
+      "renderedResource": "MID_SPACEBL",
+      "filename": "背景音乐11.mp3",
+      "seconds": 206.263,
+      "sha256": "24ab741aa1a0b328967948c9d1e513015414ea00901115285c5ea36967cfe150",
+      "bytes": 4951561,
+      "asset": "web/assets/music/MDS_SPACEBL.mp3"
+    },
+    {
+      "resource": "MDS_SMACK",
+      "renderedResource": "MID_SMACK",
+      "filename": "背景音乐12_重击.mp3",
+      "seconds": 182.416,
+      "sha256": "73fc307a7d55d71108afa1193f7d7b9853f99ce88e88136f1d3d149f37f58796",
+      "bytes": 4379793,
+      "asset": "web/assets/music/MDS_SMACK.mp3"
+    },
+    {
+      "resource": "MDS_PACE",
+      "renderedResource": "MID_PACE",
+      "filename": "背景音乐13_节奏.mp3",
+      "seconds": 185.922,
+      "sha256": "057cc80489288c517dcf7630d35aa13b039c55a45753b5a813ad5a32eb6b7d3a",
+      "bytes": 4463803,
+      "asset": "web/assets/music/MDS_PACE.mp3"
+    },
+    {
+      "resource": "MDS_SIMP",
+      "renderedResource": "MID_SIMP",
+      "filename": "背景音乐14.mp3",
+      "seconds": 159.684,
+      "sha256": "6e69760fc0b275785fce61ec6ed9ef6d6948d38669bece7d41fb97c5d3a84785",
+      "bytes": 3833729,
+      "asset": "web/assets/music/MDS_SIMP.mp3"
+    },
+    {
+      "resource": "MDS_ASTEROID",
+      "renderedResource": "MID_ASTEROID",
+      "filename": "背景音乐15_小行星.mp3",
+      "seconds": 164.676,
+      "sha256": "36c8d51497a1c5b8a8d76c4f9a546574c0ad625dc821806275360a0562b25176",
+      "bytes": 3953475,
+      "asset": "web/assets/music/MDS_ASTEROID.mp3"
+    },
+    {
+      "resource": "MDS_DAVIS_C",
+      "renderedResource": "MID_DAVIS_C",
+      "filename": "背景音乐16.mp3",
+      "seconds": 311.96,
+      "sha256": "99edbb1656af54f902cf8330dd9d86676020a8a6391016114f9134e64cc5172d",
+      "bytes": 7488782,
+      "asset": "web/assets/music/MDS_DAVIS_C.mp3"
+    },
+    {
+      "resource": "MDS_SPACTOUT",
+      "renderedResource": "MID_SPACTOUT",
+      "filename": "背景音乐17.mp3",
+      "seconds": 224.247,
+      "sha256": "fb7f77af6c9ce9b408c99093faef47a4797f4c281dbe6f7fe4d671af30b78548",
+      "bytes": 5383522,
+      "asset": "web/assets/music/MDS_SPACTOUT.mp3"
+    },
+    {
+      "resource": "MDS_NO_GOOD",
+      "renderedResource": "MID_NO_GOOD",
+      "filename": "背景音乐18_不妙.mp3",
+      "seconds": 245.133,
+      "sha256": "7b11580f62ccc0c2e45c0320d1a1e2ae88ab0a7d805d1ceceacf66f35310adba",
+      "bytes": 5884446,
+      "asset": "web/assets/music/MDS_NO_GOOD.mp3"
+    },
+    {
+      "resource": "MDS_WARP",
+      "renderedResource": "MID_WARP",
+      "filename": "背景音乐19_跃迁.mp3",
+      "seconds": 400.184,
+      "sha256": "5e00bb0d4223dbfe106b91beacfc915fef4a62cd650a8462dddbc11e314778f5",
+      "bytes": 9605955,
+      "asset": "web/assets/music/MDS_WARP.mp3"
+    },
+    {
+      "resource": "MDS_HANGER",
+      "renderedResource": "MID_HANGER",
+      "filename": "背景音乐20_机库.mp3",
+      "seconds": 73.143,
+      "sha256": "f235997a5e9089a93ea0272531debd426eb2b841183babe2f6cc5b15a127fdf2",
+      "bytes": 1756681,
+      "asset": "web/assets/music/MDS_HANGER.mp3"
+    }
+  ]
+}
