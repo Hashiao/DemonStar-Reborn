@@ -27,6 +27,8 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 **IPA 需要用自己的 Apple 身份签名后才能安装，下载不等于可直接安装。当前没有 TestFlight 邀请。** 仓库不包含账号、证书、配置描述文件或签名私钥。最低部署目标不代表已在最低版本实机验收。
 
+若导入工具提示 `invalid ipa name`，可尝试 M1 的纯字母文件名副本 [DemonStar.ipa](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.1.0/DemonStar.ipa)（[SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.1.0/DemonStar.ipa.sha256)）。它与原 IPA 字节一致，仍需签名；安装器兼容性尚待复测。
+
 每个完成的里程碑都提交对应源码并发布 APK、IPA 与 `SHA256SUMS.txt`；不覆盖已有版本标签。GitHub Release 与 README 会明确列出实际测试的系统版本和仍未完成的事项。
 
 ## 操作
@@ -83,6 +85,8 @@ M1 验证：9 项引擎/原数据/炮位/18 关 Boss 回归通过；桌面、390
 可选浏览器回归需要 Playwright 与已有 Chrome：`node tests/browser.mjs`。使用已有包时可设置 `PLAYWRIGHT_PATH`；`GAME_URL` 可指向构建后的预览服务。
 
 ## 原作数据与素材
+
+最新 [原版战斗与布局取证](docs/ORIGINAL_COMBAT_RESEARCH.md) 已确认开局双发、16 点能量、经典 HUD 和掉落编号差异，并记录手机竖屏、折叠屏/平板横屏及左摇杆右 A/B 的后续目标。这些修正尚未进入 M1 安装包。
 
 [格式记录](docs/FORMAT.md) · [还原差异](docs/FIDELITY.md) · [imagegen 提示词与素材来源](docs/ART.md) · [第三方声明](THIRD_PARTY_NOTICES.md)
 
