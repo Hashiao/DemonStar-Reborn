@@ -19,7 +19,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 - 五类炮台固定底座、独立转动炮管；图集按当前关加载并释放旧染色缓存，等待完整解码后才判定就绪。
 - 对照十八个录像分集各四个代表时刻，并逐项检查本地原型。新增基础外形覆盖不等于完整动画逐帧还原；部分方向与旋转仍用单张重绘旋转近似，地面阴影及残骸仍有差异。
 
-本版双端验收完成后更新构建记录。
+109 项回归、十组浏览器及 Android/iPhone/iPad 验收通过，版本 0.2.9（11）。详见下方测试记录与 [本版报告](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.9/verification.json)。
 
 [第二关原型](docs/screenshots/campaign-02-prototypes.png) · [敌弹图鉴](docs/screenshots/enemy-projectiles-gallery.png) · [证据与边界](docs/M2_9_RESEARCH.md) · [完整覆盖表](docs/campaign-art-coverage.json) · [重绘来源与完整提示词](docs/ART_M2_9.md)。HP、关卡、玩家伤害表和超级武器旧预算不变。
 
@@ -172,7 +172,7 @@ open ios/DemonStar.xcodeproj
 
 ## 测试
 
-M2.8 的 104 项引擎/声音/语言回归与九组浏览器检查通过，新增导弹定速、目标保持与循环重选、转后对齐、保险丝、位移继承、红弹减速，以及三色十八档真实渲染；保留三语、五种布局和独立血条验收。Android Debug/项目签名 Release、Lint（0 错误、4 提示）及 Android 17/API37 现有 AVD 验收通过；真实设置控件确认默认普通关闭/Boss 开启，三语、操作、旋转及后台恢复通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38021073134) 通过 iPhoneOS ARM64 编译及 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) 检查；四种系统语言场景均确认血条默认、独立切换、新武器图集加载与尺寸数据，并保留战斗状态。两包版本 0.2.8（10），脚本、图集、音频与本地化资源一致，HTML/CSS 仅有平台换行差异，包内路径 ASCII。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.8/verification.json)。
+M2.9 的 109 项引擎/声音/语言回归与十组浏览器检查通过。全部 244 个实际使用原型通过实绘可见像素检查，十八关 54 个场景、15 种敌弹和五类炮台的 32 朝向通过；当前关新增图集解码量最高 78 MiB，不代表 App 总内存。Android Debug/项目签名 Release、Lint（0 错误、4 提示）及现有 Android 17/API37 AVD 的三语、操作、旋转、后台恢复和独立血条设置通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38028435099) 通过 iPhoneOS ARM64 构建及 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) 检查；四种原生语言场景均逐张解码并绘制全部 18 张新增图集。两包版本 0.2.9（11），脚本、图集、音频、本地化资源与构建输入一致，仅允许 HTML/CSS 平台换行差异。IPA 未签名，须自行签名；最低系统及真机未实测。[完整验收](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.9/verification.json)。
 
 原始 HP/主武器伤害表与 v0.2.1 一致。最低系统、手机扬声器和原机逐样本 A/B 仍未实测；独立激光启动音 W_PULSE 已定位在 Game3.glb，尚未包含在用户提供的 MP3 清单，“脉冲炮一”是另一资源 W_PULSAR。
 
