@@ -10,13 +10,21 @@ On 2026-10-10, this pass inspected local DemonStar 4.04 death branches and revis
 
 `0x40fdb0` excludes ground flag `0x40` and requires `0x80` for falling. Eligible stages are 3, 4, 5, 6, 9, 12, 13, 15 and 18; the remaining Bosses explode in place. Universal downward translation/rightward roll is removed. Base HP, weapon damage, guns, stage events and explicit art routing are unchanged.
 
-高效果状态 3 在更新前检查深度大于 120（`0x41015c`），再以初始 0.25、每步增加 0.25、上限 4 推进。第 38 次更新后深度为 122，第 39 次才销毁。绘制由 `0x410c8c` 进入 `0x414940`，用整数深度和系数 327 做中心透视缩小；当前浮点移植比例为 `65536 / (65536 + floor(depth) * 327)`，适配现有 400×480 战场。火焰跟随机体变换，最终爆炸中心一致。
+再次抽看金标 P3 的 238、241、243、243.25、243.5、244、244.25、244.75、245.25、245.5、246、246.5、247 秒后，确认死亡前后两轮多点爆炸，中间保留焦黑机体。使用本地原图对 238/241 秒活动机体、244.75/245.25 秒受损机体做只读模板比对，最佳显示尺度均为 1.375；后两帧匹配位置从 `(190,90)` 到 `(181,83)`，匹配相关系数约 0.755/0.885。这支持原大小、侧上漂移的状态 4，而非状态 3 的中心透视缩小；截图尺寸不是原作速度实测。
 
-High-detail state 3 checks depth greater than 120 before updating, starts at velocity 0.25, adds 0.25 per update and caps velocity at 4. Depth reaches 122 after update 38 and destruction occurs on update 39. Drawing calls `0x414940` from `0x410c8c`, using integer depth and coefficient 327 for center-based perspective shrink. The floating-point port uses the formula above in the existing 400×480 field. Flames share the hull transform and the final blast uses its displayed center.
+Further sampled P3 review at the listed timestamps shows two multi-point blast phases with a charred hull between them. Read-only original-sprite matching at 238/241 seconds (live hull) and 244.75/245.25 seconds (damaged hull) gives the same best display scale, 1.375. The damaged matches move from `(190,90)` to `(181,83)` with correlations approximately 0.755/0.885. This supports constant-size sideways/upward state 4 rather than state-3 perspective shrinking. Screenshot coordinates are not original-speed measurements.
 
-边界：原程序低效果状态 4 使用另一分支（每步 `0x5555 / 65536`、阈值 16、侧向偏移并上移）；目前固定采用高效果表现，没有新增画质选项。原作受损姿态、各机碎片、随机火点仍未全部重绘或逐帧校准。此次修正分支和投影，不宣称全部死亡动画 1:1；原作定点逐像素舍入也不完全等于高清浮点绘制。
+当前默认状态 4 依 `0x4101a2`、`0x410cce`：每次增加 `0x5555` 定点深度，先检查超过 `0x100000`，第 50 次更新销毁；绘制整数深度的侧向/向上位移，不旋转、不缩小。`x<64` 向左，`x>336` 向右，中央区按原作二选一。状态 3 作为原程序另一条内部路径保留（初速/加速度 0.25、上限 4、超过 120 后第 39 次销毁及中心投影），没有新增画质菜单。
 
-Limits: original low-detail state 4 has a different branch (increment `0x5555 / 65536`, threshold 16, lateral/upward displacement). The remake uses high-detail presentation without adding a quality option. Damaged poses, per-hull debris and random flame sites are not all redrawn or frame-calibrated. This fixes branch selection/projection rather than claiming complete animation fidelity. Original fixed-point pixel rounding also differs from HD floating-point rendering.
+The default now follows state 4 at `0x4101a2`/`0x410cce`: increment fixed-point depth by `0x5555`, check the `0x100000` threshold before updating, destroy on update 50, and draw integer sideways/upward displacement without rotation/scaling. Left/right edge gates are 64/336, with the original binary direction choice centrally. State 3 remains an internal original alternative: 0.25 velocity/increment, velocity cap 4, threshold 120 and destruction on update 39 with center projection. No quality menu was added.
+
+`0x40fdb0` 在进入坠毁时触发爆炸；`0x4111f0` 最终销毁再次触发 `0x40ed20`：四边中点加至少两个、或 `floor(max(width,height)/24)` 个内部爆点。当前使用已有重绘火球，在 104×104 的原作效果画布尺度表现，并保留首尾爆炸、受损帧和最终单次计分。移除坠毁期间额外的固定火焰柱，空血 Boss 标签隐藏。九个原作动画末帧后的损毁资源已独立重绘并显式映射，按关加载与完整解码检查保留；见 [受损图集](ART_M2_10_BOSS_DEATHS.md)。
+
+Death entry triggers explosions in `0x40fdb0`; final destruction invokes `0x40ed20` again at `0x4111f0`: four edge midpoints plus at least two or `floor(max(width,height)/24)` interior points. Existing redrawn fireballs use the original 104×104 effect-canvas scale, with initial/final blasts, a damaged frame and one final score award. Extra permanent flame columns during falling are removed, and the empty Boss bar is hidden. Nine post-animation destroyed resources now have independent redraws and explicit mappings, retaining per-stage loading/full-image readiness; see the linked atlas record.
+
+边界：火球仍为六关键帧重绘而非原版全部 26 帧；碎片、随机火点和原机墙钟时序仍有近似。未以本轮抽样宣称十八关整段逐帧验收或完整 1:1。
+
+Limits: fireballs remain six redrawn keyframes rather than all 26 original frames. Debris, random fire sites and original wall-clock timing remain approximate. These samples do not establish complete eighteen-stage frame-by-frame fidelity.
 
 ## 结算 / Results
 
@@ -38,9 +46,9 @@ Built-in imagegen redrew a star-field pixel icon from local PLAYER1I's silhouett
 
 The packaging script only generates platform sizes from the shared source. iOS sizes are opaque; Android includes density variants and an inset adaptive icon, replacing the old vector. Source/generated files were inspected; installed launcher masks can differ.
 
-当前验证：151 项引擎/单元测试，经典结算、三语、战斗反馈/音乐和双人房间浏览器检查通过。双端新安装包仍须在发布前完成构建验收。
+当前验证：160 项引擎/单元测试，经典结算、三语、战斗反馈/音乐和双人房间浏览器检查通过。双端新安装包仍须在发布前完成构建验收。
 
-Current verification: 151 engine/unit checks and classic-results, localization, combat/audio and two-player room browser suites passed. Fresh native packages still require build verification before release.
+Current verification: 160 engine/unit checks and classic-results, localization, combat/audio and two-player room browser suites passed. Fresh native packages still require build verification before release.
 
 Android 新图标与界面已通过 Debug 编译/Lint，以及 API 37 打包版冷主菜单 BGM、原生触感调用、TCP 收发和双人重连复验。iOS 与正式 Release 包仍待本次构建结果。
 

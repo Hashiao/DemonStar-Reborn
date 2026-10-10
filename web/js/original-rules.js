@@ -16,6 +16,7 @@
   // 0x414940 的定点透视投影，深度输入先截为整数。
   // Fixed-point perspective from 0x414940, with integer depth input.
   const deathScale=fall=>65536/(65536+Math.floor(fall)*327);
+  const deathTransform=e=>{if(!e.dying)return {x:e.x,y:e.y,scale:1};if(e.deathMode===4){const depth=Math.floor(e.fall);return {x:e.x+depth*e.fallDirection,y:e.y-depth,scale:1};}const scale=deathScale(e.fall);return {x:W/2+(e.x-W/2)*scale,y:H/2+(e.y-H/2)*scale,scale};};
   const rng=seed=>{let a=seed>>>0;const random=()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};random.state=()=>a;random.restore=value=>{a=value>>>0;};return random;};
   const MAX_PLAYERS=4;
   // 玩家 ID 稳定为 1–4；保留 player 作为一号玩家兼容入口。
@@ -261,19 +262,29 @@
       this.spawnPickup(weapon,e.x,e.y);
     }
     targetable(e){const d=e.def,inside=e.x>=0&&e.x<W&&e.y>=0&&e.y<H;return !e.dead&&!e.dying&&!e.scenery&&(e.entered||inside)&&e.x+d.width/2>0&&e.x-d.width/2<W&&e.y+d.height/2>0&&e.y-d.height/2<H;}
-    killEnemy(e,p=this.player){
+    bossBurst(e,phase){
+      // 0x40ed20：四个边缘中点，再加 max(width,height)/24 个内部爆点。
+      // 0x40ed20: four edge midpoints plus max(width,height)/24 interior blasts.
+      const at=deathTransform(e),w=e.def.width*at.scale,h=e.def.height*at.scale,ground=!!(e.def.flags&0x40),random=rng((this.seed^e.uid^(phase==='start'?0x47a1:phase==='finish-extra'?0xbc91:0xa574))>>>0);
+      const points=[[0,-h/2],[0,h/2],[-w/2,0],[w/2,0]];
+      for(let i=0;i<Math.max(2,Math.floor(Math.max(w,h)/24));i++)points.push([(random()-.5)*w,(random()-.5)*h]);
+      for(const [dx,dy] of points){this.addEffect(ground?3:2,at.x+dx,at.y+dy,104,26,ground);Object.assign(this.effects[this.effects.length-1],{bossId:e.uid,bossPhase:phase});}
+      // 碎片运动是现有粒子预算的表现近似，独立随机源不改变战斗掉落。
+      // Debris remains a presentation approximation with the existing particle budget and an isolated RNG.
+      for(let i=0;i<85&&this.particles.length<350;i++){const angle=i/85*Math.PI*2+(random()-.5)*.1,speed=95+random()*105,life=.7+random()*.6;this.particles.push({x:at.x,y:at.y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life,maxLife:life,color:'#b8c2c9',size:.7+random()*.8});}
+    }
+    killEnemy(e,p=this.player,deathMode=4){
       if(e.dead||e.dying||e.scenery)return;e.killerId=p.id;if(e.boss)e.hp=0;
       // 0x40fdb0 只让带 0x80 且非地面的对象进入坠毁；其余 Boss 原地爆炸。
       // 0x40fdb0 gates falling on 0x80 without ground 0x40; other Bosses explode in place.
-      if(e.boss&&(e.def.flags&0xc0)===0x80){e.hp=0;e.dying=true;e.deathTicks=0;e.fall=0;e.fallSpeed=.25;this.events.push({type:'boss-dying',playerId:p.id});return;}
+      if(e.boss&&(e.def.flags&0xc0)===0x80){e.dying=true;e.burning=false;e.deathMode=deathMode===3?3:4;e.deathTicks=0;e.fall=e.fallFixed=0;e.fallSpeed=.25;e.fallDirection=e.x<64?-1:e.x>336?1:this.random()<.5?-1:1;this.bossBurst(e,'start');this.events.push({type:'boss-dying',playerId:p.id},{type:'explosion',heavy:true,ground:false});return;}
       this.finishEnemy(e);
     }
     finishEnemy(e){
       if(e.dead)return;e.dead=true;this.kills++;this.score+=e.def.score;const killer=this.playerById(e.killerId)||this.player;killer.kills++;killer.score+=e.def.score;
       const ground=!!(e.def.flags&0x40),large=e.def.width>=32,size=e.boss?112:large?Math.max(48,Math.min(96,e.def.width)):28;
-      const scale=e.dying?deathScale(e.fall):1,x=W/2+(e.x-W/2)*scale,y=H/2+(e.y-H/2)*scale;
-      this.addEffect(ground?3:2,x,y,size,e.boss?36:large?24:18,ground);
-      this.explode(x,y,'#ffb05c',e.boss?85:16);
+      if(e.boss){this.bossBurst(e,'finish');if(!(e.def.flags&0x80))this.bossBurst(e,'finish-extra');}
+      else{this.addEffect(ground?3:2,e.x,e.y,size,large?24:18,ground);this.explode(e.x,e.y,'#ffb05c',16);}
       // 必须同时有 0x40/0x80 才留残骸；残骸不再战斗、掉落或计分。
       // 0x4113d2: both 0x40 and 0x80 are required. Remnants cannot fire,
       // collide, receive damage, score or drop equipment a second time.
@@ -289,9 +300,15 @@
       if(e.x>=0&&e.x<W&&e.y>=0&&e.y<H)e.entered=true;
       // 濒死阈值按基础 HP 计算，包括出生时翻倍的 Boss。
       // Original warnings compare against base HP, including for doubled Boss HP.
-      e.critical=e.hp>0&&e.hp<Math.floor(e.def.hp/4);e.burning=e.boss&&(e.dying||e.hp<Math.floor(e.def.hp/16));
+      e.critical=e.hp>0&&e.hp<Math.floor(e.def.hp/4);e.burning=e.boss&&!e.dying&&e.hp>0&&e.hp<Math.floor(e.def.hp/16);
       e.criticalTicks=e.critical?(e.criticalTicks||0)+1:0;
-      if(e.dying){e.deathTicks++;if(e.fall>120){this.finishEnemy(e);return;}e.fall+=e.fallSpeed;e.fallSpeed=Math.min(4,e.fallSpeed+.25);return;}
+      if(e.dying){
+        e.deathTicks++;
+        // 金标录像采用状态 4；保持 0x5555 定点增量及先判断、后递增的顺序。
+        // The reference uses state 4; retain its 0x5555 increment and threshold-before-update order.
+        if(e.deathMode===4){if(e.fallFixed>0x100000){this.finishEnemy(e);return;}e.fallFixed+=0x5555;e.fall=e.fallFixed/65536;}
+        else{if(e.fall>120){this.finishEnemy(e);return;}e.fall+=e.fallSpeed;e.fallSpeed=Math.min(4,e.fallSpeed+.25);}return;
+      }
       if((e.def.flags&0x800)&&e.entered){e.engineTicks=(e.engineTicks||0)-1;if(e.engineTicks<=0){e.engineTicks=120;const f=e.def.flags,variant=f&0x100000?2:f&0x200000?3:f&0x400000?4:f&0x800000?5:f&0x4000000?6:1;this.events.push({type:'boss-engine',variant});}}
       if(e.def.flags&0x400){
         const p=this.targetPlayer(e.x,e.y),target=(Math.round(Math.atan2(p.x-e.x,-(p.y-e.y))*16/Math.PI)+32)%32;
@@ -493,5 +510,5 @@
       this.pickups=this.pickups.filter(i=>!i.dead&&i.y<H+30);this.particles=this.particles.filter(v=>v.life>0);
     }
   }
-  globalThis.StarfallCore={W,H,TICK,STEP,MAX_PLAYERS,createPlayer,validCheckpoint,deathScale,LAUNCH_SPEED,HEALTH_BAR_MIN_HP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};
+  globalThis.StarfallCore={W,H,TICK,STEP,MAX_PLAYERS,createPlayer,validCheckpoint,deathScale,deathTransform,LAUNCH_SPEED,HEALTH_BAR_MIN_HP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};
 })();

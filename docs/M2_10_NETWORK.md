@@ -57,3 +57,13 @@ The linked CI for `12c5f67` passed the iPhoneOS build, four native-language case
 最新表现提交 `560fdcb` 的首轮 iOS 构建成功，但常规模拟器在卸载旧 App 时超过 60 秒，后续检查未执行。该失败运行 [38047611281](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38047611281) 保留为失败记录。验收脚本现在跳过未安装应用的卸载，并只在超时时重启同一既有模拟器重试一次；新完整构建仍需通过。
 
 The first iOS pass for presentation commit `560fdcb` built successfully but timed out uninstalling the old app after 60 seconds, skipping later checks. Run 38047611281 remains a failed record. The harness now skips uninstall when absent and reboots the same existing simulator once only on a timeout. A fresh complete build still must pass.
+
+## Android 原生双应用 / Two native Android apps
+
+`tests/android-native-pair.mjs` 在现有 API 37 模拟器上直接连接正式签名 Release 主机与 Debug 原生客户端（同机回环 TCP、不同原生进程）。通过主机建房界面、P2 独立动作/炸弹、客户端请求暂停和重连保留座位/炸弹；两端平台标识均为 Android。动作从客户端自己的会话注入，主机保持真实 App/UI 和引擎推进。这比桌面 TCP 端多覆盖一条 Android 原生客户端链路，仍不代表两台安卓手机热点已实测。结果位于忽略目录 `artifacts/m210-android-native-pair.json`。
+
+The Android native-pair test directly connects the signed Release host to a Debug native client in separate app processes on the existing API 37 emulator over loopback TCP. It passed host room UI, P2-owned actions/bombs, guest-requested pause and seat/bomb-preserving reconnect, with both platform identifiers Android. Actions enter the client's own session while the host runs its actual UI/engine. This adds the native Android client path beyond desktop TCP fixtures, but is not a two-phone hotspot claim. The result is retained in the ignored artifacts directory.
+
+未完成的真机项目逐项列在 [设备验收清单](M2_10_DEVICE_CHECKLIST.md)，空白与未测试不会记为通过。
+
+The linked physical-device checklist lists outstanding hardware evidence; blank/untested items are not passes.

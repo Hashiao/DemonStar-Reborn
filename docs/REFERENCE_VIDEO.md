@@ -64,3 +64,9 @@ This is explicit representative-frame coverage, not a frame-by-frame certificati
 2026-10-10：用户另提供双人原作截图并确认以图中排列为准。明确可见红色 P1、蓝色 P2、蓝色 P2 余命小飞机，以及右下角“小蓝机在能量条左端、炸弹在上方”的状态组。截图未附时间戳，不记为新审看的录像时刻。原图保存在忽略的 `.local/reference/m210/user-p2-hud.png`；重绘与验证见 [蓝色 P2 记录](ART_M2_10_P2.md)。
 
 2026-10-10: a user-supplied two-player original screenshot confirms red P1, blue P2, blue P2 spare-life icons and a bottom-right status group with the blue ship left of energy and bombs above. No timestamp was supplied, so this is not logged as a newly watched video timestamp. The reference remains ignored; see the linked redraw/verification record.
+
+## M2.10 坠毁补验 / Additional death review
+
+2026-10-10：通过原网页视频播放器定位并实际查看 P3 238、241、243、243.25、243.5、244、244.25、244.75、245.25、245.5、246、246.5、247 秒帧。确认初始多点爆炸后仍有原大小受损机体，侧上漂移后发生最终爆炸；不采用先前泛化的侧翻或默认透视缩小。只读模板匹配支持相同尺度，详见 [M2.10 表现记录](M2_10_PRESENTATION.md)。截图仅位于忽略目录；未下载整段视频，未把采样称作全程逐帧验收。
+
+On 2026-10-10, the original webpage video player was used to seek and inspect the listed P3 frames. Initial multi-point blasts leave a constant-size damaged hull, followed by sideways/upward drift and a final blast. This corrects the earlier generalized roll/default perspective shrink. Read-only template matching supports the unchanged scale, as detailed in the linked record. Screenshots remain ignored; no full video was downloaded and sampling is not called complete frame-by-frame review.

@@ -16,5 +16,6 @@ try{
   }
   await page.getByRole('button',{name:'Next stage →',exact:true}).click();await page.waitForFunction(()=>StarfallApp.game.stage.id===2&&StarfallApp.game.phase==='launch');assert.equal(await page.locator('#dialog').isVisible(),false);assert.equal(await page.evaluate(()=>StarfallApp.game.players[1].rear),3);assert.equal(await page.evaluate(()=>StarfallApp.game.score),33000);
   await page.locator('#pause').click();assert.equal(await page.locator('#dialog').evaluate(e=>e.classList.contains('classic-results')),false);checks.push('next-stage-preserves-equipment-and-restores-normal-settings-style');
+  await page.evaluate(()=>{const a=StarfallApp;a.start(1);a.game.phase='playing';a.game.launch=null;a.game.defeatBoss();a.game.completeStage();});await page.waitForSelector('.classic-results:not([hidden])');await page.keyboard.press('Escape');assert.equal(await page.evaluate(()=>StarfallApp.game.phase),'menu');assert.equal(await page.locator('#menu').isVisible(),true);assert.equal(await page.locator('#dialog').isVisible(),false);checks.push('escape-leaves-results-without-stranding-the-completed-stage');
   assert.deepEqual(errors,[]);const report={status:'passed',checks,errors};await writeFile('artifacts/m210-classic-results.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
 }finally{await browser.close();}

@@ -24,10 +24,16 @@
     return 'key:'+(special[key]||(/^[a-z]$/i.test(key)?'Key'+key.toUpperCase():/^[0-9]$/.test(key)?'Digit'+key:key));
   }
   class Input {
-    constructor(config){this.config=preferences(config);this.count=this.config.count;this.keys=new Set();this.mouse=new Set();this.mouseTarget=null;this.sequence=0;this.states=Array.from({length:4},()=>({x:0,y:0,fire:new Set(),firePulse:false,bomb:0,previousBomb:false,previousPause:false}));this.padBlocked=new Set();}
-    configure(config){this.config=preferences(config);this.count=this.config.count;this.clear();}
+    constructor(config){this.config=preferences(config);this.count=this.config.count;this.keys=new Set();this.mouse=new Set();this.mouseTarget=null;this.sequence=0;this.states=Array.from({length:4},()=>({x:0,y:0,fire:new Set(),firePulse:false,bomb:0,previousBomb:false,previousPause:false}));this.padBlocked=new Set();this.setCount(this.count);}
+    configure(config){this.config=preferences(config);this.setCount(this.config.count);}
     bindings(index){return Object.assign(defaults(index,this.count),this.config.players[index].bindings);}
-    setCount(count){this.count=clamp(Math.floor(count)||1,1,4);this.clear();}
+    setCount(count){
+      this.count=clamp(Math.floor(count)||1,1,4);const used=new Set(),conflicts=[];
+      // 单人期间可用任一手柄；加入玩家时停用后加入方的重复分配，避免一只手柄驱动两架飞机。
+      // Solo may use any controller; joining players lose duplicate assignments so one pad cannot drive two ships.
+      for(let i=0;i<this.count;i++){const p=this.config.players[i];if(p.pad<0)continue;if(used.has(p.pad)){p.pad=-1;conflicts.push(i);}else used.add(p.pad);}
+      this.clear();return conflicts;
+    }
     clear(){this.keys.clear();this.mouse.clear();this.mouseTarget=null;this.pausePulse=false;for(const s of this.states){s.x=s.y=0;s.fire.clear();s.firePulse=false;s.bomb=0;s.previousBomb=s.previousPause=false;}for(let i=0;i<16;i++)this.padBlocked.add(i);}
     commit(){for(const s of this.states){s.firePulse=false;s.bomb=0;}}
     move(index,x,y){const length=Math.hypot(x,y)||1;this.states[index].x=x/Math.max(1,length);this.states[index].y=y/Math.max(1,length);}
@@ -35,9 +41,10 @@
     pulse(index,action){if(action==='bomb')this.states[index].bomb=++this.sequence;else if(action==='fire')this.states[index].firePulse=true;}
     key(event,down){const token=keyToken(event);if(down){if(!this.keys.has(token))for(let i=0;i<this.count;i++){const b=this.bindings(i);if(b.fire.includes(token))this.pulse(i,'fire');if(b.bomb.includes(token)){this.pulse(i,'bomb');this.states[i].previousBomb=true;}if(b.pause.includes(token)){this.pausePulse=true;this.states[i].previousPause=true;}}this.keys.add(token);this.mouseTarget=null;}else this.keys.delete(token);return token;}
     bind(index,action,token){
-      if(!actions.includes(action)||!tokenValid(token)||token==='key:Escape')return false;
+      if(!Number.isInteger(index)||index<0||index>=this.states.length||!actions.includes(action)||!tokenValid(token)||token==='key:Escape')return false;
       const category=token.split(':')[0];
-      for(let i=0;i<this.count;i++)for(const other of actions){
+      for(let i=0;i<this.config.players.length;i++)for(const other of actions){
+        if(i>=this.count&&i!==index)continue;
         if(i===index&&other===action)continue;
         if(category==='pad'&&this.config.players[i].pad!==this.config.players[index].pad)continue;
         if(category==='mouse'&&i!==index)continue;

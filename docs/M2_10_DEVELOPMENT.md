@@ -11,7 +11,7 @@ Baseline: M2.9 `7b9a543`. The linked audit defines the full scope. On 2026-10-10
 | 同机双人 / Local cooperative play | 至少两人同时触屏移动开火投弹；沿用 1P 原作 HUD / Simultaneous touch players using the original 1P HUD style | 六触点浏览器检查通过；真屏待验收 / Six browser contacts passed; physical touch pending |
 | 局域网 / LAN | Android–Android、Android–iOS、iOS–iOS；当前双人；四人仅协议预留；热点、重连、同步 / All platform pairings, two players now, four reserved in protocol, hotspots, reconnection and synchronization | 双人房间与同步已接入；Android 主机实收发通过，跨平台热点与 iOS 原生联局待验收 / Rooms/sync integrated; Android host transport passed, mixed hotspots and iOS native game sessions pending |
 | 触感 / Haptics | 原生调用、开关、能力检测 / Native feedback, preference and capability handling | 两端代码已接入；Android 模拟器调用通过，真实手感待验收 / Both implementations added; Android emulator call passed, physical feel pending |
-| Boss / Boss deaths | 按本地原作分支和录像核对，修复动画 / Branch-specific evidence and presentation | 分支与投影已修正，受损素材仍有差异 / Branch/projection fixed; damaged art remains approximate |
+| Boss / Boss deaths | 按本地原作分支和录像核对，修复动画 / Branch-specific evidence and presentation | 分支、金标漂移、双轮爆炸与九种受损图已接入 / Flag gates, reference drift, two blast phases and nine damaged hulls integrated |
 | 结算 / Results | 原作战场叠层、玩家奖励框、三语 / Original battlefield overlay, player rewards, three locales | 单/双人三语浏览器检查通过 / Solo/two-player locale checks passed |
 | 选关 / Stage selection | 设置/暂停随时切关；联机房主同步决定 / Available from settings/pause, host coordinated online | 本地与主机统一切关已实现，双端浏览器流程通过 / Local and host-coordinated stage changes passed two-client browser flow |
 | 存档 / Saves | 关卡起点快照、版本校验、装备生命分数、多人 / Versioned stage-entry snapshots with equipment, lives, scores and players | 自动档、三个槽位与主机读档同步已实现，双端浏览器流程通过 / Automatic/three slots and host load synchronization passed two-client browser flow |
@@ -106,3 +106,7 @@ Android two-player recheck: Debug build/Lint passed. The packaged API 37 emulato
 Boss、结算与图标的证据及遗留差异见 [表现修正记录](M2_10_PRESENTATION.md)。
 
 See the linked presentation record for Boss/results/icon evidence and remaining differences.
+
+后续金标 P3 比对纠正了默认坠毁分支，并补齐九种受损图与首尾多点爆炸。160 项引擎/单元及受损图浏览器检查通过。iOS 运行 38048583611 在第二种语言的换曲播放上出现 readyState=0 超时；新增限次媒体恢复与更详细探针，不把该运行记为通过，仍需重新构建验收。
+
+Further P3 matching corrected the default death branch and added nine damaged hulls plus initial/final multi-point blasts. 160 engine/unit checks and damaged-hull browser checks passed. iOS run 38048583611 timed out with music readyState=0 during the second language case; bounded media recovery and richer diagnostics were added. That run is not a pass; a fresh native build is still required.

@@ -4,7 +4,7 @@
   const C=DemonStarCampaign,{STAGES,DIFFICULTIES,createPlayer,validCheckpoint}=StarfallCore;
   const world='phase resumePhase score kills combo shotsFired shotsHit totalTime elapsed scroll previousScroll frame flash shake bombRing bossSpawned enemyFireLock bossRadioTicks aftermathTicks presentation mode'.split(' ');
   const player='id score kills shotsFired shotsHit x y px py r lives energy maxEnergy medals defaultWeapon power weapon bank thrust shield invincible fire baseFire respawn bombCooldown missileAmmo missileType side rear sideDelay sideBurst sideGap rearDelay rearBurst rearGap shotPhase mega megaTick missileTimer connected'.split(' ');
-  const enemy='uid x y px py r hp maxHp boss scenery ground dead hit time speed type entered critical criticalTicks burning dying deathTicks fall fallSpeed facing animationFrame'.split(' ');
+  const enemy='uid x y px py r hp maxHp boss scenery ground dead hit time speed type entered critical criticalTicks burning dying deathTicks deathMode fall fallFixed fallDirection fallSpeed facing animationFrame'.split(' ');
   const bullet='wireId x y px py vx vy friendly damage style r life playerId shotType defaultShot missile homing carryTicks flightAngle speedStep targetUid age playerBeam beam beamFrames owner offsetX offsetY endY pulse nova dead'.split(' ');
   const special='wireId type playerId x y px py angle speed ticks fuse exploded remaining radius'.split(' ');
   const pickup='wireId id type x y px py time r angle speed deathDrop cycleTicks dead'.split(' ');

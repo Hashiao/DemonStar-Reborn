@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT. See docs/ART.md for generated asset provenance. */
 (() => {
-  const {W,H,STEP,DROPS,rng,deathScale,HEALTH_BAR_MIN_HP}=StarfallCore;
-  const enemyArt=DemonStarEnemyArt,presentationArt=DemonStarPresentationArt,campaignArt=DemonStarCampaignArt,enemyShots=DemonStarEnemyShots;
+  const {W,H,STEP,DROPS,rng,deathTransform,HEALTH_BAR_MIN_HP}=StarfallCore;
+  const enemyArt=DemonStarEnemyArt,presentationArt=DemonStarPresentationArt,campaignArt=DemonStarCampaignArt,enemyShots=DemonStarEnemyShots,deathArt=DemonStarBossDeathArt;
   const load=src=>{const im=new Image();im.src=src;return im;};
   class Renderer {
     constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.time=0;this.effects=load('assets/combat-effects-hd.png');this.playerWeapons=load(DemonStarWeaponArt.asset);this.attacks=load('assets/enemy-attacks-hd.png');this.enemyAtlases={};for(const name in enemyArt.sprites)this.enemyAtlases[name]=load(enemyArt.sprites[name].asset);this.tintCache=new Map();this.enemyHealthBars=false;this.superWeapon=load('assets/pulse-laser-hd.png');this.launchCarrier=load('assets/launch-carrier-hd.png');this.launchDoors=load('assets/launch-doors-hd.png');this.blasts=load('assets/blast-animation-hd.png');this.wreckAtlas=load('assets/ground-wrecks-hd.png');this.ships=load('assets/ships-hd.png');this.bosses=load('assets/bosses-07-18-hd.png');this.hangar=load('assets/hangar-hd.png');this.mission1=load('assets/mission1-hd.png');this.weapons=load('assets/weapons-hd.png');this.pickups=load('assets/pickups-hd.png');this.playerMotion=load('assets/player-motion-hd.png');this.player2Motion=load('assets/player2-motion-hd.png');this.carriers=load('assets/supply-carriers-hd.png');this.terrain=[load('assets/terrain-01-06-hd.png'),load('assets/terrain-07-12-hd.png'),load('assets/terrain-13-18-hd.png')];this.mission1Names=['S_ENEMY14','S_ENEMY20','S_ENEMY21','S_ENEMY34A','S_ASTER1A','S_ASTER2A','S_ASTER3A','S_ENBON1','S_ENBON3','S_SPTNKRA','S_ENEMY22','S_ENEMY28A','S_PIPE1','S_PIPE2','S_PIPE3','S_BHOLE1A'];const r=rng(654);this.stars=Array.from({length:100},()=>[r()*W,r()*H,r()*1.3+.3]);this.resize();}
@@ -11,6 +11,7 @@
       // 只保留当前关的重绘图集，同时释放对应染色缓存，避免手机解码全部 18 关素材。
       // Retain only this stage's redraw atlases and tint caches, avoiding full-campaign decoded memory.
       const needed=new Set(campaignArt.stageAssets[id]);
+      const deathSprite=deathArt.sprites[deathArt.stages[id]];if(deathSprite)needed.add(deathSprite.asset);
       for(const [path,image] of this.campaignAtlases)if(!needed.has(path)){this.tintCache.delete(image);this.campaignAtlases.delete(path);}
       for(const path of needed)if(!this.campaignAtlases.has(path))this.campaignAtlases.set(path,load(path));
       this.artStage=id;
@@ -106,9 +107,9 @@
     terrainDraw(stage,scroll){const c=this.c,idx=stage-1,im=this.terrain[Math.floor(idx/6)],cell=idx%6;if(im?.complete&&im.naturalWidth){const cw=im.naturalWidth/3,ch=im.naturalHeight/2,sy=Math.floor(cell/3)*ch,sx=cell%3*cw,y=scroll%H;c.drawImage(im,sx,sy,cw,ch,0,y-H,W,H);c.drawImage(im,sx,sy,cw,ch,0,y,W,H);}else{c.fillStyle='#010205';c.fillRect(0,0,W,H);for(const [x,y,s] of this.stars){c.fillStyle='#9aa293';c.globalAlpha=s*.4;c.fillRect(x,(y+scroll)%H,s,s);}c.globalAlpha=1;}}
     object(e){const c=this.c,d=e.def,w=d.width,h=d.height;
       c.save();
-      // 原作高效果坠毁以画面中心透视缩小，没有统一向右侧翻。
-      // Original high-detail death uses a center-based perspective shrink, without a universal rightward roll.
-      if(e.dying){const scale=deathScale(e.fall);c.translate(W/2,H/2);c.scale(scale,scale);c.translate(-W/2,-H/2);}
+      // 金标状态 4 侧上漂移；保留状态 3 投影，两者均无擅加侧翻。
+      // Reference state 4 drifts sideways/upward; state 3 projection remains supported without an added roll.
+      if(e.dying){const at=deathTransform(e);c.translate(at.x,at.y);c.scale(at.scale,at.scale);c.translate(-e.x,-e.y);}
       else if(e.facing!==undefined&&campaignArt.routes[d.sprite]?.kind!=='campaign'&&!enemyArt.sprites[d.sprite]?.directional){c.translate(e.x,e.y);c.rotate((e.facing-16)*Math.PI/16);c.translate(-e.x,-e.y);}
       const red=e.critical&&e.criticalTicks%10<3;
       this.objectBody(e,red);
@@ -118,6 +119,7 @@
     }
     objectBody(e,red){
       const d=e.def,w=d.width,h=d.height,route=campaignArt.routes[d.sprite],im=image=>red?this.redImage(image):image;
+      if(e.dying){const s=deathArt.sprites[d.id];if(!s){this.missingSprites.add(d.sprite+':death');return;}const image=this.campaignAtlases.get(s.asset);if(image?.complete&&image.naturalWidth)this.cropped(image,s.crop,e.x+s.offset[0],e.y+s.offset[1],...s.size);return;}
       // 每个原型都有显式路由；未知名称只记录诊断，不再替换成红色飞机。
       // Every prototype has an explicit route; unknown names are diagnosed, never replaced with red fighters.
       if(!route){this.missingSprites.add(d.sprite);return;}

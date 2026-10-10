@@ -113,7 +113,7 @@
     captureBinding=null;const p=input.config.players[controlPlayer],select=(id,options,value)=>`<select id="${id}">${options.map(([v,label])=>`<option value="${v}" ${String(v)===String(value)?'selected':''}>${label}</option>`).join('')}</select>`;
     const body=`<label class="dialog-setting">${t('playerCount')}${select('player-count',[1,2].map(n=>[n,t('playerCountValue',{n})]),input.config.count)}</label><p>${t('localPlayersHint')}</p><label class="dialog-setting">${t('configurePlayer')}${select('control-player',[1,2].map(n=>[n-1,t('playerNumber',{n})]),controlPlayer)}</label><label class="dialog-setting">${t('touchMode')}${select('touch-mode',['fixed','floating','dpad'].map(m=>[m,t('touch'+m)]),p.touch)}</label><label class="dialog-setting">${t('stickSize')}<input id="stick-size-setting" type="range" min="75" max="130" value="${Math.round(p.size*100)}"></label><label class="dialog-setting">${t('stickHorizontal')}<input id="stick-x-setting" type="range" min="0" max="100" value="${Math.round(p.stickX*100)}"></label><label class="dialog-setting">${t('stickVertical')}<input id="stick-y-setting" type="range" min="0" max="100" value="${Math.round(p.stickY*100)}"></label><label class="dialog-setting">${t('mouseControl')}${select('mouse-player',[[0,t('off')],...[1,2].map(n=>[n,t('playerNumber',{n})])],input.config.mousePlayer)}</label><label class="dialog-setting">${t('controller')}${select('gamepad-index',[[-1,t('off')],...[0,1,2,3].map(n=>[n,t('controllerNumber',{n:n+1})])],p.pad)}</label><p>${t('bindingHint')}</p><p class="input-note" id="binding-status" role="status">${note}</p>${DemonStarInput.actions.map(action=>`<div class="mapping-row"><span>${t('action'+action)}</span><button class="secondary" data-binding="${action}">${input.bindings(controlPlayer)[action].map(bindingName).join(' / ')||t('unbound')}</button></div>`).join('')}`;
     dialog(t('inputSettings'),t('inputSettings'),body,[[t('backSettings'),backSettings],[t('resetControls'),()=>{input.config.players[controlPlayer]=DemonStarInput.preferences().players[controlPlayer];persistInput();showControls();},true]]);
-    $('player-count').disabled=game.phase==='paused'||lan.role!=='offline';$('control-player').disabled=lan.role!=='offline';if(lan.role!=='offline'){$('control-player').selectedOptions[0].textContent=t('lanLocalPlayer',{n:lan.localSlot});$('player-count').value='1';$('player-count').closest('label').nextElementSibling.textContent=t('lanInputHint');}$('player-count').onchange=()=>{input.config.count=Number($('player-count').value);input.setCount(input.config.count);persistInput();showControls();};
+    $('player-count').disabled=game.phase==='paused'||lan.role!=='offline';$('control-player').disabled=lan.role!=='offline';if(lan.role!=='offline'){$('control-player').selectedOptions[0].textContent=t('lanLocalPlayer',{n:lan.localSlot});$('player-count').value='1';$('player-count').closest('label').nextElementSibling.textContent=t('lanInputHint');}$('player-count').onchange=()=>{input.config.count=Number($('player-count').value);const conflicts=input.setCount(input.config.count);persistInput();showControls(conflicts.length?t('controllerConflict'):'');};
     $('control-player').onchange=()=>{controlPlayer=Number($('control-player').value);showControls();};
     $('touch-mode').onchange=()=>{p.touch=$('touch-mode').value;clearInput();persistInput();};
     for(const [id,key,factor] of [['stick-size-setting','size',100],['stick-x-setting','stickX',100],['stick-y-setting','stickY',100]])$(id).oninput=()=>{p[key]=Number($(id).value)/factor;persistInput();};
@@ -169,7 +169,7 @@
     const gear=[p.missileAmmo?{id:p.missileType,text:t(p.missileType===9?'gearHoming':'gearMissile',{n:p.missileAmmo})} : null,p.side?{id:12,text:t('gearSide',{n:p.side})} : null,p.rear?{id:13,text:t('gearRear',{n:p.rear})} : null,p.shield>0?{id:7,text:t('gearShield')} : null].filter(Boolean);
     const gearKey=gear.map(g=>g.id+':'+g.text).join('|');if($('aux-equipment').dataset.key!==gearKey){$('aux-equipment').innerHTML=gear.map(g=>`<span><i class="gear-icon gear-${g.id}" aria-hidden="true"></i>${g.text}</span>`).join('');$('aux-equipment').dataset.key=gearKey;}
     text('bomb-count',String(p.bombs));$('bomb').disabled=game.phase!=='playing'||p.bombs<=0||p.bombCooldown>1e-9||p.respawn>0;label('bomb',t('bombAria',{n:p.bombs}));
-    $('boss-hud').hidden=!game.boss||!saved.bossHealthBars;if(game.boss){text('boss-name',t('boss',{n:game.stage.id}));$('boss-health').style.width=`${Math.max(0,game.boss.hp/game.boss.maxHp*100)}%`;}
+    $('boss-hud').hidden=!game.boss||game.boss.dying||!saved.bossHealthBars;if(game.boss){text('boss-name',t('boss',{n:game.stage.id}));$('boss-health').style.width=`${Math.max(0,game.boss.hp/game.boss.maxHp*100)}%`;}
     touch?.update(game);
   }
   function frame(timestamp){
@@ -219,15 +219,16 @@
     if(activeInput())e.preventDefault();
     if(e.repeat)return;
     if(key==='Enter'&&game.phase==='menu'&&$('dialog').hidden){e.preventDefault();start();return;}
-    if(key==='Escape'){if(['playing','launch','aftermath'].includes(game.phase))pause();else if(game.phase==='paused')resume();else if(!$('dialog').hidden)hideDialog();return;}
+    if(key==='Escape'){back();e.preventDefault();return;}
     if(['playing','paused','launch','aftermath'].includes(game.phase))input.key(e,true);
   });
   window.addEventListener('keyup',e=>input.key(e,false));
   function background(){clearInput();pause();audio.suspend();music.suspend();}
+  function back(){if(['playing','launch','aftermath'].includes(game.phase))pause();else if(game.phase==='paused')resume();else if(['cleared','victory','gameover'].includes(game.phase))showMenu();else if(!$('dialog').hidden)hideDialog();}
   document.addEventListener('visibilitychange',()=>{if(document.hidden)background();else{previous=0;if(game.phase==='menu')music.resume();}});window.addEventListener('blur',background);window.addEventListener('focus',()=>{if(game.phase==='menu')music.resume();});
   window.addEventListener('pagehide',()=>{saveScore();background();});
   window.addEventListener('resize',()=>{clearInput();renderer.resize();touch.layout(renderer.layout);});
-  globalThis.StarfallApp={game,i18n:I,input,touch,saves,lan,native:DemonStarNative,background,back:()=>{if(['playing','launch','aftermath'].includes(game.phase))pause();else if(game.phase==='paused')resume();else if(!$('dialog').hidden)hideDialog();},start,showMenu,showControls,showSaves,showMissions,showRoom,renderer,music,audio};
+  globalThis.StarfallApp={game,i18n:I,input,touch,saves,lan,native:DemonStarNative,background,back,start,showMenu,showControls,showSaves,showMissions,showRoom,renderer,music,audio};
   document.addEventListener('click',e=>{if(e.target.closest('button')){music.unlock();if(saved.sound){audio.unlock();if(!['fire','bomb','start'].includes(e.target.closest('button').id))audio.effect('menu');}}});
   // 原生容器允许首屏播放；浏览器若拒绝，后续交互仍会再次尝试。
   // Native hosts allow startup playback; browser gesture handlers retry if autoplay is rejected.
