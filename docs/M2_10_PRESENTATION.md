@@ -46,9 +46,9 @@ Built-in imagegen redrew a star-field pixel icon from local PLAYER1I's silhouett
 
 The packaging script only generates platform sizes from the shared source. iOS sizes are opaque; Android includes density variants and an inset adaptive icon, replacing the old vector. Source/generated files were inspected; installed launcher masks can differ.
 
-当前验证：160 项引擎/单元测试，经典结算、三语、战斗反馈/音乐和双人房间浏览器检查通过。双端新安装包仍须在发布前完成构建验收。
+当前验证：162 项引擎/单元测试，经典结算、三语、战斗反馈/音乐和双人房间浏览器检查通过。双端新安装包仍须在发布前完成构建验收。
 
-Current verification: 160 engine/unit checks and classic-results, localization, combat/audio and two-player room browser suites passed. Fresh native packages still require build verification before release.
+Current verification: 162 engine/unit checks and classic-results, localization, combat/audio and two-player room browser suites passed. Fresh native packages still require build verification before release.
 
 Android 新图标与界面已通过 Debug 编译/Lint，以及 API 37 打包版冷主菜单 BGM、原生触感调用、TCP 收发和双人重连复验。iOS 与正式 Release 包仍待本次构建结果。
 

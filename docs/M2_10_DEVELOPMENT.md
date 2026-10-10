@@ -107,6 +107,10 @@ Boss、结算与图标的证据及遗留差异见 [表现修正记录](M2_10_PRE
 
 See the linked presentation record for Boss/results/icon evidence and remaining differences.
 
-后续金标 P3 比对纠正了默认坠毁分支，并补齐九种受损图与首尾多点爆炸。160 项引擎/单元及受损图浏览器检查通过。iOS 运行 38048583611 在第二种语言的换曲播放上出现 readyState=0 超时；新增限次媒体恢复与更详细探针，不把该运行记为通过，仍需重新构建验收。
+后续金标 P3 比对纠正了默认坠毁分支，并补齐九种受损图与首尾多点爆炸。162 项引擎/单元及受损图浏览器检查通过。iOS 运行 38048583611 在第二种语言的换曲播放上出现 readyState=0 超时；新增限次媒体恢复与更详细探针，不把该运行记为通过，仍需重新构建验收。
 
-Further P3 matching corrected the default death branch and added nine damaged hulls plus initial/final multi-point blasts. 160 engine/unit checks and damaged-hull browser checks passed. iOS run 38048583611 timed out with music readyState=0 during the second language case; bounded media recovery and richer diagnostics were added. That run is not a pass; a fresh native build is still required.
+Further P3 matching corrected the default death branch and added nine damaged hulls plus initial/final multi-point blasts. 162 engine/unit checks and damaged-hull browser checks passed. iOS run 38048583611 timed out with music readyState=0 during the second language case; bounded media recovery and richer diagnostics were added. That run is not a pass; a fresh native build is still required.
+
+P2 鼠标补验：为每名本机玩家补齐默认左键开火/右键炸弹；联机设备把启用的鼠标绑定到自己的唯一动作流，并保留离线归属设置。操作菜单仅显示当前联网玩家。输入配置 v2 迁移旧 P2 改键中缺失的鼠标类别，保留自定义鼠标键及明确空映射。单元与完整 App 流程验证本机/联机 P2 操作不会消耗 P1 炸弹或替 P1 开火。
+
+P2 mouse recheck: every local player has default left-fire/right-bomb bindings. A LAN device routes enabled mouse input to its own sole action stream while retaining offline ownership; its menu shows the assigned network player only. Input preference v2 fills missing legacy P2 mouse categories without replacing custom mouse buttons or explicit empty mappings. Unit and full-app flows verify that local/network P2 mouse actions do not fire or spend bombs for P1.

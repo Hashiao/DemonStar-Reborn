@@ -7,14 +7,18 @@
   function defaults(index,count=1){
     const rows=[['KeyW','KeyS','KeyA','KeyD','KeyZ','KeyX','KeyP'],['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ControlRight','ShiftRight','Pause'],['Numpad8','Numpad2','Numpad4','Numpad6','Numpad0','NumpadDecimal','NumpadEnter'],['KeyI','KeyK','KeyJ','KeyL','KeyN','KeyM','KeyO']];
     const result={};actions.forEach((a,i)=>result[a]=['key:'+rows[index][i],'pad:'+([12,13,14,15,0,1,9][i])]);
-    if(index===0){result.fire.push('mouse:0');result.bomb.push('mouse:2','key:Space');if(count===1){['up','down','left','right'].forEach((a,i)=>result[a].push('key:'+rows[1][i]));result.fire.push('key:KeyJ');result.bomb.push('key:KeyK');}}
+    result.fire.push('mouse:0');result.bomb.push('mouse:2');
+    if(index===0){result.bomb.push('key:Space');if(count===1){['up','down','left','right'].forEach((a,i)=>result[a].push('key:'+rows[1][i]));result.fire.push('key:KeyJ');result.bomb.push('key:KeyK');}}
     return result;
   }
   function preferences(value){
-    const result={version:1,count:clamp(Math.floor(Number(value?.count)||1),1,4),mousePlayer:clamp(Math.floor(Number(value?.mousePlayer)||0),0,4),players:[]};
+    const result={version:2,count:clamp(Math.floor(Number(value?.count)||1),1,4),mousePlayer:clamp(Math.floor(Number(value?.mousePlayer)||0),0,4),players:[]};
     for(let i=0;i<4;i++){
       const v=value?.players?.[i]||{},bindings={};
       for(const action of actions)if(Array.isArray(v.bindings?.[action]))bindings[action]=v.bindings[action].filter(tokenValid).slice(0,12);
+      // 旧实验设置给 P2 改过键后缺少鼠标类别；保留自定义鼠标键及明确空映射。
+      // Legacy experimental P2 remaps omitted mouse defaults; preserve custom mouse tokens and explicit empty mappings.
+      if(value?.version!==2&&i>0)for(const [action,button] of [['fire',0],['bomb',2]])if(bindings[action]?.length&&bindings[action].length<12&&!bindings[action].some(t=>t.startsWith('mouse:')))bindings[action].push('mouse:'+button);
       result.players.push({touch:['fixed','floating','dpad'].includes(v.touch)?v.touch:'fixed',size:clamp(Number(v.size)||1,.75,1.3),stickX:clamp(Number.isFinite(v.stickX)?v.stickX:.5,0,1),stickY:clamp(Number.isFinite(v.stickY)?v.stickY:.5,0,1),pad:Number.isInteger(v.pad)?clamp(v.pad,-1,15):i,bindings});
     }return result;
   }
@@ -26,6 +30,9 @@
   class Input {
     constructor(config){this.config=preferences(config);this.count=this.config.count;this.keys=new Set();this.mouse=new Set();this.mouseTarget=null;this.sequence=0;this.states=Array.from({length:4},()=>({x:0,y:0,fire:new Set(),firePulse:false,bomb:0,previousBomb:false,previousPause:false}));this.padBlocked=new Set();this.setCount(this.count);}
     configure(config){this.config=preferences(config);this.setCount(this.config.count);}
+    // 联机设备只有一套本机动作，归属于分配到的网络玩家；保留离线鼠标分配。
+    // A network device has one local action stream for its assigned peer; retain its offline mouse assignment.
+    get mouseOwner(){return this.localOnly&&this.config.mousePlayer?1:this.config.mousePlayer;}
     bindings(index){return Object.assign(defaults(index,this.count),this.config.players[index].bindings);}
     setCount(count){
       this.count=clamp(Math.floor(count)||1,1,4);const used=new Set(),conflicts=[];
@@ -60,10 +67,10 @@
         const axes=pad?.axes||[],neutral=!pressed.some(Boolean)&&axes.every(a=>Math.abs(a)<.18);
         if(neutral)this.padBlocked.delete(config.pad);
         const ready=pad&&!this.padBlocked.has(config.pad);
-        const held=action=>map[action].some(t=>t.startsWith('key:')?this.keys.has(t):t.startsWith('mouse:')?this.config.mousePlayer===index+1&&this.mouse.has(Number(t.slice(6))):ready&&pressed[Number(t.slice(4))]);
+        const held=action=>map[action].some(t=>t.startsWith('key:')?this.keys.has(t):t.startsWith('mouse:')?this.mouseOwner===index+1&&this.mouse.has(Number(t.slice(6))):ready&&pressed[Number(t.slice(4))]);
         const axis=n=>ready&&Number.isFinite(axes[n])&&Math.abs(axes[n])>.18?Math.sign(axes[n])*(Math.abs(axes[n])-.18)/.82:0;
         let x=s.x+Number(held('right'))-Number(held('left'))+axis(0),y=s.y+Number(held('down'))-Number(held('up'))+axis(1);
-        if(this.config.mousePlayer===index+1&&this.mouseTarget&&players[index]&&!x&&!y){x=(this.mouseTarget.x-players[index].x)/18;y=(this.mouseTarget.y-players[index].y)/18;if(Math.hypot(x,y)<.12)x=y=0;}
+        if(this.mouseOwner===index+1&&this.mouseTarget&&players[index]&&!x&&!y){x=(this.mouseTarget.x-players[index].x)/18;y=(this.mouseTarget.y-players[index].y)/18;if(Math.hypot(x,y)<.12)x=y=0;}
         const length=Math.max(1,Math.hypot(x,y));x/=length;y/=length;
         const bomb=!!held('bomb'),paused=!!held('pause');if(bomb&&!s.previousBomb)this.pulse(index,'bomb');if(paused&&!s.previousPause)pause=true;s.previousBomb=bomb;s.previousPause=paused;
         return {x,y,fire:s.fire.size>0||s.firePulse||!!held('fire'),bomb:s.bomb};
