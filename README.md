@@ -19,7 +19,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 - 黄色高档侧弹恢复并排成对外形；蓝色三种长度组合六档；红色主条逐档加宽，辅助小弹恢复独立外形及减速。去掉旧版红蓝额外的 1.5 倍放大。
 - [用户提供的十八关录像](docs/REFERENCE_VIDEO.md)作为长期视觉参考，记录本轮实际看过的代表时刻；全部十八档组合另核对本地原始表和图形。HP、主机伤害表、主炮射速与超级武器预算不变。
 
-本版双端验收完成后更新构建记录。
+104 项回归、九组浏览器及 Android/iPhone/iPad 原生验收通过，版本 0.2.8（10）。详见下方测试记录及 [本版报告](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.8/verification.json)。
 
 [黄色六档](docs/screenshots/weapon-yellow-levels.png) · [蓝色六档](docs/screenshots/weapon-blue-levels.png) · [红色六档](docs/screenshots/weapon-red-levels.png) · [细追踪弹](docs/screenshots/homing-missiles.png) · [证据与边界](docs/M2_8_RESEARCH.md) · [内置 imagegen 素材与完整提示词](docs/ART_M2_8.md)。目标槽位回收次序、碰撞和烟迹仍有近似；磁力转向未在本轮核验。
 
@@ -161,7 +161,7 @@ open ios/DemonStar.xcodeproj
 
 ## 测试
 
-M2.7 的 94 项引擎/声音/语言回归与八组浏览器检查通过，新增母舰节奏、气罐比例、默认仅 Boss 血条、独立开关持久化和蓝激光最近目标命中；保留三语及五种布局验收。Android Debug/项目签名 Release、Lint（0 错误、4 提示）及 Android 17/API37 现有 AVD 验收通过；真实设置控件确认默认普通关闭/Boss 开启，三语、操作、旋转及后台恢复通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38013608968) 通过 iPhoneOS ARM64 编译及 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) 检查；四种系统语言场景均确认两项血条默认和独立切换，并保留战斗状态。两包版本 0.2.7（9），脚本、图集、音频与本地化资源一致，HTML/CSS 仅有平台换行差异，包内路径 ASCII。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.7/verification.json)。
+M2.8 的 104 项引擎/声音/语言回归与九组浏览器检查通过，新增导弹定速、目标保持与循环重选、转后对齐、保险丝、位移继承、红弹减速，以及三色十八档真实渲染；保留三语、五种布局和独立血条验收。Android Debug/项目签名 Release、Lint（0 错误、4 提示）及 Android 17/API37 现有 AVD 验收通过；真实设置控件确认默认普通关闭/Boss 开启，三语、操作、旋转及后台恢复通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38021073134) 通过 iPhoneOS ARM64 编译及 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) 检查；四种系统语言场景均确认血条默认、独立切换、新武器图集加载与尺寸数据，并保留战斗状态。两包版本 0.2.8（10），脚本、图集、音频与本地化资源一致，HTML/CSS 仅有平台换行差异，包内路径 ASCII。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.8/verification.json)。
 
 原始 HP/主武器伤害表与 v0.2.1 一致。最低系统、手机扬声器和原机逐样本 A/B 仍未实测；独立激光启动音 W_PULSE 已定位在 Game3.glb，尚未包含在用户提供的 MP3 清单，“脉冲炮一”是另一资源 W_PULSAR。
 
