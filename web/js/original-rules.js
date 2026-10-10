@@ -5,6 +5,9 @@
   // 原作基础节拍为 35ms，渲染独立运行。
   // 4.04's base wait is 35 ms (0x41ae07). Rendering remains independent.
   const W=400,H=480,STEP=.035,TICK=1/STEP;
+  // 出击演出独立按约 60Hz 标定，保留原作每演出帧下移 3；不加速战斗。
+  // Calibrate launch presentation near 60Hz, retaining 3 source pixels per frame; combat stays unchanged.
+  const LAUNCH_SPEED=3*(H/400)*60,HEALTH_BAR_MIN_HP=C.definitions[C.byId[17]].hp;
   // 按原作可见区域校准手机移动距离，不改变世界计时。
   // Match the classic 320x400 visible-area traversal in our 400x480 playfield.
   // This is mobile control calibration, not a change to enemy/world timing.
@@ -62,7 +65,8 @@
     nextStage(){if(this.phase!=='cleared'||this.stage.id>=18)return false;this.loadStage(this.stage.id+1);return true;}
     beginPresentation(){
       this.effects=[];this.wrecks=[];this.stageBonus=null;this.player.medals=0;this.launch=null;
-      if(this.presentation){this.phase='launch';this.launch={ticks:0,carrierY:-64};}
+      this.player.mega=0;this.player.megaTick=0;
+      if(this.presentation){this.phase='launch';this.launch={ticks:0,carrierY:-64,previousY:-64};}
     }
     pause(){if(['playing','launch','aftermath'].includes(this.phase)){this.resumePhase=this.phase;this.phase='paused';return true;}return false;}
     resume(){if(this.phase==='paused'){this.pendingTime=0;this.phase=this.resumePhase||'playing';return true;}return false;}
@@ -296,7 +300,7 @@
       const p=this.player;
       // 保持原有 4 秒持续时间与每四 tick 的 3×240 伤害预算。
       // Keep the existing 4 s duration and 3*240 damage per four-tick burst frozen.
-      if(p.mega>0&&p.respawn<=0){if((p.megaTick++||0)%4===0){this.addBullet(p.x,p.y-20,0,-950,true,3*240,1,{shotType:61,pulse:true,r:18,hitEnemies:[]});this.events.push({type:'super-pulse'});}}
+      if(p.mega>0&&p.respawn<=0){if((p.megaTick++||0)%4===0){this.addBullet(p.x,p.y-20,0,0,true,3*240,1,{shotType:61,pulse:true,playerBeam:true,age:-1,r:6,endY:0,damageApplied:false,life:4*STEP});this.events.push({type:'super-pulse'});}}
       for(const s of this.specials){s.px=s.x;s.py=s.y;s.ticks++;
         if(s.exploded){s.remaining--;continue;}
         s.x+=Math.sin(s.angle)*s.speed;s.y-=Math.cos(s.angle)*s.speed;
@@ -314,6 +318,23 @@
       }
       this.specials=this.specials.filter(s=>!s.exploded||s.remaining>0);
     }
+    updatePlayerBeam(b){
+      const p=this.player;
+      if(this.phase!=='playing'||p.respawn>0||p.mega<=0||++b.age>=4){b.dead=true;return;}
+      b.px=b.x;b.py=b.y;b.x=p.x;b.y=p.y-20;b.endY=0;
+      // 原作 0x428e70/0x428ed0 从炮口向前扫描并在首个目标处截止。
+      // Original 0x428e70/0x428ed0 scans forward from the muzzle and stops at the first target.
+      let target=null,nearest=-Infinity;
+      for(const e of this.enemies){
+        if(!this.targetable(e)||e.y>=b.y||Math.abs(e.x-b.x)>e.r+b.r)continue;
+        const edge=Math.min(b.y,e.y+e.r);if(edge>nearest){nearest=edge;target=e;}
+      }
+      if(target){b.endY=Math.max(0,nearest);if(!b.damageApplied){
+        b.damageApplied=true;target.hp-=b.damage;target.hit=.06;this.shotsHit++;
+        this.addEffect(1,b.x,b.endY,40,16);
+        if(target.hp<=0)this.killEnemy(target);else this.events.push({type:'enemy-hit'});
+      }}
+    }
     defeatBoss(){
       if(this.phase!=='playing')return;this.boss=null;this.bullets=[];this.flash=.35;
       const p=this.player;this.stageBonus={bombs:p.bombs,medals:p.medals,bombScore:p.bombs*1000,medalScore:p.medals*2000,total:p.bombs*1000+p.medals*2000,awarded:false};
@@ -329,7 +350,7 @@
       if(this.phase==='launch'){
         const s=this.launch;s.ticks++;
         if(s.ticks===26)this.events.push({type:'launch'});
-        if(s.ticks>=26)s.carrierY+=3;
+        s.previousY=s.carrierY;if(s.ticks>=26)s.carrierY+=LAUNCH_SPEED*STEP;
         if(s.carrierY>H+64){this.phase='playing';this.launch=null;this.pendingTime=0;this.events.push({type:'mission-start'});}
       }else if(this.phase==='aftermath'){
         this.flash=Math.max(0,this.flash-STEP);this.shake=Math.max(0,this.shake-STEP*25);this.updateEffects();
@@ -365,6 +386,7 @@
       for(const e of this.enemies){if(e.dead)continue;e.time+=dt;e.hit=Math.max(0,e.hit-dt);if(!e.dying)this.moveEnemy(e,dt);this.updateEnemyState(e);if(e.dead||e.dying)continue;for(const gun of e.guns)gun.tick(e,this);if(!e.scenery&&!e.ground&&e.y>0&&Math.hypot(e.x-p.x,e.y-p.y)<e.r+p.r)this.collideEnemy(e);}
       this.updateSpecials();
       for(const b of this.bullets){
+        if(b.playerBeam){this.updatePlayerBeam(b);continue;}
         if(b.beam){
           const owner=this.enemies.find(e=>e.uid===b.owner&&!e.dead&&!e.dying);
           if(!owner||b.dead||++b.age>=4){b.dead=true;continue;}
@@ -389,5 +411,5 @@
       this.pickups=this.pickups.filter(i=>!i.dead&&i.y<H+30);this.particles=this.particles.filter(v=>v.life>0);
     }
   }
-  globalThis.StarfallCore={W,H,TICK,STEP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};
+  globalThis.StarfallCore={W,H,TICK,STEP,LAUNCH_SPEED,HEALTH_BAR_MIN_HP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};
 })();

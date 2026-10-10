@@ -8,11 +8,22 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics, purchases or network permissions.
 
-**Current milestone M2.6 (v0.2.6) adds trilingual UI and permanent Chinese/English maintenance. This is not a verified complete 1:1 port.** The original 18 stages come first; stages 19–25 have not been developed. See [fidelity status](docs/FIDELITY.en.md) for confirmed behavior, estimates and remaining differences.
+**Current milestone M2.7 (v0.2.7) fixes carrier launch, tanker proportions, separate health bars and the blue laser. This is not a verified complete 1:1 port.** The original 18 stages come first; stages 19–25 have not been developed. See [fidelity status](docs/FIDELITY.en.md) for confirmed behavior, estimates and remaining differences.
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.6
+## Current milestone M2.7
+
+- Carrier launch including doors takes about 3.7 seconds with smooth interpolation. Combat speed and stage time are unchanged. Timing is a reference-based calibration, not an exact original-runtime measurement.
+- The large stage-one tanker uses the original 44×87 visible silhouette ratio, retaining its 700 HP and collision geometry.
+- Independent regular and boss health-bar settings: **regular bars OFF, boss bars ON by default**. Regular bars require maximum HP of at least 905, matching the opening square supply ship. Old combined settings migrate once.
+- The blue bomb now wraps the player in violet lightning and projects a continuous thick blue laser, following movement and stopping at the nearest eligible forward target. Aura rings no longer travel as projectiles. The existing provisional damage budget remains.
+
+Build records will be updated after this release's Android and iOS verification finishes.
+
+[Default bar settings](docs/screenshots/m27-default-settings.png) · [Violet aura and blue laser](docs/screenshots/blue-laser-aura.png) · [Tanker proportions](docs/screenshots/tanker-proportions.png) · [Evidence and limits](docs/M2_7_RESEARCH.md) · [Built-in imagegen asset and full prompt](docs/ART_M2_7.md)
+
+## Completed M2.6
 
 - First launch reads the native preferred language: Simplified Chinese, Traditional Chinese including Taiwan/Hong Kong/Macao, or English fallback. Explicit Hans/Hant scripts take precedence.
 - Switch immediately in main-menu or pause settings. Saved manual choices take precedence. Switching does not restart combat or reset equipment, scores, difficulty, unlocks or audio preferences.
@@ -54,9 +65,9 @@ HP, damage and superweapon budgets were frozen during that milestone. Version 0.
 
 Authorized BGM MP3s map to the original 18-stage music indices. The first three correspond to files05_相位,06_慢速火箭 and07. Twenty named entries deduplicate to18 tracks. Music/effects have separate volume/mute settings and resume from their paused position. See [music mapping](docs/MUSIC.md).
 
-Pickups and boss arrival no longer display central blocking messages. An equipment panel shows weapon level, same-color advice and auxiliaries; medium/large enemy health bars are optional. Offscreen enemies are protected. Tracking hulls keep turning, enemies flash near death, bosses burn/fall, and red/blue projectile tiers have distinct sizes.
+Pickups and boss arrival no longer display central blocking messages. An equipment panel shows weapon level, same-color advice and auxiliaries; M2.7 separates optional high-HP regular bars from boss bars. Offscreen enemies are protected. Tracking hulls keep turning, enemies flash near death, bosses burn/fall, and red/blue projectile tiers have distinct sizes.
 
-Three superweapons display a forward golden mass,32 surrounding charges and sustained blue pulses. Boss radio uses W_RADIO1; launch, ambience and engine clips are separate, with original voice priorities. M2.4 later corrected incoming damage under new authorization; HP and old bomb budgets remain unchanged. [Limits](docs/M2_2_RESEARCH.md) · [Equipment/death rules](docs/DROPS_WEAPONS.md)
+Three superweapons display a forward golden mass,32 surrounding charges and a blue attack (corrected to aura plus continuous laser in M2.7). Boss radio uses W_RADIO1; launch, ambience and engine clips are separate, with original voice priorities. M2.4 later corrected incoming damage under new authorization; HP and old bomb budgets remain unchanged. [Limits](docs/M2_2_RESEARCH.md) · [Equipment/death rules](docs/DROPS_WEAPONS.md)
 
 - Original 18 maps,8,368 placements and387 object definitions retain stable IDs, HP, speed, scores, paths, guns and drop metadata; no random substitute campaign.
 - Separate boss definitions; four weapon families with six enhancement levels, missiles/homing, side/rear guns, shields, armor and lives. Some interactions still need original-runtime checks.

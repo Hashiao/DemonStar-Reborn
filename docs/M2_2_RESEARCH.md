@@ -1,5 +1,9 @@
 # M2.2 战斗表现与声音核对
 
+> **M2.7 更正 / Correction:** 下文将 S_BPULSEA–D 当成发射物的判断已被更完整调用链推翻：它是玩家护罩，61 号弹实际使用 S_ESHOT6L2A–D 激光。M2.7 已修复表现与前向最近目标扫描，保留旧临时伤害预算。M2.4 已修复下文历史冻结的普通受伤数值。详见 [M2.7 证据](M2_7_RESEARCH.md)、[M2.4 证据](M2_4_RESEARCH.md)。
+>
+> The earlier S_BPULSEA–D projectile interpretation below is superseded: those frames belong to the player aura; projectile 61 uses S_ESHOT6L2A–D laser tiles. M2.7 fixes presentation and nearest-forward-target scanning while retaining the provisional damage budget. M2.4 superseded the historical incoming-damage freeze below. See the linked evidence.
+
 ## 数值冻结
 
 按用户要求，`campaign.js` 与 `player-rules.js` 和 v0.2.1 构建提交 85b73bd 内容一致。基础 HP、Boss 出场倍数、主炮伤害表、难度倍率、敌弹简化 1/2 点及撞击 3 点均未调整。后两项仍为待核对实现，不能称为原表值。

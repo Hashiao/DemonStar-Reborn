@@ -40,6 +40,7 @@ for family in ('iPhone','iPad'):
         (out/(family+'-'+expected+'-probe.json')).write_text(json.dumps(probe,indent=2))
         run(['xcrun','simctl','io',uid,'screenshot',str(out/(family+'.png'))])
         assert probe.get('initialLocale')==expected,probe
+        assert probe.get('healthBarDefaults')=={'regular':False,'boss':True} and probe.get('independentHealthBarSwitches'),probe
         assert probe.get('languagePreservesCombat') and all(c['passed'] for c in probe['languageChecks']) and len(probe['languageChecks'])==3,probe
         assert probe.get('launchSeen') and probe.get('presentationReady'),probe
         assert probe.get('phase')=='playing',probe;assert probe.get('assetsReady'),probe;assert probe.get('score',0)>=0,probe

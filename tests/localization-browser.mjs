@@ -53,6 +53,6 @@ try{
   const privateContext=await browser.newContext({locale:'en-US',viewport:{width:390,height:844}});
   await privateContext.addInitScript(()=>{Storage.prototype.setItem=function(){throw new Error('Storage unavailable');};});
   const privatePage=await privateContext.newPage();privatePage.on('pageerror',e=>errors.push(String(e)));await privatePage.goto(url);await privatePage.locator('#settings').click();await privatePage.locator('#language').selectOption('zh-Hant');
-  assert.equal(await privatePage.locator('html').getAttribute('lang'),'zh-Hant');assert.ok((await privatePage.locator('.language-hint').textContent()).includes('無法儲存'));await privateContext.close();
+  assert.equal(await privatePage.locator('html').getAttribute('lang'),'zh-Hant');assert.ok((await privatePage.locator('.language-hint').first().textContent()).includes('無法儲存'));await privateContext.close();
   assert.deepEqual(errors,[]);await writeFile('artifacts/localization-verification.json',JSON.stringify({status:'passed',firstRun:checks,nativeHint:true,persistedOverride:true,legacySaveMigration:true,threeLanguagesWithoutCombatReset:true,accessibleLabels:true,localizedPickupsAndResults:true,fiveLayouts:true,traditionalCopyReviewed:true,storageUnavailableSessionSwitch:true,errors},null,2));console.log('Three-language browser checks passed / 三语浏览器检查通过');
 }finally{await browser.close();}

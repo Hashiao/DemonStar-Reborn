@@ -1,0 +1,13 @@
+# M2.7 护罩与蓝激光图集 / Aura and blue-laser atlas
+
+内置 imagegen 重绘，非 CLI。最终文件：`web/assets/pulse-laser-hd.png`，1774×887，透明 RGBA，4×2 图集。上排四帧紫色护罩，下排四帧蓝激光。参考仅保存在 `.local/reference/m22/pulse-reference.png`、`.local/reference/m27/beam-reference.png`，不随仓库发布。保留生成的 alpha，`web/js/superweapon-art.js` 只提供运行时裁切。
+
+Generated with **built-in imagegen**, not the CLI. Final file: `web/assets/pulse-laser-hd.png`,1774×887 transparent RGBA,4×2 atlas. The top row contains four violet aura frames; the bottom row four blue beam frames. Original references remain only in ignored local folders. Generated alpha is preserved; `web/js/superweapon-art.js` contains runtime crop metadata.
+
+气罐没有重新绘图；沿用 `mission1-hd.png`，用原作44×87可见轮廓修正裁切与比例。Tanker art is reused from `mission1-hd.png`; only its crop and mapping to the original44×87 visible footprint are corrected.
+
+图集 SHA-256 / Atlas SHA-256: `ed0e7115b244f8ba82154ee184542aa1312778bf9052f41163a27ca77e396ecd`
+
+## 完整提示词 / Full prompt
+
+Production transparent RGBA sprite atlas for a faithful DemonStar HD remake. Reference 1 is the original FOUR electric aura outlines S_BPULSEA-D; reference 2 is the original blue laser tile sequence. Generate EXACTLY 4 equal columns by 2 equal rows, eight isolated centered cells, wide 2:1 canvas, no text/grid/border/background. TOP ROW cells 0-3: four animation frames of the SAME purple-violet electrical sheath around a small fighter, fighter itself NOT included. Preserve the original wide pear / teardrop-shaped jagged closed boundary with a narrow point at the TOP and a broad rounded lower part, about width40:height48, clear fully transparent hollow center. Electric jagged violet rim with bright lavender-white hotspots and a small bright white-violet flare at the top. Different small lightning wrinkles in each frame, fixed center and dimensions. Restrained bright purple glow right near the rim; no interior filled disk or circular projectile, no ship. These surround the player and never fly away. BOTTOM ROW cells 4-7: four phases of a thick vertical BLUE LASER SHAFT TILE, same center, straight parallel sides, solid luminous blue/cyan-white interior. First frame strongest with white center and cobalt margins; second bright ice blue; third darker blue; fourth narrow dim blue. Rectangular beam segments, upright with no circle or bubble or pear outline. Segment visible shape ratio 1:4, continuous luminous core reaching flat top and bottom edges of its own segment for seamless extension into a long beam. No pointed missile nose. Same industrial arcade visual language as original. Each sprite confined to its cell with about 15% transparent margin; all backgrounds genuinely transparent alpha. Redraw crisp HD painted effects; do not copy enlarged pixels.

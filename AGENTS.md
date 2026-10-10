@@ -45,3 +45,6 @@
 - M2.2：用户已授权执行修复并使用 audio/ 新增 BGM MP3。按原程序音乐索引映射 18 关，来源/渲染方式和哈希写入 docs/MUSIC.md。该明确授权允许发布用户提供的 MP3 副本，不发布原始 music.glb。HP/伤害参数先冻结，来源和临时预算分开记录；不得凭手感擅调血量。屏外保护、全部拾取及 Boss 出场不遮屏、可选血条、红蓝弹型尺寸、持续转向、濒死/坠毁和三种超级武器按 docs/M2_2_RESEARCH.md 逐项验收。
 
 - M2.4：用户在定位后明确授权修复撞击/敌弹伤害、S_ENEMY1A、网架炮台和大岩石，并要求核对四档难度、低能量降火及普通中弹无额外无敌。该授权解除这些受伤规则的冻结；敌机基础 HP、主机武器伤害及超级武器旧预算仍冻结。分别遵循原作撞机与敌弹处理分支，不统一乘经验倍率。证据见 docs/M2_4_RESEARCH.md。
+
+- M2.7：普通高血量敌机（最大 HP≥905）与 Boss 血条独立，默认仅 Boss 开启；旧设置只迁移一次。蓝色炸弹是主角紫色护罩加向前激光，不是发射圆环；保留现有伤害预算，参见 docs/M2_7_RESEARCH.md。
+  M2.7: independent regular (max HP ≥905) and boss bars default to boss-only, with a one-time legacy migration. The blue bomb is a player aura plus a forward laser, not travelling rings. Preserve the existing damage budget; see docs/M2_7_RESEARCH.md.

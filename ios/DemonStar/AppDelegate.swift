@@ -79,6 +79,14 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
             // Switch through the real settings control and verify paused combat is unchanged.
             var before=JSON.stringify({player:g.player,score:g.score,stage:g.stage.id,frame:g.frame});
             document.getElementById('pause').click();var languageChecks=[];
+            // 两项血条独立，默认仅 Boss；开关不能改变战斗状态。
+            // Health-bar switches are independent and default to Boss only, without changing combat.
+            var regular=document.getElementById('health-toggle'),bossBar=document.getElementById('boss-health-toggle');
+            result.healthBarDefaults={regular:regular.getAttribute('aria-pressed')==='true',boss:bossBar.getAttribute('aria-pressed')==='true'};
+            if(result.healthBarDefaults.regular||!result.healthBarDefaults.boss)throw new Error('Wrong health-bar defaults');
+            regular.click();if(bossBar.getAttribute('aria-pressed')!=='true')throw new Error('Regular toggle changed Boss bars');
+            bossBar.click();if(regular.getAttribute('aria-pressed')!=='true')throw new Error('Boss toggle changed regular bars');
+            regular.click();bossBar.click();result.independentHealthBarSwitches=true;
             ['zh-Hans','zh-Hant','en'].forEach(function(locale){
               var select=document.getElementById('language');select.value=locale;select.dispatchEvent(new Event('change',{bubbles:true}));
               var ok=document.documentElement.lang===locale&&g.phase==='paused'&&JSON.parse(localStorage.getItem('demonstar-reborn-v1')).language===locale&&document.getElementById('dialog-title').textContent===DemonStarI18n.t('pausedTitle')&&document.getElementById('bomb').getAttribute('aria-label')===DemonStarI18n.t('bombAria',{n:2});

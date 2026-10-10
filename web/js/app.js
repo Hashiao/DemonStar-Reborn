@@ -2,14 +2,16 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id), I=DemonStarI18n, t=I.t;
-  const VERSION='0.2.6', weaponName=n=>t('weapon'+n);
+  const VERSION='0.2.7', weaponName=n=>t('weapon'+n);
   let settingsContext='menu',pickupKey=null,storageAvailable=true;
   function hideDialog(){const el=$('dialog');el.hidden=true;el.setAttribute('aria-modal','false');el.setAttribute('aria-hidden','true');}
   const { Game, DIFFICULTIES, STAGES, WEAPONS, W, H, clamp } = StarfallCore;
   const game=new Game(), renderer=new StarfallRenderer($('game')), audio=new StarfallAudio(), music=new DemonStarMusicPlayer();
-  let saved={language:I.detect(I.preferred()),best:[0,0,0,0],unlocked:[1,1,1,1],difficulty:1,sound:true,music:true,musicPreferenceVersion:1,enemyHealthBars:true,musicVolume:.35,soundVolume:1};
+  let saved={language:I.detect(I.preferred()),best:[0,0,0,0],unlocked:[1,1,1,1],difficulty:1,sound:true,music:true,musicPreferenceVersion:1,enemyHealthBars:false,bossHealthBars:true,healthBarsVersion:1,musicVolume:.35,soundVolume:1};
   try { const s=JSON.parse(localStorage.getItem('demonstar-reborn-v1')||'null'); if(s && typeof s==='object'){
     saved.language=I.resolve(s.language,I.preferred());
+    // 旧版合并开关一次性迁移为仅 Boss；之后分别尊重两项选择。
+    // Migrate the old combined switch once to Boss-only, then preserve independent choices.
     saved.best=Array.from({length:4},(_,i)=>Math.max(0,Math.floor(Number(s.best?.[i])||0)));
     saved.unlocked=Array.from({length:4},(_,i)=>clamp(Math.floor(Number(s.unlocked?.[i])||1),1,18));
     saved.difficulty=clamp(Math.floor(Number(s.difficulty)||0),0,3);saved.sound=s.sound!==false;
@@ -17,7 +19,7 @@
     // Enable BGM once when migrating pre-default-on saves. Later explicit
     // mute choices remain persistent, including a deliberately zero volume.
     saved.music=s.musicPreferenceVersion===1?s.music!==false:true;
-    saved.musicVolume=clamp(Number.isFinite(s.musicVolume)&&(s.musicPreferenceVersion===1||s.musicVolume>0)?s.musicVolume:.35,0,1);saved.soundVolume=clamp(Number.isFinite(s.soundVolume)?s.soundVolume:1,0,1);saved.enemyHealthBars=s.enemyHealthBars!==false;
+    saved.musicVolume=clamp(Number.isFinite(s.musicVolume)&&(s.musicPreferenceVersion===1||s.musicVolume>0)?s.musicVolume:.35,0,1);saved.soundVolume=clamp(Number.isFinite(s.soundVolume)?s.soundVolume:1,0,1);if(s.healthBarsVersion===1){saved.enemyHealthBars=s.enemyHealthBars===true;saved.bossHealthBars=s.bossHealthBars!==false;}
   }} catch { /* 隐私模式/损坏存档可恢复。Private browsing/corrupt saves are recoverable. */ }
   I.select(saved.language);I.apply();
   let selectedStage=1, pointer=null, previous=0, accumulator=0, toastTime=0, pickupTime=0, lastPhase='menu', hudTick=0, dialogReturn=null, firePulse=false;
@@ -47,10 +49,11 @@
     $('dialog').hidden=false;$('dialog').setAttribute('aria-modal','true');$('dialog').setAttribute('aria-hidden','false');requestAnimationFrame(()=>$('dialog-buttons').querySelector('button')?.focus({preventScroll:true}));
   }
   function resume(){game.resume();hideDialog();$('pause').focus({preventScroll:true});previous=0;accumulator=0;clearInput();audio.unlock();music.resume();}
-  function settingsRows(){return `<label class="dialog-setting language-setting">${t('language')}<select id="language" aria-label="${t('language')}">${I.locales.map((locale,i)=>`<option value="${locale}" ${locale===I.locale?'selected':''}>${['简体中文','繁體中文','English'][i]}</option>`).join('')}</select></label><p class="language-hint">${t(storageAvailable?'languageHint':'languageSessionHint')}</p><div class="dialog-setting">${t('sfx')} <button class="secondary" id="sfx-toggle" aria-label="${t('sfx')} ${t(saved.sound?'on':'off')}" aria-pressed="${saved.sound}">${t(saved.sound?'on':'off')}</button></div><label class="dialog-setting">${t('sfxVolume')} <input id="sfx-volume" aria-label="${t('sfxVolume')}" type="range" min="0" max="100" value="${Math.round(saved.soundVolume*100)}"></label><div class="dialog-setting">${t('music')} <button class="secondary" id="music-toggle" aria-label="${t('music')} ${t(saved.music?'on':'off')}" aria-pressed="${saved.music}">${t(saved.music?'on':'off')}</button></div><label class="dialog-setting">${t('musicVolume')} <input id="music-volume" aria-label="${t('musicVolume')}" type="range" min="0" max="100" value="${Math.round(saved.musicVolume*100)}"></label><div class="dialog-setting">${t('healthBars')} <button class="secondary" id="health-toggle" aria-label="${t('healthBars')} ${t(saved.enemyHealthBars?'on':'off')}" aria-pressed="${saved.enemyHealthBars}">${t(saved.enemyHealthBars?'on':'off')}</button></div>`; }
+  function settingsRows(){return `<label class="dialog-setting language-setting">${t('language')}<select id="language" aria-label="${t('language')}">${I.locales.map((locale,i)=>`<option value="${locale}" ${locale===I.locale?'selected':''}>${['简体中文','繁體中文','English'][i]}</option>`).join('')}</select></label><p class="language-hint">${t(storageAvailable?'languageHint':'languageSessionHint')}</p><div class="dialog-setting">${t('sfx')} <button class="secondary" id="sfx-toggle" aria-label="${t('sfx')} ${t(saved.sound?'on':'off')}" aria-pressed="${saved.sound}">${t(saved.sound?'on':'off')}</button></div><label class="dialog-setting">${t('sfxVolume')} <input id="sfx-volume" aria-label="${t('sfxVolume')}" type="range" min="0" max="100" value="${Math.round(saved.soundVolume*100)}"></label><div class="dialog-setting">${t('music')} <button class="secondary" id="music-toggle" aria-label="${t('music')} ${t(saved.music?'on':'off')}" aria-pressed="${saved.music}">${t(saved.music?'on':'off')}</button></div><label class="dialog-setting">${t('musicVolume')} <input id="music-volume" aria-label="${t('musicVolume')}" type="range" min="0" max="100" value="${Math.round(saved.musicVolume*100)}"></label><div class="dialog-setting">${t('healthBars')} <button class="secondary" id="health-toggle" aria-label="${t('healthBars')} ${t(saved.enemyHealthBars?'on':'off')}" aria-pressed="${saved.enemyHealthBars}">${t(saved.enemyHealthBars?'on':'off')}</button></div><p class="language-hint">${t('healthBarsHint')}</p><div class="dialog-setting">${t('bossHealthBars')} <button class="secondary" id="boss-health-toggle" aria-label="${t('bossHealthBars')} ${t(saved.bossHealthBars?'on':'off')}" aria-pressed="${saved.bossHealthBars}">${t(saved.bossHealthBars?'on':'off')}</button></div>`; }
   function bindSettings(){
     $('language').onchange=()=>changeLanguage($('language').value);
-    const toggle=(id,key,apply)=>{$(id).onclick=()=>{saved[key]=!saved[key];$(id).textContent=t(saved[key]?'on':'off');$(id).setAttribute('aria-pressed',String(saved[key]));$(id).setAttribute('aria-label',t({'health-toggle':'healthBars','music-toggle':'music','sfx-toggle':'sfx'}[id])+' '+t(saved[key]?'on':'off'));apply();persist();};};
+    const toggle=(id,key,apply)=>{$(id).onclick=()=>{saved[key]=!saved[key];$(id).textContent=t(saved[key]?'on':'off');$(id).setAttribute('aria-pressed',String(saved[key]));$(id).setAttribute('aria-label',t({'health-toggle':'healthBars','boss-health-toggle':'bossHealthBars','music-toggle':'music','sfx-toggle':'sfx'}[id])+' '+t(saved[key]?'on':'off'));apply();persist();};};
+    toggle('boss-health-toggle','bossHealthBars',updateHud);
     toggle('health-toggle','enemyHealthBars',()=>{renderer.enemyHealthBars=saved.enemyHealthBars;updateHud();});
     toggle('music-toggle','music',()=>{music.setEnabled(saved.music);});
     toggle('sfx-toggle','sound',()=>{audio.enabled=saved.sound;if(saved.sound)audio.unlock();else audio.stopAll();menuInfo();});
@@ -101,7 +104,7 @@
     const gear=[p.missileAmmo?{id:p.missileType,text:t(p.missileType===9?'gearHoming':'gearMissile',{n:p.missileAmmo})} : null,p.side?{id:12,text:t('gearSide',{n:p.side})} : null,p.rear?{id:13,text:t('gearRear',{n:p.rear})} : null,p.shield>0?{id:7,text:t('gearShield')} : null].filter(Boolean);
     const gearKey=gear.map(g=>g.id+':'+g.text).join('|');if($('aux-equipment').dataset.key!==gearKey){$('aux-equipment').innerHTML=gear.map(g=>`<span><i class="gear-icon gear-${g.id}" aria-hidden="true"></i>${g.text}</span>`).join('');$('aux-equipment').dataset.key=gearKey;}
     text('bomb-count',String(p.bombs));$('bomb').disabled=game.phase!=='playing'||p.bombs<=0||p.bombCooldown>1e-9||p.respawn>0;label('bomb',t('bombAria',{n:p.bombs}));
-    $('boss-hud').hidden=!game.boss||!saved.enemyHealthBars;if(game.boss){text('boss-name',t('boss',{n:game.stage.id}));$('boss-health').style.width=`${Math.max(0,game.boss.hp/game.boss.maxHp*100)}%`;}
+    $('boss-hud').hidden=!game.boss||!saved.bossHealthBars;if(game.boss){text('boss-name',t('boss',{n:game.stage.id}));$('boss-health').style.width=`${Math.max(0,game.boss.hp/game.boss.maxHp*100)}%`;}
   }
   function frame(timestamp){
     let dt=previous?Math.min(.1,(timestamp-previous)/1000):0;previous=timestamp;

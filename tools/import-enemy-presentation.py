@@ -1,7 +1,9 @@
-"""Import numeric animation/bounding-box metadata; never copy original pixels.
+"""导入数值动画/边界框信息，不复制原图像素。使用本地原作和已有高清图集。
+Import numeric animation/bounding-box metadata; never copy original pixels.
 
-Reads a local 4.04 installation and the three already generated HD atlases.
-Requires the maintainer's existing Pillow. See docs/ART_M2_4.md.
+Reads a local 4.04 installation and existing generated HD atlases.
+复用已有 Pillow，来源见 docs/ART_M2_4.md 与 docs/ART_M2_7.md。
+Requires existing Pillow; see docs/ART_M2_4.md and docs/ART_M2_7.md.
 """
 import argparse,json,runpy,struct
 from pathlib import Path
@@ -34,10 +36,17 @@ def extract(directory):
             # visible extent, never the square atlas cell to a tall rectangle.
             crops.append([x+a,y+b,c-a,d-b,(left+right-original.width)/2,(top+bottom-original.height)/2,right-left,bottom-top])
         sprites[name]={'asset':'assets/'+file,'directional':name=='S_ASTSHT1B','frames':crops}
+    # 气罐沿用已重绘图，只用原作可见边界恢复比例；不导出参考像素。
+    # Reuse the redrawn tanker and restore its original visible bounds; export no reference pixels.
+    original=api['decode_sprite'](next(e['data'] for e in entries if e['name']=='S_SPTNKRA'),palette)
+    left,top,right,bottom=original.getchannel('A').getbbox();atlas=Image.open(ROOT/'web/assets/mission1-hd.png')
+    x,y=round(atlas.width/4),round(atlas.height/2);x2,y2=round(atlas.width/2),round(atlas.height*3/4)
+    a,b,c,d=atlas.getchannel('A').crop((x,y,x2,y2)).point(lambda a:255 if a>128 else 0).getbbox()
+    sprites['S_SPTNKRA']={'asset':'assets/mission1-hd.png','directional':False,'frames':[[x+a,y+b,c-a,d-b,(left+right-original.width)/2,(top+bottom-original.height)/2,right-left,bottom-top]]}
     data=next(e['data'] for e in entries if e['name']=='SHIPDEFS_DAT');animations={}
     for i in range(struct.unpack_from('<I',data)[0]):
         rec=data[4+i*2688:4+(i+1)*2688];name=rec[:16].split(b'\0')[0].decode()
-        if name not in sprites:continue
+        if name not in sprites or name=='S_SPTNKRA':continue
         s16=lambda off:struct.unpack_from('<h',rec,off)[0]
         animations[struct.unpack_from('<I',rec,16)[0]]={'interval':s16(64),'pause':s16(66),'loopFrames':s16(68),'cycles':s16(70),'start':s16(72),'pauseEnd':s16(82),'pauseStart':s16(84),'pingPong':bool(struct.unpack_from('<I',rec,40)[0]&0x10000)}
     return {'sprites':sprites,'animations':animations}
