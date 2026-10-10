@@ -21,7 +21,7 @@ def tap(identifier):
     n=node(identifier);x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')));run('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));time.sleep(.6)
 run('shell','am','force-stop','io.github.hashiao.demonstar')
 run('shell','am','start','-n','io.github.hashiao.demonstar/.MainActivity');time.sleep(2)
-assert '单人游戏' in node('start').get('text','')
+start=node('start');assert '单人游戏' in (start.get('content-desc') or start.get('text',''))
 capture('android-menu.png');tap('start');time.sleep(2)
 capture('android-launch.png');time.sleep(7)
 assert '关卡' in node('stage-label').get('text','')
