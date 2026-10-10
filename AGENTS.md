@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.9：全战役原型和敌弹必须按 `campaign-art.js` / `enemy-shots.js` 显式映射，不得重新引入编号取模飞机或通用地物回退。保留五类炮台固定底座/独立炮管、按关加载与完整图片解码检查。基础外形覆盖不代表全部动画已还原；见 `docs/M2_9_RESEARCH.md`。
+  M2.9: use explicit campaign-object and enemy-shot mappings; never reintroduce modulo fighters or generic scenery fallbacks. Preserve five fixed-base turret layers, per-stage loading and complete-image readiness. Base-art coverage is not full animation fidelity; see the M2.9 research document.
+
 ## 长期语言要求 / Long-term language policy
 
 - 从 M2.6 起，新增/修改的核心注释、源码重要说明、提交说明、PR、Release 和其他重要 Git 信息必须提供简体中文及英文。README.md 为简体中文，README.en.md 为等价英文版，互相链接并同步维护。历史发布记录保留，不覆写既有标签。

@@ -25,3 +25,30 @@ Preserve original silhouettes, colors, patterns and movement; HD redraws improve
 以上是本轮明确看过的代表帧，不是“18 关全程逐帧验收”。其他已截取但未逐张审看的时刻不计入视觉验收。录像确认了细小导弹/航迹、黄色高档成对斜弹和蓝色四列等外观；全部中间档位与精确位移、转向规则以本地原始图形和程序分支补足。采集于 2026-10-10，通过浏览器播放和截图。
 
 This is explicit representative-frame coverage, not a frame-by-frame certification of complete runs. Captured but individually unreviewed frames are not counted as visual verification. The recording supports thin missiles/trails, paired yellow side shots and four-column blue fire. Local original sprites and code branches supply missing intermediate tiers and precise movement/steering rules. Captured through browser playback/screenshots on 2026-10-10.
+
+## M2.9 实际审看 / Actual visual review
+
+2026-10-10：十八个分集每集四帧，共 72 个明确审看的代表时刻；第二关另复看 60 / 100 秒。仍不是全程逐帧验收。原型名称和几何以本地 4.04 图形记录补足。
+
+2026-10-10: four explicitly reviewed frames per part, 72 representative times total; stage two 60 / 100 s were also rechecked. This is not full-run frame-by-frame certification. Local 4.04 sprite records supplement names and geometry.
+
+| 分集 / Part | 秒 / Seconds |
+|---|---|
+| 1 | 25, 60, 120, 160 |
+| 2 | 25, 60, 100, 180 |
+| 3 | 25, 65, 110, 180 |
+| 4 | 25, 60, 150, 200 |
+| 5 | 25, 60, 150, 200 |
+| 6 | 20, 60, 100, 160 |
+| 7 | 25, 60, 150, 200 |
+| 8 | 25, 60, 150, 200 |
+| 9 | 25, 60, 150, 200 |
+| 10 | 25, 60, 150, 200 |
+| 11 | 25, 60, 150, 200 |
+| 12 | 25, 60, 150, 200 |
+| 13 | 25, 60, 150, 200 |
+| 14 | 25, 60, 150, 200 |
+| 15 | 25, 60, 150, 200 |
+| 16 | 25, 60, 150, 200 |
+| 17 | 25, 60, 150, 200 |
+| 18 | 20, 60, 160, 240 |

@@ -95,7 +95,14 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
             if(JSON.stringify({player:g.player,score:g.score,stage:g.stage.id,frame:g.frame})!==before)throw new Error('Language switch changed combat');
             var select=document.getElementById('language');select.value=initialLocale;select.dispatchEvent(new Event('change',{bubbles:true}));
             result.initialLocale=initialLocale;result.preferredLanguage=preferredLanguage;result.languageChecks=languageChecks;result.languagePreservesCombat=true;
-            StarfallApp.music.suspend();window.smokeResult=JSON.stringify(result);clearInterval(timer);
+            StarfallApp.music.suspend();clearInterval(timer);
+            // 逐张解码打包的全战役图集，不同时保留整套图片。
+            // Decode every packaged campaign atlas sequentially without retaining the full set.
+            var paths=Object.keys(DemonStarCampaignArt.assets).concat(Object.keys(DemonStarEnemyShots.assets)),checked=[];
+            function checkAtlas(index){
+              if(index===paths.length){result.campaignArt={decoded:checked,prototypeRoutes:Object.keys(DemonStarCampaignArt.routes).length,enemyTypes:Object.keys(DemonStarEnemyShots.shots).length};window.smokeResult=JSON.stringify(result);return;}
+              var image=new Image();image.onload=function(){try{var canvas=document.createElement('canvas');canvas.width=canvas.height=64;var context=canvas.getContext('2d');context.drawImage(image,0,0,64,64);var pixels=context.getImageData(0,0,64,64).data,visible=0;for(var i=3;i<pixels.length;i+=4)visible+=pixels[i]>0?1:0;if(!visible)throw new Error('Empty atlas '+paths[index]);checked.push(paths[index]);checkAtlas(index+1);}catch(e){window.smokeResult=JSON.stringify({error:String(e)});}};image.onerror=function(){window.smokeResult=JSON.stringify({error:'Atlas failed: '+paths[index]});};image.src=paths[index];
+            }checkAtlas(0);
           }catch(error){window.smokeResult=JSON.stringify({error:String(error)});clearInterval(timer);}},50);
         })();
         """

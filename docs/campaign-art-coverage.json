@@ -1,0 +1,8138 @@
+{
+  "description": {
+    "zh-Hans": "逐原型显式映射；生成基础外形覆盖不等于全部动画已逐帧还原。",
+    "en": "Explicit prototype mappings; base-art coverage is not complete animation fidelity."
+  },
+  "definitions": 387,
+  "usedDefinitions": 366,
+  "sprites": 251,
+  "usedSprites": 244,
+  "newMappedSprites": 213,
+  "missing": [],
+  "records": {
+    "S_ENEMY1A": {
+      "width": 34,
+      "height": 46,
+      "bounds": [
+        0,
+        0,
+        34,
+        46
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        34,
+        46
+      ],
+      "definitions": [
+        0,
+        47
+      ],
+      "stages": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        10,
+        11,
+        12,
+        13,
+        14,
+        17,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "framed"
+      }
+    },
+    "S_ENEMY2": {
+      "width": 30,
+      "height": 32,
+      "bounds": [
+        0,
+        0,
+        30,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        30,
+        32
+      ],
+      "definitions": [
+        1,
+        65,
+        2,
+        3,
+        56
+      ],
+      "stages": [
+        3
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY3": {
+      "width": 22,
+      "height": 23,
+      "bounds": [
+        0,
+        0,
+        22,
+        23
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        22,
+        23
+      ],
+      "definitions": [
+        4
+      ],
+      "stages": [],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-12-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY4": {
+      "width": 31,
+      "height": 22,
+      "bounds": [
+        0,
+        0,
+        31,
+        22
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        31,
+        22
+      ],
+      "definitions": [
+        5
+      ],
+      "stages": [
+        2
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY5": {
+      "width": 31,
+      "height": 31,
+      "bounds": [
+        0,
+        0,
+        31,
+        31
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        31,
+        31
+      ],
+      "definitions": [
+        6
+      ],
+      "stages": [
+        4
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY6": {
+      "width": 31,
+      "height": 31,
+      "bounds": [
+        0,
+        0,
+        31,
+        31
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        31,
+        31
+      ],
+      "definitions": [
+        7
+      ],
+      "stages": [
+        4
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY7": {
+      "width": 24,
+      "height": 16,
+      "bounds": [
+        0,
+        0,
+        24,
+        16
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        24,
+        16
+      ],
+      "definitions": [
+        8,
+        187,
+        51
+      ],
+      "stages": [
+        3
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY8": {
+      "width": 48,
+      "height": 30,
+      "bounds": [
+        0,
+        0,
+        48,
+        30
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        48,
+        30
+      ],
+      "definitions": [
+        9
+      ],
+      "stages": [],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-12-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY37A": {
+      "width": 32,
+      "height": 40,
+      "bounds": [
+        0,
+        0,
+        32,
+        39
+      ],
+      "offset": [
+        0.0,
+        -0.5
+      ],
+      "visible": [
+        32,
+        39
+      ],
+      "definitions": [
+        10,
+        108
+      ],
+      "stages": [
+        3,
+        10
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY36A": {
+      "width": 32,
+      "height": 40,
+      "bounds": [
+        0,
+        0,
+        32,
+        40
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        32,
+        40
+      ],
+      "definitions": [
+        11,
+        109
+      ],
+      "stages": [
+        3,
+        10
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY35A": {
+      "width": 32,
+      "height": 40,
+      "bounds": [
+        0,
+        0,
+        32,
+        40
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        32,
+        40
+      ],
+      "definitions": [
+        12,
+        110
+      ],
+      "stages": [
+        3,
+        10
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY9A": {
+      "width": 30,
+      "height": 32,
+      "bounds": [
+        0,
+        0,
+        30,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        30,
+        32
+      ],
+      "definitions": [
+        146,
+        156
+      ],
+      "stages": [
+        5
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY9B": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        32,
+        32
+      ],
+      "definitions": [
+        147,
+        159
+      ],
+      "stages": [
+        5
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY9C": {
+      "width": 27,
+      "height": 29,
+      "bounds": [
+        0,
+        0,
+        27,
+        29
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        27,
+        29
+      ],
+      "definitions": [
+        148,
+        160
+      ],
+      "stages": [
+        5
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY10": {
+      "width": 74,
+      "height": 39,
+      "bounds": [
+        0,
+        0,
+        74,
+        39
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        74,
+        39
+      ],
+      "definitions": [
+        13
+      ],
+      "stages": [],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-12-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY13": {
+      "width": 29,
+      "height": 24,
+      "bounds": [
+        0,
+        0,
+        29,
+        24
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        29,
+        24
+      ],
+      "definitions": [
+        16,
+        182,
+        183
+      ],
+      "stages": [
+        4
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY14": {
+      "width": 56,
+      "height": 63,
+      "bounds": [
+        0,
+        0,
+        56,
+        63
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        56,
+        63
+      ],
+      "definitions": [
+        17,
+        72
+      ],
+      "stages": [
+        1,
+        2,
+        3
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "mission1",
+        "index": 0
+      }
+    },
+    "S_ENEMY15": {
+      "width": 22,
+      "height": 20,
+      "bounds": [
+        0,
+        0,
+        22,
+        20
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        22,
+        20
+      ],
+      "definitions": [
+        18
+      ],
+      "stages": [
+        3
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY16": {
+      "width": 22,
+      "height": 21,
+      "bounds": [
+        0,
+        0,
+        22,
+        21
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        22,
+        21
+      ],
+      "definitions": [
+        19
+      ],
+      "stages": [
+        3
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY17": {
+      "width": 36,
+      "height": 23,
+      "bounds": [
+        0,
+        0,
+        36,
+        23
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        36,
+        23
+      ],
+      "definitions": [
+        20,
+        59,
+        107
+      ],
+      "stages": [
+        3
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY18": {
+      "width": 43,
+      "height": 28,
+      "bounds": [
+        0,
+        0,
+        43,
+        28
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        43,
+        28
+      ],
+      "definitions": [
+        21,
+        184
+      ],
+      "stages": [
+        4,
+        6
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY19": {
+      "width": 71,
+      "height": 29,
+      "bounds": [
+        0,
+        0,
+        71,
+        29
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        71,
+        29
+      ],
+      "definitions": [
+        22
+      ],
+      "stages": [
+        5
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY20": {
+      "width": 34,
+      "height": 21,
+      "bounds": [
+        0,
+        0,
+        34,
+        21
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        34,
+        21
+      ],
+      "definitions": [
+        23,
+        67,
+        57,
+        105
+      ],
+      "stages": [
+        1,
+        2
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "mission1",
+        "index": 1
+      }
+    },
+    "S_ENEMY21": {
+      "width": 33,
+      "height": 30,
+      "bounds": [
+        0,
+        0,
+        33,
+        30
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        33,
+        30
+      ],
+      "definitions": [
+        24,
+        58
+      ],
+      "stages": [
+        1,
+        2
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "mission1",
+        "index": 2
+      }
+    },
+    "S_ENEMY22": {
+      "width": 32,
+      "height": 40,
+      "bounds": [
+        0,
+        1,
+        31,
+        38
+      ],
+      "offset": [
+        -0.5,
+        -0.5
+      ],
+      "visible": [
+        31,
+        37
+      ],
+      "definitions": [
+        25
+      ],
+      "stages": [
+        1,
+        5
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "mission1",
+        "index": 10
+      }
+    },
+    "S_ENEMY23": {
+      "width": 48,
+      "height": 48,
+      "bounds": [
+        1,
+        5,
+        47,
+        45
+      ],
+      "offset": [
+        0.0,
+        1.0
+      ],
+      "visible": [
+        46,
+        40
+      ],
+      "definitions": [
+        26,
+        66,
+        79,
+        80,
+        81,
+        82,
+        154,
+        155,
+        157
+      ],
+      "stages": [
+        4,
+        16
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY24": {
+      "width": 64,
+      "height": 56,
+      "bounds": [
+        1,
+        3,
+        63,
+        53
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        62,
+        50
+      ],
+      "definitions": [
+        27,
+        104
+      ],
+      "stages": [
+        2,
+        6,
+        7,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY38A": {
+      "width": 56,
+      "height": 40,
+      "bounds": [
+        0,
+        1,
+        55,
+        39
+      ],
+      "offset": [
+        -0.5,
+        0.0
+      ],
+      "visible": [
+        55,
+        38
+      ],
+      "definitions": [
+        149
+      ],
+      "stages": [
+        5,
+        6,
+        9
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY33A": {
+      "width": 64,
+      "height": 56,
+      "bounds": [
+        1,
+        3,
+        63,
+        53
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        62,
+        50
+      ],
+      "definitions": [
+        161,
+        260,
+        261
+      ],
+      "stages": [
+        6,
+        7,
+        9
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENBIGROTA": {
+      "width": 56,
+      "height": 64,
+      "bounds": [
+        3,
+        3,
+        52,
+        63
+      ],
+      "offset": [
+        -0.5,
+        1.0
+      ],
+      "visible": [
+        49,
+        60
+      ],
+      "definitions": [
+        177
+      ],
+      "stages": [
+        6,
+        7,
+        9,
+        10,
+        11,
+        12,
+        13,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENREDROTA": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        2,
+        2,
+        62,
+        63
+      ],
+      "offset": [
+        0.0,
+        0.5
+      ],
+      "visible": [
+        60,
+        61
+      ],
+      "definitions": [
+        178
+      ],
+      "stages": [
+        6,
+        7,
+        10,
+        12,
+        14,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY25": {
+      "width": 40,
+      "height": 48,
+      "bounds": [
+        4,
+        7,
+        35,
+        44
+      ],
+      "offset": [
+        -0.5,
+        1.5
+      ],
+      "visible": [
+        31,
+        37
+      ],
+      "definitions": [
+        28,
+        62,
+        64,
+        188
+      ],
+      "stages": [
+        2,
+        16
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY26": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        4,
+        2,
+        61,
+        63
+      ],
+      "offset": [
+        0.5,
+        0.5
+      ],
+      "visible": [
+        57,
+        61
+      ],
+      "definitions": [
+        37,
+        29
+      ],
+      "stages": [
+        3,
+        4,
+        5,
+        6,
+        9,
+        10,
+        11,
+        15,
+        16
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY40A": {
+      "width": 64,
+      "height": 72,
+      "bounds": [
+        3,
+        2,
+        61,
+        71
+      ],
+      "offset": [
+        0.0,
+        0.5
+      ],
+      "visible": [
+        58,
+        69
+      ],
+      "definitions": [
+        179
+      ],
+      "stages": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        14,
+        16,
+        17
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY27A": {
+      "width": 24,
+      "height": 24,
+      "bounds": [
+        3,
+        1,
+        20,
+        22
+      ],
+      "offset": [
+        -0.5,
+        -0.5
+      ],
+      "visible": [
+        17,
+        21
+      ],
+      "definitions": [
+        31,
+        60,
+        181
+      ],
+      "stages": [
+        6
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY28A": {
+      "width": 40,
+      "height": 40,
+      "bounds": [
+        5,
+        3,
+        35,
+        38
+      ],
+      "offset": [
+        0.0,
+        0.5
+      ],
+      "visible": [
+        30,
+        35
+      ],
+      "definitions": [
+        30,
+        46,
+        73
+      ],
+      "stages": [
+        1,
+        2,
+        3,
+        5,
+        12,
+        13,
+        14
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "spinner"
+      }
+    },
+    "S_ENEMY29A": {
+      "width": 16,
+      "height": 16,
+      "bounds": [
+        1,
+        2,
+        14,
+        15
+      ],
+      "offset": [
+        -0.5,
+        0.5
+      ],
+      "visible": [
+        13,
+        13
+      ],
+      "definitions": [
+        32,
+        35,
+        77,
+        78,
+        128
+      ],
+      "stages": [
+        5
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY30A": {
+      "width": 48,
+      "height": 48,
+      "bounds": [
+        2,
+        6,
+        45,
+        47
+      ],
+      "offset": [
+        -0.5,
+        2.5
+      ],
+      "visible": [
+        43,
+        41
+      ],
+      "definitions": [
+        84,
+        36,
+        38
+      ],
+      "stages": [
+        3
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY31A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        1,
+        1,
+        32,
+        32
+      ],
+      "offset": [
+        0.5,
+        0.5
+      ],
+      "visible": [
+        31,
+        31
+      ],
+      "definitions": [
+        33,
+        69,
+        68,
+        90
+      ],
+      "stages": [
+        2,
+        6
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY32A": {
+      "width": 48,
+      "height": 48,
+      "bounds": [
+        9,
+        9,
+        40,
+        40
+      ],
+      "offset": [
+        0.5,
+        0.5
+      ],
+      "visible": [
+        31,
+        31
+      ],
+      "definitions": [
+        48,
+        50,
+        49,
+        52,
+        53,
+        54,
+        55,
+        75
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        12
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY34A": {
+      "width": 48,
+      "height": 48,
+      "bounds": [
+        8,
+        4,
+        39,
+        42
+      ],
+      "offset": [
+        -0.5,
+        -1.0
+      ],
+      "visible": [
+        31,
+        38
+      ],
+      "definitions": [
+        124,
+        133,
+        111,
+        132,
+        114,
+        134
+      ],
+      "stages": [
+        1,
+        3,
+        5,
+        9
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "mission1",
+        "index": 3
+      }
+    },
+    "S_ASTER1A": {
+      "width": 40,
+      "height": 56,
+      "bounds": [
+        4,
+        3,
+        35,
+        52
+      ],
+      "offset": [
+        -0.5,
+        -0.5
+      ],
+      "visible": [
+        31,
+        49
+      ],
+      "definitions": [
+        61
+      ],
+      "stages": [
+        1
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "framed"
+      }
+    },
+    "S_ASTER2A": {
+      "width": 16,
+      "height": 16,
+      "bounds": [
+        0,
+        0,
+        16,
+        15
+      ],
+      "offset": [
+        0.0,
+        -0.5
+      ],
+      "visible": [
+        16,
+        15
+      ],
+      "definitions": [
+        71
+      ],
+      "stages": [
+        1,
+        3
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "mission1",
+        "index": 5
+      }
+    },
+    "S_ASTER3A": {
+      "width": 24,
+      "height": 32,
+      "bounds": [
+        0,
+        5,
+        23,
+        27
+      ],
+      "offset": [
+        -0.5,
+        0.0
+      ],
+      "visible": [
+        23,
+        22
+      ],
+      "definitions": [
+        70,
+        76
+      ],
+      "stages": [
+        1,
+        3
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "mission1",
+        "index": 6
+      }
+    },
+    "S_DRONE1A": {
+      "width": 40,
+      "height": 32,
+      "bounds": [
+        3,
+        1,
+        36,
+        30
+      ],
+      "offset": [
+        -0.5,
+        -0.5
+      ],
+      "visible": [
+        33,
+        29
+      ],
+      "definitions": [
+        34,
+        14,
+        15
+      ],
+      "stages": [
+        5,
+        16
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "S_DRONE2A": {
+      "width": 48,
+      "height": 48,
+      "bounds": [
+        3,
+        5,
+        44,
+        45
+      ],
+      "offset": [
+        -0.5,
+        1.0
+      ],
+      "visible": [
+        41,
+        40
+      ],
+      "definitions": [
+        83
+      ],
+      "stages": [
+        5,
+        9,
+        14
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "G_TNK1A": {
+      "width": 56,
+      "height": 56,
+      "bounds": [
+        11,
+        3,
+        46,
+        47
+      ],
+      "offset": [
+        0.5,
+        -3.0
+      ],
+      "visible": [
+        35,
+        44
+      ],
+      "definitions": [
+        85,
+        91,
+        352
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        14
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-01-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENBON1": {
+      "width": 36,
+      "height": 47,
+      "bounds": [
+        0,
+        0,
+        36,
+        47
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        36,
+        47
+      ],
+      "definitions": [
+        86
+      ],
+      "stages": [
+        1,
+        3,
+        5,
+        7,
+        8,
+        9,
+        10,
+        11,
+        13,
+        14,
+        15,
+        17
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "carrier",
+        "index": 0
+      }
+    },
+    "S_ENBON3": {
+      "width": 36,
+      "height": 47,
+      "bounds": [
+        0,
+        0,
+        36,
+        47
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        36,
+        47
+      ],
+      "definitions": [
+        158
+      ],
+      "stages": [
+        1,
+        2,
+        3,
+        5,
+        11,
+        17
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "carrier",
+        "index": 2
+      }
+    },
+    "S_ENBON2": {
+      "width": 36,
+      "height": 30,
+      "bounds": [
+        0,
+        0,
+        36,
+        30
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        36,
+        30
+      ],
+      "definitions": [
+        87
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "carrier",
+        "index": 1
+      }
+    },
+    "S_ENBON4": {
+      "width": 36,
+      "height": 30,
+      "bounds": [
+        0,
+        0,
+        36,
+        30
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        36,
+        30
+      ],
+      "definitions": [
+        152,
+        370
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        15,
+        17,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "carrier",
+        "index": 3
+      }
+    },
+    "G_TNK2A": {
+      "width": 56,
+      "height": 48,
+      "bounds": [
+        3,
+        2,
+        52,
+        48
+      ],
+      "offset": [
+        -0.5,
+        1.0
+      ],
+      "visible": [
+        49,
+        46
+      ],
+      "definitions": [
+        88
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-01-hd.png",
+      "kind": "atlas"
+    },
+    "G_BTANK1A": {
+      "width": 80,
+      "height": 48,
+      "bounds": [
+        4,
+        1,
+        77,
+        47
+      ],
+      "offset": [
+        0.5,
+        0.0
+      ],
+      "visible": [
+        73,
+        46
+      ],
+      "definitions": [
+        185
+      ],
+      "stages": [
+        4,
+        10,
+        14,
+        16
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "G_ANGTNKR": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        3,
+        2,
+        62,
+        62
+      ],
+      "offset": [
+        0.5,
+        0.0
+      ],
+      "visible": [
+        59,
+        60
+      ],
+      "definitions": [
+        117
+      ],
+      "stages": [
+        4,
+        6,
+        12,
+        16
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "G_ANGTNKL": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        3,
+        2,
+        63,
+        62
+      ],
+      "offset": [
+        1.0,
+        0.0
+      ],
+      "visible": [
+        60,
+        60
+      ],
+      "definitions": [
+        118
+      ],
+      "stages": [
+        4,
+        6,
+        12,
+        16
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "G_TNK3A": {
+      "width": 72,
+      "height": 80,
+      "bounds": [
+        4,
+        2,
+        68,
+        75
+      ],
+      "offset": [
+        0.0,
+        -1.5
+      ],
+      "visible": [
+        64,
+        73
+      ],
+      "definitions": [
+        89
+      ],
+      "stages": [
+        4,
+        16
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "G_TNKSHT1A": {
+      "width": 48,
+      "height": 48,
+      "bounds": [
+        1,
+        1,
+        47,
+        47
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        46,
+        46
+      ],
+      "definitions": [
+        123,
+        153,
+        300
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        11,
+        12,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/fixed-turret-layers-hd.png",
+      "kind": "atlas"
+    },
+    "G_PKS1A": {
+      "width": 32,
+      "height": 24,
+      "bounds": [
+        5,
+        1,
+        27,
+        23
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        22,
+        22
+      ],
+      "definitions": [
+        103
+      ],
+      "stages": [
+        2
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-01-hd.png",
+      "kind": "atlas"
+    },
+    "G_PKS2A": {
+      "width": 32,
+      "height": 24,
+      "bounds": [
+        5,
+        1,
+        27,
+        23
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        22,
+        22
+      ],
+      "definitions": [
+        119
+      ],
+      "stages": [
+        2
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-01-hd.png",
+      "kind": "atlas"
+    },
+    "G_PKS3A": {
+      "width": 40,
+      "height": 48,
+      "bounds": [
+        2,
+        3,
+        36,
+        43
+      ],
+      "offset": [
+        -1.0,
+        -1.0
+      ],
+      "visible": [
+        34,
+        40
+      ],
+      "definitions": [
+        120
+      ],
+      "stages": [
+        2,
+        16
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-01-hd.png",
+      "kind": "atlas"
+    },
+    "G_PKS4A": {
+      "width": 40,
+      "height": 48,
+      "bounds": [
+        4,
+        3,
+        37,
+        43
+      ],
+      "offset": [
+        0.5,
+        -1.0
+      ],
+      "visible": [
+        33,
+        40
+      ],
+      "definitions": [
+        121
+      ],
+      "stages": [
+        8,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "G_PLRCRSH": {
+      "width": 32,
+      "height": 24,
+      "bounds": [
+        4,
+        4,
+        25,
+        22
+      ],
+      "offset": [
+        -1.5,
+        1.0
+      ],
+      "visible": [
+        21,
+        18
+      ],
+      "definitions": [
+        122
+      ],
+      "stages": [
+        2
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-13-hd.png",
+      "kind": "atlas"
+    },
+    "S_ENEMY39A": {
+      "width": 24,
+      "height": 120,
+      "bounds": [
+        0,
+        3,
+        24,
+        116
+      ],
+      "offset": [
+        0.0,
+        -0.5
+      ],
+      "visible": [
+        24,
+        113
+      ],
+      "definitions": [
+        186
+      ],
+      "stages": [],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-06-hd.png",
+      "kind": "atlas"
+    },
+    "S_PIPE1": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        135
+      ],
+      "stages": [
+        1,
+        5,
+        7,
+        9,
+        11,
+        15,
+        17
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "mission1",
+        "index": 12
+      }
+    },
+    "S_PIPE2": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        42
+      ],
+      "offset": [
+        0.0,
+        -11.0
+      ],
+      "visible": [
+        64,
+        42
+      ],
+      "definitions": [
+        136
+      ],
+      "stages": [
+        1,
+        5
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "mission1",
+        "index": 13
+      }
+    },
+    "S_PIPE3": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        22,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        11.0
+      ],
+      "visible": [
+        64,
+        42
+      ],
+      "definitions": [
+        137
+      ],
+      "stages": [
+        1,
+        5
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "mission1",
+        "index": 14
+      }
+    },
+    "S_STAT1": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        92
+      ],
+      "stages": [
+        3
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-01-hd.png",
+      "kind": "atlas"
+    },
+    "S_STAT2": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        93
+      ],
+      "stages": [
+        9,
+        13
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "S_STAT3": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        51,
+        64
+      ],
+      "offset": [
+        -6.5,
+        0.0
+      ],
+      "visible": [
+        51,
+        64
+      ],
+      "definitions": [
+        94
+      ],
+      "stages": [
+        5
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "S_STAT4": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        95
+      ],
+      "stages": [
+        5,
+        13
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "S_STAT5": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        13,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        6.5,
+        0.0
+      ],
+      "visible": [
+        51,
+        64
+      ],
+      "definitions": [
+        96
+      ],
+      "stages": [
+        5
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "S_STAT6": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        97
+      ],
+      "stages": [
+        3
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-01-hd.png",
+      "kind": "atlas"
+    },
+    "S_STAT7": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        98
+      ],
+      "stages": [
+        3,
+        5,
+        13
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "S_STAT9": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        112
+      ],
+      "stages": [
+        3,
+        5,
+        13
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "S_STAT11A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        125
+      ],
+      "stages": [],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-06-hd.png",
+      "kind": "atlas"
+    },
+    "S_STAT10A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        113
+      ],
+      "stages": [
+        5
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "S_STAT9A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        99
+      ],
+      "stages": [
+        3,
+        5,
+        9,
+        13
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/fixed-turret-layers-hd.png",
+      "kind": "atlas"
+    },
+    "S_SPCRAD1A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        129
+      ],
+      "stages": [
+        3,
+        5
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_STAT12": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        27,
+        64,
+        38
+      ],
+      "offset": [
+        0.0,
+        0.5
+      ],
+      "visible": [
+        64,
+        11
+      ],
+      "definitions": [
+        150
+      ],
+      "stages": [
+        3,
+        5,
+        9,
+        13
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-07-hd.png",
+      "kind": "atlas"
+    },
+    "S_STAT13": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        27,
+        0,
+        37,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        10,
+        64
+      ],
+      "definitions": [
+        151
+      ],
+      "stages": [
+        5,
+        9
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-08-hd.png",
+      "kind": "atlas"
+    },
+    "G_RADAR1A": {
+      "width": 56,
+      "height": 56,
+      "bounds": [
+        6,
+        9,
+        56,
+        49
+      ],
+      "offset": [
+        3.0,
+        1.0
+      ],
+      "visible": [
+        50,
+        40
+      ],
+      "definitions": [
+        130
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-01-hd.png",
+      "kind": "atlas"
+    },
+    "G_RUNWAY1A": {
+      "width": 8,
+      "height": 120,
+      "bounds": [
+        1,
+        1,
+        6,
+        118
+      ],
+      "offset": [
+        -0.5,
+        -0.5
+      ],
+      "visible": [
+        5,
+        117
+      ],
+      "definitions": [
+        131,
+        289
+      ],
+      "stages": [
+        2,
+        4,
+        8,
+        16,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-01-hd.png",
+      "kind": "atlas"
+    },
+    "G_STAT1A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        32,
+        32
+      ],
+      "definitions": [
+        100
+      ],
+      "stages": [
+        2
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-01-hd.png",
+      "kind": "atlas"
+    },
+    "G_STAT2A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        32,
+        32
+      ],
+      "definitions": [
+        101
+      ],
+      "stages": [
+        2
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-01-hd.png",
+      "kind": "atlas"
+    },
+    "G_TUR1A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        32,
+        32
+      ],
+      "definitions": [
+        106,
+        294
+      ],
+      "stages": [
+        2,
+        7,
+        8,
+        9,
+        14,
+        17,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/fixed-turret-layers-hd.png",
+      "kind": "atlas"
+    },
+    "S_ASTSHT1B": {
+      "width": 31,
+      "height": 34,
+      "bounds": [
+        0,
+        0,
+        31,
+        34
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        31,
+        34
+      ],
+      "definitions": [
+        115
+      ],
+      "stages": [
+        1,
+        5,
+        7,
+        9,
+        11
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "framed"
+      }
+    },
+    "G_ORETRK1A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        2,
+        64,
+        62
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        60
+      ],
+      "definitions": [
+        140
+      ],
+      "stages": [
+        6,
+        12
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "G_ORETRK2A": {
+      "width": 64,
+      "height": 56,
+      "bounds": [
+        0,
+        2,
+        63,
+        54
+      ],
+      "offset": [
+        -0.5,
+        0.0
+      ],
+      "visible": [
+        63,
+        52
+      ],
+      "definitions": [
+        141
+      ],
+      "stages": [
+        6
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "G_ORETRK3A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        4,
+        0,
+        61,
+        64
+      ],
+      "offset": [
+        0.5,
+        0.0
+      ],
+      "visible": [
+        57,
+        64
+      ],
+      "definitions": [
+        142
+      ],
+      "stages": [
+        6,
+        12
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "S_ORCPIC1": {
+      "width": 32,
+      "height": 24,
+      "bounds": [
+        3,
+        1,
+        27,
+        23
+      ],
+      "offset": [
+        -1.0,
+        0.0
+      ],
+      "visible": [
+        24,
+        22
+      ],
+      "definitions": [
+        173
+      ],
+      "stages": [
+        6,
+        12
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": null,
+      "kind": "ore"
+    },
+    "S_ORCPIC2": {
+      "width": 56,
+      "height": 48,
+      "bounds": [
+        4,
+        1,
+        52,
+        47
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        48,
+        46
+      ],
+      "definitions": [
+        174
+      ],
+      "stages": [
+        6,
+        12
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": null,
+      "kind": "ore"
+    },
+    "S_ORCPIC3": {
+      "width": 120,
+      "height": 104,
+      "bounds": [
+        2,
+        2,
+        115,
+        103
+      ],
+      "offset": [
+        -1.5,
+        0.5
+      ],
+      "visible": [
+        113,
+        101
+      ],
+      "definitions": [
+        175
+      ],
+      "stages": [
+        6,
+        12
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": null,
+      "kind": "ore"
+    },
+    "S_ORCPIC4": {
+      "width": 152,
+      "height": 112,
+      "bounds": [
+        4,
+        4,
+        151,
+        112
+      ],
+      "offset": [
+        1.5,
+        2.0
+      ],
+      "visible": [
+        147,
+        108
+      ],
+      "definitions": [
+        176
+      ],
+      "stages": [
+        6
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": null,
+      "kind": "ore"
+    },
+    "G_GRDST2A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        74
+      ],
+      "stages": [
+        6,
+        12
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "G_GRDST3A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        116
+      ],
+      "stages": [
+        6
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "G_GRDST4A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        138
+      ],
+      "stages": [
+        6,
+        12
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "G_GRDST5A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        139
+      ],
+      "stages": [
+        6,
+        12
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "G_LNDOIL2A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        144
+      ],
+      "stages": [
+        4,
+        10,
+        12,
+        14
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-13-hd.png",
+      "kind": "atlas"
+    },
+    "G_LNDOIL3A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        145
+      ],
+      "stages": [
+        4
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "G_LNDOIL1A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        143
+      ],
+      "stages": [
+        4
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "G_STAT3A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        102
+      ],
+      "stages": [
+        6,
+        12
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "S_PIPE1A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        4,
+        0,
+        28,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        24,
+        32
+      ],
+      "definitions": [
+        162
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        10,
+        12,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-13-hd.png",
+      "kind": "atlas"
+    },
+    "S_PIPE2A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        4,
+        0,
+        28,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        24,
+        32
+      ],
+      "definitions": [
+        163
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        10,
+        12,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-13-hd.png",
+      "kind": "atlas"
+    },
+    "S_PIPE3A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        0,
+        4,
+        32,
+        28
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        32,
+        24
+      ],
+      "definitions": [
+        164
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        10,
+        12,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-13-hd.png",
+      "kind": "atlas"
+    },
+    "S_PIPE4A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        0,
+        4,
+        32,
+        28
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        32,
+        24
+      ],
+      "definitions": [
+        165
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        10,
+        12,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-13-hd.png",
+      "kind": "atlas"
+    },
+    "S_PIPE5A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        32,
+        32
+      ],
+      "definitions": [
+        166
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        10,
+        12,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-13-hd.png",
+      "kind": "atlas"
+    },
+    "S_PIPE6A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        32,
+        32
+      ],
+      "definitions": [
+        167
+      ],
+      "stages": [
+        6,
+        10,
+        12
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-13-hd.png",
+      "kind": "atlas"
+    },
+    "S_PIPE7A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        32,
+        32
+      ],
+      "definitions": [
+        168
+      ],
+      "stages": [
+        2,
+        10,
+        12
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-13-hd.png",
+      "kind": "atlas"
+    },
+    "S_PIPE8A": {
+      "width": 32,
+      "height": 16,
+      "bounds": [
+        0,
+        0,
+        32,
+        16
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        32,
+        16
+      ],
+      "definitions": [
+        169
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        10,
+        12,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-13-hd.png",
+      "kind": "atlas"
+    },
+    "S_PIPE9A": {
+      "width": 32,
+      "height": 16,
+      "bounds": [
+        0,
+        0,
+        32,
+        16
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        32,
+        16
+      ],
+      "definitions": [
+        170
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        10,
+        12,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-13-hd.png",
+      "kind": "atlas"
+    },
+    "S_PIPE10A": {
+      "width": 16,
+      "height": 32,
+      "bounds": [
+        0,
+        0,
+        16,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        16,
+        32
+      ],
+      "definitions": [
+        171
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        10,
+        12
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-13-hd.png",
+      "kind": "atlas"
+    },
+    "S_PIPE11A": {
+      "width": 16,
+      "height": 32,
+      "bounds": [
+        0,
+        0,
+        16,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        16,
+        32
+      ],
+      "definitions": [
+        172
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        10
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-13-hd.png",
+      "kind": "atlas"
+    },
+    "G_GASTNK1A": {
+      "width": 80,
+      "height": 80,
+      "bounds": [
+        4,
+        2,
+        72,
+        77
+      ],
+      "offset": [
+        -2.0,
+        -0.5
+      ],
+      "visible": [
+        68,
+        75
+      ],
+      "definitions": [
+        39,
+        371
+      ],
+      "stages": [
+        2,
+        4,
+        6,
+        10,
+        12,
+        15,
+        17,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-01-hd.png",
+      "kind": "atlas"
+    },
+    "G_SHTTNK1A": {
+      "width": 80,
+      "height": 80,
+      "bounds": [
+        1,
+        1,
+        78,
+        79
+      ],
+      "offset": [
+        -0.5,
+        0.0
+      ],
+      "visible": [
+        77,
+        78
+      ],
+      "definitions": [
+        126,
+        372
+      ],
+      "stages": [
+        2,
+        10,
+        12,
+        15,
+        16
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-01-hd.png",
+      "kind": "atlas"
+    },
+    "G_SMLGAS1A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        3,
+        3,
+        29,
+        29
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        26,
+        26
+      ],
+      "definitions": [
+        127
+      ],
+      "stages": [],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-06-hd.png",
+      "kind": "atlas"
+    },
+    "G_GASTNK2A": {
+      "width": 104,
+      "height": 128,
+      "bounds": [
+        8,
+        2,
+        99,
+        126
+      ],
+      "offset": [
+        1.5,
+        0.0
+      ],
+      "visible": [
+        91,
+        124
+      ],
+      "definitions": [
+        63
+      ],
+      "stages": [
+        4,
+        10
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-02-hd.png",
+      "kind": "atlas"
+    },
+    "S_SPTNKRA": {
+      "width": 48,
+      "height": 88,
+      "bounds": [
+        2,
+        0,
+        46,
+        87
+      ],
+      "offset": [
+        0.0,
+        -0.5
+      ],
+      "visible": [
+        44,
+        87
+      ],
+      "definitions": [
+        189
+      ],
+      "stages": [
+        1,
+        7,
+        9,
+        10,
+        11,
+        18
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "framed"
+      }
+    },
+    "S_BLDNG1A": {
+      "width": 88,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        88,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        88,
+        64
+      ],
+      "definitions": [
+        180
+      ],
+      "stages": [
+        6,
+        10,
+        16
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "S_BHOLE1A": {
+      "width": 80,
+      "height": 80,
+      "bounds": [
+        4,
+        4,
+        79,
+        80
+      ],
+      "offset": [
+        1.5,
+        2.0
+      ],
+      "visible": [
+        75,
+        76
+      ],
+      "definitions": [
+        217
+      ],
+      "stages": [
+        1
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "mission1",
+        "index": 15
+      }
+    },
+    "S_BOSS1": {
+      "width": 98,
+      "height": 81,
+      "bounds": [
+        0,
+        0,
+        98,
+        81
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        98,
+        81
+      ],
+      "definitions": [
+        40
+      ],
+      "stages": [
+        1
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "boss1",
+        "index": 8
+      }
+    },
+    "S_BOSS2": {
+      "width": 110,
+      "height": 121,
+      "bounds": [
+        0,
+        0,
+        110,
+        121
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        110,
+        121
+      ],
+      "definitions": [
+        41
+      ],
+      "stages": [
+        2
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "boss1",
+        "index": 9
+      }
+    },
+    "S_BOSS3A": {
+      "width": 106,
+      "height": 90,
+      "bounds": [
+        0,
+        0,
+        106,
+        90
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        106,
+        90
+      ],
+      "definitions": [
+        42
+      ],
+      "stages": [
+        3
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "boss1",
+        "index": 10
+      }
+    },
+    "S_BOSS4A": {
+      "width": 199,
+      "height": 92,
+      "bounds": [
+        0,
+        0,
+        199,
+        92
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        199,
+        92
+      ],
+      "definitions": [
+        43
+      ],
+      "stages": [
+        4
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "boss1",
+        "index": 11
+      }
+    },
+    "S_BOSS5A": {
+      "width": 151,
+      "height": 188,
+      "bounds": [
+        0,
+        0,
+        151,
+        188
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        151,
+        188
+      ],
+      "definitions": [
+        44
+      ],
+      "stages": [
+        5
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "boss1",
+        "index": 12
+      }
+    },
+    "S_BOSS6A": {
+      "width": 183,
+      "height": 167,
+      "bounds": [
+        0,
+        0,
+        183,
+        167
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        183,
+        167
+      ],
+      "definitions": [
+        45
+      ],
+      "stages": [
+        6
+      ],
+      "archive": "Game.glb",
+      "route": {
+        "kind": "boss1",
+        "index": 13
+      }
+    },
+    "S2_SHIP1A": {
+      "width": 48,
+      "height": 48,
+      "bounds": [
+        8,
+        5,
+        39,
+        46
+      ],
+      "offset": [
+        -0.5,
+        1.5
+      ],
+      "visible": [
+        31,
+        41
+      ],
+      "definitions": [
+        190,
+        256,
+        308,
+        310,
+        309,
+        257,
+        258,
+        262,
+        292,
+        311
+      ],
+      "stages": [
+        7,
+        9,
+        11,
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP2A": {
+      "width": 56,
+      "height": 56,
+      "bounds": [
+        9,
+        11,
+        47,
+        52
+      ],
+      "offset": [
+        0.0,
+        3.5
+      ],
+      "visible": [
+        38,
+        41
+      ],
+      "definitions": [
+        191,
+        285,
+        377,
+        286,
+        287
+      ],
+      "stages": [
+        8,
+        10,
+        12,
+        16
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP49A": {
+      "width": 48,
+      "height": 48,
+      "bounds": [
+        4,
+        2,
+        44,
+        40
+      ],
+      "offset": [
+        0.0,
+        -3.0
+      ],
+      "visible": [
+        40,
+        38
+      ],
+      "definitions": [
+        328,
+        329,
+        331,
+        332,
+        336
+      ],
+      "stages": [
+        13,
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP50A": {
+      "width": 48,
+      "height": 48,
+      "bounds": [
+        4,
+        9,
+        44,
+        47
+      ],
+      "offset": [
+        0.0,
+        4.0
+      ],
+      "visible": [
+        40,
+        38
+      ],
+      "definitions": [
+        330,
+        337
+      ],
+      "stages": [
+        13,
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP3A": {
+      "width": 48,
+      "height": 64,
+      "bounds": [
+        2,
+        7,
+        45,
+        55
+      ],
+      "offset": [
+        -0.5,
+        -1.0
+      ],
+      "visible": [
+        43,
+        48
+      ],
+      "definitions": [
+        192
+      ],
+      "stages": [
+        7,
+        9,
+        13,
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP3C": {
+      "width": 48,
+      "height": 64,
+      "bounds": [
+        2,
+        1,
+        45,
+        55
+      ],
+      "offset": [
+        -0.5,
+        -4.0
+      ],
+      "visible": [
+        43,
+        54
+      ],
+      "definitions": [
+        193
+      ],
+      "stages": [
+        7,
+        9,
+        13,
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP3E": {
+      "width": 48,
+      "height": 64,
+      "bounds": [
+        2,
+        7,
+        46,
+        55
+      ],
+      "offset": [
+        0.0,
+        -1.0
+      ],
+      "visible": [
+        44,
+        48
+      ],
+      "definitions": [
+        194
+      ],
+      "stages": [
+        7,
+        9,
+        13,
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP3G": {
+      "width": 48,
+      "height": 64,
+      "bounds": [
+        2,
+        7,
+        45,
+        64
+      ],
+      "offset": [
+        -0.5,
+        3.5
+      ],
+      "visible": [
+        43,
+        57
+      ],
+      "definitions": [
+        195
+      ],
+      "stages": [
+        7,
+        9,
+        13,
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP4A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        2,
+        4,
+        29,
+        28
+      ],
+      "offset": [
+        -0.5,
+        0.0
+      ],
+      "visible": [
+        27,
+        24
+      ],
+      "definitions": [
+        196,
+        268,
+        267,
+        266
+      ],
+      "stages": [
+        13,
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP5A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        2,
+        4,
+        28,
+        28
+      ],
+      "offset": [
+        -1.0,
+        0.0
+      ],
+      "visible": [
+        26,
+        24
+      ],
+      "definitions": [
+        197,
+        271,
+        270,
+        269,
+        265,
+        272
+      ],
+      "stages": [
+        7,
+        9,
+        13,
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S2_TECHBUS1A": {
+      "width": 40,
+      "height": 40,
+      "bounds": [
+        4,
+        2,
+        37,
+        28
+      ],
+      "offset": [
+        0.5,
+        -5.0
+      ],
+      "visible": [
+        33,
+        26
+      ],
+      "definitions": [
+        302,
+        305
+      ],
+      "stages": [
+        11,
+        13,
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_TECHBUS1B": {
+      "width": 40,
+      "height": 40,
+      "bounds": [
+        4,
+        10,
+        37,
+        28
+      ],
+      "offset": [
+        0.5,
+        -1.0
+      ],
+      "visible": [
+        33,
+        18
+      ],
+      "definitions": [
+        303,
+        306
+      ],
+      "stages": [
+        11,
+        13,
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_TECHBUS1C": {
+      "width": 40,
+      "height": 40,
+      "bounds": [
+        4,
+        11,
+        37,
+        38
+      ],
+      "offset": [
+        0.5,
+        4.5
+      ],
+      "visible": [
+        33,
+        27
+      ],
+      "definitions": [
+        304,
+        307
+      ],
+      "stages": [
+        11,
+        13,
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP6A": {
+      "width": 40,
+      "height": 40,
+      "bounds": [
+        2,
+        4,
+        37,
+        37
+      ],
+      "offset": [
+        -0.5,
+        0.5
+      ],
+      "visible": [
+        35,
+        33
+      ],
+      "definitions": [
+        198,
+        367
+      ],
+      "stages": [
+        7,
+        15,
+        17,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP7A": {
+      "width": 40,
+      "height": 40,
+      "bounds": [
+        4,
+        2,
+        37,
+        37
+      ],
+      "offset": [
+        0.5,
+        -0.5
+      ],
+      "visible": [
+        33,
+        35
+      ],
+      "definitions": [
+        264,
+        333,
+        334
+      ],
+      "stages": [
+        7,
+        9,
+        10,
+        11,
+        12,
+        13,
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP8A": {
+      "width": 48,
+      "height": 48,
+      "bounds": [
+        2,
+        2,
+        45,
+        45
+      ],
+      "offset": [
+        -0.5,
+        -0.5
+      ],
+      "visible": [
+        43,
+        43
+      ],
+      "definitions": [
+        199,
+        290,
+        291
+      ],
+      "stages": [
+        8,
+        10,
+        12,
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP9A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        5,
+        6,
+        28,
+        25
+      ],
+      "offset": [
+        0.5,
+        -0.5
+      ],
+      "visible": [
+        23,
+        19
+      ],
+      "definitions": [
+        200
+      ],
+      "stages": [
+        11,
+        12,
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP10A": {
+      "width": 48,
+      "height": 48,
+      "bounds": [
+        3,
+        2,
+        44,
+        43
+      ],
+      "offset": [
+        -0.5,
+        -1.5
+      ],
+      "visible": [
+        41,
+        41
+      ],
+      "definitions": [
+        201
+      ],
+      "stages": [
+        15,
+        16,
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP11A": {
+      "width": 136,
+      "height": 48,
+      "bounds": [
+        5,
+        2,
+        132,
+        44
+      ],
+      "offset": [
+        0.5,
+        -1.0
+      ],
+      "visible": [
+        127,
+        42
+      ],
+      "definitions": [
+        202
+      ],
+      "stages": [
+        11,
+        12,
+        13,
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP12": {
+      "width": 40,
+      "height": 40,
+      "bounds": [
+        2,
+        3,
+        39,
+        38
+      ],
+      "offset": [
+        0.5,
+        0.5
+      ],
+      "visible": [
+        37,
+        35
+      ],
+      "definitions": [
+        203,
+        298
+      ],
+      "stages": [
+        10,
+        11,
+        12,
+        17,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP33A": {
+      "width": 40,
+      "height": 48,
+      "bounds": [
+        1,
+        2,
+        38,
+        47
+      ],
+      "offset": [
+        -0.5,
+        0.5
+      ],
+      "visible": [
+        37,
+        45
+      ],
+      "definitions": [
+        248
+      ],
+      "stages": [
+        8
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP36A": {
+      "width": 48,
+      "height": 40,
+      "bounds": [
+        0,
+        0,
+        48,
+        39
+      ],
+      "offset": [
+        0.0,
+        -0.5
+      ],
+      "visible": [
+        48,
+        39
+      ],
+      "definitions": [
+        274
+      ],
+      "stages": [
+        9,
+        11,
+        14,
+        15,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP43A": {
+      "width": 40,
+      "height": 48,
+      "bounds": [
+        2,
+        3,
+        38,
+        44
+      ],
+      "offset": [
+        0.0,
+        -0.5
+      ],
+      "visible": [
+        36,
+        41
+      ],
+      "definitions": [
+        312
+      ],
+      "stages": [
+        17,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP44A": {
+      "width": 96,
+      "height": 64,
+      "bounds": [
+        1,
+        4,
+        95,
+        59
+      ],
+      "offset": [
+        0.0,
+        -0.5
+      ],
+      "visible": [
+        94,
+        55
+      ],
+      "definitions": [
+        313
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-12-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP45A": {
+      "width": 48,
+      "height": 48,
+      "bounds": [
+        1,
+        3,
+        47,
+        47
+      ],
+      "offset": [
+        0.0,
+        1.0
+      ],
+      "visible": [
+        46,
+        44
+      ],
+      "definitions": [
+        314,
+        317,
+        316,
+        315
+      ],
+      "stages": [
+        12,
+        14,
+        16,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP46A": {
+      "width": 24,
+      "height": 24,
+      "bounds": [
+        3,
+        2,
+        21,
+        22
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        18,
+        20
+      ],
+      "definitions": [
+        318,
+        319,
+        320
+      ],
+      "stages": [
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP37A": {
+      "width": 64,
+      "height": 80,
+      "bounds": [
+        4,
+        6,
+        60,
+        76
+      ],
+      "offset": [
+        0.0,
+        1.0
+      ],
+      "visible": [
+        56,
+        70
+      ],
+      "definitions": [
+        275
+      ],
+      "stages": [
+        11,
+        13,
+        15,
+        16,
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP52A": {
+      "width": 96,
+      "height": 64,
+      "bounds": [
+        2,
+        1,
+        93,
+        60
+      ],
+      "offset": [
+        -0.5,
+        -1.5
+      ],
+      "visible": [
+        91,
+        59
+      ],
+      "definitions": [
+        355
+      ],
+      "stages": [
+        17,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP38A": {
+      "width": 24,
+      "height": 16,
+      "bounds": [
+        4,
+        1,
+        20,
+        15
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        16,
+        14
+      ],
+      "definitions": [
+        276,
+        301
+      ],
+      "stages": [
+        11,
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP39A": {
+      "width": 64,
+      "height": 40,
+      "bounds": [
+        1,
+        8,
+        63,
+        40
+      ],
+      "offset": [
+        0.0,
+        4.0
+      ],
+      "visible": [
+        62,
+        32
+      ],
+      "definitions": [
+        277
+      ],
+      "stages": [
+        11,
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP40A": {
+      "width": 64,
+      "height": 56,
+      "bounds": [
+        2,
+        6,
+        64,
+        56
+      ],
+      "offset": [
+        1.0,
+        3.0
+      ],
+      "visible": [
+        62,
+        50
+      ],
+      "definitions": [
+        278
+      ],
+      "stages": [
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP41A": {
+      "width": 96,
+      "height": 112,
+      "bounds": [
+        3,
+        2,
+        93,
+        111
+      ],
+      "offset": [
+        0.0,
+        0.5
+      ],
+      "visible": [
+        90,
+        109
+      ],
+      "definitions": [
+        279
+      ],
+      "stages": [
+        9,
+        10,
+        11,
+        12,
+        13,
+        15,
+        17,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP53A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        382
+      ],
+      "stages": [
+        8,
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP54A": {
+      "width": 40,
+      "height": 56,
+      "bounds": [
+        1,
+        3,
+        39,
+        55
+      ],
+      "offset": [
+        0.0,
+        1.0
+      ],
+      "visible": [
+        38,
+        52
+      ],
+      "definitions": [
+        383
+      ],
+      "stages": [
+        7
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP55A": {
+      "width": 40,
+      "height": 40,
+      "bounds": [
+        3,
+        3,
+        37,
+        37
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        34,
+        34
+      ],
+      "definitions": [
+        384,
+        385
+      ],
+      "stages": [
+        8
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP42A": {
+      "width": 56,
+      "height": 56,
+      "bounds": [
+        8,
+        9,
+        50,
+        44
+      ],
+      "offset": [
+        1.0,
+        -1.5
+      ],
+      "visible": [
+        42,
+        35
+      ],
+      "definitions": [
+        281,
+        381,
+        280,
+        357,
+        380
+      ],
+      "stages": [
+        17,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP16A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        3,
+        1,
+        62,
+        64
+      ],
+      "offset": [
+        0.5,
+        0.5
+      ],
+      "visible": [
+        59,
+        63
+      ],
+      "definitions": [
+        207,
+        259
+      ],
+      "stages": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        17,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP17A": {
+      "width": 72,
+      "height": 56,
+      "bounds": [
+        6,
+        1,
+        65,
+        55
+      ],
+      "offset": [
+        -0.5,
+        0.0
+      ],
+      "visible": [
+        59,
+        54
+      ],
+      "definitions": [
+        208,
+        327
+      ],
+      "stages": [
+        11,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP31A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        3,
+        3,
+        60,
+        61
+      ],
+      "offset": [
+        -0.5,
+        0.0
+      ],
+      "visible": [
+        57,
+        58
+      ],
+      "definitions": [
+        224
+      ],
+      "stages": [
+        8
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/fixed-turret-layers-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP32A": {
+      "width": 64,
+      "height": 120,
+      "bounds": [
+        0,
+        4,
+        64,
+        119
+      ],
+      "offset": [
+        0.0,
+        1.5
+      ],
+      "visible": [
+        64,
+        115
+      ],
+      "definitions": [
+        225
+      ],
+      "stages": [
+        8
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP34A": {
+      "width": 56,
+      "height": 40,
+      "bounds": [
+        2,
+        1,
+        55,
+        39
+      ],
+      "offset": [
+        0.5,
+        0.0
+      ],
+      "visible": [
+        53,
+        38
+      ],
+      "definitions": [
+        273,
+        297
+      ],
+      "stages": [
+        10,
+        12,
+        16,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP47A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        323
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP48A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        15,
+        9,
+        49,
+        55
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        34,
+        46
+      ],
+      "definitions": [
+        326
+      ],
+      "stages": [
+        12,
+        16,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_GTURRET1A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        3,
+        9,
+        52,
+        55
+      ],
+      "offset": [
+        -4.5,
+        0.0
+      ],
+      "visible": [
+        49,
+        46
+      ],
+      "definitions": [
+        324
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_GTURRET2A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        12,
+        7,
+        62,
+        55
+      ],
+      "offset": [
+        5.0,
+        -1.0
+      ],
+      "visible": [
+        50,
+        48
+      ],
+      "definitions": [
+        325
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP35A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        14,
+        3,
+        49,
+        54
+      ],
+      "offset": [
+        -0.5,
+        -3.5
+      ],
+      "visible": [
+        35,
+        51
+      ],
+      "definitions": [
+        282,
+        299,
+        379,
+        283,
+        284
+      ],
+      "stages": [
+        8,
+        10,
+        11,
+        12,
+        14,
+        16,
+        17,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP51A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        350
+      ],
+      "stages": [
+        16,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_TAINRAIL1A": {
+      "width": 64,
+      "height": 32,
+      "bounds": [
+        0,
+        1,
+        64,
+        32
+      ],
+      "offset": [
+        0.0,
+        0.5
+      ],
+      "visible": [
+        64,
+        31
+      ],
+      "definitions": [
+        321
+      ],
+      "stages": [
+        12,
+        14,
+        16,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_TAINCAR1A": {
+      "width": 168,
+      "height": 32,
+      "bounds": [
+        0,
+        0,
+        165,
+        32
+      ],
+      "offset": [
+        -1.5,
+        0.0
+      ],
+      "visible": [
+        165,
+        32
+      ],
+      "definitions": [
+        322
+      ],
+      "stages": [
+        12,
+        16,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_TAINCAR2A": {
+      "width": 168,
+      "height": 32,
+      "bounds": [
+        0,
+        0,
+        166,
+        32
+      ],
+      "offset": [
+        -1.0,
+        0.0
+      ],
+      "visible": [
+        166,
+        32
+      ],
+      "definitions": [
+        351
+      ],
+      "stages": [
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_BASTER1A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        7,
+        11,
+        59,
+        63
+      ],
+      "offset": [
+        1.0,
+        5.0
+      ],
+      "visible": [
+        52,
+        52
+      ],
+      "definitions": [
+        205
+      ],
+      "stages": [
+        7,
+        9
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S2_BASTER2A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        7,
+        4,
+        57,
+        60
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        50,
+        56
+      ],
+      "definitions": [
+        226
+      ],
+      "stages": [
+        7,
+        9
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S2_BASTER3A": {
+      "width": 40,
+      "height": 40,
+      "bounds": [
+        5,
+        2,
+        38,
+        36
+      ],
+      "offset": [
+        1.5,
+        -1.0
+      ],
+      "visible": [
+        33,
+        34
+      ],
+      "definitions": [
+        227
+      ],
+      "stages": [
+        7,
+        9
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-09-hd.png",
+      "kind": "atlas"
+    },
+    "S2_LAVAROID1A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        7,
+        3,
+        55,
+        58
+      ],
+      "offset": [
+        -1.0,
+        -1.5
+      ],
+      "visible": [
+        48,
+        55
+      ],
+      "definitions": [
+        335,
+        375
+      ],
+      "stages": [
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_LAVAROID2A": {
+      "width": 24,
+      "height": 24,
+      "bounds": [
+        1,
+        1,
+        23,
+        23
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        22,
+        22
+      ],
+      "definitions": [
+        353,
+        366,
+        356,
+        376
+      ],
+      "stages": [
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_LAVAROID3A": {
+      "width": 48,
+      "height": 96,
+      "bounds": [
+        4,
+        3,
+        45,
+        95
+      ],
+      "offset": [
+        0.5,
+        1.0
+      ],
+      "visible": [
+        41,
+        92
+      ],
+      "definitions": [
+        354,
+        373,
+        374
+      ],
+      "stages": [
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-11-hd.png",
+      "kind": "atlas"
+    },
+    "S2_WSPARK1A": {
+      "width": 32,
+      "height": 32,
+      "bounds": [
+        17,
+        12,
+        25,
+        22
+      ],
+      "offset": [
+        5.0,
+        1.0
+      ],
+      "visible": [
+        8,
+        10
+      ],
+      "definitions": [
+        295
+      ],
+      "stages": [
+        8
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_BOBER1A": {
+      "width": 40,
+      "height": 40,
+      "bounds": [
+        15,
+        2,
+        39,
+        28
+      ],
+      "offset": [
+        7.0,
+        -5.0
+      ],
+      "visible": [
+        24,
+        26
+      ],
+      "definitions": [
+        228,
+        288
+      ],
+      "stages": [
+        8
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-10-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP14A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        204
+      ],
+      "stages": [
+        8
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP15A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        206
+      ],
+      "stages": [
+        8
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP18A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        210
+      ],
+      "stages": [
+        10
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP19A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        211
+      ],
+      "stages": [
+        10
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP20A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        212
+      ],
+      "stages": [],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-06-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP21A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        213
+      ],
+      "stages": [
+        10,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP22A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        214
+      ],
+      "stages": [
+        10
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP23A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        215
+      ],
+      "stages": [
+        10
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP24A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        216
+      ],
+      "stages": [
+        10,
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_TECH1A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        249
+      ],
+      "stages": [
+        12,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_TECH2A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        250
+      ],
+      "stages": [
+        12,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_TECH3A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        251
+      ],
+      "stages": [
+        12,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_FARM1A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        245
+      ],
+      "stages": [
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_FARM2A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        246
+      ],
+      "stages": [
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_FARM3A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        247
+      ],
+      "stages": [
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_FARM4A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        22,
+        64,
+        42
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        20
+      ],
+      "definitions": [
+        252
+      ],
+      "stages": [
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_FARM5A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        22,
+        0,
+        42,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        20,
+        64
+      ],
+      "definitions": [
+        253
+      ],
+      "stages": [
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP25A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        218
+      ],
+      "stages": [
+        7,
+        11,
+        15,
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-03-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP26B": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        219
+      ],
+      "stages": [
+        11,
+        15,
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-04-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP27B": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        220
+      ],
+      "stages": [
+        15,
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP28A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        221
+      ],
+      "stages": [
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP29A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        222
+      ],
+      "stages": [
+        15,
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/fixed-turret-layers-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SHIP30A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        223
+      ],
+      "stages": [
+        15,
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_DLAND1A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        229
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_DLAND2A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        209
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_DLAND3A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        230
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_DLAND4A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        231
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_DLAND5A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        232
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_DLAND6A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        233
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_DLAND7A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        22,
+        64,
+        42
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        20
+      ],
+      "definitions": [
+        254
+      ],
+      "stages": [
+        16,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_DLAND8A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        22,
+        0,
+        42,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        20,
+        64
+      ],
+      "definitions": [
+        255
+      ],
+      "stages": [
+        16,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_VBUILD1A": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        365,
+        369
+      ],
+      "stages": [
+        15,
+        16
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-05-hd.png",
+      "kind": "atlas"
+    },
+    "S2_STREET1": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        338
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-15-hd.png",
+      "kind": "atlas"
+    },
+    "S2_STREET2": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        339
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-15-hd.png",
+      "kind": "atlas"
+    },
+    "S2_STREET3": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        340
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-15-hd.png",
+      "kind": "atlas"
+    },
+    "S2_STREET4": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        2,
+        64,
+        62
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        60
+      ],
+      "definitions": [
+        341
+      ],
+      "stages": [
+        16,
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-15-hd.png",
+      "kind": "atlas"
+    },
+    "S2_STREET5": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        13,
+        64,
+        51
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        38
+      ],
+      "definitions": [
+        342
+      ],
+      "stages": [
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-15-hd.png",
+      "kind": "atlas"
+    },
+    "S2_STREET6": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        24,
+        64,
+        40
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        16
+      ],
+      "definitions": [
+        343
+      ],
+      "stages": [
+        14,
+        16
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_STREET7": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        24,
+        0,
+        40,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        16,
+        64
+      ],
+      "definitions": [
+        344
+      ],
+      "stages": [
+        14,
+        16
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_STREET8": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        345
+      ],
+      "stages": [
+        14,
+        16
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_WATER1": {
+      "width": 136,
+      "height": 112,
+      "bounds": [
+        0,
+        1,
+        135,
+        110
+      ],
+      "offset": [
+        -0.5,
+        -0.5
+      ],
+      "visible": [
+        135,
+        109
+      ],
+      "definitions": [
+        346
+      ],
+      "stages": [
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_WATER2": {
+      "width": 72,
+      "height": 64,
+      "bounds": [
+        2,
+        1,
+        70,
+        63
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        68,
+        62
+      ],
+      "definitions": [
+        347
+      ],
+      "stages": [
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_WATER3": {
+      "width": 24,
+      "height": 24,
+      "bounds": [
+        1,
+        2,
+        23,
+        22
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        22,
+        20
+      ],
+      "definitions": [
+        348
+      ],
+      "stages": [
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_WATER4": {
+      "width": 40,
+      "height": 48,
+      "bounds": [
+        2,
+        1,
+        39,
+        44
+      ],
+      "offset": [
+        0.5,
+        -1.5
+      ],
+      "visible": [
+        37,
+        43
+      ],
+      "definitions": [
+        349
+      ],
+      "stages": [
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_LAVAGRD1A": {
+      "width": 96,
+      "height": 72,
+      "bounds": [
+        2,
+        2,
+        89,
+        69
+      ],
+      "offset": [
+        -2.5,
+        -0.5
+      ],
+      "visible": [
+        87,
+        67
+      ],
+      "definitions": [
+        358
+      ],
+      "stages": [
+        16
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-15-hd.png",
+      "kind": "atlas"
+    },
+    "S2_LAVAGRD2A": {
+      "width": 64,
+      "height": 56,
+      "bounds": [
+        5,
+        3,
+        58,
+        49
+      ],
+      "offset": [
+        -0.5,
+        -2.0
+      ],
+      "visible": [
+        53,
+        46
+      ],
+      "definitions": [
+        359
+      ],
+      "stages": [
+        16
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-15-hd.png",
+      "kind": "atlas"
+    },
+    "S2_LAVAGRD3A": {
+      "width": 48,
+      "height": 40,
+      "bounds": [
+        6,
+        3,
+        44,
+        36
+      ],
+      "offset": [
+        1.0,
+        -0.5
+      ],
+      "visible": [
+        38,
+        33
+      ],
+      "definitions": [
+        360
+      ],
+      "stages": [
+        16
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-15-hd.png",
+      "kind": "atlas"
+    },
+    "S2_LAVAGRD4A": {
+      "width": 16,
+      "height": 16,
+      "bounds": [
+        0,
+        0,
+        12,
+        11
+      ],
+      "offset": [
+        -2.0,
+        -2.5
+      ],
+      "visible": [
+        12,
+        11
+      ],
+      "definitions": [
+        361
+      ],
+      "stages": [
+        16
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-15-hd.png",
+      "kind": "atlas"
+    },
+    "S2_LAVAROK1": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        2,
+        0,
+        63,
+        64
+      ],
+      "offset": [
+        0.5,
+        0.0
+      ],
+      "visible": [
+        61,
+        64
+      ],
+      "definitions": [
+        362
+      ],
+      "stages": [
+        16
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-15-hd.png",
+      "kind": "atlas"
+    },
+    "S2_LAVAROK2": {
+      "width": 40,
+      "height": 40,
+      "bounds": [
+        3,
+        0,
+        38,
+        39
+      ],
+      "offset": [
+        0.5,
+        -0.5
+      ],
+      "visible": [
+        35,
+        39
+      ],
+      "definitions": [
+        363
+      ],
+      "stages": [
+        16
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-15-hd.png",
+      "kind": "atlas"
+    },
+    "S2_LAVAROK3": {
+      "width": 24,
+      "height": 24,
+      "bounds": [
+        3,
+        0,
+        22,
+        24
+      ],
+      "offset": [
+        0.5,
+        0.0
+      ],
+      "visible": [
+        19,
+        24
+      ],
+      "definitions": [
+        364
+      ],
+      "stages": [
+        16
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-15-hd.png",
+      "kind": "atlas"
+    },
+    "S2_BOSS1A": {
+      "width": 152,
+      "height": 120,
+      "bounds": [
+        2,
+        1,
+        150,
+        120
+      ],
+      "offset": [
+        0.0,
+        0.5
+      ],
+      "visible": [
+        148,
+        119
+      ],
+      "definitions": [
+        234
+      ],
+      "stages": [
+        7
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "boss2",
+        "index": 0
+      }
+    },
+    "S2_BOSS2A": {
+      "width": 104,
+      "height": 152,
+      "bounds": [
+        5,
+        3,
+        81,
+        149
+      ],
+      "offset": [
+        -9.0,
+        0.0
+      ],
+      "visible": [
+        76,
+        146
+      ],
+      "definitions": [
+        235
+      ],
+      "stages": [
+        8
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "boss2",
+        "index": 1
+      }
+    },
+    "S2_BOSS3A": {
+      "width": 120,
+      "height": 112,
+      "bounds": [
+        2,
+        4,
+        118,
+        111
+      ],
+      "offset": [
+        0.0,
+        1.5
+      ],
+      "visible": [
+        116,
+        107
+      ],
+      "definitions": [
+        236
+      ],
+      "stages": [
+        9
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "boss2",
+        "index": 2
+      }
+    },
+    "S2_BOSS4A": {
+      "width": 96,
+      "height": 120,
+      "bounds": [
+        0,
+        3,
+        96,
+        118
+      ],
+      "offset": [
+        0.0,
+        0.5
+      ],
+      "visible": [
+        96,
+        115
+      ],
+      "definitions": [
+        237
+      ],
+      "stages": [
+        10
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "boss2",
+        "index": 3
+      }
+    },
+    "S2_BOSS5A": {
+      "width": 160,
+      "height": 152,
+      "bounds": [
+        3,
+        1,
+        157,
+        151
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        154,
+        150
+      ],
+      "definitions": [
+        238
+      ],
+      "stages": [
+        11
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "boss2",
+        "index": 4
+      }
+    },
+    "S2_BOSS6A": {
+      "width": 200,
+      "height": 72,
+      "bounds": [
+        2,
+        1,
+        199,
+        71
+      ],
+      "offset": [
+        0.5,
+        0.0
+      ],
+      "visible": [
+        197,
+        70
+      ],
+      "definitions": [
+        239
+      ],
+      "stages": [
+        12
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "boss2",
+        "index": 5
+      }
+    },
+    "S2_BOSS7A": {
+      "width": 112,
+      "height": 120,
+      "bounds": [
+        2,
+        1,
+        110,
+        119
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        108,
+        118
+      ],
+      "definitions": [
+        240
+      ],
+      "stages": [
+        13
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "boss2",
+        "index": 6
+      }
+    },
+    "S2_BOSS8A": {
+      "width": 88,
+      "height": 128,
+      "bounds": [
+        1,
+        3,
+        87,
+        127
+      ],
+      "offset": [
+        0.0,
+        1.0
+      ],
+      "visible": [
+        86,
+        124
+      ],
+      "definitions": [
+        241
+      ],
+      "stages": [
+        14
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "boss2",
+        "index": 7
+      }
+    },
+    "S2_BOSS9A": {
+      "width": 168,
+      "height": 160,
+      "bounds": [
+        2,
+        1,
+        166,
+        158
+      ],
+      "offset": [
+        0.0,
+        -0.5
+      ],
+      "visible": [
+        164,
+        157
+      ],
+      "definitions": [
+        242
+      ],
+      "stages": [
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "boss2",
+        "index": 8
+      }
+    },
+    "S2_BOSS10A": {
+      "width": 144,
+      "height": 104,
+      "bounds": [
+        4,
+        1,
+        141,
+        103
+      ],
+      "offset": [
+        0.5,
+        0.0
+      ],
+      "visible": [
+        137,
+        102
+      ],
+      "definitions": [
+        243
+      ],
+      "stages": [
+        16
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "boss2",
+        "index": 9
+      }
+    },
+    "S2_BOSS11A": {
+      "width": 72,
+      "height": 64,
+      "bounds": [
+        1,
+        3,
+        71,
+        61
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        70,
+        58
+      ],
+      "definitions": [
+        244
+      ],
+      "stages": [
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "boss2",
+        "index": 10
+      }
+    },
+    "S2_BOSS12A": {
+      "width": 216,
+      "height": 176,
+      "bounds": [
+        36,
+        7,
+        188,
+        176
+      ],
+      "offset": [
+        4.0,
+        3.5
+      ],
+      "visible": [
+        152,
+        169
+      ],
+      "definitions": [
+        263
+      ],
+      "stages": [
+        18
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "boss2",
+        "index": 11
+      }
+    },
+    "S2_BIGSHIP1": {
+      "width": 320,
+      "height": 640,
+      "bounds": [
+        31,
+        47,
+        273,
+        564
+      ],
+      "offset": [
+        -8.0,
+        -14.5
+      ],
+      "visible": [
+        242,
+        517
+      ],
+      "definitions": [
+        293
+      ],
+      "stages": [
+        9
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_BIGSHIP2": {
+      "width": 400,
+      "height": 400,
+      "bounds": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        400,
+        400
+      ],
+      "definitions": [
+        296
+      ],
+      "stages": [
+        11
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_BIGAST1": {
+      "width": 400,
+      "height": 400,
+      "bounds": [
+        0,
+        0,
+        400,
+        390
+      ],
+      "offset": [
+        0.0,
+        -5.0
+      ],
+      "visible": [
+        400,
+        390
+      ],
+      "definitions": [
+        368
+      ],
+      "stages": [
+        15
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_BIGSHIP3": {
+      "width": 400,
+      "height": 480,
+      "bounds": [
+        20,
+        24,
+        386,
+        471
+      ],
+      "offset": [
+        3.0,
+        7.5
+      ],
+      "visible": [
+        366,
+        447
+      ],
+      "definitions": [
+        386
+      ],
+      "stages": [
+        7
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-14-hd.png",
+      "kind": "atlas"
+    },
+    "S2_SPCHEX1": {
+      "width": 64,
+      "height": 64,
+      "bounds": [
+        0,
+        0,
+        64,
+        64
+      ],
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "visible": [
+        64,
+        64
+      ],
+      "definitions": [
+        378
+      ],
+      "stages": [
+        17
+      ],
+      "archive": "game2.glb",
+      "route": {
+        "kind": "campaign"
+      },
+      "asset": "assets/campaign-objects-15-hd.png",
+      "kind": "atlas"
+    }
+  },
+  "assets": {
+    "assets/campaign-objects-01-hd.png": {
+      "sha256": "cf5dbd345af62954458312a0d3c8df388f8afb6e51c6a886c5d70c51ddbbb239",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-02-hd.png": {
+      "sha256": "91ff0c2890e914b22ddc2fd746bedf7672645fca45e3829f5f696cc55f5e6465",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-03-hd.png": {
+      "sha256": "e05db45b2644a8b804596ce3cda71c5ec538e64e18bbc2c5ac89d24c44d4f189",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-04-hd.png": {
+      "sha256": "3b13d0cb62bdd17e71833355ce82d5b8c63e7ddac71db32b45a7b9bbcfa901fe",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-05-hd.png": {
+      "sha256": "dc8eb0212e7d3e7e44251199605f2a6a839813f97060c59dd42b6eb50e128ec3",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-06-hd.png": {
+      "sha256": "35f5293385bae67c8457e16a1f3c551274abfe6c205b1aeeb9b80e998fe27a14",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-07-hd.png": {
+      "sha256": "477f155dbc82954a3e31cc68fb9366f0e3a3957ce96ae784a184f545ddeffa9b",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-08-hd.png": {
+      "sha256": "5602e83d978d7d3c0e29d133adf3fd41ae5ff1bc20cbff638cea845eae23bff6",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-09-hd.png": {
+      "sha256": "665eebca92308d3ed83f1ad469aebd3d54f37929faf0ef933838749a9e04e9fa",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-10-hd.png": {
+      "sha256": "993e68950e4842f1e9ee8cbd72737b2187cc2089480ea29cee15bfa5b01e847a",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-11-hd.png": {
+      "sha256": "2770a368173a6b959b5000f01bf66ff5b343de387bef8622e60d6df90a188b65",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-12-hd.png": {
+      "sha256": "f60d8232c405d8e306c81a0bc19430de43f61e8f40a6bb8c33371fe8d0a20aaa",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-13-hd.png": {
+      "sha256": "8214372003c904dab1386e871dd943c93f2410ba2adb234652ef91e2b6ac9567",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-14-hd.png": {
+      "sha256": "4cf68b4fca3d2863dbe22f6dcb5464ab2cd5419ef3795d5432c9a1d16641d824",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/campaign-objects-15-hd.png": {
+      "sha256": "c24f67794fd3c7eb0792aa21ca4e9ef60140129cd37a59793fdedfd2874628b1",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "assets/fixed-turret-layers-hd.png": {
+      "sha256": "e7050ec3d3c65f512af8ed1e6bf1bb548a5f93f5bea184abbda2dc2afc4031a3",
+      "size": [
+        1983,
+        793
+      ]
+    }
+  }
+}

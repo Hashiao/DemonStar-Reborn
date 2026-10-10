@@ -1,5 +1,6 @@
 // 出击、激光和血条回归。 / Launch, laser and health-bar regressions.
 import test from 'node:test';import assert from 'node:assert/strict';
+import '../web/js/campaign-art.js';import '../web/js/enemy-shots.js';
 import '../web/js/campaign.js';import '../web/js/player-rules.js';import '../web/js/projectile-rules.js';import '../web/js/weapon-art.js';import '../web/js/enemy-art.js';import '../web/js/presentation-art.js';import '../web/js/superweapon-art.js';import '../web/js/original-rules.js';import '../web/js/render-hd.js';
 const {Game,STEP,HEALTH_BAR_MIN_HP}=StarfallCore;
 function arena(){const g=new Game(1);g.start();g.recordEvents=[];g.player.invincible=999;return g;}

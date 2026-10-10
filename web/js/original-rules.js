@@ -40,10 +40,10 @@
       if(this.aim){this.angle=(Math.atan2(game.player.x-x,-(game.player.y-y))*1024/Math.PI+r[8])&2047;this.aim=false;}
       if(enemy.y>=0&&enemy.y<H+enemy.r&&game.enemyFireLock<=0&&!enemy.dying){
         const a=this.angle*Math.PI/1024,s=Math.max(1,r[12])*TICK;
-        // 9 号弹是绑定炮口的四帧光束，伤害取原始模板。
-        // Type 9 is a four-frame beam attached to its emitter (0x429722),
-        // not a travelling bullet. Damage comes from its original template.
-        const beam=r[2]===9?{beam:true,owner:enemy.uid,offsetX:x-enemy.x,offsetY:y-enemy.y,age:0,life:4*STEP}:{};
+        // 9/10 号弹绑定炮口，分别播放四/五帧，伤害取原始模板。
+        // Types 9/10 attach to the muzzle for four/five frames (0x429722); keep original damage.
+        const beamFrames=r[2]===10?5:4;
+        const beam=r[2]===9||r[2]===10?{beam:true,beamFrames,owner:enemy.uid,offsetX:x-enemy.x,offsetY:y-enemy.y,age:0,life:beamFrames*STEP}:{};
         game.addBullet(x,y,Math.sin(a)*s,-Math.cos(a)*s,false,P.damage[r[2]],r[2]%3,{shotType:r[2],missile:r[2]===8,...beam});game.events?.push({type:'enemy-shot',shotType:r[2]});
       }
       this.angle=(this.angle+r[9])&2047;this.arc--;
@@ -342,7 +342,7 @@
     }
     updatePlayerBeam(b){
       const p=this.player;
-      if(this.phase!=='playing'||p.respawn>0||p.mega<=0||++b.age>=4){b.dead=true;return;}
+      if(this.phase!=='playing'||p.respawn>0||p.mega<=0||++b.age>=(b.beamFrames||4)){b.dead=true;return;}
       b.px=b.x;b.py=b.y;b.x=p.x;b.y=p.y-20;b.endY=0;
       // 原作 0x428e70/0x428ed0 从炮口向前扫描并在首个目标处截止。
       // Original 0x428e70/0x428ed0 scans forward from the muzzle and stops at the first target.
@@ -411,7 +411,7 @@
         if(b.playerBeam){this.updatePlayerBeam(b);continue;}
         if(b.beam){
           const owner=this.enemies.find(e=>e.uid===b.owner&&!e.dead&&!e.dying);
-          if(!owner||b.dead||++b.age>=4){b.dead=true;continue;}
+          if(!owner||b.dead||++b.age>=(b.beamFrames||4)){b.dead=true;continue;}
           b.px=b.x;b.py=b.y;b.x=owner.x+b.offsetX;b.y=owner.y+b.offsetY;b.life-=dt;
           // 原作光束宽 8 像素、向下 480 像素，命中后不消失。
           // Original 0x428a77: vertical rectangle eight pixels wide, reaching

@@ -8,11 +8,22 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics, purchases or network permissions.
 
-**Current milestone M2.8 (v0.2.8) audits and corrects homing missiles and six tiers per weapon color. This is not a verified complete 1:1 port.** The original 18 stages come first; stages 19–25 have not been developed. See [fidelity status](docs/FIDELITY.en.md) for confirmed behavior, estimates and remaining differences.
+**Current milestone M2.9 (v0.2.9) fills missing object and enemy-projectile art across eighteen stages. This is not a verified complete 1:1 port.** The original 18 stages come first; stages 19–25 have not been developed. See [fidelity status](docs/FIDELITY.en.md) for confirmed behavior, estimates and remaining differences.
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.8
+## Current milestone M2.9
+
+- Explicit mappings cover all 251 prototypes, including the 244 used by the eighteen stages. Add art for 213 missing prototypes and remove modulo enemy/generic terrain fallbacks. Stage-two lids, tanks, radar and turrets regain their own silhouettes.
+- All 15 used enemy projectile types map to source frame names, colors and visible sizes, including the five-frame muzzle-bound red laser. Damage still comes from the original table.
+- Five turret families have stationary bases and independently turning barrels. Load campaign atlases per stage, release obsolete tint caches, and require complete decoding before readiness.
+- Review four representative times in each of eighteen video parts plus local original prototypes. Base-art coverage is not complete animation fidelity: some headings/rotation use a rotated single redraw; ground shadows and wrecks remain approximate.
+
+Build records will be updated after this release's Android and iOS verification finishes.
+
+[Stage-two prototypes](docs/screenshots/campaign-02-prototypes.png) · [Enemy projectile gallery](docs/screenshots/enemy-projectiles-gallery.png) · [Evidence and limits](docs/M2_9_RESEARCH.md) · [Complete coverage](docs/campaign-art-coverage.json) · [Redraw provenance and full prompts](docs/ART_M2_9.md). HP, campaign data, player damage and provisional superweapon budgets remain unchanged.
+
+## M2.8 completed
 
 - Homing missiles restore the original thin 4×8 body and eight-unit speed per tick. Initial targets cycle, locks persist until invalid, and turning no longer causes cumulative speed loss.
 - Restore source turn steps and post-turn alignment, sixteen headings, a 101-tick fuse and brief player-motion inheritance.
