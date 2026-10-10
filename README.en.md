@@ -20,9 +20,9 @@ The game supports Simplified Chinese, Traditional Chinese and English. First lau
 - Traditional copy uses natural terms such as 設定, 主選單, 搖桿, 飛彈, 電漿砲 and 強化火力 rather than automatic character conversion. Regional native-speaker review is not claimed.
 - [Project instructions](AGENTS.md), [contribution rules](CONTRIBUTING.md), core comments, READMEs, significant commits and releases have Simplified Chinese and English versions. The [localization policy](docs/LOCALIZATION.md) defines ongoing verification.
 
-Build records will be updated after this release's Android and iOS verification finishes.
+87 regressions, seven browser suites and native Android/iPhone/iPad checks passed for version 0.2.6 (8). See verification below and the [release report](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.6/verification.json).
 
-[Simplified menu](docs/screenshots/menu-zh-Hans.png) · [Traditional menu](docs/screenshots/menu-zh-Hant.png) · [English menu](docs/screenshots/menu-en.png) · [Language settings](docs/screenshots/settings-en.png)
+[Simplified menu](docs/screenshots/menu-zh-Hans.png) · [Traditional menu](docs/screenshots/menu-zh-Hant.png) · [English menu](docs/screenshots/menu-en.png) · [Language settings](docs/screenshots/settings-en.png) · [iPhone English settings](docs/screenshots/ios-settings-en.png) · [iPad Traditional settings](docs/screenshots/ios-settings-zh-Hant.png)
 
 ## Completed M2.5
 
@@ -128,7 +128,7 @@ Choose your Team in Xcode for device installation. [iOS CI](https://github.com/H
 
 ## Verification
 
-M2.6 verification is in progress. The previous release, 0.2.5 (7), passed 80 engine/audio tests, six browser suites, Android Debug/Release builds, Lint with 0 errors/3 warnings, Android 17/API37 emulator checks, and iOS 18.5 iPhone 16 Pro/iPad Pro 11(M4) checks. All packaged scripts, art and audio matched, allowing only HTML/CSS line-ending differences. [Previous report](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.5/verification.json).
+M2.6 passed 87 engine/audio/locale tests and seven browser suites covering seven preferred languages, switching, legacy saves, persistence, storage-unavailable feedback, five layouts and existing gameplay. Android Debug/signed Release builds, Lint (0 errors, 4 warnings) and the existing Android 17/API37 AVD passed. Native zh-CN, zh-TW, zh-HK and fr-FR first-launch cases and saved overrides after restart passed. The four warnings include localeConfig being ignored on older Android versions. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38009132683) passed the ARM64 iPhoneOS build and iOS 18.5 checks on iPhone 16 Pro and iPad Pro 11-inch (M4): Simplified Chinese, Taiwan Traditional Chinese and French-to-English fallback on iPhone; Hong Kong Traditional Chinese on iPad. Each case used the actual settings control to switch all three languages without changing paused combat. Both packages are version 0.2.6 (8); all scripts, art, audio and locale resources match, allowing only HTML/CSS line-ending differences. Bundle paths are ASCII. [Full report](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.6/verification.json).
 
 Original HP/player-damage tables remain equal to v0.2.1. Minimum OS versions, phone-speaker audition and original-runtime sample-by-sample A/B checks remain unverified. W_PULSE was located in Game3.glb but is absent from authorized MP3 sources; 脉冲炮一 maps to W_PULSAR instead.
 

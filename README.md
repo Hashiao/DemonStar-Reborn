@@ -10,7 +10,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 **当前 M2.6（v0.2.6）加入三语界面与长期中英双语维护，仍不是已验收的完整 1:1 移植。** 原版 1–18 关优先；19–25 关尚未开发。完整的确认项、推断值与差异见 [还原状态](docs/FIDELITY.md)。
 
-![Menu](docs/screenshots/menu.png)
+![菜单](docs/screenshots/menu.png)
 
 ## 当前里程碑 M2.6
 
@@ -20,9 +20,9 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 - 繁体版独立改写，采用「設定、主選單、搖桿、飛彈、電漿砲、強化火力」等通用表达，不机械转字。
 - [项目规范](AGENTS.md)、[贡献约定](CONTRIBUTING.md)、核心注释、README、重要提交和 Release 提供简体中文及英文；[语言规范](docs/LOCALIZATION.md)规定后续验收要求。
 
-本版双端验收完成后更新构建记录。
+87 项回归、七组浏览器及 Android/iPhone/iPad 原生验收通过，版本 0.2.6（8）。详见下方测试记录及 [本版报告](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.6/verification.json)。
 
-[简体菜单](docs/screenshots/menu-zh-Hans.png) · [繁体菜单](docs/screenshots/menu-zh-Hant.png) · [英文菜单](docs/screenshots/menu-en.png) · [语言设置](docs/screenshots/settings-en.png)。繁体文案未声称经过地区母语玩家审校。
+[简体菜单](docs/screenshots/menu-zh-Hans.png) · [繁体菜单](docs/screenshots/menu-zh-Hant.png) · [英文菜单](docs/screenshots/menu-en.png) · [语言设置](docs/screenshots/settings-en.png)。繁体文案未声称经过地区母语玩家审校。[iPhone 英文设置](docs/screenshots/ios-settings-en.png) · [iPad 繁体设置](docs/screenshots/ios-settings-zh-Hant.png)。
 
 ## M2.5 已完成内容
 
@@ -139,7 +139,7 @@ open ios/DemonStar.xcodeproj
 
 ## 测试
 
-M2.5 的 80 项引擎/声音回归与六组浏览器检查通过，覆盖出击冻结/恢复、广播时序、命中与击毁特效、底栏五种尺寸、残骸、原作奖励及 M2.4 伤害规则。Android Debug/签名 Release、Lint（0 错误、3 提示）及现有 Android 17 / API37 AVD 出击、摇杆/A/B、旋转、后台和设置检查通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/37989366559) 通过 iPhoneOS ARM64 编译和 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) WKWebView 检查，包括实际经过出击阶段、新图集加载、移动/开火和 BGM 播放。两包版本 0.2.5（7），全部游戏脚本、图集和音频内容核验一致；HTML/CSS 仅有平台换行差异，包内路径 ASCII。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.5/verification.json)。
+M2.6 的 87 项引擎/声音/语言回归与七组浏览器检查通过，覆盖七种首选语言、三语切换、旧存档、持久化、禁用存储提示、五种屏幕布局及既有战斗功能。Android Debug/签名 Release、Lint（0 错误、4 提示）及 Android 17/API37 现有 AVD 验收通过；原生 zh-CN、zh-TW、zh-HK、fr-FR 首次选择和重启后的手动选择优先级均通过。四个提示包括旧系统忽略 localeConfig 的兼容提示。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38009132683) 通过 iPhoneOS ARM64 编译，以及 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) 检查：iPhone 测试简体、台湾繁体、法语回退英语，iPad 测试香港繁体；均通过真实设置控件切换三语且保持暂停战斗状态。两包版本 0.2.6（8），全部脚本、图集、音频与本地化资源核验一致，HTML/CSS 仅有平台换行差异，包内路径 ASCII。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.6/verification.json)。
 
 原始 HP/主武器伤害表与 v0.2.1 一致。最低系统、手机扬声器和原机逐样本 A/B 仍未实测；独立激光启动音 W_PULSE 已定位在 Game3.glb，尚未包含在用户提供的 MP3 清单，“脉冲炮一”是另一资源 W_PULSAR。
 
