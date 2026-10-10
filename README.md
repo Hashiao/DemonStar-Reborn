@@ -19,7 +19,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 - 普通敌机与 Boss 血条独立设置，**默认普通血条关闭、Boss 血条开启**。普通条只显示最大 HP 达到开局方形补给机（905）及以上的敌人；旧合并设置一次性迁移。
 - 蓝色炸弹改为包住主角的紫色闪电罩和连续粗蓝激光，随主角移动，在前方最近可攻击目标处停止；不再发射护罩圆环。伤害仍使用原有临时预算。
 
-本版双端验收完成后更新构建记录。
+94 项回归、八组浏览器及 Android/iPhone/iPad 原生验收通过，版本 0.2.7（9）。详见下方测试记录及 [本版报告](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.7/verification.json)。
 
 [默认血条设置](docs/screenshots/m27-default-settings.png) · [紫色护罩与蓝激光](docs/screenshots/blue-laser-aura.png) · [气罐比例](docs/screenshots/tanker-proportions.png) · [原作证据与边界](docs/M2_7_RESEARCH.md) · [内置 imagegen 素材与完整提示词](docs/ART_M2_7.md)。
 
@@ -150,7 +150,7 @@ open ios/DemonStar.xcodeproj
 
 ## 测试
 
-M2.6 的 87 项引擎/声音/语言回归与七组浏览器检查通过，覆盖七种首选语言、三语切换、旧存档、持久化、禁用存储提示、五种屏幕布局及既有战斗功能。Android Debug/签名 Release、Lint（0 错误、4 提示）及 Android 17/API37 现有 AVD 验收通过；原生 zh-CN、zh-TW、zh-HK、fr-FR 首次选择和重启后的手动选择优先级均通过。四个提示包括旧系统忽略 localeConfig 的兼容提示。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38009132683) 通过 iPhoneOS ARM64 编译，以及 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) 检查：iPhone 测试简体、台湾繁体、法语回退英语，iPad 测试香港繁体；均通过真实设置控件切换三语且保持暂停战斗状态。两包版本 0.2.6（8），全部脚本、图集、音频与本地化资源核验一致，HTML/CSS 仅有平台换行差异，包内路径 ASCII。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.6/verification.json)。
+M2.7 的 94 项引擎/声音/语言回归与八组浏览器检查通过，新增母舰节奏、气罐比例、默认仅 Boss 血条、独立开关持久化和蓝激光最近目标命中；保留三语及五种布局验收。Android Debug/项目签名 Release、Lint（0 错误、4 提示）及 Android 17/API37 现有 AVD 验收通过；真实设置控件确认默认普通关闭/Boss 开启，三语、操作、旋转及后台恢复通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38013608968) 通过 iPhoneOS ARM64 编译及 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) 检查；四种系统语言场景均确认两项血条默认和独立切换，并保留战斗状态。两包版本 0.2.7（9），脚本、图集、音频与本地化资源一致，HTML/CSS 仅有平台换行差异，包内路径 ASCII。[完整验收记录](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.7/verification.json)。
 
 原始 HP/主武器伤害表与 v0.2.1 一致。最低系统、手机扬声器和原机逐样本 A/B 仍未实测；独立激光启动音 W_PULSE 已定位在 Game3.glb，尚未包含在用户提供的 MP3 清单，“脉冲炮一”是另一资源 W_PULSAR。
 
