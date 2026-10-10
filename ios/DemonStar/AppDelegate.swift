@@ -101,7 +101,9 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
             var paths=Object.keys(DemonStarCampaignArt.assets).concat(Object.keys(DemonStarEnemyShots.assets)),checked=[];
             function checkAtlas(index){
               if(index===paths.length){result.campaignArt={decoded:checked,prototypeRoutes:Object.keys(DemonStarCampaignArt.routes).length,enemyTypes:Object.keys(DemonStarEnemyShots.shots).length};window.smokeResult=JSON.stringify(result);return;}
-              var image=new Image();image.onload=function(){try{var canvas=document.createElement('canvas');canvas.width=canvas.height=64;var context=canvas.getContext('2d');context.drawImage(image,0,0,64,64);var pixels=context.getImageData(0,0,64,64).data,visible=0;for(var i=3;i<pixels.length;i+=4)visible+=pixels[i]>0?1:0;if(!visible)throw new Error('Empty atlas '+paths[index]);checked.push(paths[index]);checkAtlas(index+1);}catch(e){window.smokeResult=JSON.stringify({error:String(e)});}};image.onerror=function(){window.smokeResult=JSON.stringify({error:'Atlas failed: '+paths[index]});};image.src=paths[index];
+              // file URL 画布允许绘制但禁止像素回读；在原生端核对解码尺寸，像素覆盖由浏览器测试负责。
+              // File-URL canvases permit drawing but reject pixel readback; verify decoded sizes here and pixels in browser tests.
+              var image=new Image();image.onload=function(){try{var expected=(DemonStarCampaignArt.assets[paths[index]]||DemonStarEnemyShots.assets[paths[index]]).size;if(!image.complete||image.naturalWidth!==expected[0]||image.naturalHeight!==expected[1])throw new Error('Wrong atlas dimensions: '+paths[index]);var canvas=document.createElement('canvas');canvas.width=canvas.height=64;canvas.getContext('2d').drawImage(image,0,0,64,64);checked.push(paths[index]);checkAtlas(index+1);}catch(e){window.smokeResult=JSON.stringify({error:'Atlas probe: '+String(e)});}};image.onerror=function(){window.smokeResult=JSON.stringify({error:'Atlas failed: '+paths[index]});};image.src=paths[index];
             }checkAtlas(0);
           }catch(error){window.smokeResult=JSON.stringify({error:String(error)});clearInterval(timer);}},50);
         })();

@@ -62,3 +62,9 @@ New regressions cover all definitions/maps, fifteen enemy-shot types, crop bound
 本轮没有核验全部原作动画帧、阴影、残骸细节、敌弹每种动画节拍及所有旋转姿态；不得把基础外形覆盖标成完整 1:1。最低系统与真机测试状态以发布验收记录为准。
 
 Complete original animations, shadows, wreck detail, every shot-animation cadence and every directional pose are not certified in this pass. Base silhouette coverage is not full 1:1 fidelity. Release verification records actual OS/device coverage.
+
+## 重建映射 / Rebuild mappings
+
+本地取证工具 `python tools/import-campaign-art.py "Deamon Star"` 需要 Python、Pillow、NumPy、SciPy 及用户自行持有的原始目录；只重建数值、裁切与覆盖文档。普通构建直接使用已提交的重绘图集与映射，不需要原作目录，也不运行此工具。
+
+The local research command above requires Python, Pillow, NumPy, SciPy and a user-owned original directory. It rebuilds numeric geometry, crops and coverage documents only. Normal builds consume committed redraws/mappings and require neither the original game nor this tool.
