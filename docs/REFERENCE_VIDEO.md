@@ -52,3 +52,9 @@ This is explicit representative-frame coverage, not a frame-by-frame certificati
 | 16 | 25, 60, 150, 200 |
 | 17 | 25, 60, 150, 200 |
 | 18 | 20, 60, 160, 240 |
+
+## 操作与表现审计实际审看
+
+2026-10-10：本轮复看先前采集的 P1 缓存帧 222、224、226、228、232 秒。222 秒为 Boss 机体与局部爆点，224 秒为大范围爆炸和碎片；226 秒出现 MISSION COMPLETE 与 Player 1 奖励框，228/232 秒可见完整三行奖励。用于定位死亡表现和结算构图，不能据此宣称精确坠毁时长或十八关完整死亡动画已验收。细节见 [定位报告](FEATURE_AUDIT_2026_10_10.md)。
+
+2026-10-10: this audit re-examined previously captured P1 frames at 222, 224, 226, 228 and 232 seconds. They show the Boss with local effects, a large explosion/debris field, then MISSION COMPLETE and the Player 1 reward panel. This supports diagnosis of death presentation and results composition, not exact crash timing or complete eighteen-stage death-animation verification. See the linked audit report.

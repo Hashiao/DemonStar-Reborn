@@ -152,7 +152,7 @@
         for(const e of game.enemies.filter(e=>!e.scenery&&!e.ground))object(e);
         for(const item of game.pickups){const at=position(item);this.cell(this.pickups,item.id??DROPS.indexOf(item.type),4,5,at.x,at.y,32,32);}
         for(const b of game.bullets){
-          if(b.playerBeam){if(game.player.mega>0){const at=position(game.player),frame=Math.max(0,Math.min(3,b.age)),height=Math.max(0,at.y-20-b.endY);this.superCell(4+frame,at.x,b.endY+height/2,[12,10,8,5][frame],height);}continue;}
+          if(b.playerBeam){const p=game.playerById?.(b.playerId)||game.player;if(p.mega>0&&p.lives>0){const at=position(p),frame=Math.max(0,Math.min(3,b.age)),height=Math.max(0,at.y-20-b.endY);this.superCell(4+frame,at.x,b.endY+height/2,[12,10,8,5][frame],height);}continue;}
           if(!b.friendly){this.enemyShot(b,position(b));continue;}
           const visual=DemonStarCombatVisuals.shot(b.shotType);if(b.friendly&&visual){this.playerShot(b,position(b),visual);continue;}
           if(b.nova!==undefined){const at=position(b);this.cell(this.weapons,[6,11,12,7][b.nova],4,4,at.x,at.y,b.nova===3?15:10,b.nova===3?15:10);continue;}
@@ -162,9 +162,15 @@
           const at=position(b);if(b.friendly){const yellow=b.shotType>=16&&b.shotType<=25,sw=b.defaultShot?3:yellow?(b.shotType===16?1.5:4.5):width,sh=b.defaultShot?13:yellow?12:height;if(this.cropped(this.weapons,presentationArt.weapons[sprite],at.x,at.y,sw,sh,angle))continue;}
           c.fillStyle=b.friendly?['#ffd85d','#80bdff','#ff99ac','#ffad39'][b.style%4]:'#ffa958';c.fillRect(at.x-2,at.y-5,4,8);
         }
-        const p=game.player,at=position(p);if(game.phase!=='gameover'&&p.respawn<=0&&(game.launch||p.mega>0||p.invincible<=0||Math.floor(this.time*14)%2===0))this.player(at.x,at.y,p.power,this.time,1,p);
-        if(p.mega>0&&p.respawn<=0)this.superCell(game.frame%4,at.x,at.y-8,48,58);
-        if(p.shield>0){c.strokeStyle='#83d8ffb0';c.lineWidth=2;c.beginPath();c.arc(at.x,at.y,23,0,Math.PI*2);c.stroke();}
+        for(const p of game.players||[game.player]){
+          if(p.lives<=0||p.respawn>0)continue;const at=position(p);
+          if(game.phase!=='gameover'&&(game.launch||p.mega>0||p.invincible<=0||Math.floor(this.time*14)%2===0))this.player(at.x,at.y,p.power,this.time,1,p);
+          if(p.mega>0)this.superCell(game.frame%4,at.x,at.y-8,48,58);
+          if(p.shield>0){c.strokeStyle='#83d8ffb0';c.lineWidth=2;c.beginPath();c.arc(at.x,at.y,23,0,Math.PI*2);c.stroke();}
+          // 编号和颜色同时区分玩家，保留重绘机体本身的原作配色。
+          // Number and color identify players while preserving the original ship palette.
+          if(game.players?.length>1){c.fillStyle=['#ff8888','#80c8ff','#ffd66b','#b6f79b'][p.id-1];c.font='bold 11px monospace';c.textAlign='center';c.fillText(String(p.id),at.x,at.y+30);c.textAlign='start';}
+        }
         for(const v of game.particles){c.globalAlpha=Math.max(0,v.life/v.maxLife)*(v.smoke ? .45 : 1);c.fillStyle=v.color;if(v.smoke){c.beginPath();c.arc(v.x,v.y,v.size/2,0,Math.PI*2);c.fill();}else c.fillRect(v.x,v.y,v.size,v.size);}c.globalAlpha=1;
         for(const v of game.effects||[])this.blast(v);
         for(const s of game.specials){const at=position(s);if(!s.exploded){if(s.type===0)this.effectCell(9,at.x,at.y,49,17);else this.effectCell(18,at.x,at.y,9,11);}else{const ratio=s.remaining/(s.type===0?30:14);c.globalAlpha=Math.min(1,ratio*3);const size=s.type===0?70+(1-ratio)*135:18+(1-ratio)*50;this.effectCell(s.type===0?(ratio>.4?10:11):(ratio>.4?18:19),at.x,at.y,size,size);c.globalAlpha=1;}}
