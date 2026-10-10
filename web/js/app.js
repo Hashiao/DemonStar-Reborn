@@ -8,8 +8,9 @@
   const { Game, DIFFICULTIES, STAGES, WEAPONS, W, H, clamp } = StarfallCore;
   const game=new Game(), renderer=new StarfallRenderer($('game')), audio=new StarfallAudio(), music=new DemonStarMusicPlayer();
   let saved={language:I.detect(I.preferred()),best:[0,0,0,0],unlocked:[1,1,1,1],difficulty:1,sound:true,music:true,musicPreferenceVersion:1,enemyHealthBars:false,bossHealthBars:true,healthBarsVersion:1,musicVolume:.35,soundVolume:1};
+  saved.haptics=true;
   try { const s=JSON.parse(localStorage.getItem('demonstar-reborn-v1')||'null'); if(s && typeof s==='object'){
-    saved.language=I.resolve(s.language,I.preferred());saved.input=s.input;
+    saved.language=I.resolve(s.language,I.preferred());saved.input=s.input;saved.haptics=s.haptics!==false;
     // 旧版合并开关一次性迁移为仅 Boss；之后分别尊重两项选择。
     // Migrate the old combined switch once to Boss-only, then preserve independent choices.
     saved.best=Array.from({length:4},(_,i)=>Math.max(0,Math.floor(Number(s.best?.[i])||0)));
@@ -54,15 +55,16 @@
   function bindSettings(){
     $('language').onchange=()=>changeLanguage($('language').value);
     $('control-settings').onclick=()=>showControls();$('stage-settings').onclick=showMissions;$('save-settings').onclick=()=>showSaves();
-    const toggle=(id,key,apply)=>{$(id).onclick=()=>{saved[key]=!saved[key];$(id).textContent=t(saved[key]?'on':'off');$(id).setAttribute('aria-pressed',String(saved[key]));$(id).setAttribute('aria-label',t({'health-toggle':'healthBars','boss-health-toggle':'bossHealthBars','music-toggle':'music','sfx-toggle':'sfx'}[id])+' '+t(saved[key]?'on':'off'));apply();persist();};};
+    const toggle=(id,key,apply)=>{$(id).onclick=()=>{saved[key]=!saved[key];$(id).textContent=t(saved[key]?'on':'off');$(id).setAttribute('aria-pressed',String(saved[key]));$(id).setAttribute('aria-label',t({'health-toggle':'healthBars','boss-health-toggle':'bossHealthBars','music-toggle':'music','sfx-toggle':'sfx','haptic-toggle':'haptics'}[id])+' '+t(saved[key]?'on':'off'));apply();persist();};};
     toggle('boss-health-toggle','bossHealthBars',updateHud);
+    toggle('haptic-toggle','haptics',()=>{});
     toggle('health-toggle','enemyHealthBars',()=>{renderer.enemyHealthBars=saved.enemyHealthBars;updateHud();});
     toggle('music-toggle','music',()=>{music.setEnabled(saved.music);});
     toggle('sfx-toggle','sound',()=>{audio.enabled=saved.sound;if(saved.sound)audio.unlock();else audio.stopAll();menuInfo();});
     $('music-volume').oninput=()=>{saved.musicVolume=Number($('music-volume').value)/100;music.volume=saved.musicVolume;music.update(!!audio.missionSource&&audio.enabled&&audio.volume>0);persist();};
     $('sfx-volume').oninput=()=>{saved.soundVolume=Number($('sfx-volume').value)/100;audio.volume=saved.soundVolume;if(audio.master)audio.master.gain.value=.4*audio.volume;persist();};
   }
-  function extraSettings(){return `<div class="config-grid"><button id="control-settings" class="secondary">${t('inputSettings')}</button><button id="stage-settings" class="secondary">${t('missionTitle')}</button><button id="save-settings" class="secondary">${t('saveMenu')}</button></div>`;}
+  function extraSettings(){return `<div class="dialog-setting">${t('haptics')}<button id="haptic-toggle" class="secondary" aria-pressed="${saved.haptics}" aria-label="${t('haptics')} ${t(saved.haptics?'on':'off')}">${t(saved.haptics?'on':'off')}</button></div><p class="language-hint">${t('hapticsHint')}</p><div class="config-grid"><button id="control-settings" class="secondary">${t('inputSettings')}</button><button id="stage-settings" class="secondary">${t('missionTitle')}</button><button id="save-settings" class="secondary">${t('saveMenu')}</button></div>`;}
   function showSettings(){settingsContext='menu';dialog(t('gameSettings'),t('gameSettings'),settingsRows()+extraSettings(),[[t('hangar'),hideDialog]]);bindSettings();}
   function showPauseDialog(){settingsContext='pause';dialog(t('pausedTag'),t('pausedTitle'),`<p>${t('pausedBody')}</p>${settingsRows()}${extraSettings()}`,[[t('resume'),resume],[t('mainMenu'),()=>dialog(t('mainMenu'),t('quitTitle'),`<p>${t('quitBody')}</p>`,[[t('resume'),resume],[t('quit'),showMenu,true]]),true]]);bindSettings();}
   function pause(){if(!game.pause())return;audio.suspend();music.suspend();saveScore();showPauseDialog();}
@@ -151,6 +153,7 @@
     audio.update(dt,game.phase!=='paused'&&game.phase!=='menu'&&!document.hidden);
     for(const e of game.drainEvents()){
       audio.effect(e.type,e);
+      if(saved.haptics&&!document.hidden&&game.phase!=='paused'&&['hit','bomb','player-death','pickup'].includes(e.type))DemonStarNative.haptic(e.type==='pickup'?'light':'heavy');
       if(e.type==='stage'){music.stage(e.stage);$('toast').hidden=true;if(!saves.write('auto',game.checkpoint()))toast(t('saveFailed'));}
       if(e.type==='mission-start')clearInput();
       if(e.type==='pickup'||e.type==='nova'){
@@ -190,7 +193,7 @@
   document.addEventListener('visibilitychange',()=>{if(document.hidden)background();else{previous=0;if(game.phase==='menu')music.resume();}});window.addEventListener('blur',background);window.addEventListener('focus',()=>{if(game.phase==='menu')music.resume();});
   window.addEventListener('pagehide',()=>{saveScore();background();});
   window.addEventListener('resize',()=>{clearInput();renderer.resize();touch.layout(renderer.layout);});
-  globalThis.StarfallApp={game,i18n:I,input,touch,saves,background,back:()=>{if(['playing','launch','aftermath'].includes(game.phase))pause();else if(game.phase==='paused')resume();else if(!$('dialog').hidden)hideDialog();},start,showMenu,showControls,showSaves,showMissions,renderer,music,audio};
+  globalThis.StarfallApp={game,i18n:I,input,touch,saves,native:DemonStarNative,background,back:()=>{if(['playing','launch','aftermath'].includes(game.phase))pause();else if(game.phase==='paused')resume();else if(!$('dialog').hidden)hideDialog();},start,showMenu,showControls,showSaves,showMissions,renderer,music,audio};
   document.addEventListener('click',e=>{if(e.target.closest('button')){music.unlock();if(saved.sound){audio.unlock();if(!['fire','bomb','start'].includes(e.target.closest('button').id))audio.effect('menu');}}});
   // 原生容器允许首屏播放；浏览器若拒绝，后续交互仍会再次尝试。
   // Native hosts allow startup playback; browser gesture handlers retry if autoplay is rejected.

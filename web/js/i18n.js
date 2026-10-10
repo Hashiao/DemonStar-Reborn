@@ -5,6 +5,7 @@
   // 繁体文案独立编写，不自动转字；数组顺序固定为简中、繁中、英文。
   // Traditional Chinese is authored separately; column order is Hans, Hant, English.
   const copy={
+    haptics:['震动反馈','震動回饋','Haptic feedback'],hapticsHint:['受伤、投弹和拾取时震动；仅在支持触感的手机 App 中生效。','受傷、投彈及拾取時提供震動；僅適用於支援觸感的手機 App。','Feedback for hits, bombs and pickups. Available in the phone app on supported hardware.'],
     inputSettings:['玩家与操作','玩家與操作','Players and controls'],playerCount:['同机人数','同機人數','Local players'],playerCountValue:['{n} 人','{n} 人','{n} players'],configurePlayer:['配置玩家','設定玩家','Configure player'],playerNumber:['玩家 {n}','玩家 {n}','Player {n}'],
     localPlayersHint:['触屏支持前两位玩家同时操作；第三、四位使用键盘或手柄。人数在主菜单设置。','前兩位玩家可同時使用觸控；第三、四位使用鍵盤或控制器。人數請在主選單設定。','The first two players can use touch together. Players 3 and 4 use a keyboard or controllers. Set the player count from the main menu.'],
     touchMode:['触控方式','觸控方式','Touch mode'],touchfixed:['固定摇杆','固定搖桿','Fixed stick'],touchfloating:['浮动摇杆','浮動搖桿','Floating stick'],touchdpad:['八方向按键','八方向按鍵','Eight-direction pad'],stickSize:['摇杆大小','搖桿大小','Stick size'],stickHorizontal:['摇杆水平位置','搖桿水平位置','Stick horizontal position'],stickVertical:['摇杆垂直位置','搖桿垂直位置','Stick vertical position'],

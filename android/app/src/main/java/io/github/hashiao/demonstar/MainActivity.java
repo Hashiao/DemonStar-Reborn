@@ -15,17 +15,25 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import java.io.ByteArrayInputStream;
+import org.json.JSONObject;
 
-/** 离线游戏宿主，无 JS 桥接/联网权限/账号/追踪。 Offline host without bridges, network, accounts or trackers. */
+/** 本地资源宿主，局域网与触感使用受限桥接，无账号或追踪。
+ * Local-asset host with a restricted LAN/haptics bridge, without accounts or trackers. */
 public final class MainActivity extends Activity {
     private WebView web;
     private boolean foreground;
+    private GameBridge bridge;
+    private JSONObject pendingNetwork;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         web = new WebView(this);
+        bridge = new GameBridge(this, event -> {
+            if (web != null && web.getUrl() != null && web.getUrl().startsWith("file:///android_asset/index.html")) web.evaluateJavascript("window.DemonStarNative && DemonStarNative.receive(" + event.toString() + ")", null);
+        }, request -> { pendingNetwork = request; requestPermissions(new String[]{"android.permission.ACCESS_LOCAL_NETWORK"}, 410); });
+        web.addJavascriptInterface(bridge, "DemonStarHost");
         if ((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
             WebView.setWebContentsDebuggingEnabled(true);
         }
@@ -36,7 +44,7 @@ public final class MainActivity extends Activity {
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        // 游戏管理单个音乐元素，并在用户交互时解锁。 / The game unlocks its music element on interaction.
+        // 首屏可直接播放，游戏继续尊重保存的静音与音量。 / Permit startup BGM while respecting saved mute/volume.
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setSupportZoom(false);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -68,6 +76,10 @@ public final class MainActivity extends Activity {
         web.loadUrl("file:///android_asset/index.html#system-language=" + Uri.encode(language));
     }
     private void gameBack() { if (web != null) web.evaluateJavascript("window.StarfallApp && StarfallApp.back()", null); }
+    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
+        super.onRequestPermissionsResult(requestCode, permissions, results);
+        if (requestCode == 410 && pendingNetwork != null) { JSONObject request = pendingNetwork; pendingNetwork = null; if (results.length > 0 && results[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) bridge.handle(request); else bridge.denied(request); }
+    }
     // API 33+ 用上方回调，以下兼容旧系统。 / API 33+ uses the callback above; this is the legacy fallback.
     @SuppressLint("GestureBackNavigation")
     @Override public void onBackPressed() { gameBack(); }
@@ -77,5 +89,5 @@ public final class MainActivity extends Activity {
         super.onPause();
     }
     @Override protected void onResume() { super.onResume(); foreground = true; if (web != null) web.onResume(); }
-    @Override protected void onDestroy() { if (web != null) { web.stopLoading(); web.destroy(); web = null; } super.onDestroy(); }
+    @Override protected void onDestroy() { if (bridge != null) bridge.destroy(); if (web != null) { web.removeJavascriptInterface("DemonStarHost"); web.stopLoading(); web.destroy(); web = null; } super.onDestroy(); }
 }

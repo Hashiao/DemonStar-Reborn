@@ -1,6 +1,7 @@
 // !$*UTF8*$!
 { archiveVersion = 1; classes = {}; objectVersion = 56; objects = {
 000000000000000000000010 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+00000000000000000000001F = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBridge.swift; sourceTree = "<group>"; };
 000000000000000000000012 = { isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>"; };
 000000000000000000000014 = { isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 000000000000000000000016 = { isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -12,14 +13,15 @@
 00000000000000000000001D = { isa = PBXBuildFile; fileRef = 00000000000000000000001A; };
 00000000000000000000001E = { isa = PBXBuildFile; fileRef = 00000000000000000000001B; };
 000000000000000000000011 = { isa = PBXBuildFile; fileRef = 000000000000000000000010; };
+000000000000000000000020 = { isa = PBXBuildFile; fileRef = 00000000000000000000001F; };
 000000000000000000000013 = { isa = PBXBuildFile; fileRef = 000000000000000000000012; };
 000000000000000000000015 = { isa = PBXBuildFile; fileRef = 000000000000000000000014; };
 000000000000000000000018 = { isa = PBXBuildFile; fileRef = 000000000000000000000017; };
 000000000000000000000006 = { isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemonStar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 000000000000000000000002 = { isa = PBXGroup; children = (000000000000000000000003,000000000000000000000004); sourceTree = "<group>"; };
-000000000000000000000003 = { isa = PBXGroup; children = (000000000000000000000010,000000000000000000000012,000000000000000000000014,000000000000000000000016,000000000000000000000017,000000000000000000000019,00000000000000000000001A,00000000000000000000001B); path = DemonStar; sourceTree = "<group>"; };
+000000000000000000000003 = { isa = PBXGroup; children = (000000000000000000000010,00000000000000000000001F,000000000000000000000012,000000000000000000000014,000000000000000000000016,000000000000000000000017,000000000000000000000019,00000000000000000000001A,00000000000000000000001B); path = DemonStar; sourceTree = "<group>"; };
 000000000000000000000004 = { isa = PBXGroup; children = (000000000000000000000006); name = Products; sourceTree = "<group>"; };
-000000000000000000000007 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (000000000000000000000011); runOnlyForDeploymentPostprocessing = 0; };
+000000000000000000000007 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (000000000000000000000011,000000000000000000000020); runOnlyForDeploymentPostprocessing = 0; };
 000000000000000000000008 = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (000000000000000000000013,000000000000000000000015,000000000000000000000018,00000000000000000000001C,00000000000000000000001D,00000000000000000000001E); runOnlyForDeploymentPostprocessing = 0; };
 000000000000000000000009 = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 000000000000000000000005 = { isa = PBXNativeTarget; buildConfigurationList = 00000000000000000000000B; buildPhases = (000000000000000000000007,000000000000000000000009,000000000000000000000008); buildRules = (); dependencies = (); name = DemonStar; productName = DemonStar; productReference = 000000000000000000000006; productType = "com.apple.product-type.application"; };

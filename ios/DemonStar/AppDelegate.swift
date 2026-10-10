@@ -20,6 +20,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
 final class GameViewController: UIViewController, WKNavigationDelegate {
     private var web: WKWebView!
+    private var bridge: GameBridge!
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation { .portrait }
     override var shouldAutorotate: Bool { true }
     override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
@@ -27,8 +28,13 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
         super.viewDidLoad()
         view.backgroundColor = UIColor(red: 0.03, green: 0.055, blue: 0.085, alpha: 1)
         let configuration = WKWebViewConfiguration()
+        bridge = GameBridge { [weak self] event in
+            guard let self = self, self.web?.url?.isFileURL == true, let data = try? JSONSerialization.data(withJSONObject: event), let text = String(data: data, encoding: .utf8) else { return }
+            self.web.evaluateJavaScript("window.DemonStarNative && DemonStarNative.receive(" + text + ")", completionHandler: nil)
+        }
+        configuration.userContentController.add(bridge, name: "demonstar")
         configuration.allowsInlineMediaPlayback = true
-        // 游戏仅在开始/菜单交互后解锁音乐。 / The game unlocks BGM on start/menu interaction.
+        // 首屏可播放，游戏继续尊重保存的静音与音量。 / Permit startup BGM while respecting saved mute/volume.
         configuration.mediaTypesRequiringUserActionForPlayback = []
         web = WKWebView(frame: .zero, configuration: configuration)
         web.isOpaque = false
@@ -45,15 +51,16 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
             web.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         if let url = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "Web") {
-            // 原生首选语言通过本地 URL 传递，无网络或消息桥接。
-            // Pass the native preferred language through a local URL, without a network or message bridge.
+            // 原生首选语言仍通过本地 URL 传递。 / Continue passing the native language in the local URL.
             var localizedURL = URLComponents(url: url, resolvingAgainstBaseURL: false)
             localizedURL?.fragment = "system-language=" + (Locale.preferredLanguages.first ?? "en")
             web.loadFileURL(localizedURL?.url ?? url, allowingReadAccessTo: url.deletingLastPathComponent())
         }
     }
+    deinit { bridge?.stop(); web?.configuration.userContentController.removeScriptMessageHandler(forName: "demonstar") }
     func suspend() { web?.evaluateJavaScript("window.StarfallApp && StarfallApp.background()", completionHandler: nil) }
-    // 显式 CI 参数测试真实打包 WebView，无网络桥接。 / Explicit CI flag tests the packaged WebView, without a network bridge.
+    // 显式 CI 参数测试真实打包 WebView；常规烟测不主动建立局域网连接。
+    // Explicit CI probes exercise the packaged WebView; the standard smoke test does not open LAN connections.
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         guard ProcessInfo.processInfo.arguments.contains("--smoke-test") else { return }
         // 冷启动后布局可能改变；等待布局和资源稳定，再按逻辑帧测试操作。

@@ -10,7 +10,7 @@ Baseline: M2.9 `7b9a543`. The linked audit defines the full scope. On 2026-10-10
 | 操作与映射 / Input and bindings | 键盘、鼠标、手柄；三种触控；固定摇杆位置大小编辑；简单改键持久化 / Keyboard, mouse, controller, three touch modes, stick layout editing and saved bindings | 已接入网页和兼容包；外设真机待验收 / Integrated; physical peripherals pending |
 | 同机双人 / Local cooperative play | 至少两人同时触屏移动开火投弹；沿用 1P 原作 HUD / Simultaneous touch players using the original 1P HUD style | 六触点浏览器检查通过；真屏待验收 / Six browser contacts passed; physical touch pending |
 | 局域网 / LAN | Android–Android、Android–iOS、iOS–iOS；最多四人；热点、重连、同步 / All platform pairings, up to four players, hotspots, reconnection and synchronization | 待实现 / Pending |
-| 触感 / Haptics | 原生调用、开关、能力检测 / Native feedback, preference and capability handling | 待实现 / Pending |
+| 触感 / Haptics | 原生调用、开关、能力检测 / Native feedback, preference and capability handling | 两端代码已接入；Android 模拟器调用通过，真实手感待验收 / Both implementations added; Android emulator call passed, physical feel pending |
 | Boss / Boss deaths | 按本地原作分支和录像核对，修复动画 / Branch-specific evidence and presentation | 待实现 / Pending |
 | 结算 / Results | 原作战场叠层、玩家奖励框、三语 / Original battlefield overlay, player rewards, three locales | 待实现 / Pending |
 | 选关 / Stage selection | 设置/暂停随时切关；联机房主同步决定 / Available from settings/pause, host coordinated online | 本地入口已实现；联机同步待实现 / Local UI implemented; LAN pending |
@@ -70,3 +70,7 @@ These are desktop-browser input/device fixtures and compatibility-build checks, 
 P2 后续纠正：以用户最新确认的双人截图为准，右下角组不镜像，小蓝机在能量条左端、炸弹在上方。P2 机体/余命/状态图标已接入本地原作参考的蓝色重绘，原暖色尾焰保留；P3/P4 扩展复用红/蓝并带编号。详见 [P2 素材与验证](ART_M2_10_P2.md)，包含 17 姿态蓝色路由和 HUD 顺序检查。
 
 P2 follow-up correction follows the user's final screenshot choice: the bottom-right group is not mirrored; its blue ship is left of the energy bar and bombs are above. Blue P2 body/life/status redraws now reference the local original, retaining warm exhaust. Extended P3/P4 reuse red/blue with numbers. The linked record covers all seventeen blue pose routes and HUD ordering.
+
+用户随后确认当前多人战机与 HUD 的风格思路正确，后续以此为基线。原生局域网/触感实现和 Android 实际收发证据见 [网络记录](M2_10_NETWORK.md)；房间和游戏同步仍需接入，完整目标保持进行中。
+
+The user subsequently confirmed the current multiplayer fighter/HUD style direction as the continuing baseline. Native LAN/haptic implementation and actual Android transport evidence are recorded in the linked network document. Rooms/game synchronization remain to be integrated; the full goal stays active.

@@ -5,11 +5,12 @@ import json
 root = Path(__file__).resolve().parents[1]
 project = root / 'ios/DemonStar.xcodeproj'
 project.mkdir(parents=True, exist_ok=True)
-ids = {name: f'{n:024X}' for n, name in enumerate(['project', 'main', 'sourceGroup', 'products', 'target', 'product', 'sources', 'resources', 'frameworks', 'configList', 'targetConfigList', 'debug', 'release', 'targetDebug', 'targetRelease', 'swift', 'swiftBuild', 'web', 'webBuild', 'launch', 'launchBuild', 'plist', 'assets', 'assetsBuild', 'localeEn', 'localeHans', 'localeHant', 'localeEnBuild', 'localeHansBuild', 'localeHantBuild'], 1)}
+ids = {name: f'{n:024X}' for n, name in enumerate(['project', 'main', 'sourceGroup', 'products', 'target', 'product', 'sources', 'resources', 'frameworks', 'configList', 'targetConfigList', 'debug', 'release', 'targetDebug', 'targetRelease', 'swift', 'swiftBuild', 'web', 'webBuild', 'launch', 'launchBuild', 'plist', 'assets', 'assetsBuild', 'localeEn', 'localeHans', 'localeHant', 'localeEnBuild', 'localeHansBuild', 'localeHantBuild', 'bridgeSwift', 'bridgeSwiftBuild'], 1)}
 objects = []
 def add(name, value): objects.append(f'{ids[name]} = {{ {value} }};')
 def ref(name): return ids[name]
 add('swift', 'isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>";')
+add('bridgeSwift', 'isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBridge.swift; sourceTree = "<group>";')
 add('web', 'isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>";')
 add('launch', 'isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>";')
 add('plist', 'isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>";')
@@ -17,13 +18,13 @@ add('assets', 'isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; 
 # 本地化桌面名称随系统显示。 / Localized launcher names follow the system language.
 for name, folder in [('localeEn','en'),('localeHans','zh-Hans'),('localeHant','zh-Hant')]:
     add(name, f'isa = PBXFileReference; lastKnownFileType = folder; path = "{folder}.lproj"; sourceTree = "<group>";')
-for name, file in [('localeEnBuild','localeEn'),('localeHansBuild','localeHans'),('localeHantBuild','localeHant'),('swiftBuild', 'swift'), ('webBuild', 'web'), ('launchBuild', 'launch'), ('assetsBuild', 'assets')]:
+for name, file in [('localeEnBuild','localeEn'),('localeHansBuild','localeHans'),('localeHantBuild','localeHant'),('swiftBuild', 'swift'), ('bridgeSwiftBuild', 'bridgeSwift'), ('webBuild', 'web'), ('launchBuild', 'launch'), ('assetsBuild', 'assets')]:
     add(name, f'isa = PBXBuildFile; fileRef = {ref(file)};')
 add('product', 'isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemonStar.app; sourceTree = BUILT_PRODUCTS_DIR;')
 add('main', f'isa = PBXGroup; children = ({ref("sourceGroup")},{ref("products")}); sourceTree = "<group>";')
-add('sourceGroup', f'isa = PBXGroup; children = ({",".join(ref(n) for n in ["swift", "web", "launch", "plist", "assets", "localeEn", "localeHans", "localeHant"])}); path = DemonStar; sourceTree = "<group>";')
+add('sourceGroup', f'isa = PBXGroup; children = ({",".join(ref(n) for n in ["swift", "bridgeSwift", "web", "launch", "plist", "assets", "localeEn", "localeHans", "localeHant"])}); path = DemonStar; sourceTree = "<group>";')
 add('products', f'isa = PBXGroup; children = ({ref("product")}); name = Products; sourceTree = "<group>";')
-for name, kind, files in [('sources','PBXSourcesBuildPhase',['swiftBuild']),('resources','PBXResourcesBuildPhase',['webBuild','launchBuild','assetsBuild','localeEnBuild','localeHansBuild','localeHantBuild']),('frameworks','PBXFrameworksBuildPhase',[])]:
+for name, kind, files in [('sources','PBXSourcesBuildPhase',['swiftBuild','bridgeSwiftBuild']),('resources','PBXResourcesBuildPhase',['webBuild','launchBuild','assetsBuild','localeEnBuild','localeHansBuild','localeHantBuild']),('frameworks','PBXFrameworksBuildPhase',[])]:
     add(name, f'isa = {kind}; buildActionMask = 2147483647; files = ({",".join(ref(n) for n in files)}); runOnlyForDeploymentPostprocessing = 0;')
 add('target', f'isa = PBXNativeTarget; buildConfigurationList = {ref("targetConfigList")}; buildPhases = ({ref("sources")},{ref("frameworks")},{ref("resources")}); buildRules = (); dependencies = (); name = DemonStar; productName = DemonStar; productReference = {ref("product")}; productType = "com.apple.product-type.application";')
 for name, children in [('configList',['debug','release']),('targetConfigList',['targetDebug','targetRelease'])]:
