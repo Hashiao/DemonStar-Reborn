@@ -66,6 +66,7 @@ def main():
             assert result['platforms'] == ['ios', 'ios'], result
             assert result['actions']['shots'] >= 4 and result['actions']['bombs'] == 2 and result['actions']['moved'], result
             assert result['startupBGM'] and result['reconnected'], result
+            assert result['startupMusic']['backend'] == 'ios-native' and result['startupMusic']['currentTime'] > 0 and not result['startupMusic']['paused'], result
             assert result['stage'] == 2 and result['score'] == 12345 and result['rear'] == 4, result
         assert results[0]['pausedFrame'] == results[1]['pausedFrame'], results
         assert results[0]['finalFrame'] == results[1]['finalFrame'], results

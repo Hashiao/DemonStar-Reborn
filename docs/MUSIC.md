@@ -27,6 +27,8 @@
 
 第 9/11/13 关分别重复第 2/3/5 关曲目。“背景音乐04_过关”实际用于第 6 关，不把中文译名当成触发场景。主菜单使用 INTRO，结算使用短曲 8GALVAMP（原作进入状态 6 时在 0x415f27 选择索引 7）。HANGER 资源保留，独立的原版机库动画尚未复现。
 
-菜单、关卡、结算曲目由单一 HTMLAudioElement 播放压缩 MP3，不把约 90 MB 的音乐展开为常驻 PCM。音乐和音效独立开关/音量，暂停续播、后台暂停、语音压低音乐；首次用户操作后解锁播放。保持已有用户的音乐开关偏好，新安装默认开启。曲尾使用完整文件循环，用户提供的自然收尾被保留；未承诺原 MIDI 的无缝采样级循环。
+菜单、关卡、结算播放压缩 MP3，不把约 90 MB 的整套音乐展开为常驻 PCM。M2.10 起 iOS 使用 AVAudioPlayer，避免已复现的 WKWebView 本地媒体加载停滞；Android/浏览器使用单一 HTMLAudioElement。音乐和音效独立开关/音量，暂停续播、后台暂停、语音压低音乐。原生主菜单应用保存的偏好后主动播放，受浏览器策略限制时在用户操作后重试。保持已有用户的音乐开关偏好，新安装默认开启。曲尾使用完整文件循环，用户提供的自然收尾被保留；未承诺原 MIDI 的无缝采样级循环。
+
+Menu, stage and result music use compressed MP3 without retaining the entire roughly 90 MB collection as decoded PCM. From M2.10, iOS uses AVAudioPlayer to avoid reproduced WKWebView local-media loading stalls; Android/browser use one HTMLAudioElement. Music and effects retain independent enable/volume settings, pause/resume, background suspension and speech ducking. Native menus attempt playback after applying saved preferences; browser gesture handlers retry when autoplay is restricted. Existing preferences are preserved and new installs enable music. Complete-file looping retains the supplied natural ending; sample-accurate original MIDI loops are not claimed.
 
 全部 18 个独立文件已由浏览器媒体解码器验证时长和可播放状态。完整文件/来源哈希与逐关代码地址见 [music-manifest.json](music-manifest.json)。重建导入：`python tools/import-music.py`，只读本地原作，复制用户提供 MP3，不修改输入目录。

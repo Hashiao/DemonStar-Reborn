@@ -2,6 +2,7 @@ import UIKit
 import WebKit
 import Network
 import CoreHaptics
+import AVFoundation
 import Darwin
 
 // 本地游戏的局域网/触感桥接，网络 IO 在独立队列中运行。
@@ -16,6 +17,9 @@ final class GameBridge: NSObject, WKScriptMessageHandler {
     private var generation = 0
     private var serial = 0
     private var lastHaptic: TimeInterval = 0
+    private var music: AVAudioPlayer?
+    private var musicTrack = ""
+    private var musicAsset = ""
     private let light = UIImpactFeedbackGenerator(style: .light)
     private let heavy = UIImpactFeedbackGenerator(style: .heavy)
     private final class Peer {
@@ -35,8 +39,9 @@ final class GameBridge: NSObject, WKScriptMessageHandler {
         if method == "capabilities" {
             var haptics: Any = "unknown"
             if #available(iOS 13.0, *) { haptics = CHHapticEngine.capabilitiesForHardware().supportsHaptics }
-            reply(request, ["lan": true, "haptics": haptics, "platform": "ios", "port": Self.port]); return
+            reply(request, ["lan": true, "haptics": haptics, "music": true, "platform": "ios", "port": Self.port]); return
         }
+        if method == "music" { handleMusic(request); return }
         if method == "haptic" {
             if UIApplication.shared.applicationState == .active && Date.timeIntervalSinceReferenceDate - lastHaptic >= 0.07 {
                 lastHaptic = Date.timeIntervalSinceReferenceDate
@@ -47,6 +52,47 @@ final class GameBridge: NSObject, WKScriptMessageHandler {
         }
         queue.async { [weak self] in self?.handle(request, method) }
     }
+    // 本地 BGM 用原生文件播放器，避免 WKWebView file URL 媒体偶发永久等待。
+    // Play bundled BGM natively, avoiding occasional indefinite WKWebView file-URL media loads.
+    private func handleMusic(_ request: [String: Any]) {
+        if request["action"] as? String == "status" { reply(request, musicStatus()); return }
+        guard request["action"] as? String == "state",
+              let track = request["track"] as? String,
+              track.range(of: "^MDS_[A-Z0-9_]+$", options: .regularExpression) != nil,
+              let asset = request["asset"] as? String,
+              asset.range(of: "^assets/music/MDS_[A-Z0-9_]+[.]mp3$", options: .regularExpression) != nil,
+              let playing = request["playing"] as? Bool,
+              let volume = request["volume"] as? Double, volume.isFinite else { reply(request, error: "music-invalid"); return }
+        do {
+            if musicTrack != track || musicAsset != asset || music == nil {
+                music?.stop(); music = nil; musicTrack = ""; musicAsset = ""
+                let name = String(asset.dropFirst("assets/music/".count).dropLast(4))
+                guard let url = Bundle.main.url(forResource: name, withExtension: "mp3", subdirectory: "Web/assets/music") else { reply(request, error: "music-file-missing"); return }
+                let player = try AVAudioPlayer(contentsOf: url)
+                player.numberOfLoops = -1
+                guard player.prepareToPlay() else { reply(request, error: "music-prepare-failed"); return }
+                music = player; musicTrack = track; musicAsset = asset
+            }
+            music?.volume = Float(max(0, min(1, volume)))
+            if playing && UIApplication.shared.applicationState == .active {
+                if music?.isPlaying != true {
+                    let session = AVAudioSession.sharedInstance()
+                    try session.setCategory(.ambient, mode: .default, options: [])
+                    try session.setActive(true)
+                    guard music?.play() == true else { reply(request, error: "music-play-failed"); return }
+                }
+            } else { music?.pause() }
+            reply(request, musicStatus())
+        } catch { reply(request, error: "music-native-failed: " + error.localizedDescription) }
+    }
+    private func musicStatus() -> [String: Any] {
+        return ["backend": "ios-native", "track": musicTrack, "ready": music != nil,
+                "paused": music?.isPlaying != true, "currentTime": music?.currentTime ?? 0,
+                "duration": music?.duration ?? 0, "volume": music?.volume ?? 0]
+    }
+    // 原生生命周期直接停音；退出房间的 stop() 只管理网络，不中断主菜单音乐。
+    // Native lifecycle pauses audio directly; room stop() manages networking without silencing menu music.
+    func suspendMusic() { music?.pause() }
     private func handle(_ request: [String: Any], _ method: String) {
         switch method {
         case "stop": stopOnQueue(); reply(request, true)

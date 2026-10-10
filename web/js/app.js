@@ -224,11 +224,12 @@
   });
   window.addEventListener('keyup',e=>input.key(e,false));
   function background(){clearInput();pause();audio.suspend();music.suspend();}
+  function foreground(){previous=0;if(['menu','cleared','victory','gameover'].includes(game.phase)||lan.status==='playing'&&['playing','launch','aftermath'].includes(game.phase)){music.resume();audio.unlock();}}
   function back(){if(['playing','launch','aftermath'].includes(game.phase))pause();else if(game.phase==='paused')resume();else if(['cleared','victory','gameover'].includes(game.phase))showMenu();else if(!$('dialog').hidden)hideDialog();}
-  document.addEventListener('visibilitychange',()=>{if(document.hidden)background();else{previous=0;if(game.phase==='menu')music.resume();}});window.addEventListener('blur',background);window.addEventListener('focus',()=>{if(game.phase==='menu')music.resume();});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)background();else foreground();});window.addEventListener('blur',background);window.addEventListener('focus',foreground);
   window.addEventListener('pagehide',()=>{saveScore();background();});
   window.addEventListener('resize',()=>{clearInput();renderer.resize();touch.layout(renderer.layout);});
-  globalThis.StarfallApp={game,i18n:I,input,touch,saves,lan,native:DemonStarNative,background,back,start,showMenu,showControls,showSaves,showMissions,showRoom,renderer,music,audio};
+  globalThis.StarfallApp={game,i18n:I,input,touch,saves,lan,native:DemonStarNative,background,foreground,back,start,showMenu,showControls,showSaves,showMissions,showRoom,renderer,music,audio};
   document.addEventListener('click',e=>{if(e.target.closest('button')){music.unlock();if(saved.sound){audio.unlock();if(!['fire','bomb','start'].includes(e.target.closest('button').id))audio.effect('menu');}}});
   // 原生容器允许首屏播放；浏览器若拒绝，后续交互仍会再次尝试。
   // Native hosts allow startup playback; browser gesture handlers retry if autoplay is rejected.

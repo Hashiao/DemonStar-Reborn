@@ -114,3 +114,9 @@ Further P3 matching corrected the default death branch and added nine damaged hu
 P2 鼠标补验：为每名本机玩家补齐默认左键开火/右键炸弹；联机设备把启用的鼠标绑定到自己的唯一动作流，并保留离线归属设置。操作菜单仅显示当前联网玩家。输入配置 v2 迁移旧 P2 改键中缺失的鼠标类别，保留自定义鼠标键及明确空映射。单元与完整 App 流程验证本机/联机 P2 操作不会消耗 P1 炸弹或替 P1 开火。
 
 P2 mouse recheck: every local player has default left-fire/right-bomb bindings. A LAN device routes enabled mouse input to its own sole action stream while retaining offline ownership; its menu shows the assigned network player only. Input preference v2 fills missing legacy P2 mouse categories without replacing custom mouse buttons or explicit empty mappings. Unit and full-app flows verify that local/network P2 mouse actions do not fire or spend bombs for P1.
+
+iOS 运行 38054244555 仍在本地 MP3 加载中超时，两次媒体重载未解决问题。现改为 AVAudioPlayer 播放已授权 MP3，Android/浏览器沿用媒体元素。等待能力协商后应用已保存静音/音量，切曲、暂停和前后台变化合并到原生状态；主菜单恢复不重启暂停中的战斗。探针读取原生 currentTime/isPlaying，并增加冷主菜单播放、暂停时钟保持、恢复、音乐开关与音量检查。168 项引擎/单元检查通过；此处不提前宣称新的 iOS 构建及模拟器验收通过。
+
+iOS run 38054244555 still timed out loading a bundled MP3 after two media reloads. iOS now uses AVAudioPlayer with the authorized MP3 files; Android/browser retain media elements. Capability negotiation precedes saved mute/volume application; native state coalesces track, pause and lifecycle changes. Menu recovery does not resume paused combat. Probes read native currentTime/isPlaying and check cold-menu playback, paused clock stability, resume, enable/mute and volume. All 168 engine/unit checks pass; the new iOS build and simulator results remain pending here.
+
+接口依据 / API references: [AVAudioPlayer](https://developer.apple.com/documentation/avfaudio/avaudioplayer), [ambient audio category](https://developer.apple.com/documentation/avfaudio/avaudiosession/category-swift.struct/ambient). 原生类别设为 ambient，硬件静音、实际外放和来电打断仍需真机验收。 / The native session uses ambient; hardware mute, audible output and phone-call interruptions still require physical-device checks.

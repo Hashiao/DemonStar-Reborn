@@ -15,7 +15,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         (window?.rootViewController as? GameViewController)?.suspend()
         application.isIdleTimerDisabled = false
     }
-    func applicationDidBecomeActive(_ application: UIApplication) { application.isIdleTimerDisabled = true }
+    func applicationDidBecomeActive(_ application: UIApplication) { application.isIdleTimerDisabled = true; (window?.rootViewController as? GameViewController)?.activate() }
 }
 
 final class GameViewController: UIViewController, WKNavigationDelegate {
@@ -57,8 +57,9 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
             web.loadFileURL(localizedURL?.url ?? url, allowingReadAccessTo: url.deletingLastPathComponent())
         }
     }
-    deinit { bridge?.stop(); web?.configuration.userContentController.removeScriptMessageHandler(forName: "demonstar") }
-    func suspend() { web?.evaluateJavaScript("window.StarfallApp && StarfallApp.background()", completionHandler: nil) }
+    deinit { bridge?.suspendMusic(); bridge?.stop(); web?.configuration.userContentController.removeScriptMessageHandler(forName: "demonstar") }
+    func suspend() { bridge?.suspendMusic(); web?.evaluateJavaScript("window.StarfallApp && StarfallApp.background()", completionHandler: nil) }
+    func activate() { web?.evaluateJavaScript("window.StarfallApp && StarfallApp.foreground()", completionHandler: nil) }
     // 显式 CI 参数测试真实打包 WebView；常规烟测不主动建立局域网连接。
     // Explicit CI probes exercise the packaged WebView; the standard smoke test does not open LAN connections.
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -81,20 +82,36 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
         // then measure held/released input in simulation frames, not host wall time.
         let script = """
         (function(){
-          var phase=0,stable=0,size='',startFrame=0,releasedX=0,releasedShots=0,sawLaunch=false;
+          var phase=0,stable=0,size='',startFrame=0,releasedX=0,releasedShots=0,sawLaunch=false,startupMusic=null;
           var initialLocale=DemonStarI18n.locale,preferredLanguage=DemonStarI18n.preferred();
+          // 验收真实原生时钟、暂停/恢复和音量，不用 HTMLAudio 的代理数值。
+          // Check the real native clock, pause/resume and volume, not HTMLAudio stand-ins.
+          async function verifyMusic(){
+            var m=StarfallApp.music,volume=m.volume;
+            function wait(check){return new Promise(function(resolve,reject){var began=Date.now();var poll=setInterval(function(){var state=m.snapshot();if(state.error){clearInterval(poll);reject(new Error(state.error));}else if(!m.nativePending&&check(state)){clearInterval(poll);resolve(state);}else if(Date.now()-began>8000){clearInterval(poll);reject(new Error('Native music state timeout: '+JSON.stringify(state)));}},50);});}
+            function delay(){return new Promise(function(resolve){setTimeout(resolve,350);});}
+            m.suspend();var paused=await wait(function(s){return s.ready&&s.paused;});await delay();
+            var still=await StarfallApp.native.request('music',{action:'status'});
+            if(Math.abs(still.currentTime-paused.currentTime)>.03)throw new Error('Paused native clock advanced');
+            m.resume();await wait(function(s){return !s.paused&&s.currentTime>paused.currentTime+.1;});
+            m.setEnabled(false);await wait(function(s){return s.paused;});m.setEnabled(true);await wait(function(s){return !s.paused;});
+            StarfallApp.audio.stopMission();m.volume=.17;m.update(false);await wait(function(s){return Math.abs(s.volume-.17)<.001;});
+            m.volume=0;m.update(false);await wait(function(s){return s.volume===0;});
+            m.volume=volume;m.suspend();await wait(function(s){return s.paused;});
+            return {backend:'ios-native',pauseClockStable:true,resumeClockAdvanced:true,muteRespected:true,volumeRespected:true,zeroVolumeRespected:true};
+          }
           function pointer(id,type,x){var el=document.getElementById(id),r=el.getBoundingClientRect(),e=new Event(type,{bubbles:true,cancelable:true});e.pointerId=id==='fire'?21:22;e.clientX=r.left+r.width*x;e.clientY=r.top+r.height*.5;el.dispatchEvent(e);}
           var timer=setInterval(function(){try{
-            var g=StarfallApp.game,renderer=StarfallApp.renderer,l=renderer.layout,nextSize=l.w+','+l.h;
+            var g=StarfallApp.game,renderer=StarfallApp.renderer,l=renderer.layout,nextSize=l.w+','+l.h,ms=StarfallApp.music.snapshot();
             if(nextSize===size)stable++;else{size=nextSize;stable=0;}
-            window.smokeProgress={probePhase:phase,gamePhase:g.phase,frame:g.frame||0,hidden:document.hidden,stable:stable,size:nextSize,ships:!!renderer.ships.naturalWidth,pickups:!!renderer.pickups.naturalWidth,carriers:!!renderer.carriers.naturalWidth,effects:!!renderer.effects.naturalWidth,musicReady:StarfallApp.music.audio.readyState,musicTime:StarfallApp.music.audio.currentTime,musicPaused:StarfallApp.music.audio.paused,musicError:StarfallApp.music.error,musicNetworkState:StarfallApp.music.audio.networkState,musicSrc:StarfallApp.music.audio.currentSrc,musicRequestedSrc:StarfallApp.music.audio.src,musicTrack:StarfallApp.music.track,musicEnabled:StarfallApp.music.enabled,musicUnlocked:StarfallApp.music.unlocked,musicPausedByApp:StarfallApp.music.paused,musicLoadRetries:StarfallApp.music.loadRetries,musicPlayFailure:StarfallApp.music.playFailure,audioState:StarfallApp.audio.ctx?StarfallApp.audio.ctx.state:null};
+            window.smokeProgress={probePhase:phase,gamePhase:g.phase,frame:g.frame||0,hidden:document.hidden,stable:stable,size:nextSize,ships:!!renderer.ships.naturalWidth,pickups:!!renderer.pickups.naturalWidth,carriers:!!renderer.carriers.naturalWidth,effects:!!renderer.effects.naturalWidth,musicBackend:ms.backend,musicReady:ms.ready,musicTime:ms.currentTime,musicPaused:ms.paused,musicError:StarfallApp.music.error,musicNetworkState:StarfallApp.music.audio.networkState,musicSrc:StarfallApp.music.audio.currentSrc,musicRequestedSrc:StarfallApp.music.audio.src,musicTrack:StarfallApp.music.track,musicEnabled:StarfallApp.music.enabled,musicUnlocked:StarfallApp.music.unlocked,musicPausedByApp:StarfallApp.music.paused,musicLoadRetries:StarfallApp.music.loadRetries,musicPlayFailure:StarfallApp.music.playFailure,audioState:StarfallApp.audio.ctx?StarfallApp.audio.ctx.state:null};
             if(g.phase==='launch')sawLaunch=true;
             if(document.hidden||stable<10||l.w<100||l.h<100||!renderer.ships.naturalWidth||!renderer.pickups.naturalWidth||!renderer.carriers.naturalWidth||!renderer.effects.naturalWidth||!renderer.attacks.naturalWidth||!renderer.enemyArtReady()||!renderer.presentationReady())return;
-            if(phase===0){StarfallApp.start(1);phase=1;return;}
+            if(ms.error)throw new Error('Native music: '+ms.error);if(phase===0){if(ms.backend!=='ios-native'||!ms.ready||ms.paused||ms.currentTime<=0)return;startupMusic=ms;StarfallApp.start(1);phase=1;return;}
             if(phase===1){if(g.phase!=='playing'||g.frame<6)return;g.player.invincible=999;pointer('fire','pointerdown',.5);pointer('joystick','pointerdown',.8);startFrame=g.frame;phase=2;return;}
             if(phase===2){if(g.frame-startFrame<20)return;pointer('fire','pointerup',.5);pointer('joystick','pointerup',.5);document.getElementById('bomb').click();releasedX=g.player.x;releasedShots=g.shotsFired;startFrame=g.frame;phase=3;return;}
-            if(g.frame-startFrame<10||StarfallApp.music.audio.readyState<2||StarfallApp.music.audio.currentTime<=0)return;
-            var result={launchSeen:sawLaunch,presentationReady:renderer.presentationReady(),weaponArtReady:renderer.playerWeapons.naturalWidth>0,weaponSizes:{homing:[DemonStarWeaponArt.shots[39].width,DemonStarWeaponArt.shots[39].height],red:[29,30,31,48,49,50].map(function(t){return DemonStarWeaponArt.shots[t].width;}),blue:[26,27,28].map(function(t){return DemonStarWeaponArt.shots[t].height;})},phase:g.phase,score:g.score,stage:g.stage.id,elapsed:g.totalTime,bullets:g.bullets.length,shotsFired:g.shotsFired,playerX:g.player.x,lives:g.player.lives,energy:g.player.energy,bombs:g.player.bombs,releaseStops:g.player.x===releasedX&&g.shotsFired===releasedShots,assetsReady:!!renderer.pickups.naturalWidth,motionReady:!!renderer.playerMotion.naturalWidth,carriersReady:!!renderer.carriers.naturalWidth,soundbankReady:!!DemonStarSounds.missionStart,effectsReady:!!renderer.effects.naturalWidth,attacksReady:!!renderer.attacks.naturalWidth,enemyArtReady:renderer.enemyArtReady(),musicReady:StarfallApp.music.audio.readyState>=2,musicTrack:StarfallApp.music.track,musicTime:StarfallApp.music.audio.currentTime,musicError:StarfallApp.music.error,bankAfterRelease:g.player.bank,viewport:[innerWidth,innerHeight],frozenAfterProbe:true};
+            if(g.frame-startFrame<10||ms.backend!=='ios-native'||!ms.ready||ms.paused||ms.currentTime<=0)return;
+            var result={launchSeen:sawLaunch,presentationReady:renderer.presentationReady(),weaponArtReady:renderer.playerWeapons.naturalWidth>0,weaponSizes:{homing:[DemonStarWeaponArt.shots[39].width,DemonStarWeaponArt.shots[39].height],red:[29,30,31,48,49,50].map(function(t){return DemonStarWeaponArt.shots[t].width;}),blue:[26,27,28].map(function(t){return DemonStarWeaponArt.shots[t].height;})},phase:g.phase,score:g.score,stage:g.stage.id,elapsed:g.totalTime,bullets:g.bullets.length,shotsFired:g.shotsFired,playerX:g.player.x,lives:g.player.lives,energy:g.player.energy,bombs:g.player.bombs,releaseStops:g.player.x===releasedX&&g.shotsFired===releasedShots,assetsReady:!!renderer.pickups.naturalWidth,motionReady:!!renderer.playerMotion.naturalWidth,carriersReady:!!renderer.carriers.naturalWidth,soundbankReady:!!DemonStarSounds.missionStart,effectsReady:!!renderer.effects.naturalWidth,attacksReady:!!renderer.attacks.naturalWidth,enemyArtReady:renderer.enemyArtReady(),musicBackend:ms.backend,startupMusic:startupMusic,musicReady:ms.ready,musicTrack:StarfallApp.music.track,musicTime:ms.currentTime,musicError:StarfallApp.music.error,bankAfterRelease:g.player.bank,viewport:[innerWidth,innerHeight],frozenAfterProbe:true};
             // 通过真实设置控件切换三语，并确认暂停中的战斗状态不变。
             // Switch through the real settings control and verify paused combat is unchanged.
             var before=JSON.stringify({player:g.player,score:g.score,stage:g.stage.id,frame:g.frame});
@@ -124,7 +141,7 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
               // file URL 画布允许绘制但禁止像素回读；在原生端核对解码尺寸，像素覆盖由浏览器测试负责。
               // File-URL canvases permit drawing but reject pixel readback; verify decoded sizes here and pixels in browser tests.
               var image=new Image();image.onload=function(){try{var expected=(DemonStarCampaignArt.assets[paths[index]]||DemonStarEnemyShots.assets[paths[index]]||DemonStarBossDeathArt.assets[paths[index]]).size;if(!image.complete||image.naturalWidth!==expected[0]||image.naturalHeight!==expected[1])throw new Error('Wrong atlas dimensions: '+paths[index]);var canvas=document.createElement('canvas');canvas.width=canvas.height=64;canvas.getContext('2d').drawImage(image,0,0,64,64);checked.push(paths[index]);checkAtlas(index+1);}catch(e){window.smokeResult=JSON.stringify({error:'Atlas probe: '+String(e)});}};image.onerror=function(){window.smokeResult=JSON.stringify({error:'Atlas failed: '+paths[index]});};image.src=paths[index];
-            }checkAtlas(0);
+            }verifyMusic().then(function(checks){result.nativeMusicChecks=checks;checkAtlas(0);}).catch(function(error){window.smokeResult=JSON.stringify({error:String(error)});});
           }catch(error){window.smokeResult=JSON.stringify({error:String(error)});clearInterval(timer);}},50);
         })();
         """
