@@ -1,5 +1,5 @@
 """Minimal GitHub API helper using the existing Git credential manager session."""
-import json, os, subprocess, urllib.error, urllib.parse, urllib.request, concurrent.futures, re
+import json, os, subprocess, urllib.error, urllib.parse, urllib.request, concurrent.futures, re, time
 
 def read_download(url, label='Download'):
     """Bounded parallel byte ranges for large, already-authorized package reads.
@@ -15,20 +15,29 @@ def read_download(url, label='Download'):
         size=int(match.group(1))
         if len(response.read())!=1:raise RuntimeError('Incomplete range probe')
     if size<=0:raise RuntimeError('Empty download')
-    count=min(6,max(1,(size+8*1024*1024-1)//(8*1024*1024)));width=(size+count-1)//count
+    # 小分段避免慢连接拖住整个大文件；仅重试网络错误，容量与内容范围仍严格校验。
+    # Small ranges avoid a slow large transfer; retry network errors only, preserving strict range/size checks.
+    width=2*1024*1024;count=(size+width-1)//width
     def part(index):
         start=index*width;end=min(size-1,start+width-1)
         request=urllib.request.Request(url,headers={'Range':f'bytes={start}-{end}'})
-        with urllib.request.urlopen(request,timeout=120) as response:
-            if response.status!=206 or response.headers.get('Content-Range')!=f'bytes {start}-{end}/{size}':raise RuntimeError('Mismatched download range')
-            data=response.read()
+        for attempt in range(4):
+            try:
+                with urllib.request.urlopen(request,timeout=45) as response:
+                    if response.status!=206 or response.headers.get('Content-Range')!=f'bytes {start}-{end}/{size}':raise RuntimeError('Mismatched download range')
+                    data=response.read()
+                break
+            except (urllib.error.URLError,TimeoutError,ConnectionError):
+                if attempt==3:raise
+                time.sleep(attempt+1)
         if len(data)!=end-start+1:raise RuntimeError('Incomplete download range')
         return index,data
     chunks=[None]*count
-    with concurrent.futures.ThreadPoolExecutor(max_workers=count) as pool:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=min(6,count)) as pool:
         futures=[pool.submit(part,i) for i in range(count)]
         for done,future in enumerate(concurrent.futures.as_completed(futures),1):
-            index,data=future.result();chunks[index]=data;print(f'{label}: {done}/{count} parts received',flush=True)
+            index,data=future.result();chunks[index]=data
+            if done%10==0 or done==count:print(f'{label}: {done}/{count} parts received',flush=True)
     data=b''.join(chunks)
     if len(data)!=size:raise RuntimeError('Incomplete download')
     return data

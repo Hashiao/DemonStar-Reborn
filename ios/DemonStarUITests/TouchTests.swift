@@ -16,7 +16,10 @@ final class TouchTests: XCTestCase {
             XCTAssertTrue(check(), "Native touch condition timed out: \(state())")
         }
         func tap(_ prefix: String) {
-            let button = app.webViews.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", prefix)).firstMatch
+            // 原生首选语言不能覆盖保存的手动选择；接受三语的真实菜单。
+            // Native preferences must not override saved language choices; accept the actual trilingual menu.
+            let labels = ["Multiplayer": ["Multiplayer", "多人游戏", "多人遊戲"], "Two players · same device": ["Two players · same device", "同屏双人", "同屏雙人"], "Single player": ["Single player", "单人游戏", "單人遊戲"]][prefix]!
+            let button = app.webViews.buttons.matching(NSPredicate(format: "label BEGINSWITH %@ OR label BEGINSWITH %@ OR label BEGINSWITH %@", labels[0], labels[1], labels[2])).firstMatch
             XCTAssertTrue(button.waitForExistence(timeout: 20), prefix); button.tap()
         }
         for count in [2, 1] {
