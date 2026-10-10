@@ -21,7 +21,7 @@ try{
   let code;await until(()=>{const texts=nodes().map(n=>n.text);code=texts.map(t=>t.match(/(?:^|\D)(\d{6})(?!\d)/)?.[1]).find(Boolean);return !!code;});
   await evaluate('StarfallApp.lan.join("127.0.0.1",'+JSON.stringify(code)+')');await until(()=>evaluate('StarfallApp.lan.status==="lobby"'));
   let controls={x:0,y:0,fire:false,bomb:0};timer=setInterval(async()=>{if(busy)return;busy=true;try{await evaluate('StarfallApp.lan.update(.05,'+JSON.stringify(controls)+');true');}catch{}finally{busy=false;}},100);
-  await tap(null,['全员出击','全員出擊','Launch together']);await until(()=>evaluate('StarfallApp.game.phase==="playing"&&StarfallApp.game.frame>=6'));
+  await tap(null,['全员出击','全員出擊','Launch together']);await tap('new-run');await tap('setup-start');await until(()=>evaluate('StarfallApp.game.phase==="playing"&&StarfallApp.game.frame>=6'));
   const before=await evaluate('StarfallApp.game.players[1].x');controls={x:.5,y:0,fire:true,bomb:1};
   await until(()=>evaluate('StarfallApp.game.players[1].shotsFired>=4&&StarfallApp.game.players[1].bombs===2'));controls={x:0,y:0,fire:false,bomb:0};
   const state=await evaluate('({players:StarfallApp.game.players.length,slot:StarfallApp.lan.localSlot,platforms:StarfallApp.lan.members.map(m=>m.platform),x:StarfallApp.game.players[1].x,shots:StarfallApp.game.players[1].shotsFired,bombs:StarfallApp.game.players[1].bombs})');assert.equal(state.players,2);assert.equal(state.slot,2);assert.deepEqual(state.platforms,['android','android']);assert.ok(state.x>before);

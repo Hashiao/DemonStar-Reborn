@@ -23,13 +23,16 @@
   // Stable IDs 1–4 identify ownership; player remains the first-player compatibility entry.
   function createPlayer(id){
     const p={id,score:0,kills:0,shotsFired:0,shotsHit:0,x:200,y:400,r:10,lives:4,energy:16,maxEnergy:16,bombInventory:[0,0,0],medals:0,defaultWeapon:true,power:0,weapon:0,bank:8,thrust:0,shield:0,invincible:2.5,fire:0,baseFire:0,respawn:0,bombCooldown:0,missileAmmo:0,missileType:8,side:0,rear:0,sideDelay:10,sideBurst:0,sideGap:0,rearDelay:10,rearBurst:0,rearGap:0,shotPhase:0,mega:0,missileTimer:0};
+    p.weaponLevels=[0,0,0];
     Object.defineProperty(p,'bombs',{enumerable:true,get(){return this.bombInventory.length;}});return p;
   }
   const checkpointFields={score:[0,1e12],kills:[0,1e9],shotsFired:[0,1e12],shotsHit:[0,1e12],lives:[0,99],energy:[0,16],weapon:[0,3],power:[0,6],missileAmmo:[0,1e9],missileType:[8,9],side:[0,4],rear:[0,4],shield:[0,60],fire:[0,60],baseFire:[0,60],missileTimer:[0,60],sideDelay:[0,60],sideBurst:[0,4],sideGap:[0,60],rearDelay:[0,60],rearBurst:[0,4],rearGap:[0,60],shotPhase:[0,1e12],bombCooldown:[0,60]};
   const clone=value=>JSON.parse(JSON.stringify(value));
+  const validWeaponLevels=value=>Array.isArray(value)&&value.length===3&&value.every(n=>Number.isInteger(n)&&n>=0&&n<=6);
   function validCheckpoint(s){
     const integer=(n,a,b)=>Number.isSafeInteger(n)&&n>=a&&n<=b;
-    if(!s||s.format!=='demonstar-stage'||s.version!==1||!integer(s.stage,1,18)||!integer(s.difficulty,0,3)||!integer(s.seed,0,Number.MAX_SAFE_INTEGER)||!integer(s.randomState,0,0xffffffff)||!['solo','local','lan'].includes(s.mode))return false;
+    if(!s||s.format!=='demonstar-stage'||![1,2].includes(s.version)||!integer(s.stage,1,18)||!integer(s.difficulty,0,3)||!integer(s.seed,0,Number.MAX_SAFE_INTEGER)||!integer(s.randomState,0,0xffffffff)||!['solo','local','lan'].includes(s.mode))return false;
+    if(s.version===2&&(typeof s.retainWeaponLevels!=='boolean'||!Array.isArray(s.players)||!s.players.every(p=>p&&validWeaponLevels(p.weaponLevels))))return false;
     if(!Array.isArray(s.players)||s.players.length<1||s.players.length>MAX_PLAYERS||!s.players.some(p=>p&&p.lives>0))return false;
     if(!integer(s.supplyIndex,0,4)||!integer(s.supplyBombIndex,0,2))return false;
     for(const key of ['score','kills','shotsFired','shotsHit','totalTime'])if(!Number.isFinite(s[key])||s[key]<0||s[key]>1e12)return false;
@@ -76,6 +79,7 @@
       // 无界面测试可跳过演出，正式 App 总是开启。
       // Headless combat callers may omit presentation; the app always enables it.
       this.presentation=presentation;
+      this.retainWeaponLevels=options.retainWeaponLevels===true;
       this.difficulty=clamp(Math.floor(difficulty),0,3);this.rules=DIFFICULTIES[this.difficulty];this.random=rng(this.seed);
       this.score=0;this.kills=0;this.combo=0;this.shotsFired=0;this.shotsHit=0;this.totalTime=0;this.events=[];this.supplyIndex=0;this.supplyBombIndex=0;
       this.players=Array.from({length:clamp(Math.floor(Number(options.playerCount)||1),1,MAX_PLAYERS)},(_,i)=>createPlayer(i+1));
@@ -86,14 +90,14 @@
     // 关卡档固定在入关时，读档重新开始该关，避免奖励与当前战斗状态混用。
     // Stage saves capture entry state; loading restarts the stage without mixing awarded bonuses into it.
     captureStageEntry(){
-      const saved={format:'demonstar-stage',version:1,stage:this.stage.id,difficulty:this.difficulty,mode:this.mode,seed:this.seed,randomState:this.random.state(),supplyIndex:this.supplyIndex,supplyBombIndex:this.supplyBombIndex,players:this.players.map(p=>{const s={id:p.id,defaultWeapon:p.defaultWeapon,bombInventory:p.bombInventory.slice()};for(const k in checkpointFields)s[k]=p[k];return s;})};
+      const saved={format:'demonstar-stage',version:2,retainWeaponLevels:this.retainWeaponLevels,stage:this.stage.id,difficulty:this.difficulty,mode:this.mode,seed:this.seed,randomState:this.random.state(),supplyIndex:this.supplyIndex,supplyBombIndex:this.supplyBombIndex,players:this.players.map(p=>{const s={id:p.id,defaultWeapon:p.defaultWeapon,weaponLevels:p.weaponLevels.slice(),bombInventory:p.bombInventory.slice()};for(const k in checkpointFields)s[k]=p[k];return s;})};
       for(const k of ['score','kills','shotsFired','shotsHit','totalTime'])saved[k]=this[k];return saved;
     }
     checkpoint(){return this.stageEntry?clone(this.stageEntry):null;}
     loadCheckpoint(value,presentation=this.presentation){
       if(!validCheckpoint(value))return false;
-      const saved=clone(value);this.seed=saved.seed;this.start(saved.difficulty,saved.stage,presentation,{mode:saved.mode,playerCount:saved.players.length});
-      for(const s of saved.players){const p=this.playerById(s.id);p.defaultWeapon=s.defaultWeapon;p.bombInventory=s.bombInventory.slice();for(const k in checkpointFields)p[k]=s[k];}
+      const saved=clone(value);this.seed=saved.seed;this.start(saved.difficulty,saved.stage,presentation,{mode:saved.mode,playerCount:saved.players.length,retainWeaponLevels:saved.version===2&&saved.retainWeaponLevels});
+      for(const s of saved.players){const p=this.playerById(s.id);p.defaultWeapon=s.defaultWeapon;p.weaponLevels=saved.version===2?s.weaponLevels.slice():[0,0,0];p.bombInventory=s.bombInventory.slice();for(const k in checkpointFields)p[k]=s[k];}
       for(const k of ['score','kills','shotsFired','shotsHit','totalTime','supplyIndex','supplyBombIndex'])this[k]=saved[k];
       this.random.restore(saved.randomState);this.stageEntry=saved;return true;
     }
@@ -108,6 +112,9 @@
       if(this.presentation){this.phase='launch';this.launch={ticks:0,carrierY:-64,previousY:-64};}
     }
     pause(){if(['playing','launch','aftermath'].includes(this.phase)){this.resumePhase=this.phase;this.phase='paused';return true;}return false;}
+    // 暂停换难度只影响后续伤害/炮位规则，不重建实体、计时或入关档。
+    // Paused difficulty changes affect subsequent damage/gun rules, preserving entities, timers and entry saves.
+    setDifficulty(value){if(this.phase!=='paused'||!Number.isInteger(value)||value<0||value>3)return false;this.difficulty=value;this.rules=DIFFICULTIES[value];return true;}
     resume(){if(this.phase==='paused'){this.pendingTime=0;if(this.players.every(p=>p.lives<=0||p.connected===false)){this.phase='gameover';this.events.push({type:'gameover'});}else this.phase=this.resumePhase||'playing';return true;}return false;}
     drainEvents(){return this.events.splice(0);}
     move(dx,dy,p=this.player){if(this.phase==='playing'&&p.lives>0){p.x=clamp(p.x+dx,16,W-16);p.y=clamp(p.y+dy,64,H-40);}}
@@ -172,6 +179,13 @@
       this.events.push({type:'nova',weapon:type,playerId:p.id});
     }
     upgradeWeapon(type,full=false,p=this.player){
+      // 可选规则按颜色记住本条命的等级；先装备颜色，确保满级清屏归属正确。
+      // The optional rule retains each color for this life; equip before emitting its nova.
+      if(this.retainWeaponLevels&&type<3){
+        const previous=p.weaponLevels[type];p.weapon=type;p.defaultWeapon=false;
+        p.power=full?6:Math.min(6,previous+1);p.weaponLevels[type]=p.power;
+        if(previous===6)this.triggerNova(p);return;
+      }
       const same=!p.defaultWeapon&&p.weapon===type;
       if(same&&p.power===6)this.triggerNova(p);
       p.power=full?6:same?Math.min(6,p.power+1):1;p.weapon=type;p.defaultWeapon=false;
@@ -360,10 +374,10 @@
       if(p.shield>0)return true;
       const loss=source==='collision'?damage:projectileDamage(damage,this.difficulty);
       p.energy-=loss;this.shake=3;this.events.push({type:'hit',damage:loss,source,playerId:p.id});
-      if(p.energy>0&&p.energy<4&&!p.defaultWeapon&&p.weapon<3&&p.power>1)p.power--;
+      if(!this.retainWeaponLevels&&p.energy>0&&p.energy<4&&!p.defaultWeapon&&p.weapon<3&&p.power>1)p.power--;
       if(p.energy<=0){
         this.deathDrops(p);this.addEffect(2,p.x,p.y,48,24);this.explode(p.x,p.y,'#ff8552',35);this.events.push({type:'explosion',heavy:true,playerId:p.id});p.medals=0;
-        p.lives--;p.energy=p.maxEnergy;p.power=0;p.weapon=0;p.defaultWeapon=true;p.fire=p.baseFire=0;p.side=p.rear=0;p.sideBurst=p.rearBurst=0;p.missileAmmo=0;p.missileType=8;p.mega=0;p.bombInventory=[0,0,0];p.bombCooldown=0;
+        p.lives--;p.energy=p.maxEnergy;p.power=0;p.weapon=0;p.defaultWeapon=true;p.weaponLevels=[0,0,0];p.fire=p.baseFire=0;p.side=p.rear=0;p.sideBurst=p.rearBurst=0;p.missileAmmo=0;p.missileType=8;p.mega=0;p.bombInventory=[0,0,0];p.bombCooldown=0;
         p.respawn=45*STEP;p.invincible=135*STEP;p.x=p.px=this.spawnX(p);p.y=p.py=H-70;p.bank=8;p.thrust=0;
         this.events.push({type:'player-death',playerId:p.id,lives:p.lives});
         if(this.players.every(player=>player.connected===false||player.lives<=0)){this.phase='gameover';this.events.push({type:'gameover'});}
@@ -510,5 +524,5 @@
       this.pickups=this.pickups.filter(i=>!i.dead&&i.y<H+30);this.particles=this.particles.filter(v=>v.life>0);
     }
   }
-  globalThis.StarfallCore={W,H,TICK,STEP,MAX_PLAYERS,createPlayer,validCheckpoint,deathScale,deathTransform,LAUNCH_SPEED,HEALTH_BAR_MIN_HP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};
+  globalThis.StarfallCore={W,H,TICK,STEP,MAX_PLAYERS,createPlayer,validCheckpoint,validWeaponLevels,deathScale,deathTransform,LAUNCH_SPEED,HEALTH_BAR_MIN_HP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};
 })();

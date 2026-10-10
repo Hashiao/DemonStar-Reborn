@@ -24,13 +24,13 @@
     if(config.role==='host'){
       if(step===1&&room.status==='lobby'){
         report('lobby',{code:room.code,startupBGM:true,startupMusic:startupMusic});if(room.members.length!==2)return;
-        clickLabel('lanStart');step=2;return;
+        clickLabel('lanStart');document.getElementById('new-run').click();document.getElementById('retain-levels').click();document.getElementById('setup-start').click();step=2;return;
       }
       if(step===2&&g.phase==='playing'){
         g.recordEvents=[];g.enemies=[];g.players.forEach(function(p){p.invincible=999;});startX=p.x;step=3;return;
       }
       if(step===3&&p.shotsFired>=4&&p.bombs===2&&p.x>startX){
-        actions={shots:p.shotsFired,bombs:p.bombs,moved:p.x>startX};p.rear=4;document.getElementById('pause').click();pausedFrame=g.frame;step=4;return;
+        actions={shots:p.shotsFired,bombs:p.bombs,moved:p.x>startX};p.rear=4;g.upgradeWeapon(0,true,p);g.upgradeWeapon(1,false,p);document.getElementById('pause').click();document.getElementById('pause-difficulty').click();document.getElementById('paused-difficulty').value='3';document.getElementById('apply-difficulty').click();pausedFrame=g.frame;step=4;return;
       }
       if(step===4){
         if(p.connected===false)disconnected=true;
@@ -38,7 +38,7 @@
         g.score=12345;g.loadStage(2);room.flush();step=5;return;
       }
       if(step===5&&g.stage.id===2&&g.phase==='paused'){
-        report('passed',{players:g.players.length,localSlot:room.localSlot,platforms:room.members.map(function(m){return m.platform;}),startupBGM:true,startupMusic:startupMusic,actions:actions,pausedFrame:pausedFrame,finalFrame:g.frame,stage:g.stage.id,score:g.score,rear:p.rear,reconnected:disconnected});clearInterval(timer);
+        report('passed',{players:g.players.length,localSlot:room.localSlot,platforms:room.members.map(function(m){return m.platform;}),startupBGM:true,startupMusic:startupMusic,actions:actions,pausedFrame:pausedFrame,finalFrame:g.frame,stage:g.stage.id,score:g.score,rear:p.rear,difficulty:g.difficulty,retained:g.retainWeaponLevels,weaponLevels:p.weaponLevels,reconnected:disconnected});clearInterval(timer);
       }
     }else{
       // 等待出击事件释放旧输入后再注入动作，与常规原生探针一致。
@@ -47,14 +47,15 @@
         if(g.players.length!==2||room.localSlot!==2)throw new Error('Wrong client ownership');
         startX=p.x;app.input.move(0,.5,0);app.input.touchFire(0,41,true);app.input.pulse(0,'bomb');step=2;return;
       }
-      if(step===2&&g.phase==='paused'&&p.rear===4){
+      if(step===2&&g.phase==='paused'&&p.rear===4&&g.difficulty===3){
+        if(!g.retainWeaponLevels||p.weaponLevels.join(',')!=='6,1,0')throw new Error('Retained color state not synchronized');
         actions={shots:p.shotsFired,bombs:p.bombs,moved:p.x>startX};pausedFrame=g.frame;app.input.clear();step=3;until=Date.now()+800;
         app.native.request('stop').catch(fail);return;
       }
       if(step===3&&Date.now()>=until){step=4;room.connect().catch(fail);return;}
       if(step===4&&g.stage.id===2&&p.rear===4&&g.score===12345){joined=true;room.requestPause();step=5;return;}
       if(step===5&&g.phase==='paused'){
-        report('passed',{players:g.players.length,localSlot:room.localSlot,platforms:room.members.map(function(m){return m.platform;}),startupBGM:true,startupMusic:startupMusic,actions:actions,pausedFrame:pausedFrame,finalFrame:g.frame,stage:g.stage.id,score:g.score,rear:p.rear,reconnected:joined});clearInterval(timer);
+        report('passed',{players:g.players.length,localSlot:room.localSlot,platforms:room.members.map(function(m){return m.platform;}),startupBGM:true,startupMusic:startupMusic,actions:actions,pausedFrame:pausedFrame,finalFrame:g.frame,stage:g.stage.id,score:g.score,rear:p.rear,difficulty:g.difficulty,retained:g.retainWeaponLevels,weaponLevels:p.weaponLevels,reconnected:joined});clearInterval(timer);
       }
     }
   }catch(error){fail(error);}},50);

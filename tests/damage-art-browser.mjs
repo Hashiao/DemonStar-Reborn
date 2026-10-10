@@ -1,3 +1,4 @@
+import {setting,finishSetup,routedButton} from './ui-navigation.mjs';
 import {createRequire} from 'node:module';
 import {writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
@@ -6,7 +7,7 @@ const browser=await chromium.launch({channel:'chrome',headless:true}),errors=[];
 const page=await browser.newPage({locale:'zh-CN',viewport:{width:480,height:900},deviceScaleFactor:2,hasTouch:true,isMobile:true});
 page.on('pageerror',e=>errors.push(String(e)));
 try{
-  await page.goto(process.env.GAME_URL||'http://127.0.0.1:4174');await page.waitForFunction(()=>StarfallApp.renderer.enemyArtReady());await page.locator('#start').tap();
+  await page.goto(process.env.GAME_URL||'http://127.0.0.1:4174');await page.waitForFunction(()=>StarfallApp.renderer.enemyArtReady());await page.locator('#start').tap();await finishSetup(page);
   for(const [scene,ticks] of [['fighter-corrected',2110],['net-turrets',4030]]){
     const result=await page.evaluate(ticks=>{const g=StarfallApp.game;g.start();g.player.invincible=9999;for(let i=0;i<ticks;i++)g.update(StarfallCore.STEP);g.pause();g.events=[];document.getElementById('toast').hidden=true;return g.enemies.filter(e=>e.y>=0&&e.y<480).map(e=>e.def.sprite);},ticks);
     assert.ok(result.includes(scene==='fighter-corrected'?'S_ENEMY1A':'S_ASTSHT1B'));await page.waitForTimeout(100);await page.screenshot({path:`artifacts/${scene}.png`});

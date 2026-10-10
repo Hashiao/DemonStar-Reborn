@@ -1,3 +1,4 @@
+import {setting,finishSetup,routedButton} from './ui-navigation.mjs';
 import {createRequire} from 'node:module';
 import {writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
@@ -6,7 +7,7 @@ const browser=await chromium.launch({channel:'chrome',headless:true}),errors=[];
 try{
   const page=await browser.newPage({locale:'zh-CN',viewport:{width:480,height:900},deviceScaleFactor:2,hasTouch:true,isMobile:true});page.on('pageerror',e=>errors.push(String(e)));
   await page.goto(process.env.GAME_URL||'http://127.0.0.1:4174');await page.waitForFunction(()=>StarfallApp.renderer.carriers.naturalWidth&&StarfallApp.renderer.playerMotion.naturalWidth);
-  await page.locator('#start').tap();await page.waitForFunction(()=>StarfallApp.game.phase==='playing');
+  await page.locator('#start').tap();await finishSetup(page);await page.waitForFunction(()=>StarfallApp.game.phase==='playing');
   await page.evaluate(()=>{const g=StarfallApp.game;g.recordEvents=[];g.enemies=[];g.player.invincible=100;g.spawnPickup(10,g.player.x,g.player.y);g.pickups[0].speed=1;g.update(.035);});
   await page.waitForFunction(()=>document.getElementById('weapon').textContent.includes('6 级'));assert.equal(await page.evaluate(()=>StarfallApp.game.player.power),6);
   await page.evaluate(()=>{const g=StarfallApp.game;g.collect({type:'ion'});});await page.waitForFunction(()=>document.getElementById('weapon').textContent.includes('离子炮 · 1 级'));

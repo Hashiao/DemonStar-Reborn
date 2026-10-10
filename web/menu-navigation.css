@@ -4,6 +4,13 @@
 .menu .menu-primary .primary{min-height:44px;font-size:21px;padding:7px 3px;line-height:1.3}
 .menu .menu-options button{font-size:14px;line-height:18px;min-height:30px;padding:6px 0}
 .menu .menu-hint{margin:8px 0 0;line-height:14px}
+/* 设置按分类逐层进入，暂停时保留返回路径。 / Categorized settings preserve the pause navigation path. */
+.settings-sections{display:grid;gap:9px;margin:12px 0}
+.settings-sections button{width:100%;min-height:44px;text-align:left}
+#setup-start,#apply-difficulty{width:100%;margin-top:14px;min-height:44px}
+#dialog-content .dialog-setting{gap:12px}
+#dialog-content .dialog-setting select{max-width:62%}
+#dialog-content p{overflow-wrap:break-word}
 @media(orientation:landscape) and (max-height:560px){
   .menu .menu-bottom{position:absolute;top:50%;left:52%;right:15px;transform:translateY(-50%);margin:0}
   .menu .menu-primary .primary{min-height:40px;font-size:19px;padding:6px 0}

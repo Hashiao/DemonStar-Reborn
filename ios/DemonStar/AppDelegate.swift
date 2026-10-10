@@ -119,7 +119,7 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
             // 通过真实设置控件切换三语，并确认暂停中的战斗状态不变。
             // Switch through the real settings control and verify paused combat is unchanged.
             var before=JSON.stringify({player:g.player,score:g.score,stage:g.stage.id,frame:g.frame});
-            document.getElementById('pause').click();var languageChecks=[];
+            document.getElementById('pause').click();document.getElementById('pause-settings').click();document.getElementById('settings-display').click();var languageChecks=[];
             // 两项血条独立，默认仅 Boss；开关不能改变战斗状态。
             // Health-bar switches are independent and default to Boss only, without changing combat.
             var regular=document.getElementById('health-toggle'),bossBar=document.getElementById('boss-health-toggle');
@@ -127,10 +127,10 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
             if(result.healthBarDefaults.regular||!result.healthBarDefaults.boss)throw new Error('Wrong health-bar defaults');
             regular.click();if(bossBar.getAttribute('aria-pressed')!=='true')throw new Error('Regular toggle changed Boss bars');
             bossBar.click();if(regular.getAttribute('aria-pressed')!=='true')throw new Error('Boss toggle changed regular bars');
-            regular.click();bossBar.click();result.independentHealthBarSwitches=true;
+            regular.click();bossBar.click();result.independentHealthBarSwitches=true;StarfallApp.back();document.getElementById('settings-language').click();
             ['zh-Hans','zh-Hant','en'].forEach(function(locale){
               var select=document.getElementById('language');select.value=locale;select.dispatchEvent(new Event('change',{bubbles:true}));
-              var ok=document.documentElement.lang===locale&&g.phase==='paused'&&JSON.parse(localStorage.getItem('demonstar-reborn-v1')).language===locale&&document.getElementById('dialog-title').textContent===DemonStarI18n.t('pausedTitle')&&document.getElementById('bomb').getAttribute('aria-label')===DemonStarI18n.t('bombAria',{n:2});
+              var ok=document.documentElement.lang===locale&&g.phase==='paused'&&JSON.parse(localStorage.getItem('demonstar-reborn-v1')).language===locale&&document.getElementById('dialog-title').textContent===DemonStarI18n.t('language')&&document.getElementById('bomb').getAttribute('aria-label')===DemonStarI18n.t('bombAria',{n:2});
               if(!ok)throw new Error('Native language switching failed: '+locale);languageChecks.push({locale:locale,passed:ok});
             });
             if(JSON.stringify({player:g.player,score:g.score,stage:g.stage.id,frame:g.frame})!==before)throw new Error('Language switch changed combat');

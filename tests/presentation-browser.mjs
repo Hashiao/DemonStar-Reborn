@@ -1,3 +1,4 @@
+import {setting,finishSetup,routedButton} from './ui-navigation.mjs';
 import {createRequire} from 'node:module';
 import {writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
@@ -8,11 +9,11 @@ page.on('pageerror',e=>errors.push(String(e)));
 try{
   await page.goto(process.env.GAME_URL||'http://127.0.0.1:4174');await page.waitForFunction(()=>StarfallApp.renderer.presentationReady());
   await page.evaluate(()=>{globalThis.cues=[];const sample=StarfallAudio.prototype.sample;StarfallAudio.prototype.sample=function(...args){const s=sample.apply(this,args);if(s)cues.push(args[0]);return s;};});
-  await page.locator('#start').tap();await page.waitForFunction(()=>StarfallApp.game.launch?.ticks>=20);await page.screenshot({path:'artifacts/launch-doors.png'});
+  await page.locator('#start').tap();await finishSetup(page);await page.waitForFunction(()=>StarfallApp.game.launch?.ticks>=20);await page.screenshot({path:'artifacts/launch-doors.png'});
   await page.waitForFunction(()=>StarfallApp.game.launch?.ticks>=48);await page.locator('#pause').tap();
   const state=await page.evaluate(()=>JSON.stringify(StarfallApp.game.launch));await page.waitForTimeout(200);assert.equal(await page.evaluate(()=>JSON.stringify(StarfallApp.game.launch)),state);
   assert.equal(await page.evaluate(()=>StarfallApp.game.frame),0);assert.equal(await page.evaluate(()=>cues.includes('missionStart')),false);
-  await page.getByRole('button',{name:'继续飞行',exact:true}).tap();
+  await (await routedButton(page,'继续飞行')).tap();
   await page.screenshot({path:'artifacts/carrier-launch.png'});await page.waitForFunction(()=>StarfallApp.game.phase==='playing');await page.waitForFunction(()=>cues.includes('missionStart'));
   assert.equal(await page.evaluate(()=>cues.filter(x=>x==='missionStart').length),1);assert.ok(await page.evaluate(()=>cues.indexOf('playerLaunch')<cues.indexOf('missionStart')));
   assert.equal(await page.locator('#toast').isVisible(),false);

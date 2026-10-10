@@ -2,15 +2,15 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id), I=DemonStarI18n, t=I.t;
-  const VERSION='0.2.11', weaponName=n=>t('weapon'+n);
-  let settingsContext='menu',dialogBack=null,pickupKey=null,storageAvailable=true;
+  const VERSION='0.2.12', weaponName=n=>t('weapon'+n);
+  let settingsContext='menu',settingsPage='home',setupBack=null,dialogBack=null,pickupKey=null,storageAvailable=true;
   function hideDialog(){const el=$('dialog');el.hidden=true;el.setAttribute('aria-modal','false');el.setAttribute('aria-hidden','true');}
   const { Game, DIFFICULTIES, STAGES, WEAPONS, W, H, clamp } = StarfallCore;
   const game=new Game(), renderer=new StarfallRenderer($('game')), audio=new StarfallAudio(), music=new DemonStarMusicPlayer();
   let saved={language:I.detect(I.preferred()),best:[0,0,0,0],unlocked:[1,1,1,1],difficulty:1,sound:true,music:true,musicPreferenceVersion:1,enemyHealthBars:false,bossHealthBars:true,healthBarsVersion:1,musicVolume:.35,soundVolume:1};
-  saved.haptics=true;
+  saved.haptics=true;saved.retainWeaponLevels=false;
   try { const s=JSON.parse(localStorage.getItem('demonstar-reborn-v1')||'null'); if(s && typeof s==='object'){
-    saved.language=I.resolve(s.language,I.preferred());saved.input=s.input;saved.haptics=s.haptics!==false;
+    saved.language=I.resolve(s.language,I.preferred());saved.input=s.input;saved.haptics=s.haptics!==false;saved.retainWeaponLevels=s.retainWeaponLevels===true;
     // 旧版合并开关一次性迁移为仅 Boss；之后分别尊重两项选择。
     // Migrate the old combined switch once to Boss-only, then preserve independent choices.
     saved.best=Array.from({length:4},(_,i)=>Math.max(0,Math.floor(Number(s.best?.[i])||0)));
@@ -33,14 +33,14 @@
   const persist=()=>{try{localStorage.setItem('demonstar-reborn-v1',JSON.stringify(saved));storageAvailable=true;}catch{storageAvailable=false;}};
   persist();
   const fmt=n=>String(Math.floor(n)).padStart(7,'0');
-  function menuInfo(){ $('best').textContent=fmt(saved.best[saved.difficulty]);$('difficulty').textContent=t('difficulty',{name:t('difficulty'+saved.difficulty)});$('unlock-label').textContent=`${String(saved.unlocked[saved.difficulty]).padStart(2,'0')} / 18`;$('sound').textContent=t('soundMenu',{state:t(saved.sound?'onShort':'offShort')});$('sound').setAttribute('aria-pressed',String(saved.sound));$('start').innerHTML=`${t('singlePlayer')} <span>${t('stage',{n:String(selectedStage).padStart(2,'0')})} →</span>`; }
+  function menuInfo(){ $('best').textContent=fmt(saved.best[saved.difficulty]);$('unlock-label').textContent=`${String(saved.unlocked[saved.difficulty]).padStart(2,'0')} / 18`;$('sound').textContent=t('soundMenu',{state:t(saved.sound?'onShort':'offShort')});$('sound').setAttribute('aria-pressed',String(saved.sound));$('start').textContent=t('singlePlayer'); }
   function changeLanguage(locale){
     if(!I.select(locale))return;
     // 只刷新文案并保存语言，不重启引擎或覆盖战斗/解锁数据。
     // Refresh copy and persist the locale without restarting combat or replacing progress.
     saved.language=I.locale;persist();I.apply();menuInfo();updateHud();
     if(pickupKey&&pickupTime>0)$('pickup-status').textContent=t(pickupKey);
-    if(settingsContext==='pause')showPauseDialog();else showSettings();
+    showSettings(settingsPage);
     $('language').focus({preventScroll:true});
   }
   function saveScore(){if(game.score>saved.best[game.difficulty]){saved.best[game.difficulty]=game.score;persist();}}
@@ -48,7 +48,7 @@
   function toast(text,seconds=2){$('toast').textContent=text;$('toast').hidden=false;toastTime=seconds;}
   function enterRun(){roomOpen=false;audio.stopAll();audio.unlock();music.unlock();music.resume();music.stage(game.stage.id);hideDialog();$('menu').hidden=true;$('controls').hidden=false;$('hud').hidden=false;input.localOnly=lan.role!=='offline';input.setCount(lan.role==='offline'?game.players.length:1);touch.localSlot=lan.role==='client'?lan.localSlot:1;touch.partyCount=game.players.length;clearInput();touch.layout(renderer.layout);pickupTime=0;pickupKey=null;$('pickup-status').textContent='';$('weapon-icon').classList.remove('collected');lastPhase=game.phase;$('toast').hidden=true;previous=0;accumulator=0;updateHud();if(game.phase==='paused'){audio.suspend();music.suspend();showPauseDialog();}}
   function applyConnections(){if(lan.role==='host')for(const p of game.players)p.connected=lan.members.find(m=>m.slot===p.id)?.connected!==false;}
-  function start(stage=selectedStage){if(lan.role==='client'){toast(t('lanHostOnly'));return;}game.start(saved.difficulty,stage,true,{playerCount:Math.min(2,lan.role==='host'?lan.members.length:input.config.count),mode:lan.role==='host'?'lan':'local'});applyConnections();enterRun();if(lan.role==='host')lan.flush();}
+  function start(stage=selectedStage){if(lan.role==='client'){toast(t('lanHostOnly'));return;}game.start(saved.difficulty,stage,true,{playerCount:Math.min(2,lan.role==='host'?lan.members.length:input.config.count),mode:lan.role==='host'?'lan':'local',retainWeaponLevels:game.phase==='paused'?game.retainWeaponLevels:saved.retainWeaponLevels});applyConnections();enterRun();if(lan.role==='host')lan.flush();}
   function showMenu(){roomOpen=false;if(lan.role!=='offline')lan.leave();input.localOnly=false;input.setCount(input.config.count);touch.localSlot=1;touch.partyCount=input.count;audio.stopAll();audio.setScene('menu');saveScore();game.phase='menu';music.resume();music.menu();$('menu').hidden=false;hideDialog();$('controls').hidden=true;$('hud').hidden=true;$('toast').hidden=true;clearInput();menuInfo();$('start').focus({preventScroll:true});}
   function dialog(tag,title,content,buttons,onBack=hideDialog){
     dialogBack=onBack;
@@ -59,31 +59,63 @@
     $('dialog').hidden=false;$('dialog').setAttribute('aria-modal','true');$('dialog').setAttribute('aria-hidden','false');$('dialog').scrollTop=0;requestAnimationFrame(()=>($('dialog-content').querySelector('select,input,button')||$('dialog-buttons').querySelector('button'))?.focus({preventScroll:true}));
   }
   function resume(){if(lan.role==='client'){toast(t('lanHostOnly'));return;}game.resume();hideDialog();$('pause').focus({preventScroll:true});previous=0;accumulator=0;clearInput();audio.unlock();music.resume();if(lan.role==='host')lan.flush();}
-  function settingsRows(){return `<label class="dialog-setting language-setting">${t('language')}<select id="language" aria-label="${t('language')}">${I.locales.map((locale,i)=>`<option value="${locale}" ${locale===I.locale?'selected':''}>${['简体中文','繁體中文','English'][i]}</option>`).join('')}</select></label><p class="language-hint">${t(storageAvailable?'languageHint':'languageSessionHint')}</p><div class="dialog-setting">${t('sfx')} <button class="secondary" id="sfx-toggle" aria-label="${t('sfx')} ${t(saved.sound?'on':'off')}" aria-pressed="${saved.sound}">${t(saved.sound?'on':'off')}</button></div><label class="dialog-setting">${t('sfxVolume')} <input id="sfx-volume" aria-label="${t('sfxVolume')}" type="range" min="0" max="100" value="${Math.round(saved.soundVolume*100)}"></label><div class="dialog-setting">${t('music')} <button class="secondary" id="music-toggle" aria-label="${t('music')} ${t(saved.music?'on':'off')}" aria-pressed="${saved.music}">${t(saved.music?'on':'off')}</button></div><label class="dialog-setting">${t('musicVolume')} <input id="music-volume" aria-label="${t('musicVolume')}" type="range" min="0" max="100" value="${Math.round(saved.musicVolume*100)}"></label><div class="dialog-setting">${t('healthBars')} <button class="secondary" id="health-toggle" aria-label="${t('healthBars')} ${t(saved.enemyHealthBars?'on':'off')}" aria-pressed="${saved.enemyHealthBars}">${t(saved.enemyHealthBars?'on':'off')}</button></div><p class="language-hint">${t('healthBarsHint')}</p><div class="dialog-setting">${t('bossHealthBars')} <button class="secondary" id="boss-health-toggle" aria-label="${t('bossHealthBars')} ${t(saved.bossHealthBars?'on':'off')}" aria-pressed="${saved.bossHealthBars}">${t(saved.bossHealthBars?'on':'off')}</button></div>`; }
-  function bindSettings(){
-    $('language').onchange=()=>changeLanguage($('language').value);
-    $('control-settings').onclick=()=>showControls();$('stage-settings').onclick=showMissions;$('save-settings').onclick=()=>showSaves();if($('lan-room'))$('lan-room').onclick=showRoom;
-    const toggle=(id,key,apply)=>{$(id).onclick=()=>{saved[key]=!saved[key];$(id).textContent=t(saved[key]?'on':'off');$(id).setAttribute('aria-pressed',String(saved[key]));$(id).setAttribute('aria-label',t({'health-toggle':'healthBars','boss-health-toggle':'bossHealthBars','music-toggle':'music','sfx-toggle':'sfx','haptic-toggle':'haptics'}[id])+' '+t(saved[key]?'on':'off'));apply();persist();};};
-    toggle('boss-health-toggle','bossHealthBars',updateHud);
-    toggle('haptic-toggle','haptics',()=>{});
-    toggle('health-toggle','enemyHealthBars',()=>{renderer.enemyHealthBars=saved.enemyHealthBars;updateHud();});
-    toggle('music-toggle','music',()=>{music.setEnabled(saved.music);});
-    toggle('sfx-toggle','sound',()=>{audio.enabled=saved.sound;if(saved.sound)audio.unlock();else audio.stopAll();menuInfo();});
-    $('music-volume').oninput=()=>{saved.musicVolume=Number($('music-volume').value)/100;music.volume=saved.musicVolume;music.update(!!audio.missionSource&&audio.enabled&&audio.volume>0);persist();};
-    $('sfx-volume').oninput=()=>{saved.soundVolume=Number($('sfx-volume').value)/100;audio.volume=saved.soundVolume;if(audio.master)audio.master.gain.value=.4*audio.volume;persist();};
+  const optionButton=(id,key,disabled=false)=>`<button id="${id}" class="secondary" ${disabled?'disabled':''}>${t(key)}</button>`;
+  const toggleRow=(id,key,on,disabled=false)=>`<div class="dialog-setting">${t(key)}<button id="${id}" class="secondary" aria-label="${t(key)} ${t(on?'on':'off')}" aria-pressed="${on}" ${disabled?'disabled':''}>${t(on?'on':'off')}</button></div>`;
+  const difficultySelect=(id,value)=>`<label class="dialog-setting">${t('difficultyLabel')}<select id="${id}">${DIFFICULTIES.map((_,i)=>`<option value="${i}" ${i===value?'selected':''}>${t('difficulty'+i)}</option>`).join('')}</select></label>`;
+  function bindToggle(id,key,label,apply=()=>{}){if(!$(id))return;$(id).onclick=()=>{saved[key]=!saved[key];$(id).textContent=t(saved[key]?'on':'off');$(id).setAttribute('aria-pressed',String(saved[key]));$(id).setAttribute('aria-label',t(label)+' '+t(saved[key]?'on':'off'));apply();persist();};}
+  function showSettings(page='home'){
+    settingsPage=page;settingsContext=game.phase==='paused'?'pause':'menu';
+    const back=page==='home'?(settingsContext==='pause'?showPauseDialog:hideDialog):()=>showSettings();
+    const titles={home:'gameSettings',audio:'audioSettings',display:'displaySettings',rules:'rulesSettings',language:'language'};
+    let body='';
+    if(page==='home')body=`<div class="settings-sections">${optionButton('settings-audio','audioSettings')}${optionButton('control-settings','inputSettings')}${optionButton('settings-display','displaySettings')}${optionButton('settings-rules','rulesSettings')}${optionButton('settings-language','language')}</div>`;
+    if(page==='audio')body=toggleRow('sfx-toggle','sfx',saved.sound)+`<label class="dialog-setting">${t('sfxVolume')}<input id="sfx-volume" aria-label="${t('sfxVolume')}" type="range" min="0" max="100" value="${Math.round(saved.soundVolume*100)}"></label>`+toggleRow('music-toggle','music',saved.music)+`<label class="dialog-setting">${t('musicVolume')}<input id="music-volume" aria-label="${t('musicVolume')}" type="range" min="0" max="100" value="${Math.round(saved.musicVolume*100)}"></label>`+toggleRow('haptic-toggle','haptics',saved.haptics)+`<p class="language-hint">${t('hapticsHint')}</p>`;
+    if(page==='display')body=toggleRow('health-toggle','healthBars',saved.enemyHealthBars)+`<p class="language-hint">${t('healthBarsHint')}</p>`+toggleRow('boss-health-toggle','bossHealthBars',saved.bossHealthBars);
+    if(page==='rules')body=toggleRow('retain-levels','retainLevels',settingsContext==='pause'?game.retainWeaponLevels:saved.retainWeaponLevels,settingsContext==='pause')+`<p>${t('retainLevelsHint')}</p><p class="language-hint">${t(settingsContext==='pause'?'ruleLocked':'ruleDefault')}</p>`;
+    if(page==='language')body=`<label class="dialog-setting language-setting">${t('language')}<select id="language" aria-label="${t('language')}">${I.locales.map((locale,i)=>`<option value="${locale}" ${locale===I.locale?'selected':''}>${['简体中文','繁體中文','English'][i]}</option>`).join('')}</select></label><p class="language-hint">${t(storageAvailable?'languageHint':'languageSessionHint')}</p>`;
+    dialog(t('gameSettings'),t(titles[page]),body,[[t(page==='home'&&settingsContext==='menu'?'hangar':'back'),back]],back);
+    if(page==='home'){for(const name of ['audio','display','rules','language'])$('settings-'+name).onclick=()=>showSettings(name);$('control-settings').onclick=()=>showControls();}
+    if(page==='language')$('language').onchange=()=>changeLanguage($('language').value);
+    if(page==='rules'&&settingsContext!=='pause')bindToggle('retain-levels','retainWeaponLevels','retainLevels');
+    if(page==='display'){bindToggle('boss-health-toggle','bossHealthBars','bossHealthBars',updateHud);bindToggle('health-toggle','enemyHealthBars','healthBars',()=>{renderer.enemyHealthBars=saved.enemyHealthBars;updateHud();});}
+    if(page==='audio'){
+      bindToggle('haptic-toggle','haptics','haptics');bindToggle('music-toggle','music','music',()=>music.setEnabled(saved.music));bindToggle('sfx-toggle','sound','sfx',()=>{audio.enabled=saved.sound;if(saved.sound)audio.unlock();else audio.stopAll();menuInfo();});
+      $('music-volume').oninput=()=>{saved.musicVolume=Number($('music-volume').value)/100;music.volume=saved.musicVolume;music.update(!!audio.missionSource&&audio.enabled&&audio.volume>0);persist();};
+      $('sfx-volume').oninput=()=>{saved.soundVolume=Number($('sfx-volume').value)/100;audio.volume=saved.soundVolume;if(audio.master)audio.master.gain.value=.4*audio.volume;persist();};
+    }
   }
-  function extraSettings(){return `<div class="dialog-setting">${t('haptics')}<button id="haptic-toggle" class="secondary" aria-pressed="${saved.haptics}" aria-label="${t('haptics')} ${t(saved.haptics?'on':'off')}">${t(saved.haptics?'on':'off')}</button></div><p class="language-hint">${t('hapticsHint')}</p><div class="config-grid"><button id="control-settings" class="secondary">${t('inputSettings')}</button><button id="stage-settings" class="secondary" ${lan.role==='client'?'disabled':''}>${t('missionTitle')}</button><button id="save-settings" class="secondary">${t('saveMenu')}</button>${lan.role!=='offline'?`<button id="lan-room" class="secondary">${t('lanRoom')}</button>`:''}</div>`;}
-  // 入口决定人数，避免单人按钮沿用旧的双人偏好。 / Menu entries own the player count, independent of saved modes.
+  // 模式入口先确定人数，再选择关卡和难度。 / Mode entries select the party before stage and difficulty setup.
   function startLocal(count){
     if(lan.role!=='offline')lan.leave();input.localOnly=false;input.config.count=count;
-    const conflicts=input.setCount(count);persistInput();start();if(conflicts.length)toast(t('controllerConflict'));
+    const conflicts=input.setCount(count);persistInput();setupBack=count===2?showMultiplayer:hideDialog;showStartOptions();if(conflicts.length)toast(t('controllerConflict'));
+  }
+  function showStartOptions(){
+    const back=setupBack||hideDialog;
+    dialog(t('prepareRun'),t(lan.role==='host'?'lanMultiplayer':input.config.count===2?'localMultiplayer':'singlePlayer'),`<div class="settings-sections">${optionButton('new-run','startBeginning')}${optionButton('choose-stage','missionTitle')}${optionButton('setup-load','loadGame')}</div>`,[[t('back'),back]],back);
+    $('new-run').onclick=()=>showLaunchOptions(1,showStartOptions);$('choose-stage').onclick=showMissions;$('setup-load').onclick=()=>showSaves('load',showStartOptions);
+  }
+  function showLaunchOptions(stage,back=showStartOptions){
+    const active=game.phase==='paused',retained=active?game.retainWeaponLevels:saved.retainWeaponLevels;
+    dialog(t('prepareRun'),t('stageName',{n:stage}),difficultySelect('launch-difficulty',active?game.difficulty:saved.difficulty)+toggleRow('retain-levels','retainLevels',retained,active)+`<p class="language-hint">${t(active?'stageRestartHint':'retainLevelsHint')}</p><button id="setup-start" class="primary">${t('launchRun')}</button>`,[[t('back'),back]],back);
+    if(!active)bindToggle('retain-levels','retainWeaponLevels','retainLevels');
+    $('setup-start').onclick=()=>{
+      if(lan.role==='client'){toast(t('lanHostOnly'));return;}
+      saved.difficulty=Number($('launch-difficulty').value);selectedStage=stage;persist();
+      if(lan.role==='host'&&!lan.started){if(lan.start(saved.difficulty,stage,{retainWeaponLevels:saved.retainWeaponLevels}))enterRun();else toast(t('lanNeedPlayers'));}
+      else{saveScore();start(stage);}
+    };
   }
   function showMultiplayer(){
-    settingsContext='menu';dialog(t('multiplayer'),t('multiplayer'),`<p>${t('multiplayerHint')}</p><button id="local-multiplayer" class="primary">${t('localMultiplayer')}</button><button id="lan-multiplayer" class="primary">${t('lanMultiplayer')}</button>`,[[t('hangar'),hideDialog]]);
+    settingsContext='menu';dialog(t('multiplayer'),t('multiplayer'),`<p>${t('multiplayerHint')}</p><div class="settings-sections"><button id="local-multiplayer" class="primary">${t('localMultiplayer')}</button><button id="lan-multiplayer" class="primary">${t('lanMultiplayer')}</button></div>`,[[t('hangar'),hideDialog]]);
     $('local-multiplayer').onclick=()=>startLocal(2);$('lan-multiplayer').onclick=showRoom;
   }
-  function showSettings(){settingsContext='menu';dialog(t('gameSettings'),t('gameSettings'),settingsRows()+extraSettings(),[[t('hangar'),hideDialog]]);bindSettings();}
-  function showPauseDialog(){settingsContext='pause';dialog(t('pausedTag'),t('pausedTitle'),`<p>${t(lan.role==='client'?'lanHostOnly':'pausedBody')}</p>${settingsRows()}${extraSettings()}`,[[t(lan.role==='client'?'lanRoom':'resume'),lan.role==='client'?showRoom:resume],[t('mainMenu'),()=>dialog(t('mainMenu'),t('quitTitle'),`<p>${t('quitBody')}</p>`,[[t(lan.role==='client'?'backSettings':'resume'),lan.role==='client'?showPauseDialog:resume],[t('quit'),showMenu,true]]),true]]);bindSettings();}
+  function showPauseDialog(){
+    settingsContext='pause';const guest=lan.role==='client',back=guest?showRoom:resume;
+    dialog(t('pausedTag'),t('pausedTitle'),`<p>${t(guest?'lanHostOnly':'pausedBody')}</p><p id="pause-difficulty-label">${t('difficulty',{name:t('difficulty'+game.difficulty)})}</p><div class="settings-sections">${optionButton('pause-difficulty','adjustDifficulty',guest)}${optionButton('pause-save','saveGame')}${optionButton('pause-load','loadGame',guest)}${optionButton('stage-settings','missionTitle',guest)}${optionButton('pause-settings','gameSettings')}${lan.role!=='offline'?optionButton('lan-room','lanRoom'):''}</div>`,[[t(guest?'lanRoom':'resume'),back],[t('mainMenu'),()=>dialog(t('mainMenu'),t('quitTitle'),`<p>${t('quitBody')}</p>`,[[t('back'),showPauseDialog],[t('quit'),showMenu,true]],showPauseDialog),true]],back);
+    $('pause-settings').onclick=()=>showSettings();$('pause-save').onclick=()=>showSaves('save',showPauseDialog);$('pause-load').onclick=()=>showSaves('load',showPauseDialog);$('stage-settings').onclick=showMissions;
+    if($('lan-room'))$('lan-room').onclick=showRoom;
+    $('pause-difficulty').onclick=()=>{if(guest)return;dialog(t('pausedTag'),t('adjustDifficulty'),difficultySelect('paused-difficulty',game.difficulty)+`<p>${t('difficultyLiveHint')}</p><button id="apply-difficulty" class="primary">${t('apply')}</button>`,[[t('back'),showPauseDialog]],showPauseDialog);$('apply-difficulty').onclick=()=>{const value=Number($('paused-difficulty').value);if(game.setDifficulty(value)){saved.difficulty=value;persist();if(lan.role==='host')lan.flush();showPauseDialog();}};};
+  }
   function pause(){if(lan.role==='client'){clearInput();lan.requestPause();return;}if(!game.pause())return;audio.suspend();music.suspend();saveScore();showPauseDialog();if(lan.role==='host')lan.flush();}
   function showHelp(){
     dialogReturn=['playing','launch','aftermath'].includes(game.phase)?'active':game.phase;if(dialogReturn==='active'){game.pause();audio.suspend();music.suspend();}
@@ -91,16 +123,16 @@
   }
   function showMissions(){
     if(lan.role==='client'){toast(t('lanHostOnly'));return;}
-    const active=game.phase==='paused';
-    dialog(t('campaign'),t('missionTitle'),`<div class="mission-grid">${STAGES.map(s=>`<button data-stage="${s.id}">${String(s.id).padStart(2,'0')}<small>${t('stageName',{n:s.id})}</small></button>`).join('')}</div><p class="dialog-footer">${t(active?'stageRestartHint':'freeStageHint')}</p>`,[[t(active?'backSettings':'hangar'),active?showPauseDialog:hideDialog,true]]);
-    document.querySelectorAll('[data-stage]').forEach(b=>b.onclick=()=>{selectedStage=Number(b.dataset.stage);if(active){saveScore();start(selectedStage);}else{hideDialog();menuInfo();}});
+    const back=game.phase==='paused'?showPauseDialog:showStartOptions;
+    dialog(t('campaign'),t('missionTitle'),`<div class="mission-grid">${STAGES.map(s=>`<button data-stage="${s.id}">${String(s.id).padStart(2,'0')}<small>${t('stageName',{n:s.id})}</small></button>`).join('')}</div><p class="dialog-footer">${t('freeStageHint')}</p>`,[[t('back'),back]],back);
+    document.querySelectorAll('[data-stage]').forEach(b=>b.onclick=()=>showLaunchOptions(Number(b.dataset.stage),showMissions));
   }
-  const backSettings=()=>settingsContext==='pause'?showPauseDialog():showSettings();
+  const backSettings=()=>showSettings();
   function lanChanged(){if(lan.role==='offline')return;if(['disconnected','rejected','error'].includes(lan.status)){clearInput();audio.suspend();music.suspend();}if(roomOpen||['disconnected','rejected','error'].includes(lan.status))showRoom();}
-  function receivedFrame(info){if(info.first||info.nextEpoch)enterRun();}
+  function receivedFrame(info){if(info.first||info.nextEpoch)enterRun();if($('pause-difficulty-label'))$('pause-difficulty-label').textContent=t('difficulty',{name:t('difficulty'+game.difficulty)});}
   function showRoom(){
     const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const errorKeys={'room-code':'lanBadCode','room-full':'lanFull','player-limit':'playerLimit','game-started':'lanStarted','local-network-permission':'lanPermission','timeout':'lanTimeout','disconnected':'lanDisconnected'};
+    const errorKeys={'protocol-version':'lanVersionMismatch','room-code':'lanBadCode','room-full':'lanFull','player-limit':'playerLimit','game-started':'lanStarted','local-network-permission':'lanPermission','timeout':'lanTimeout','disconnected':'lanDisconnected'};
     if(!DemonStarNative.available){dialog(t('lanTitle'),t('lanTitle'),`<p>${t('lanNativeOnly')}</p>`,[[t('backMultiplayer'),showMultiplayer]],showMultiplayer);return;}
     const error=lan.error?`<p class="input-note" role="status">${t(errorKeys[lan.error]||'lanConnectError')}</p>`:'';
     if(lan.role==='offline'){
@@ -110,7 +142,7 @@
     const roster=lan.members.map(m=>`<li>${t('playerNumber',{n:Number(m.slot)||0})} · ${['android','ios'].includes(m.platform)?m.platform==='ios'?'iOS':'Android':t('lanTestPeer')} · ${t(m.connected?'lanConnected':'lanDisconnected')}</li>`).join('');
     const hostInfo=lan.role==='host'?`<p>${t('lanAddress')}: <b>${escape((lan.addresses||[]).join(' / ')||t('lanWaitingAddress'))}</b></p><p>${t('lanCode')}: <b class="room-code">${escape(lan.code)}</b></p>`:`<p>${t('lanAddress')}: ${escape(lan.hostAddress)}</p><p>${t('lanLocalPlayer',{n:lan.localSlot})}</p>`;
     const actions=[];
-    if(lan.role==='host'&&!lan.started&&lan.status==='lobby')actions.push([t('lanStart'),()=>{if(lan.start(saved.difficulty,selectedStage))enterRun();else toast(t('lanNeedPlayers'));}]);
+    if(lan.role==='host'&&!lan.started&&lan.status==='lobby')actions.push([t('lanStart'),()=>{if(lan.members.length<2||lan.members.some(m=>!m.connected)){toast(t('lanNeedPlayers'));return;}setupBack=showRoom;showStartOptions();}]);
     if(lan.started&&lan.status==='playing')actions.push([t('backSettings'),()=>{roomOpen=false;if(game.phase==='paused')showPauseDialog();else hideDialog();}]);
     if(lan.role==='client'&&['disconnected','rejected','error'].includes(lan.status))actions.push([t('lanReconnect'),()=>{lan.retries=0;lan.connect();}]);
     actions.push([t('lanLeave'),showMenu,true]);
@@ -122,7 +154,7 @@
     if(lan.role!=='offline')controlPlayer=0;
     captureBinding=null;const p=input.config.players[controlPlayer],select=(id,options,value)=>`<select id="${id}">${options.map(([v,label])=>`<option value="${v}" ${String(v)===String(value)?'selected':''}>${label}</option>`).join('')}</select>`;
     const body=`<p>${t(lan.role==='offline'?'localPlayersHint':'lanInputHint')}</p><label class="dialog-setting">${t('configurePlayer')}${select('control-player',[1,2].map(n=>[n-1,t('playerNumber',{n})]),controlPlayer)}</label><label class="dialog-setting">${t('touchMode')}${select('touch-mode',['fixed','floating','dpad'].map(m=>[m,t('touch'+m)]),p.touch)}</label><label class="dialog-setting">${t('stickSize')}<input id="stick-size-setting" type="range" min="75" max="130" value="${Math.round(p.size*100)}"></label><label class="dialog-setting">${t('stickHorizontal')}<input id="stick-x-setting" type="range" min="0" max="100" value="${Math.round(p.stickX*100)}"></label><label class="dialog-setting">${t('stickVertical')}<input id="stick-y-setting" type="range" min="0" max="100" value="${Math.round(p.stickY*100)}"></label><label class="dialog-setting">${t('mouseControl')}${select('mouse-player',[[0,t('off')],...(lan.role==='offline'?[1,2].map(n=>[n,t('playerNumber',{n})]):[[1,t('lanLocalPlayer',{n:lan.localSlot})]])],input.mouseOwner)}</label><label class="dialog-setting">${t('controller')}${select('gamepad-index',[[-1,t('off')],...[0,1,2,3].map(n=>[n,t('controllerNumber',{n:n+1})])],p.pad)}</label><p>${t('bindingHint')}</p><p class="input-note" id="binding-status" role="status">${note}</p>${DemonStarInput.actions.map(action=>`<div class="mapping-row"><span>${t('action'+action)}</span><button class="secondary" data-binding="${action}">${input.bindings(controlPlayer)[action].map(bindingName).join(' / ')||t('unbound')}</button></div>`).join('')}`;
-    dialog(t('inputSettings'),t('inputSettings'),body,[[t('backSettings'),backSettings],[t('resetControls'),()=>{input.config.players[controlPlayer]=DemonStarInput.preferences().players[controlPlayer];persistInput();showControls();},true]]);
+    dialog(t('inputSettings'),t('inputSettings'),body,[[t('backSettings'),backSettings],[t('resetControls'),()=>{input.config.players[controlPlayer]=DemonStarInput.preferences().players[controlPlayer];persistInput();showControls();},true]],backSettings);
     $('control-player').disabled=lan.role!=='offline';if(lan.role!=='offline')$('control-player').selectedOptions[0].textContent=t('lanLocalPlayer',{n:lan.localSlot});
     $('control-player').onchange=()=>{controlPlayer=Number($('control-player').value);showControls();};
     $('touch-mode').onchange=()=>{p.touch=$('touch-mode').value;clearInput();persistInput();};
@@ -132,11 +164,20 @@
     document.querySelectorAll('[data-binding]').forEach(b=>b.onclick=()=>{captureBinding={player:controlPlayer,action:b.dataset.binding};$('binding-status').textContent=t('bindingWaiting');});
   }
   function acceptBinding(token){if(!captureBinding)return;const {player,action}=captureBinding,ok=input.bind(player,action,token);if(ok)persistInput();showControls(t(ok?'bindingSaved':'bindingConflict'));}
-  function showSaves(note=''){
-    const active=game.phase==='paused',body=['auto','1','2','3'].map(id=>{const slot=saves.get(id),cp=slot?.checkpoint;return `<div class="save-row"><b>${t(id==='auto'?'autoSave':'saveSlot',{n:id})}</b><p>${cp?t('saveSummary',{stage:cp.stage,n:cp.players.length,score:cp.score}):t('emptySave')}</p><div class="config-grid"><button class="secondary" data-load="${id}" ${cp?'':'disabled'}>${t('loadSave')}</button>${id==='auto'?'':`<button class="secondary" data-save="${id}" ${active?'':'disabled'}>${t('writeSave')}</button>`}</div></div>`;}).join('');
-    dialog(t('saveMenu'),t('saveMenu'),`<p>${t('saveEntryHint')}</p><p role="status">${note}</p>${body}`,[[t('backSettings'),backSettings]]);
-    document.querySelectorAll('[data-save]').forEach(b=>b.onclick=()=>showSaves(t(saves.write(b.dataset.save,game.checkpoint())?'saveWritten':'saveFailed')));
-    document.querySelectorAll('[data-load]').forEach(b=>{if(lan.role==='client')b.disabled=true;b.onclick=()=>{if(lan.role==='client'){toast(t('lanHostOnly'));return;}const cp=saves.get(b.dataset.load)?.checkpoint;if(cp?.players.length>2){showSaves(t('playerLimit'));return;}if(lan.role==='host'&&cp?.players.length!==lan.members.length){showSaves(t('lanSaveCount'));return;}if(lan.role==='host'&&cp)cp.mode='lan';if(!game.loadCheckpoint(cp,true)){showSaves(t('saveFailed'));return;}applyConnections();saved.difficulty=game.difficulty;if(lan.role==='offline')input.config.count=game.players.length;persistInput();enterRun();if(lan.role==='host')lan.flush();};});
+  function showSaves(mode='load',back=game.phase==='paused'?showPauseDialog:showStartOptions,note=''){
+    const active=game.phase==='paused',refresh=message=>showSaves(mode,back,message),body=(mode==='save'?['1','2','3']:['auto','1','2','3']).map(id=>{
+      const cp=saves.get(id)?.checkpoint;
+      return `<div class="save-row"><b>${t(id==='auto'?'autoSave':'saveSlot',{n:id})}</b><p>${cp?t('saveSummary',{stage:cp.stage,n:cp.players.length,score:cp.score})+' · '+t('difficulty'+cp.difficulty)+' · '+t(cp.retainWeaponLevels?'retainedRule':'classicRule'):t('emptySave')}</p>${mode==='save'?`<button class="secondary" data-save="${id}" ${active?'':'disabled'}>${t('writeSave')}</button>`:`<button class="secondary" data-load="${id}" ${cp&&lan.role!=='client'?'':'disabled'}>${t('loadSave')}</button>`}</div>`;
+    }).join('');
+    dialog(t('saveMenu'),t(mode==='save'?'saveGame':'loadGame'),`<p>${t('saveEntryHint')}</p><p role="status">${note}</p>${body}`,[[t('back'),back]],back);
+    document.querySelectorAll('[data-save]').forEach(b=>b.onclick=()=>refresh(t(saves.write(b.dataset.save,game.checkpoint())?'saveWritten':'saveFailed')));
+    document.querySelectorAll('[data-load]').forEach(b=>b.onclick=()=>{
+      if(lan.role==='client'){toast(t('lanHostOnly'));return;}const cp=saves.get(b.dataset.load)?.checkpoint;
+      if(cp?.players.length>2){refresh(t('playerLimit'));return;}
+      if(lan.role==='host'&&cp?.players.length!==lan.members.length){refresh(t('lanSaveCount'));return;}
+      if(!(lan.role==='host'?lan.load(cp):game.loadCheckpoint(cp,true))){refresh(t('saveFailed'));return;}
+      applyConnections();saved.difficulty=game.difficulty;if(lan.role==='offline')input.config.count=game.players.length;persistInput();enterRun();if(lan.role==='host')lan.flush();
+    });
   }
   function results(){
     music.results();saveScore();const won=game.phase==='cleared'||game.phase==='victory';
@@ -212,8 +253,7 @@
     music.update(!!audio.missionSource&&audio.enabled&&audio.volume>0);renderer.draw(game,dt);hudTick+=dt;if(hudTick>.06){updateHud();hudTick=0;}requestAnimationFrame(frame);
   }
   function gamepads(){try{return Array.from(navigator.getGamepads?.()||[]);}catch{return [];}}
-  $('settings').onclick=showSettings;$('start').onclick=()=>startLocal(1);$('multiplayer').onclick=showMultiplayer;$('pause').onclick=pause;$('help').onclick=showHelp;$('desktop-help').onclick=showHelp;$('missions').onclick=showMissions;
-  $('difficulty').onclick=()=>{saved.difficulty=(saved.difficulty+1)%4;selectedStage=1;persist();menuInfo();};
+  $('settings').onclick=()=>showSettings();$('start').onclick=()=>startLocal(1);$('multiplayer').onclick=showMultiplayer;$('pause').onclick=pause;$('help').onclick=showHelp;$('desktop-help').onclick=showHelp;
   $('sound').onclick=()=>{saved.sound=!saved.sound;audio.enabled=saved.sound;if(saved.sound)audio.unlock();else audio.suspend();persist();menuInfo();};
   const activeInput=()=>game.phase==='playing'&&$('dialog').hidden;
   touch=new DemonStarTouchControls(input,activeInput,()=>{audio.unlock();music.unlock();});touch.layout(renderer.layout);
@@ -234,11 +274,11 @@
   window.addEventListener('keyup',e=>input.key(e,false));
   function background(){clearInput();pause();audio.suspend();music.suspend();}
   function foreground(){previous=0;if(['menu','cleared','victory','gameover'].includes(game.phase)||lan.status==='playing'&&['playing','launch','aftermath'].includes(game.phase)){music.resume();audio.unlock();}}
-  function back(){if(['playing','launch','aftermath'].includes(game.phase))pause();else if(game.phase==='paused')resume();else if(['cleared','victory','gameover'].includes(game.phase))showMenu();else if(!$('dialog').hidden)(dialogBack||hideDialog)();}
+  function back(){if(!$('dialog').hidden)(dialogBack||hideDialog)();else if(['playing','launch','aftermath'].includes(game.phase))pause();else if(game.phase==='paused')resume();else if(['cleared','victory','gameover'].includes(game.phase))showMenu();}
   document.addEventListener('visibilitychange',()=>{if(document.hidden)background();else foreground();});window.addEventListener('blur',background);window.addEventListener('focus',foreground);
   window.addEventListener('pagehide',()=>{saveScore();background();});
   window.addEventListener('resize',()=>{clearInput();renderer.resize();touch.layout(renderer.layout);});
-  globalThis.StarfallApp={game,i18n:I,input,touch,saves,lan,native:DemonStarNative,background,foreground,back,start,startLocal,showMenu,showMultiplayer,showControls,showSaves,showMissions,showRoom,renderer,music,audio};
+  globalThis.StarfallApp={game,i18n:I,input,touch,saves,lan,native:DemonStarNative,background,foreground,back,start,startLocal,showMenu,showSettings,showPauseDialog,showMultiplayer,showControls,showSaves,showMissions,showRoom,renderer,music,audio};
   document.addEventListener('click',e=>{if(e.target.closest('button')){music.unlock();if(saved.sound){audio.unlock();if(!['fire','bomb','start'].includes(e.target.closest('button').id))audio.effect('menu');}}});
   // 原生容器允许首屏播放；浏览器若拒绝，后续交互仍会再次尝试。
   // Native hosts allow startup playback; browser gesture handlers retry if autoplay is rejected.

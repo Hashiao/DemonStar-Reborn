@@ -33,13 +33,13 @@ for native,expected in [('zh-CN','设置'),('zh-TW','設定'),('zh-HK','設定')
  actual=label(find('settings'));assert actual==expected,(native,actual)
  (out/('android-locale-'+native+'.png')).write_bytes(subprocess.check_output(adb+['exec-out','screencap','-p'],timeout=30))
  cases.append({'native_preference':native,'settings':actual,'passed':True})
-tap('settings')
-for option,title in [('简体中文','游戏设置'),('繁體中文','遊戲設定'),('English','Game settings')]:
+tap('settings');tap('settings-language')
+for option,title in [('简体中文','语言'),('繁體中文','語言'),('English','Language')]:
  tap('language');tap(text=option);assert find('dialog-title').get('text')==title
 run('shell','am','force-stop',package)
 run('shell','cmd','locale','set-app-locales',package,'--user','0','--locales','zh-CN');launch()
 assert label(find('settings'))=='Settings'
-tap('settings');tap('language');tap(text='简体中文');tap(text='返回机库')
+tap('settings');tap('settings-language');tap('language');tap(text='简体中文');tap(text='返回');tap(text='返回机库')
 report={'status':'passed','cases':cases,'manual_switch_three_languages':True,'cold_restart_preserves_override':True,'native_preference_change_does_not_replace_override':True,'serial':args.serial,'api':run('shell','getprop','ro.build.version.sdk')}
 (out/'android-localization-verification.json').write_text(json.dumps(report,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 print('Android language checks passed / Android 三语检查通过')

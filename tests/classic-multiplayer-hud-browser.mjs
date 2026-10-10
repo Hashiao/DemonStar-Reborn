@@ -1,3 +1,4 @@
+import {setting,finishSetup,routedButton} from './ui-navigation.mjs';
 import {createRequire} from 'node:module';
 import {writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
@@ -5,7 +6,7 @@ const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAY
 const browser=await chromium.launch({channel:'chrome',headless:true}),checks=[],errors=[];
 try{
   const page=await browser.newPage({viewport:{width:844,height:390},locale:'zh-CN'});page.on('pageerror',e=>errors.push(e.message));await page.goto(process.env.GAME_URL||'http://127.0.0.1:4173');await page.waitForFunction(()=>window.StarfallApp&&StarfallApp.renderer.presentationReady());
-  await page.locator('#start').click();await page.evaluate(()=>{const g=StarfallApp.game;g.phase='playing';g.launch=null;g.events=[];g.recordEvents=[];g.pause();});await page.waitForTimeout(100);
+  await page.locator('#start').click();await finishSetup(page);await page.evaluate(()=>{const g=StarfallApp.game;g.phase='playing';g.launch=null;g.events=[];g.recordEvents=[];g.pause();});await page.waitForTimeout(100);
   const appearance=selector=>page.locator(selector).first().evaluate(e=>{const s=getComputedStyle(e);return {backgroundImage:s.backgroundImage,backgroundSize:s.backgroundSize,backgroundPosition:s.backgroundPosition,backgroundColor:s.backgroundColor,borderColor:s.borderColor,boxShadow:s.boxShadow,width:s.width,height:s.height};});
   const solo={life:await appearance('#lives .ship-icon'),bomb:await appearance('#bomb-stock .bomb-icon-0'),energy:await appearance('#energy .filled')};
   for(const count of [2]){

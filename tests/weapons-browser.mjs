@@ -1,3 +1,4 @@
+import {setting,finishSetup,routedButton} from './ui-navigation.mjs';
 // 三色六档实绘与导弹验收。 / Actual rendering of six tiers per color and missile checks.
 import assert from 'node:assert/strict';import {createRequire} from 'node:module';import {writeFile} from 'node:fs/promises';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
@@ -6,7 +7,7 @@ const page=await browser.newPage({locale:'zh-CN',viewport:{width:390,height:844}
 try{
  await page.goto(process.env.GAME_URL||'http://127.0.0.1:4174');await page.waitForFunction(()=>StarfallApp.renderer.presentationReady());
  const art=await page.evaluate(()=>({size:[StarfallApp.renderer.playerWeapons.naturalWidth,StarfallApp.renderer.playerWeapons.naturalHeight],rules:DemonStarProjectileRules.homing}));assert.deepEqual(art.size,[1536,1024]);assert.equal(art.rules.turnStep,64);
- await page.locator('#start').tap();await page.waitForFunction(()=>StarfallApp.game.phase==='playing');
+ await page.locator('#start').tap();await finishSetup(page);await page.waitForFunction(()=>StarfallApp.game.phase==='playing');
  const gallery=await browser.newPage({viewport:{width:1250,height:1160}}),rows=[];
  for(let color=0;color<3;color++){
   const images=[];

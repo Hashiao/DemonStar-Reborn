@@ -1,3 +1,4 @@
+import {setting,finishSetup,routedButton} from './ui-navigation.mjs';
 import {createRequire} from 'node:module';
 import {writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
@@ -12,9 +13,9 @@ try{
   await page.reload();await page.waitForFunction(()=>StarfallApp.renderer.attacks.naturalWidth);
   const migrated=await page.evaluate(()=>JSON.parse(localStorage.getItem('demonstar-reborn-v1')));
   assert.equal(migrated.music,true);assert.equal(migrated.musicVolume,.35);assert.equal(migrated.musicPreferenceVersion,1);assert.equal(migrated.best[0],12345);assert.equal(migrated.unlocked[0],8);
-  await page.locator('#start').tap();await page.waitForFunction(()=>StarfallApp.music.audio.currentTime>.1&&!StarfallApp.music.audio.paused);
-  await page.locator('#pause').tap();await page.locator('#music-toggle').tap();await page.reload();assert.equal(await page.evaluate(()=>StarfallApp.music.enabled),false);
-  await page.locator('#settings').tap();await page.locator('#music-toggle').tap();await page.getByRole('button',{name:'返回机库',exact:true}).tap();await page.locator('#start').tap();
+  await page.locator('#start').tap();await finishSetup(page);await page.waitForFunction(()=>StarfallApp.music.audio.currentTime>.1&&!StarfallApp.music.audio.paused);
+  await page.locator('#pause').tap();await (await setting(page,'music-toggle')).tap();await page.reload();assert.equal(await page.evaluate(()=>StarfallApp.music.enabled),false);
+  await page.locator('#settings').tap();await (await setting(page,'music-toggle')).tap();await (await routedButton(page,'返回机库')).tap();await page.locator('#start').tap();await finishSetup(page);
   for(const [label,ticks] of [['stars',290],['laser',622]]){
     const result=await page.evaluate(ticks=>{
       const g=StarfallApp.game;g.start();g.recordEvents=[];g.player.invincible=999;g.spawnRecord(g.stage.map.events.find(r=>r[2]===40));

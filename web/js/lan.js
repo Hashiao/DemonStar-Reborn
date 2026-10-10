@@ -31,7 +31,7 @@
       if(this.role==='offline')return;
       if(event.type==='connected'){
         if(this.role==='host')this.pending.set(event.peer,this.clock());
-        else if(event.peer==='host')this.send('host','hello',{code:this.code,token:this.identity,platform:this.native.capabilities.platform});return;
+        else if(event.peer==='host')this.send('host','hello',{code:this.code,token:this.identity,platform:this.native.capabilities.platform,stateVersion:DemonStarNetworkState.version});return;
       }
       if(event.type==='disconnected'){
         if(this.role==='client'){if(this.status!=='rejected')this.lost();return;}
@@ -44,11 +44,12 @@
       if(p?.protocol!==PROTOCOL)return;
       this.role==='host'?this.hostPacket(event.peer,p):this.clientPacket(event.peer,p);
     }
-    welcome(member){this.send(member.peer,'welcome',{slot:member.slot,roster:this.publicMembers(),epoch:this.epoch,started:this.started,...(this.started?{sequence:++this.frameSequence,state:DemonStarNetworkState.encode(this.game)}:{})});}
+    welcome(member){this.send(member.peer,'welcome',{stateVersion:DemonStarNetworkState.version,slot:member.slot,roster:this.publicMembers(),epoch:this.epoch,started:this.started,...(this.started?{sequence:++this.frameSequence,state:DemonStarNetworkState.encode(this.game)}:{})});}
     reindexLobby(){this.members=this.members.filter(m=>m.connected);this.members.forEach((m,i)=>m.slot=i+1);for(const member of this.members)if(member.peer)this.welcome(member);}
     broadcastRoster(){this.send('*','roster',{roster:this.publicMembers(),epoch:this.epoch});}
     hostPacket(peer,p){
       if(p.type==='hello'){
+        if(p.stateVersion!==DemonStarNetworkState.version){this.send(peer,'rejected',{reason:'protocol-version'});return;}
         if(p.code!==this.code||typeof p.token!=='string'||!/^[a-f0-9]{32}$/.test(p.token)){this.send(peer,'rejected',{reason:'room-code'});return;}
         let member=this.members.find(m=>m.token===p.token);
         if(member?.slot===1||!member&&(this.started||this.members.length>=this.maxPlayers)){this.send(peer,'rejected',{reason:this.started?'game-started':'room-full'});return;}
@@ -69,6 +70,7 @@
       if(peer!=='host')return;this.lastRx=this.clock();
       if(p.type==='rejected'){this.reject(p.reason);return;}
       if(p.type==='welcome'){
+        if(p.stateVersion!==DemonStarNetworkState.version){this.reject('protocol-version');return;}
         if(!Number.isInteger(p.slot)||p.slot<2||p.slot>4||!Number.isSafeInteger(p.epoch)||p.epoch<0||!validRoster(p.roster))return;
         if(p.slot>this.maxPlayers||p.roster.length>this.maxPlayers){this.reject('player-limit');return;}this.authenticated=true;
         this.localSlot=p.slot;this.members=Array.isArray(p.roster)?p.roster:[];this.status=p.started?'playing':'lobby';this.retries=0;this.started=!!p.started;this.lastFrame=0;this.change();
@@ -81,12 +83,20 @@
         const nextEpoch=p.epoch!==this.epoch,first=!this.started||!this.game.player;
         if(!DemonStarNetworkState.apply(this.game,p.state,!nextEpoch&&!first))return;
         this.epoch=p.epoch;this.lastFrame=p.sequence;this.started=true;this.status='playing';if(nextEpoch)this.sequence=0;this.onFrame({first,nextEpoch});
-      }else if(p.type==='welcome'){this.epoch=p.epoch;}
+      }else if(p.type==='welcome'){
+        if(p.stateVersion!==DemonStarNetworkState.version){this.reject('protocol-version');return;}this.epoch=p.epoch;}
     }
     reject(reason){this.status='rejected';this.error=reason;this.retries=99;this.authenticated=false;this.native.request('stop').catch(()=>{});this.change();}
-    start(difficulty=1,stage=1){
+    start(difficulty=1,stage=1,options={}){
       if(this.role!=='host'||this.status!=='lobby'||this.members.length<2||this.members.some(m=>!m.connected))return false;
-      this.game.start(difficulty,stage,true,{playerCount:this.members.length,mode:'lan'});this.started=true;this.status='playing';this.flush();this.change();return true;
+      this.game.start(difficulty,stage,true,{playerCount:this.members.length,mode:'lan',retainWeaponLevels:options.retainWeaponLevels===true});this.started=true;this.status='playing';this.flush();this.change();return true;
+    }
+    // 房主可在大厅或暂停时原子恢复关卡档；失败不改变会话。
+    // Hosts restore stage checkpoints atomically from the lobby or pause; failure leaves the session intact.
+    load(checkpoint){
+      if(this.role!=='host'||!['lobby','playing'].includes(this.status)||this.started&&this.game.phase!=='paused'||this.members.length<2||this.members.some(m=>!m.connected)||!StarfallCore.validCheckpoint(checkpoint)||checkpoint.players.length!==this.members.length)return false;
+      if(!this.game.loadCheckpoint({...checkpoint,mode:'lan'},true))return false;
+      this.started=true;this.status='playing';this.flush();this.change();return true;
     }
     inputs(local=idle()){
       return {players:this.game.players.map(p=>{if(p.id===1)return local;const m=this.members.find(m=>m.slot===p.id);return m?.connected&&this.clock()-(m.inputAt||0)<300?m.input:idle();})};

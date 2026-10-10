@@ -1,3 +1,4 @@
+import {setting,finishSetup,routedButton} from './ui-navigation.mjs';
 import {createRequire} from 'node:module';
 import {writeFile,readFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
@@ -8,22 +9,22 @@ page.on('pageerror',e=>errors.push(String(e)));
 try{
   await page.goto(process.env.GAME_URL||'http://127.0.0.1:4174');await page.waitForFunction(()=>StarfallApp.renderer.effects.naturalWidth);
   await page.evaluate(()=>{globalThis.played=[];const sample=StarfallAudio.prototype.sample;StarfallAudio.prototype.sample=function(...args){const s=sample.apply(this,args);if(s)played.push(args[0]);return s;};});
-  await page.locator('#start').tap();
+  await page.locator('#start').tap();await finishSetup(page);
   await page.evaluate(()=>{const g=StarfallApp.game;g.recordEvents=[];g.enemies=[];g.player.invincible=999;});
   await page.waitForFunction(()=>StarfallApp.music.audio.currentTime>.2&&!StarfallApp.music.audio.paused);
   assert.equal(await page.evaluate(()=>StarfallApp.music.track),'MDS_PHASER');
   await page.waitForFunction(()=>played.includes('missionStart'));
   const events=await page.evaluate(()=>played);assert.ok(events.indexOf('playerLaunch')<events.indexOf('missionStart'));assert.ok(events.includes('stageAmbience'));assert.ok(!events.includes('menu'));
   await page.locator('#pause').tap();const time=await page.evaluate(()=>StarfallApp.music.audio.currentTime);await page.waitForTimeout(150);assert.equal(await page.evaluate(()=>StarfallApp.music.audio.currentTime),time);
-  assert.equal(await page.evaluate(()=>StarfallApp.renderer.enemyHealthBars),false);await page.locator('#health-toggle').tap();assert.equal(await page.evaluate(()=>StarfallApp.renderer.enemyHealthBars),true);await page.locator('#boss-health-toggle').tap();
-  await page.locator('#sfx-toggle').tap();assert.equal(await page.evaluate(()=>StarfallApp.audio.enabled),false);
-  await page.getByRole('button',{name:'继续飞行',exact:true}).tap();await page.waitForFunction(t=>StarfallApp.music.audio.currentTime>t,time);
+  assert.equal(await page.evaluate(()=>StarfallApp.renderer.enemyHealthBars),false);await (await setting(page,'health-toggle')).tap();assert.equal(await page.evaluate(()=>StarfallApp.renderer.enemyHealthBars),true);await (await setting(page,'boss-health-toggle')).tap();
+  await (await setting(page,'sfx-toggle')).tap();assert.equal(await page.evaluate(()=>StarfallApp.audio.enabled),false);
+  await (await routedButton(page,'继续飞行')).tap();await page.waitForFunction(t=>StarfallApp.music.audio.currentTime>t,time);
   await page.evaluate(()=>{document.getElementById('toast').hidden=true;const g=StarfallApp.game;for(const type of StarfallCore.DROPS)g.collect({type});});
   await page.waitForTimeout(100);assert.equal(await page.locator('#toast').isVisible(),false);assert.ok(await page.locator('#pickup-status').textContent());
   assert.equal(await page.locator('#power-meter i').count(),6);
   await page.evaluate(()=>{const g=StarfallApp.game;g.spawnRecord(g.stage.map.events.find(r=>DemonStarCampaign.definitions[DemonStarCampaign.byId[r[2]]].flags&1));});
   await page.waitForTimeout(100);assert.equal(await page.locator('#toast').isVisible(),false);assert.equal(await page.locator('#boss-hud').isVisible(),false);
-  await page.locator('#pause').tap();await page.locator('#boss-health-toggle').tap();assert.ok(await page.locator('#boss-hud').isVisible());await page.getByRole('button',{name:'继续飞行',exact:true}).tap();
+  await page.locator('#pause').tap();await (await setting(page,'boss-health-toggle')).tap();assert.ok(await page.locator('#boss-hud').isVisible());await (await routedButton(page,'继续飞行')).tap();
   const bossAlignment=await page.evaluate(()=>{const b=document.getElementById('boss-hud').getBoundingClientRect(),s=document.querySelector('.classic-score').getBoundingClientRect();return {bossTop:b.top,scoreTop:s.top,bossLeft:b.left,scoreRight:s.right};});assert.ok(Math.abs(bossAlignment.bossTop-bossAlignment.scoreTop)<2);assert.ok(bossAlignment.bossLeft>bossAlignment.scoreRight);
   for(const weapon of [1,2])for(const power of [1,6]){
     await page.evaluate(({weapon,power})=>{const g=StarfallApp.game;g.start();g.recordEvents=[];g.events=[];g.player.defaultWeapon=false;g.player.weapon=weapon;g.player.power=power;g.player.invincible=0;g.firePlayer();for(const b of g.bullets){b.y=b.py=190;b.x=b.px+=b.defaultShot?0:50;}g.pause();document.getElementById('toast').hidden=true;document.getElementById('pickup-status').textContent='';},{weapon,power});

@@ -1,3 +1,4 @@
+import {setting,finishSetup,routedButton} from './ui-navigation.mjs';
 import {createRequire} from 'node:module';
 import {mkdir,writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
@@ -25,7 +26,7 @@ async function bounds(page){
 async function resetArena(page){await page.waitForFunction(()=>StarfallApp.game.phase==='playing');await page.evaluate(()=>{const g=StarfallApp.game;g.recordEvents=[];g.enemies=[];g.bullets=[];g.player.invincible=100;});}
 try{
   const desktop=await browser.newContext({locale:'zh-CN',viewport:{width:1280,height:900}}),page=await open(desktop);
-  await page.locator('#start').click();await resetArena(page);await page.waitForTimeout(200);
+  await page.locator('#start').click();await finishSetup(page);await resetArena(page);await page.waitForTimeout(200);
   await page.waitForFunction(()=>audioEvents.includes('missionStart'));assert.equal(await page.evaluate(()=>audioEvents.filter(x=>x==='missionStart').length),1);
   assert.equal(await page.evaluate(()=>StarfallApp.game.shotsFired),0);
   await page.keyboard.down('z');await page.keyboard.down('ArrowRight');await page.waitForTimeout(250);await page.keyboard.up('z');await page.keyboard.up('ArrowRight');
@@ -33,14 +34,14 @@ try{
   await page.locator('#pause').click();const frozen=await page.evaluate(()=>StarfallApp.game.totalTime);await page.waitForTimeout(120);assert.equal(await page.evaluate(()=>StarfallApp.game.totalTime),frozen);
   // 输入动作在下一个固定逻辑步执行；等待实际消耗而非事件回调内即时写入。
   // Actions execute on the next fixed simulation step; wait for the actual inventory change.
-  await page.getByRole('button',{name:'继续飞行',exact:true}).click();await page.locator('#bomb').click();await page.waitForFunction(()=>StarfallApp.game.player.bombs===2);assert.equal(await page.evaluate(()=>StarfallApp.game.player.bombs),2);await bounds(page);
+  await (await routedButton(page,'继续飞行')).click();await page.locator('#bomb').click();await page.waitForFunction(()=>StarfallApp.game.player.bombs===2);assert.equal(await page.evaluate(()=>StarfallApp.game.player.bombs),2);await bounds(page);
   // Isolate impact routing from the higher-priority radio/menu/bomb voices tested separately.
   await page.evaluate(()=>{StarfallApp.audio.stopAll();StarfallApp.game.specials=[];const g=StarfallApp.game,r=g.stage.map.events.find(r=>DemonStarCampaign.definitions[DemonStarCampaign.byId[r[2]]].sprite==='S_ENEMY14');g.enemies=[];g.bullets=[];g.spawnRecord(r);const e=g.enemies[0];e.x=200;e.y=200;e.pathFinished=true;e.speed=0;e.guns=[];g.addBullet(200,210,0,-400,true,1);});
   await page.waitForFunction(()=>audioEvents.includes('hit'));
   await page.evaluate(()=>{StarfallApp.game.addBullet(200,210,0,-400,true,5000);});await page.waitForFunction(()=>audioEvents.includes('explosion'));
   report.push({surface:'desktop',keyboardFire:true,movement:true,pause:true,bomb:true,missionVoiceOnce:true,enemyHitSound:true,explosionSound:true});
   const mobile=await browser.newContext({locale:'zh-CN',viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true}),phone=await open(mobile);
-  await phone.screenshot({path:'artifacts/mobile-menu.png'});await phone.locator('.title h2').tap();assert.equal(await phone.evaluate(()=>StarfallApp.game.phase),'menu');await phone.locator('#start').tap();await resetArena(phone);
+  await phone.screenshot({path:'artifacts/mobile-menu.png'});await phone.locator('.title h2').tap();assert.equal(await phone.evaluate(()=>StarfallApp.game.phase),'menu');await phone.locator('#start').tap();await finishSetup(phone);await resetArena(phone);
   assert.equal(await phone.locator('#lives .ship-icon').count(),3);assert.equal(await phone.locator('#energy .filled').count(),16);assert.equal(await phone.locator('#bomb-stock i').count(),3);
   // Real simultaneous touch contacts: joystick movement and A held together.
   const session=await mobile.newCDPSession(phone),stick=await phone.locator('#joystick').boundingBox(),fire=await phone.locator('#fire').boundingBox();
@@ -62,20 +63,20 @@ try{
   const snapshot=await phone.evaluate(()=>JSON.stringify({p:StarfallApp.game.player,score:StarfallApp.game.score,scroll:StarfallApp.game.scroll}));
   await phone.setViewportSize({width:844,height:390});await phone.waitForTimeout(80);await bounds(phone);
   assert.equal(await phone.evaluate(()=>JSON.stringify({p:StarfallApp.game.player,score:StarfallApp.game.score,scroll:StarfallApp.game.scroll})),snapshot);
-  await phone.getByRole('button',{name:'继续飞行',exact:true}).tap();await phone.screenshot({path:'artifacts/phone-landscape.png'});await phone.evaluate(()=>StarfallApp.background());
+  await (await routedButton(phone,'继续飞行')).tap();await phone.screenshot({path:'artifacts/phone-landscape.png'});await phone.evaluate(()=>StarfallApp.background());
   report.push({surface:'mobile390x844',realMultitouch:true,holdFire:true,releaseStops:true,noBattlefieldDrag:true,classicHUD:true,backgroundPause:true,rotationPreservesState:true});
   // Fresh paused state for each fold/tablet size; resize never restarts a stage.
   for(const [width,height,name] of [[768,900,'fold-open'],[1024,768,'tablet-landscape'],[320,568,'small-phone']]){
     const before=await phone.evaluate(()=>({score:StarfallApp.game.score,frame:StarfallApp.game.frame,stage:StarfallApp.game.stage.id}));
     await phone.setViewportSize({width,height});await phone.waitForTimeout(60);await bounds(phone);assert.deepEqual(await phone.evaluate(()=>({score:StarfallApp.game.score,frame:StarfallApp.game.frame,stage:StarfallApp.game.stage.id})),before);
-    await phone.getByRole('button',{name:'继续飞行',exact:true}).tap();await phone.screenshot({path:`artifacts/${name}.png`});await phone.evaluate(()=>StarfallApp.background());report.push({surface:name,withinViewport:true,resizePreservesState:true});
+    await (await routedButton(phone,'继续飞行')).tap();await phone.screenshot({path:`artifacts/${name}.png`});await phone.evaluate(()=>StarfallApp.background());report.push({surface:name,withinViewport:true,resizePreservesState:true});
   }
   const legacy=await browser.newContext({locale:'zh-CN',viewport:{width:375,height:812},isMobile:true,hasTouch:true});await legacy.addInitScript(()=>{
     delete window.PointerEvent;delete Element.prototype.replaceChildren;
     // Deleting Chromium's constructor alone does not stop its native pointer stream.
     // Old WebKit emits only touch events, so suppress trusted native pointer events here.
     for(const name of ['pointerdown','pointermove','pointerup','pointercancel'])document.addEventListener(name,e=>{if(e.isTrusted)e.stopImmediatePropagation();},true);
-  });const old=await open(legacy);await old.locator('#start').tap();await resetArena(old);
+  });const old=await open(legacy);await old.locator('#start').tap();await finishSetup(old);await resetArena(old);
   const touch=(name,end=false)=>old.evaluate(({name,end})=>{
     const ids=['joystick','fire'];for(let i=0;i<ids.length;i++){const el=document.getElementById(ids[i]),r=el.getBoundingClientRect(),ev=new Event(name,{bubbles:true,cancelable:true});Object.defineProperty(ev,'changedTouches',{value:[{identifier:i+8,target:el,clientX:r.x+r.width*(i?.5:.8),clientY:r.y+r.height*.5}]});el.dispatchEvent(ev);}
   },{name,end});

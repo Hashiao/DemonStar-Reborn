@@ -1,10 +1,11 @@
+import {setting,finishSetup,routedButton} from './ui-navigation.mjs';
 // 真实关卡与全原型渲染验收。 / Actual-stage and complete-prototype rendering checks.
 import assert from 'node:assert/strict';import {createRequire} from 'node:module';import {writeFile} from 'node:fs/promises';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
 const browser=await chromium.launch({channel:'chrome',headless:true}),errors=[],stages=[],drawn=new Set();
 const page=await browser.newPage({locale:'zh-CN',viewport:{width:480,height:900},deviceScaleFactor:2});page.on('pageerror',e=>errors.push(String(e)));
 try{
- await page.goto(process.env.GAME_URL||'http://127.0.0.1:4174');await page.waitForFunction(()=>StarfallApp.renderer.presentationReady()&&StarfallApp.renderer.enemyArtReady());await page.locator('#start').click();
+ await page.goto(process.env.GAME_URL||'http://127.0.0.1:4174');await page.waitForFunction(()=>StarfallApp.renderer.presentationReady()&&StarfallApp.renderer.enemyArtReady());await page.locator('#start').click();await finishSetup(page);
  for(let id=1;id<=18;id++){
   await page.evaluate(id=>{StarfallApp.game.start(1,id);StarfallApp.game.pause();StarfallApp.renderer.prepareStage(id);},id);await page.waitForFunction(id=>StarfallApp.renderer.campaignReady(id),id);
   const info=await page.evaluate(id=>{const r=StarfallApp.renderer,names=[...new Set(DemonStarCampaign.levels[id-1].events.map(row=>DemonStarCampaign.definitions[DemonStarCampaign.byId[row[2]]].sprite))];return {id,names,assets:[...r.campaignAtlases.keys()],decodedBytes:[...r.campaignAtlases.values()].reduce((n,im)=>n+im.naturalWidth*im.naturalHeight*4,0)};},id);

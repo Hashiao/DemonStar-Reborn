@@ -18,7 +18,7 @@ final class TouchTests: XCTestCase {
         func tap(_ prefix: String) {
             // 原生首选语言不能覆盖保存的手动选择；接受三语的真实菜单。
             // Native preferences must not override saved language choices; accept the actual trilingual menu.
-            let labels = ["Multiplayer": ["Multiplayer", "多人游戏", "多人遊戲"], "Two players · same device": ["Two players · same device", "同屏双人", "同屏雙人"], "Single player": ["Single player", "单人游戏", "單人遊戲"]][prefix]!
+            let labels = ["Multiplayer": ["Multiplayer", "多人游戏", "多人遊戲"], "Two players · same device": ["Two players · same device", "同屏双人", "同屏雙人"], "Single player": ["Single player", "单人游戏", "單人遊戲"]][prefix] ?? (prefix == "Start from stage 1" ? ["Start from stage 1", "从头开始", "從頭開始"] : ["Launch", "开始游戏", "開始遊戲"])
             let button = app.webViews.buttons.matching(NSPredicate(format: "label BEGINSWITH %@ OR label BEGINSWITH %@ OR label BEGINSWITH %@", labels[0], labels[1], labels[2])).firstMatch
             XCTAssertTrue(button.waitForExistence(timeout: 20), prefix); button.tap()
         }
@@ -26,6 +26,7 @@ final class TouchTests: XCTestCase {
             app.launch(); XCTAssertTrue(app.staticTexts["touch-probe"].waitForExistence(timeout: 25))
             wait { state()["phase"] as? String == "menu" }
             if count == 2 { tap("Multiplayer"); tap("Two players · same device") } else { tap("Single player") }
+            tap("Start from stage 1"); tap("Launch")
             wait { state()["phase"] as? String == "playing" }
             XCTAssertEqual((state()["players"] as? [[String: Any]])?.count, count)
             for index in 0..<count {

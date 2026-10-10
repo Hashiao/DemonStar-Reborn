@@ -22,7 +22,7 @@ def tap(identifier):
 run('shell','am','force-stop','io.github.hashiao.demonstar')
 run('shell','am','start','-n','io.github.hashiao.demonstar/.MainActivity');time.sleep(2)
 start=node('start');assert '单人游戏' in (start.get('content-desc') or start.get('text',''))
-capture('android-menu.png');tap('start');time.sleep(2)
+capture('android-menu.png');tap('start');tap('new-run');tap('setup-start');time.sleep(2)
 capture('android-launch.png');time.sleep(7)
 assert '关卡' in node('stage-label').get('text','')
 first=capture('android-game-before.png');time.sleep(.7);second=capture('android-game.png');assert first!=second,'Game rendering did not advance'
