@@ -8,12 +8,25 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前里程碑 M2.11（v0.2.11）修复 iOS 长按选字并重排单人、多人和设置入口，仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
+**当前里程碑 M2.12（v0.2.12）提供分类设置、暂停难度与读档，以及可选三色火力保留，仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
 
 
 ![菜单](docs/screenshots/menu.png)
 
-## 当前里程碑 M2.11
+## 当前里程碑 M2.12
+
+- 设置分为声音与震动、玩家与操作、画面与界面、游戏规则、语言。存读档移至开局和暂停入口。
+- 单人、同屏双人、局域网双人均先选择从头开始或关卡，再选择难度。暂停可随时调整难度并继续原战斗；联机由房主统一操作。
+- 新增默认关闭的三色火力保留：黄/蓝/红分别升级至 6，换色与低能量不降级，仅死亡清空。黄 6 → 蓝 1 → 黄补给会触发黄色清屏，之后蓝补给升为蓝 2。S 只补满当前颜色。规则在开局确定、读档恢复，并随局域网同步。
+- 关卡档仍保存入关状态，包括入关难度、装备、三色进度与分数；暂停读档从关卡起点重玩。兼容旧档，联机双方须使用兼容版本。经典 HUD、P2 原作蓝色、原版 HP/伤害表保持不变。
+
+176 项引擎/单元及 19 组浏览器回归通过。Android Release/Debug 构建、两种 Lint（各 0 错误、12 警告）、API 37 模拟器操作/分类设置/三语/原生 App 双进程联机通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38092413740) 通过 iPhoneOS 构建、iOS 18.5 iPhone/iPad 常规检查、双模拟器 TCP 的三色进度与难度同步、断线重连，以及单人/双人系统长按检查。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.12/DemonStar-Reborn-release.apk) · [IPA（未签名，须自行签名）](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.12/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.12/SHA256SUMS.txt) · [完整报告](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.12/verification.json)
+
+[分类设置](docs/screenshots/m212-settings-home.png) · [暂停菜单](docs/screenshots/m212-pause-menu.png) · [开局设置](docs/screenshots/m212-launch-options.png) · [定位与规则说明](docs/M2_12_SETTINGS.md)。实际玩法仍限单人/双人，3P/4P 仅协议预留；真机热点、Android–iOS 真机配对、实体手柄和震动手感未实测，最低系统目标不等于已测系统。
+
+## M2.11 已完成内容
 
 - 修复 iOS 长按 A/B、摇杆时的文字选择与长按菜单冲突；防护包含两位玩家、固定/浮动摇杆和八方向按键，联机文本框仍可选择与粘贴。
 - 主菜单前三项为“单人游戏 → 多人游戏 → 设置”。多人页提供“同屏双人 / 局域网双人”；单人入口固定启动 1P，设置保留操作映射，不再混放联机和人数入口。

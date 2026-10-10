@@ -2,7 +2,7 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-当前是 **M2.11：iOS 长按与主菜单入口修复**，不是已验证的完整 1:1 移植。先还原 1–18 关，19–25 关尚未开发。
+当前是 **M2.12：分类设置、暂停难度与可选三色火力**，不是已验证的完整 1:1 移植。先还原 1–18 关，19–25 关尚未开发。
 
 | 范围 | 当前状态 |
 |---|---|
@@ -46,3 +46,5 @@ M2.8：追踪导弹恢复 4×8、定速 8/步、固定转向步及转后对齐�
 M2.10 保留红 P1/蓝 P2 与原作图标 HUD：P2 右下角，小蓝机在能量条左端，炸弹在上方。结算使用战场叠层、玩家框和图标三行奖励，两端共用像素重绘图标。iOS BGM 改用原生播放器，首屏、暂停/恢复、开关和音量由原生计时验收。18 关、HP 和伤害表未变；完整还原仍受上述动画、时序与真机边界限制。见 [开发记录](M2_10_DEVELOPMENT.md)、[表现证据](M2_10_PRESENTATION.md) 和 [设备清单](M2_10_DEVICE_CHECKLIST.md)。
 
 M2.11: [iOS 长按与菜单修复 / iOS touch and menu fixes](M2_11_INPUT_MENU.md)。原作数据与上述还原边界未变。 / Original data and fidelity limitations above remain unchanged.
+
+M2.12: [分类设置与可选三色规则 / Categorized settings and optional retained colors](M2_12_SETTINGS.md)。默认仍使用已核实原作规则，新增保留模式是用户要求的可选扩展，不宣称原作行为。 / Verified classic rules remain the default; retained colors are a user-requested optional extension, not claimed original behavior.

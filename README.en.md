@@ -8,12 +8,25 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
 
-**Current milestone M2.11 (v0.2.11) fixes iOS long-press selection and reorganizes solo, multiplayer and settings entries. This is not a complete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
+**Current milestone M2.12 (v0.2.12) adds categorized settings, paused difficulty/load controls and optional retained color power. This is not a complete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
 
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.11
+## Current milestone M2.12
+
+- Settings now separate sound/haptics, player controls, display/interface, game rules and language. Save/load entries move to setup and pause.
+- Solo, same-device two-player and LAN two-player games select a fresh start or stage, then difficulty. Difficulty can change while paused without restarting combat; LAN hosts control the shared change.
+- Optional retained color power defaults off: yellow/blue/red each reach level 6, survive color changes and low energy, and clear only on death. Yellow 6 → blue 1 → yellow pickup triggers a yellow nova; the next blue pickup gives blue 2. S fills only the equipped color. The rule is chosen before launch, restored by loading and replicated over LAN.
+- Saves remain stage-entry checkpoints, including entry difficulty, equipment, color banks and score. Loading from pause restarts that stage. Legacy saves work; LAN peers need compatible versions. Classic HUD, original blue P2 and original HP/damage tables remain unchanged.
+
+176 engine/unit tests and 19 browser suites passed. Android Release/Debug builds, both Lint checks (0 errors, 12 warnings each), API 37 controls/categories/localization and native app-process pair LAN passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38092413740) passed iPhoneOS compilation, standard iOS 18.5 iPhone/iPad checks, simulator-pair TCP color/difficulty replication and reconnection, plus solo/two-player system long presses.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.12/DemonStar-Reborn-release.apk) · [Unsigned IPA — requires user signing](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.12/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.12/SHA256SUMS.txt) · [Full report](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.12/verification.json)
+
+[Settings categories](docs/screenshots/m212-settings-home.png) · [Pause menu](docs/screenshots/m212-pause-menu.png) · [Launch setup](docs/screenshots/m212-launch-options.png) · [Diagnosis and rules](docs/M2_12_SETTINGS.md). Public play remains solo/two-player, with P3/P4 reserved in the protocol. Physical hotspots, Android–iOS hardware pairs, controllers and haptic feel remain untested; minimum deployment targets are not tested-device claims.
+
+## M2.11 completed
 
 - Fix iOS text selection/callouts while holding A/B or sticks. Guards cover both players and fixed/floating/eight-way controls; LAN text fields retain selection and paste.
 - The first main entries are Single player → Multiplayer → Settings. Multiplayer offers same-device two-player or LAN play. Single player always starts P1; settings retain bindings without hiding LAN or player-count selection there.

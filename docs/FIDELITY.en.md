@@ -2,7 +2,7 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-Current milestone: **M2.11, iOS long-press and main-menu fixes**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+Current milestone: **M2.12, categorized settings, live difficulty and optional retained power**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
 
 | Area | Current status |
 |---|---|
@@ -28,3 +28,5 @@ M2.8 restores thin 4×8 homing missiles, eight units per tick, original turn ste
 M2.10 retains red P1/blue P2 and the classic icon HUD: P2 sits bottom-right, with its blue ship left of the energy bar and bombs above. Results use battlefield player panels and three icon reward rows; both platforms share a pixel-redrawn launcher icon. Native iOS BGM timing verifies startup, pause/resume, enable/mute and volume. The eighteen-stage, HP and damage tables are unchanged. Animation, timing and hardware limitations above still preclude full-fidelity claims. See the [development record](M2_10_DEVELOPMENT.md), [presentation evidence](M2_10_PRESENTATION.md) and [device checklist](M2_10_DEVICE_CHECKLIST.md).
 
 M2.11: [iOS 长按与菜单修复 / iOS touch and menu fixes](M2_11_INPUT_MENU.md)。原作数据与上述还原边界未变。 / Original data and fidelity limitations above remain unchanged.
+
+M2.12: [分类设置与可选三色规则 / Categorized settings and optional retained colors](M2_12_SETTINGS.md)。默认仍使用已核实原作规则，新增保留模式是用户要求的可选扩展，不宣称原作行为。 / Verified classic rules remain the default; retained colors are a user-requested optional extension, not claimed original behavior.
