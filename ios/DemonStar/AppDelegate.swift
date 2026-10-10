@@ -62,6 +62,19 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
     // 显式 CI 参数测试真实打包 WebView；常规烟测不主动建立局域网连接。
     // Explicit CI probes exercise the packaged WebView; the standard smoke test does not open LAN connections.
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        #if targetEnvironment(simulator)
+        // 仅模拟器显式参数读取 CI 放入沙盒的探针，不包含在 iPhoneOS 分支。
+        // Only an explicit simulator argument loads the sandbox CI probe; excluded from iPhoneOS.
+        if ProcessInfo.processInfo.arguments.contains("--lan-probe"),
+           let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
+           let script = try? String(contentsOf: dir.appendingPathComponent("lan-probe.js"), encoding: .utf8) {
+            webView.evaluateJavaScript(script) { [weak self] _, error in
+                if let error = error { self?.saveLANProbe(["status": "error", "error": error.localizedDescription]) }
+                else { self?.collectLANProbe(attempts: 360) }
+            }
+            return
+        }
+        #endif
         guard ProcessInfo.processInfo.arguments.contains("--smoke-test") else { return }
         // 冷启动后布局可能改变；等待布局和资源稳定，再按逻辑帧测试操作。
         // Cold WKWebView startup can resize after didFinish. Wait for layout/assets,
@@ -135,6 +148,26 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
             try? text.write(to: dir.appendingPathComponent("smoke.json"), atomically: true, encoding: .utf8)
         }
     }
+    #if targetEnvironment(simulator)
+    private func saveLANProbe(_ value: [String: Any]) {
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
+           let data = try? JSONSerialization.data(withJSONObject: value) {
+            try? data.write(to: dir.appendingPathComponent("lan-probe.json"), options: .atomic)
+        }
+    }
+    private func collectLANProbe(attempts: Int) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.web.evaluateJavaScript("window.lanProbeResult || null") { result, error in
+                if let value = result as? [String: Any] {
+                    self?.saveLANProbe(value)
+                    if let status = value["status"] as? String, status == "passed" || status == "error" { return }
+                }
+                if attempts > 0 { self?.collectLANProbe(attempts: attempts - 1) }
+                else { self?.saveLANProbe(["status": "error", "error": "Native LAN probe timed out"]) }
+            }
+        }
+    }
+    #endif
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         decisionHandler(navigationAction.request.url?.isFileURL == true ? .allow : .cancel)
     }

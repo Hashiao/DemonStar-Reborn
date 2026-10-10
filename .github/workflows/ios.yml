@@ -2,7 +2,7 @@ name: iOS build and simulator smoke test
 on:
   push:
     branches: [main]
-    paths: ['web/**', 'ios/**', 'tools/sync.mjs', 'tools/generate-ios-project.py', 'tools/test-ios-simulator.py', 'tests/*.test.mjs', '.github/workflows/ios.yml', 'package.json', 'pnpm-lock.yaml']
+    paths: ['web/**', 'ios/**', 'tools/sync.mjs', 'tools/generate-ios-project.py', 'tools/test-ios-simulator.py', 'tools/test-ios-lan.py', 'tools/ios-lan-probe.js', 'tests/*.test.mjs', '.github/workflows/ios.yml', 'package.json', 'pnpm-lock.yaml']
   pull_request:
     paths: ['web/**', 'ios/**', 'tools/**', 'tests/**', '.github/workflows/ios.yml', 'package.json']
   workflow_dispatch:
@@ -42,6 +42,8 @@ jobs:
           cd artifacts && zip -qr DemonStar.ipa Payload
       - name: Build and launch on an existing iPhone simulator
         run: python3 tools/test-ios-simulator.py
+      - name: Verify two-player native LAN on existing iPhone and iPad simulators
+        run: python3 tools/test-ios-lan.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
