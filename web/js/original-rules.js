@@ -95,8 +95,8 @@
     }
     spawnX(p){return this.players.length===1?W/2:W*(p.id/(this.players.length+1));}
     playerById(id){return this.players?.find(p=>p.id===id);}
-    livePlayers(){return this.players.filter(p=>p.lives>0&&p.respawn<=0);}
-    targetPlayer(x,y){return this.livePlayers().reduce((best,p)=>!best||Math.hypot(p.x-x,p.y-y)<Math.hypot(best.x-x,best.y-y)?p:best,null)||this.players.find(p=>p.lives>0)||this.player;}
+    livePlayers(){return this.players.filter(p=>p.connected!==false&&p.lives>0&&p.respawn<=0);}
+    targetPlayer(x,y){return this.livePlayers().reduce((best,p)=>!best||Math.hypot(p.x-x,p.y-y)<Math.hypot(best.x-x,best.y-y)?p:best,null)||this.players.find(p=>p.connected!==false&&p.lives>0)||this.player;}
     nextStage(){if(this.phase!=='cleared'||this.stage.id>=18)return false;this.loadStage(this.stage.id+1);return true;}
     beginPresentation(){
       this.effects=[];this.wrecks=[];this.stageBonus=null;this.stageBonuses=[];this.launch=null;
@@ -104,7 +104,7 @@
       if(this.presentation){this.phase='launch';this.launch={ticks:0,carrierY:-64,previousY:-64};}
     }
     pause(){if(['playing','launch','aftermath'].includes(this.phase)){this.resumePhase=this.phase;this.phase='paused';return true;}return false;}
-    resume(){if(this.phase==='paused'){this.pendingTime=0;this.phase=this.resumePhase||'playing';return true;}return false;}
+    resume(){if(this.phase==='paused'){this.pendingTime=0;if(this.players.every(p=>p.lives<=0||p.connected===false)){this.phase='gameover';this.events.push({type:'gameover'});}else this.phase=this.resumePhase||'playing';return true;}return false;}
     drainEvents(){return this.events.splice(0);}
     move(dx,dy,p=this.player){if(this.phase==='playing'&&p.lives>0){p.x=clamp(p.x+dx,16,W-16);p.y=clamp(p.y+dy,64,H-40);}}
     addBullet(x,y,vx,vy,friendly=false,damage=1,style=0,extra={}){if(this.bullets.length>1800)return;const playerId=friendly?(extra.playerId??this.player.id):undefined;this.bullets.push({x,y,px:x,py:y,vx,vy,friendly,damage,style,r:3,life:5,...(friendly?{playerId}:{}),...extra});if(friendly){this.shotsFired++;const p=this.playerById(playerId);if(p)p.shotsFired++;}}
@@ -136,7 +136,7 @@
       const a=b.flightAngle*Math.PI/1024;b.vx=Math.sin(a)*b.speedStep*TICK;b.vy=-Math.cos(a)*b.speedStep*TICK;
     }
     firePlayer(part='all',p=this.player){
-      if(p.lives<=0||p.respawn>0)return;
+      if(p.connected===false||p.lives<=0||p.respawn>0)return;
       if(part!=='enhancement')for(const [type,muzzle] of P.slots[0].levels[0]){const [x,y]=P.muzzles[muzzle];this.emitPlayerShot(type,p.x-16+x,p.y-16+y,0,{playerId:p.id});}
       if(part!=='base'&&!p.defaultWeapon){
         for(const [type,muzzle] of P.slots[p.weapon+1].levels[p.power-1]){
@@ -305,7 +305,7 @@
       state.wait=rule.interval;
     }
     collect(item,p=this.player){
-      if(item.dead||p.lives<=0||p.respawn>0)return false;
+      if(item.dead||p.connected===false||p.lives<=0||p.respawn>0)return false;
       const t=item.type;
       if(['weapon','ion','plasma','magnetic'].includes(t))this.upgradeWeapon(['weapon','ion','plasma','magnetic'].indexOf(t),false,p);
       if(t==='full')this.upgradeWeapon(p.defaultWeapon?0:p.weapon,true,p);
@@ -323,13 +323,13 @@
       if(!p.defaultWeapon){const id=[2,3,4,4][p.weapon];if(p.power===6)this.spawnPickup(id,p.x,p.y,true);this.spawnPickup(id,p.x,p.y,true);}
     }
     collideEnemy(e,p=this.player){
-      if(e.dead||e.dying||e.scenery||e.ground||p.lives<=0||p.respawn>0||p.invincible>0||this.phase!=='playing')return false;
+      if(e.dead||e.dying||e.scenery||e.ground||p.connected===false||p.lives<=0||p.respawn>0||p.invincible>0||this.phase!=='playing')return false;
       this.hitPlayer(collisionDamage(e.def.width),'collision',p);
       e.hp-=305;e.hit=.06;if(e.hp<=0)this.killEnemy(e,p);
       return true;
     }
     hitPlayer(damage=1,source='projectile',p=this.player){
-      if(p.lives<=0||p.respawn>0||p.invincible>0||this.phase!=='playing')return false;
+      if(p.connected===false||p.lives<=0||p.respawn>0||p.invincible>0||this.phase!=='playing')return false;
       if(p.shield>0)return true;
       const loss=source==='collision'?damage:projectileDamage(damage,this.difficulty);
       p.energy-=loss;this.shake=3;this.events.push({type:'hit',damage:loss,source,playerId:p.id});
@@ -339,12 +339,12 @@
         p.lives--;p.energy=p.maxEnergy;p.power=0;p.weapon=0;p.defaultWeapon=true;p.fire=p.baseFire=0;p.side=p.rear=0;p.sideBurst=p.rearBurst=0;p.missileAmmo=0;p.missileType=8;p.mega=0;p.bombInventory=[0,0,0];p.bombCooldown=0;
         p.respawn=45*STEP;p.invincible=135*STEP;p.x=p.px=this.spawnX(p);p.y=p.py=H-70;p.bank=8;p.thrust=0;
         this.events.push({type:'player-death',playerId:p.id,lives:p.lives});
-        if(this.players.every(player=>player.lives<=0)){this.phase='gameover';this.events.push({type:'gameover'});}
+        if(this.players.every(player=>player.connected===false||player.lives<=0)){this.phase='gameover';this.events.push({type:'gameover'});}
       }
       return true;
     }
     useBomb(p=this.player){
-      if(this.phase!=='playing'||p.lives<=0||p.respawn>0||p.bombCooldown>1e-9||p.bombs<=0)return false;
+      if(this.phase!=='playing'||p.connected===false||p.lives<=0||p.respawn>0||p.bombCooldown>1e-9||p.bombs<=0)return false;
       const type=p.bombInventory.pop();p.bombCooldown=35*STEP;p.invincible=Math.max(p.invincible,1);
       if(type===2){p.mega=4;p.megaTick=0;}else{
         const hits=[],count=type===0?1:32;
@@ -376,7 +376,7 @@
     }
     updatePlayerBeam(b){
       const p=this.playerById(b.playerId)||this.player;
-      if(this.phase!=='playing'||p.lives<=0||p.respawn>0||p.mega<=0||++b.age>=(b.beamFrames||4)){b.dead=true;return;}
+      if(this.phase!=='playing'||p.connected===false||p.lives<=0||p.respawn>0||p.mega<=0||++b.age>=(b.beamFrames||4)){b.dead=true;return;}
       b.px=b.x;b.py=b.y;b.x=p.x;b.y=p.y-20;b.endY=0;
       // 原作 0x428e70/0x428ed0 从炮口向前扫描并在首个目标处截止。
       // Original 0x428e70/0x428ed0 scans forward from the muzzle and stops at the first target.
@@ -393,7 +393,7 @@
     }
     defeatBoss(){
       if(this.phase!=='playing')return;this.boss=null;this.bullets=[];this.flash=.35;
-      this.stageBonuses=this.players.map(p=>{const bombs=p.lives>0?p.bombs:0,medals=p.lives>0?p.medals:0;return {playerId:p.id,bombs,medals,bombScore:bombs*1000,medalScore:medals*2000,total:bombs*1000+medals*2000};});
+      this.stageBonuses=this.players.map(p=>{const eligible=p.lives>0&&p.connected!==false,bombs=eligible?p.bombs:0,medals=eligible?p.medals:0;return {playerId:p.id,bombs,medals,bombScore:bombs*1000,medalScore:medals*2000,total:bombs*1000+medals*2000};});
       this.stageBonus={bombs:0,medals:0,bombScore:0,medalScore:0,total:0,awarded:false};for(const row of this.stageBonuses)for(const key of ['bombs','medals','bombScore','medalScore','total'])this.stageBonus[key]+=row[key];
       this.events.push({type:'stage-complete',stage:this.stage.id,final:this.stage.id===18});
       if(this.presentation){this.phase='aftermath';this.aftermathTicks=45;}else this.completeStage();
@@ -420,7 +420,7 @@
       while(this.pendingTime+1e-9>=STEP&&['playing','launch','aftermath'].includes(this.phase)){this.pendingTime-=STEP;if(this.phase==='playing')this.step(input);else this.presentationStep();}
     }
     stepPlayer(p,input={}){
-      if(p.lives<=0)return;
+      if(p.connected===false||p.lives<=0)return;
       const dt=STEP;
       const hadShield=p.shield>0;
       for(const k of ['invincible','shield','mega','respawn','bombCooldown'])p[k]=Math.max(0,p[k]-dt);

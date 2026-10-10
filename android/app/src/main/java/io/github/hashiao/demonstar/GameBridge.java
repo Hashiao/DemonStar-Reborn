@@ -52,6 +52,7 @@ final class GameBridge {
         return result;
     }
     private void emit(JSONObject value) { activity.runOnUiThread(() -> output.accept(value)); }
+    private void emit(int run, JSONObject value) { activity.runOnUiThread(() -> { if (run == generation) output.accept(value); }); }
     private void reply(JSONObject request, Object value, String error) { if (request.optInt("requestId") != 0) emit(object("requestId", request.optInt("requestId"), "value", value, "error", error)); }
     @JavascriptInterface public void command(String text) {
         if (text == null || text.length() > LIMIT + 4096) return;
@@ -88,8 +89,8 @@ final class GameBridge {
     private void startHost(JSONObject request) {
         stop(); final int run = generation;
         workers.execute(() -> {
-            try {
-                ServerSocket server = new ServerSocket(); server.setReuseAddress(true); server.bind(new InetSocketAddress(PORT));
+            try (ServerSocket server = new ServerSocket()) {
+                server.setReuseAddress(true); server.bind(new InetSocketAddress(PORT));
                 if (run != generation) { server.close(); return; } listener = server;
                 JSONArray addresses = new JSONArray();
                 for (NetworkInterface network : Collections.list(NetworkInterface.getNetworkInterfaces())) if (network.isUp()) for (InetAddress address : Collections.list(network.getInetAddresses())) if (address instanceof Inet4Address && !address.isLoopbackAddress() && address.isSiteLocalAddress()) addresses.put(address.getHostAddress());
@@ -99,7 +100,7 @@ final class GameBridge {
                     if (peers.size() >= 8) { socket.close(); continue; }
                     attach("peer-" + serial.incrementAndGet(), socket, run);
                 }
-            } catch (Exception error) { if (run == generation) { reply(request, null, "listen-failed"); emit(object("type", "error", "error", "listen-failed")); } }
+            } catch (Exception error) { if (run == generation) { reply(request, null, "listen-failed"); emit(run, object("type", "error", "error", "listen-failed")); } }
         });
     }
     private void join(JSONObject request) {
@@ -117,7 +118,8 @@ final class GameBridge {
         });
     }
     private void attach(String id, Socket socket, int run) throws Exception {
-        socket.setTcpNoDelay(true); socket.setKeepAlive(true); Peer peer = new Peer(id, socket, run); peers.put(id, peer); emit(object("type", "connected", "peer", id)); workers.execute(peer::read);
+        if (run != generation) { socket.close(); return; }
+        socket.setTcpNoDelay(true); socket.setKeepAlive(true); Peer peer = new Peer(id, socket, run); peers.put(id, peer); emit(run, object("type", "connected", "peer", id)); workers.execute(peer::read);
     }
     void stop() {
         generation++; ServerSocket current = listener; listener = null; try { if (current != null) current.close(); } catch (Exception ignored) { }
@@ -144,14 +146,14 @@ final class GameBridge {
             try {
                 InputStream input = socket.getInputStream(); byte[] buffer = new byte[16384]; ByteArrayOutputStream line = new ByteArrayOutputStream(); int length;
                 while (!closed && run == generation && (length = input.read(buffer)) != -1) for (int i = 0; i < length; i++) {
-                    if (buffer[i] == '\n') { String text = line.toString(StandardCharsets.UTF_8.name()); line.reset(); emit(object("type", "message", "peer", id, "data", text)); }
+                    if (buffer[i] == '\n') { String text = line.toString(StandardCharsets.UTF_8.name()); line.reset(); emit(run, object("type", "message", "peer", id, "data", text)); }
                     else { line.write(buffer[i]); if (line.size() > LIMIT) throw new IllegalArgumentException(); }
                 }
             } catch (Exception ignored) { } finally { close(); }
         }
         synchronized void close() {
             if (closed) return; closed = true; peers.remove(id, this); try { socket.close(); } catch (Exception ignored) { } writer.shutdownNow();
-            if (run == generation) emit(object("type", "disconnected", "peer", id));
+            if (run == generation) emit(run, object("type", "disconnected", "peer", id));
         }
     }
 }

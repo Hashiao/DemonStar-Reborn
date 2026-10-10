@@ -6,9 +6,11 @@
 
 An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 12+**. Imagegen redraws reference the local original while preserving its red fighter and industrial science-fiction style. The independently implemented game code is open source.
 
-The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics, purchases or network permissions.
+The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Published M2.9 packages have no network permissions; the M2.10 development branch adds permissions for optional LAN play.
 
-**Current milestone M2.9 (v0.2.9) fills missing object and enemy-projectile art across eighteen stages. This is not a verified complete 1:1 port.** The original 18 stages come first; stages 19–25 have not been developed. See [fidelity status](docs/FIDELITY.en.md) for confirmed behavior, estimates and remaining differences.
+**Current published milestone M2.9 (v0.2.9) fills missing object and enemy-projectile art across eighteen stages. This is not a verified complete 1:1 port.** The original 18 stages come first; stages 19–25 have not been developed. See [fidelity status](docs/FIDELITY.en.md) for confirmed behavior, estimates and remaining differences.
+
+Development branch `codex/multiplayer-controls` is implementing M2.10: four-seat protocol reserves, currently solo/two-player modes, two-player touch controls, multiple input/remapping options, stage saves, native LAN/haptics and original presentation fixes. Red P1/blue P2 and the original icon HUD follow the user's confirmed direction. Full platform acceptance and new packages are not yet published; the download links above still target the released version. See the [development record](docs/M2_10_DEVELOPMENT.md) and [LAN record](docs/M2_10_NETWORK.md) for progress and verification limits.
 
 ![Menu](docs/screenshots/menu-en.png)
 

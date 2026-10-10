@@ -14,9 +14,9 @@ Published asset: `web/assets/player2-motion-hd.png`, generated with built-in ima
 
 SHA-256: `bbb956f5ab75a6086c697839cd51b3dfafc842626341fceb4b036a78b83ea6ab`。
 
-HUD 蓝色小飞机的紧裁切为 `[632,903,138,135]`，通过 CSS 背景定位使用同一重绘图集，不把留白缩入图标。P2 的机体和 HUD 均显式选用蓝图；扩展的 P3/P4 分别复用红/蓝，并保留编号。三、四人配置是本项目扩展，不冒充原作双人规则。
+HUD 蓝色小飞机的紧裁切为 `[632,903,138,135]`，通过 CSS 背景定位使用同一重绘图集，不把留白缩入图标。P2 的机体和 HUD 均显式选用蓝图；扩展的 P3/P4 分别复用红/蓝，并保留编号。P3/P4 仅为协议与内核预留，当前不开放三、四人玩法。
 
-The blue HUD ship uses a tight `[632,903,138,135]` crop through CSS background coordinates. P2 body and HUD explicitly use this blue atlas. Extended P3/P4 reuse red/blue with distinct numbers; four-player presentation is a remake extension, not an original feature claim.
+The blue HUD ship uses a tight `[632,903,138,135]` crop through CSS background coordinates. P2 body and HUD explicitly use this blue atlas. Extended P3/P4 reuse red/blue with distinct numbers; P3/P4 remain a protocol/core reserve, with no current three/four-player mode.
 
 生成提示词要点 / Generation prompt summary:
 

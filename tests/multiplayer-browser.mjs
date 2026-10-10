@@ -23,5 +23,5 @@ try{
   const snapshot=await page.evaluate(()=>{const g=StarfallApp.game,s=g.checkpoint();g.loadCheckpoint(s,false);return {players:g.players.length,phase:g.phase,frame:g.frame,stage:g.stage.id};});assert.deepEqual(snapshot,{players:4,phase:'playing',frame:0,stage:1});
   await page.evaluate(()=>{StarfallApp.showMenu();StarfallApp.start();});await page.waitForFunction(()=>StarfallApp.game.phase==='playing');
   assert.equal(await page.evaluate(()=>StarfallApp.game.players.length),1);assert.deepEqual(errors,[]);
-  const report={status:'passed',scope:'Renderer and stage checkpoint only; multiplayer touch/LAN UI not yet implemented',draws,snapshot,errors};await writeFile('artifacts/m210-multiplayer-render.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
+  const report={status:'passed',scope:'Renderer and stage checkpoint probe; touch and native LAN have separate acceptance tests',draws,snapshot,errors};await writeFile('artifacts/m210-multiplayer-render.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
 }finally{await browser.close();}

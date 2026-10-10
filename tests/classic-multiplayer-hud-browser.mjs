@@ -8,7 +8,7 @@ try{
   await page.locator('#start').click();await page.evaluate(()=>{const g=StarfallApp.game;g.phase='playing';g.launch=null;g.events=[];g.recordEvents=[];g.pause();});await page.waitForTimeout(100);
   const appearance=selector=>page.locator(selector).first().evaluate(e=>{const s=getComputedStyle(e);return {backgroundImage:s.backgroundImage,backgroundSize:s.backgroundSize,backgroundPosition:s.backgroundPosition,backgroundColor:s.backgroundColor,borderColor:s.borderColor,boxShadow:s.boxShadow,width:s.width,height:s.height};});
   const solo={life:await appearance('#lives .ship-icon'),bomb:await appearance('#bomb-stock .bomb-icon-0'),energy:await appearance('#energy .filled')};
-  for(const count of [2,4]){
+  for(const count of [2]){
     await page.evaluate(count=>{const app=StarfallApp;app.input.config.count=count;app.start();const g=app.game;g.phase='playing';g.launch=null;g.events=[];g.recordEvents=[];for(const [i,p] of g.players.entries()){p.lives=4-i;p.energy=[16,9,3,12][i];p.bombInventory=i===0?[0,1,2,0,1,2]:i===1?[2,1,0,2,1,0]:i===2?[]:[1];p.score=(i+1)*12340;p.invincible=0;}g.pause();},count);await page.waitForTimeout(100);
     assert.equal(await page.locator('#coop-hud .coop-player').count(),count);
     for(let i=0;i<count;i++){const p=page.locator(`#coop-hud [data-player="${i+1}"]`);assert.equal(await p.locator('.classic-lives .ship-icon').count(),3-i);assert.equal(await p.locator('.classic-energy i').count(),16);assert.equal(await p.locator('.classic-energy .filled').count(),[16,9,3,12][i]);assert.equal(await p.locator('.classic-bomb-stock .hud-sprite').count(),[6,6,0,1][i]);assert.ok(!(await p.textContent()).includes('能'));}

@@ -167,7 +167,7 @@
           c.fillStyle=b.friendly?['#ffd85d','#80bdff','#ff99ac','#ffad39'][b.style%4]:'#ffa958';c.fillRect(at.x-2,at.y-5,4,8);
         }
         for(const p of game.players||[game.player]){
-          if(p.lives<=0||p.respawn>0)continue;const at=position(p);
+          if(p.connected===false||p.lives<=0||p.respawn>0)continue;const at=position(p);
           if(game.phase!=='gameover'&&(game.launch||p.mega>0||p.invincible<=0||Math.floor(this.time*14)%2===0))this.player(at.x,at.y,p.power,this.time,1,p);
           if(p.mega>0)this.superCell(game.frame%4,at.x,at.y-8,48,58);
           if(p.shield>0){c.strokeStyle='#83d8ffb0';c.lineWidth=2;c.beginPath();c.arc(at.x,at.y,23,0,Math.PI*2);c.stroke();}

@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- 用户最新范围：3P/4P 仅保留协议与底层扩展能力，当前实际游玩、人数设置、同机触屏和局域网房间只开放单人/双人。不要把四人协议测试写成当前四人玩法已开放。
+  Latest scope: reserve 3P/4P in the protocol/core only. Current gameplay, player-count settings, local touch and LAN rooms expose solo/two-player modes. Four-seat protocol tests must not be described as an available four-player mode.
+
 - 多人 HUD 必须沿用已核实 1P 的原作风格：飞机余命图标、逐枚且区分类型的炸弹图标、16 格能量条。只扩展玩家位置与标识，不得替换为“生命/炸弹/能量”文字表或现代状态卡。
   Multiplayer HUD must reuse the verified 1P style: spare-ship icons, individual typed bomb icons and sixteen energy segments. Extend placement and player identity only; never replace these with text summaries or modern status cards.
 - P2 战机、余命与状态小飞机必须为原作蓝色。以用户于 2026-10-10 最后确认的双人截图排列为准：P2 整组在右下角，小蓝机在能量条左端，炸弹在上方；此前“左右镜像”的口述已被该截图确认取代。
