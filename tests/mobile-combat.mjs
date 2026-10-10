@@ -31,7 +31,9 @@ try{
   await page.keyboard.down('z');await page.keyboard.down('ArrowRight');await page.waitForTimeout(250);await page.keyboard.up('z');await page.keyboard.up('ArrowRight');
   assert.ok(await page.evaluate(()=>StarfallApp.game.shotsFired)>=2);assert.ok(await page.evaluate(()=>StarfallApp.game.player.x)>200);
   await page.locator('#pause').click();const frozen=await page.evaluate(()=>StarfallApp.game.totalTime);await page.waitForTimeout(120);assert.equal(await page.evaluate(()=>StarfallApp.game.totalTime),frozen);
-  await page.getByRole('button',{name:'继续飞行',exact:true}).click();await page.locator('#bomb').click();assert.equal(await page.evaluate(()=>StarfallApp.game.player.bombs),2);await bounds(page);
+  // 输入动作在下一个固定逻辑步执行；等待实际消耗而非事件回调内即时写入。
+  // Actions execute on the next fixed simulation step; wait for the actual inventory change.
+  await page.getByRole('button',{name:'继续飞行',exact:true}).click();await page.locator('#bomb').click();await page.waitForFunction(()=>StarfallApp.game.player.bombs===2);assert.equal(await page.evaluate(()=>StarfallApp.game.player.bombs),2);await bounds(page);
   // Isolate impact routing from the higher-priority radio/menu/bomb voices tested separately.
   await page.evaluate(()=>{StarfallApp.audio.stopAll();StarfallApp.game.specials=[];const g=StarfallApp.game,r=g.stage.map.events.find(r=>DemonStarCampaign.definitions[DemonStarCampaign.byId[r[2]]].sprite==='S_ENEMY14');g.enemies=[];g.bullets=[];g.spawnRecord(r);const e=g.enemies[0];e.x=200;e.y=200;e.pathFinished=true;e.speed=0;e.guns=[];g.addBullet(200,210,0,-400,true,1);});
   await page.waitForFunction(()=>audioEvents.includes('hit'));
@@ -49,7 +51,7 @@ try{
   await phone.waitForTimeout(180);assert.equal(await phone.evaluate(()=>StarfallApp.game.player.x),moved.x);assert.equal(await phone.evaluate(()=>StarfallApp.game.shotsFired),moved.shots);
   // Dragging the battlefield must not reposition the aircraft.
   await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:100,y:300,id:3}]});await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:330,y:450,id:3}]});await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});assert.equal(await phone.evaluate(()=>StarfallApp.game.player.x),moved.x);
-  await phone.locator('#bomb').tap();assert.equal(await phone.evaluate(()=>StarfallApp.game.player.bombs),2);
+  await phone.locator('#bomb').tap();await phone.waitForFunction(()=>StarfallApp.game.player.bombs===2);assert.equal(await phone.evaluate(()=>StarfallApp.game.player.bombs),2);
   await phone.evaluate(()=>{const g=StarfallApp.game;for(let i=0;i<16;i++)g.spawnPickup(i,58+i%4*90,120+Math.floor(i/4)*55);});
   await phone.screenshot({path:'artifacts/mobile-game.png'});const portrait=await bounds(phone);assert.ok(portrait.l.x<1,'Tall phones should use the full playfield width');
   for(const [name,x,y] of [['left',-1,0],['right',1,0],['forward',0,-1],['reverse',0,1]]){
@@ -79,7 +81,7 @@ try{
   },{name,end});
   await touch('touchstart');await old.waitForTimeout(220);await touch('touchcancel',true);await old.waitForTimeout(60);
   const state=await old.evaluate(()=>({x:StarfallApp.game.player.x,shots:StarfallApp.game.shotsFired}));assert.ok(state.x>200&&state.shots>0);await old.waitForTimeout(140);assert.deepEqual(await old.evaluate(()=>({x:StarfallApp.game.player.x,shots:StarfallApp.game.shotsFired})),state);
-  await old.locator('#bomb').tap();assert.equal(await old.evaluate(()=>StarfallApp.game.player.bombs),2);
+  await old.locator('#bomb').tap();await old.waitForFunction(()=>StarfallApp.game.player.bombs===2);assert.equal(await old.evaluate(()=>StarfallApp.game.player.bombs),2);
   await old.locator('#pause').tap();assert.equal(await old.evaluate(()=>StarfallApp.game.phase),'paused');report.push({surface:'legacy-API-fallback-in-Chromium',multiTouchFallback:true,cancelStops:true,actualIOS12:false});
   assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);await writeFile('artifacts/browser-verification.json',JSON.stringify({status:'passed',report,errors,failed},null,2));console.log(JSON.stringify(report));
 }finally{await browser.close();}

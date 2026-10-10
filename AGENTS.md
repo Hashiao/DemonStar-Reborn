@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- 多人 HUD 必须沿用已核实 1P 的原作风格：飞机余命图标、逐枚且区分类型的炸弹图标、16 格能量条。只扩展玩家位置与标识，不得替换为“生命/炸弹/能量”文字表或现代状态卡。
+  Multiplayer HUD must reuse the verified 1P style: spare-ship icons, individual typed bomb icons and sixteen energy segments. Extend placement and player identity only; never replace these with text summaries or modern status cards.
+
 - M2.9：全战役原型和敌弹必须按 `campaign-art.js` / `enemy-shots.js` 显式映射，不得重新引入编号取模飞机或通用地物回退。保留五类炮台固定底座/独立炮管、按关加载与完整图片解码检查。基础外形覆盖不代表全部动画已还原；见 `docs/M2_9_RESEARCH.md`。
   M2.9: use explicit campaign-object and enemy-shot mappings; never reintroduce modulo fighters or generic scenery fallbacks. Preserve five fixed-base turret layers, per-stage loading and complete-image readiness. Base-art coverage is not full animation fidelity; see the M2.9 research document.
 

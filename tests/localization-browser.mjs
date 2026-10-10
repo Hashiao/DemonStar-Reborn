@@ -20,7 +20,7 @@ try{
   const prefs=await page.evaluate(()=>JSON.parse(localStorage.getItem('demonstar-reborn-v1')));assert.deepEqual(prefs.best,[1234,5678,0,0]);assert.deepEqual(prefs.unlocked,[3,5,1,1]);assert.equal(prefs.music,false);assert.equal(prefs.musicVolume,0);assert.equal(prefs.sound,false);
   await page.goto(url+'#system-language=zh-CN');await page.reload();await page.waitForFunction(()=>globalThis.StarfallApp);assert.equal(await page.locator('html').getAttribute('lang'),'en');assert.ok((await page.locator('#start').textContent()).includes('Start game'));
   await page.locator('#help').tap();assert.ok((await page.locator('#dialog-content').textContent()).includes('Matching colored orbs'));await page.getByRole('button',{name:'Ready to fly',exact:true}).tap();
-  await page.locator('#missions').tap();assert.equal(await page.locator('[data-stage="5"]').isEnabled(),true);assert.equal(await page.locator('[data-stage="6"]').isEnabled(),false);await page.getByRole('button',{name:'Back to hangar',exact:true}).tap();
+  await page.locator('#missions').tap();assert.equal(await page.locator('[data-stage="5"]').isEnabled(),true);assert.equal(await page.locator('[data-stage="6"]').isEnabled(),true);await page.getByRole('button',{name:'Back to hangar',exact:true}).tap();
   await page.locator('#start').tap();await page.waitForFunction(()=>StarfallApp.game.phase==='playing');
   await page.evaluate(()=>{const g=StarfallApp.game;g.recordEvents=[];g.enemies=[];g.player.invincible=999;g.collect({type:'plasma'});g.collect({type:'missile'});g.spawnRecord(g.stage.map.events.find(e=>e[2]===40));g.boss.x=g.boss.px=200;g.boss.y=g.boss.py=160;});
   await page.locator('#pause').tap();const snapshot=await page.evaluate(()=>JSON.stringify(StarfallApp.game));
