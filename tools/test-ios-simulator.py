@@ -3,6 +3,22 @@ import json, os, pathlib, plistlib, re, subprocess, time
 root=pathlib.Path(__file__).resolve().parents[1]
 out=root/'artifacts';out.mkdir(exist_ok=True)
 def run(args): return subprocess.check_output(args,cwd=root,text=True,timeout=600).strip()
+
+def install_clean(uid):
+    # 冷启动的 CoreSimulator 偶有卸载超时；只对超时重启同一模拟器并重试一次。
+    # A cold CoreSimulator can time out during uninstall; reboot this same device once on timeout only.
+    for attempt in range(2):
+        try:
+            existing=subprocess.run(['xcrun','simctl','get_app_container',uid,'io.github.hashiao.demonstar','data'],capture_output=True,text=True,timeout=60)
+            if existing.returncode==0:
+                subprocess.run(['xcrun','simctl','terminate',uid,'io.github.hashiao.demonstar'],capture_output=True,timeout=60)
+                subprocess.run(['xcrun','simctl','uninstall',uid,'io.github.hashiao.demonstar'],check=True,timeout=120)
+            run(['xcrun','simctl','install',uid,str(root/'.local/ios-simulator/Build/Products/Release-iphonesimulator/DemonStar.app')])
+            return
+        except subprocess.TimeoutExpired:
+            if attempt: raise
+            print('Simulator install/reset timed out; rebooting the existing device once: '+uid,flush=True)
+            run(['xcrun','simctl','shutdown',uid]);run(['xcrun','simctl','boot',uid]);run(['xcrun','simctl','bootstatus',uid,'-b'])
 device_app=root/'.local/ios-device/Build/Products/Release-iphoneos/DemonStar.app'
 info=plistlib.loads((device_app/'Info.plist').read_bytes())
 assert info['MinimumOSVersion']=='12.0',info['MinimumOSVersion']
@@ -25,8 +41,8 @@ for family in ('iPhone','iPad'):
     locale_cases=[]
     cases=[('zh-Hans-CN','zh-Hans'),('zh-Hant-TW','zh-Hant'),('fr-FR','en')] if family=='iPhone' else [('zh-Hant-HK','zh-Hant')]
     for language,expected in cases:
-        subprocess.run(['xcrun','simctl','uninstall',uid,'io.github.hashiao.demonstar'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=60)
-        run(['xcrun','simctl','install',uid,str(root/'.local/ios-simulator/Build/Products/Release-iphonesimulator/DemonStar.app')])
+        print(f'{family} {language}: reset/install existing simulator',flush=True)
+        install_clean(uid)
         container=pathlib.Path(run(['xcrun','simctl','get_app_container',uid,'io.github.hashiao.demonstar','data']))
         result=container/'Documents/smoke.json'
         if result.exists():result.unlink()

@@ -47,3 +47,13 @@ Unit tests retain the four-seat protocol reserve and add the current two-player 
 证据边界：浏览器端平台标签只是测试夹具，桌面 TCP 端不是 iOS 真机。adb 转发验证原生套接字与应用协议，不替代实际热点可达性、跨品牌安卓设备、Android–iOS 或 iOS–iOS 原生联局。早期原生桥接提交 `0764f6e` 的 [iOS 构建/常规模拟器运行](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38044298431) 已成功；新的房间代码仍需后续 iOS 和双设备验收。
 
 Limits: browser platform labels are fixtures and desktop TCP peers are not iOS devices. adb forwarding verifies native sockets/application protocol, not hotspot reachability, different Android vendors, Android–iOS or iOS–iOS native sessions. The linked iOS build/standard simulator run succeeded for the earlier bridge commit `0764f6e`; newer room code still needs subsequent iOS and device-pair verification.
+
+## iOS 原生双端证据 / Native iOS pair evidence
+
+提交 `12c5f67` 的 [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38046858657) 已通过 iPhoneOS 构建、四种首选语言/三语切换检查，以及既有 iPhone 与 iPad 模拟器的真实 Network.framework TCP 双人联局。两端核对了冷主菜单 BGM、P2 移动/开火/炸弹、同帧暂停、保留装备重连及第二关同步暂停。使用模拟器回环网络，不冒充真机热点；这一提交早于后续 Boss/结算/图标修改。
+
+The linked CI for `12c5f67` passed the iPhoneOS build, four native-language cases with trilingual switching, and actual two-player Network.framework TCP between existing iPhone/iPad simulators. Both ends checked cold-menu BGM, P2 movement/fire/bombs, shared paused frames, equipment-preserving reconnect and stage-two synchronized pause. Simulator loopback is not a physical-hotspot test; this commit predates subsequent Boss/results/icon changes.
+
+最新表现提交 `560fdcb` 的首轮 iOS 构建成功，但常规模拟器在卸载旧 App 时超过 60 秒，后续检查未执行。该失败运行 [38047611281](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38047611281) 保留为失败记录。验收脚本现在跳过未安装应用的卸载，并只在超时时重启同一既有模拟器重试一次；新完整构建仍需通过。
+
+The first iOS pass for presentation commit `560fdcb` built successfully but timed out uninstalling the old app after 60 seconds, skipping later checks. Run 38047611281 remains a failed record. The harness now skips uninstall when absent and reboots the same existing simulator once only on a timeout. A fresh complete build still must pass.

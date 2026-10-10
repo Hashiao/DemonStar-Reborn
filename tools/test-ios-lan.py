@@ -20,7 +20,7 @@ def wait_report(path, statuses, timeout=150):
             if value.get('status') in statuses:
                 return value
         time.sleep(0.5)
-    raise RuntimeError('LAN probe timed out: ' + str(path))
+    raise RuntimeError('LAN probe timed out: ' + str(path) + '; last=' + (path.read_text() if path.exists() else 'missing'))
 
 
 def main():
@@ -33,6 +33,7 @@ def main():
     try:
         for device in devices:
             uid = device['udid']
+            print('LAN: boot existing simulator '+device['name'],flush=True)
             if device['state'] != 'Booted':
                 run('boot', uid)
             run('bootstatus', uid, '-b')
@@ -46,8 +47,10 @@ def main():
             (containers[index] / 'lan-probe.js').write_text('window.lanProbeConfig=' + json.dumps(config) + ';\n' + script)
             run('launch', '--terminate-running-process', devices[index]['udid'], PACKAGE, '--lan-probe')
         launch(0, {'role': 'host'})
+        print('LAN: waiting for native host lobby',flush=True)
         lobby = wait_report(probes[0], ['lobby'])
         launch(1, {'role': 'client', 'code': lobby['code']})
+        print('LAN: waiting for two-player actions, reconnect and stage pause',flush=True)
         results = [wait_report(probe, ['passed']) for probe in probes]
         for index, result in enumerate(results):
             assert result['players'] == 2 and result['localSlot'] == index + 1, result

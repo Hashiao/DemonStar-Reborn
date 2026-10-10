@@ -16,6 +16,7 @@
       step=1;report('connecting',{startupBGM:true});return;
     }
     if(room.status==='error'||room.status==='rejected')throw new Error(room.error);
+    report('running',{gamePhase:g.phase,roomStatus:room.status,frame:g.frame,players:g.players.length,connected:room.members.map(function(m){return m.connected;}),shots:p?p.shotsFired:0,bombs:p?p.bombs:0,roomError:room.error});
     if(config.role==='host'){
       if(step===1&&room.status==='lobby'){
         report('lobby',{code:room.code,startupBGM:true});if(room.members.length!==2)return;
