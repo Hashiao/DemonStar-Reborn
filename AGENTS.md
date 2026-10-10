@@ -3,6 +3,11 @@
 - 用户最新范围：3P/4P 仅保留协议与底层扩展能力，当前实际游玩、人数设置、同机触屏和局域网房间只开放单人/双人。不要把四人协议测试写成当前四人玩法已开放。
   Latest scope: reserve 3P/4P in the protocol/core only. Current gameplay, player-count settings, local touch and LAN rooms expose solo/two-player modes. Four-seat protocol tests must not be described as an available four-player mode.
 
+- M2.12：设置按声音与震动、玩家与操作、画面与界面、游戏规则、语言分类；存读档放在开局/暂停入口。新游戏先选起始关卡，再选难度；暂停可改难度而不重置战斗，局域网由房主统一操作。关卡档仍保存入关状态（含入口难度），兼容旧档。
+  M2.12: categorize settings into sound/haptics, player controls, display/interface, game rules and language. Save/load belongs to setup/pause. New runs select stage then difficulty; paused difficulty changes preserve combat and LAN hosts control the shared setting. Saves remain stage-entry checkpoints, including entry difficulty, with legacy compatibility.
+- 三色火力保留是默认关闭的可选规则，不冒充原作：黄/蓝/红分别升级至 6，换色与低能量不降级，只在所属玩家死亡时清空。切回已满级颜色并拾取时触发一次该色清屏，S 只补满当前颜色。本局开局确定、读档恢复；同步关卡档及联机快照。见 `docs/M2_12_SETTINGS.md`。
+  Retained color power is an optional, default-off extension, not an original mechanic: yellow/blue/red independently reach 6, survive color changes and low energy, and clear only on their owner's death. Picking up an already full color equips it and triggers one matching nova; S fills only the equipped color. Select the rule before launch and restore it when loading; serialize it in checkpoints and LAN snapshots. See `docs/M2_12_SETTINGS.md`.
+
 - 多人 HUD 必须沿用已核实 1P 的原作风格：飞机余命图标、逐枚且区分类型的炸弹图标、16 格能量条。只扩展玩家位置与标识，不得替换为“生命/炸弹/能量”文字表或现代状态卡。
   Multiplayer HUD must reuse the verified 1P style: spare-ship icons, individual typed bomb icons and sixteen energy segments. Extend placement and player identity only; never replace these with text summaries or modern status cards.
 - P2 战机、余命与状态小飞机必须为原作蓝色。以用户于 2026-10-10 最后确认的双人截图排列为准：P2 整组在右下角，小蓝机在能量条左端，炸弹在上方；此前“左右镜像”的口述已被该截图确认取代。

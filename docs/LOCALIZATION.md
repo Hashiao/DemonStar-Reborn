@@ -35,6 +35,8 @@ Long-term maintenance: keep README.md and README.en.md equivalent. New or change
 
 ## 参考与验收 / References and verification
 
+M2.12：语言入口移至“设置 → 语言”，暂停时先进入“游戏设置”。切换后留在语言页，返回依次回到分类及暂停菜单；新增开局、难度、存读档与三色规则说明均提供三语。 / M2.12: use Settings → Language, or Game settings from pause. Switching stays on the language page; Back returns through categories to pause. Setup, difficulty, save/load and retained-power explanations are localized into all three languages.
+
 - [Android Configuration.getLocales](https://developer.android.com/reference/android/content/res/Configuration#getLocales()) · [Locale.toLanguageTag](https://developer.android.com/reference/java/util/Locale#toLanguageTag())
 - [Apple Locale.preferredLanguages](https://developer.apple.com/documentation/foundation/locale/preferredlanguages) · [Localized bundle display names](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html)
 - `tests/i18n.test.mjs`：字形/地区、保存优先级、原生片段、词典/占位符检查。Script/region routing, saved precedence, native hint and catalog/placeholder validation.

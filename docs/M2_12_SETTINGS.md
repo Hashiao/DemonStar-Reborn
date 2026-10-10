@@ -8,6 +8,10 @@ This milestone implements the user's approved interaction requirements and an op
 
 ## 交互 / Navigation
 
+定位结果：原设置与暂停页共用一整段设置控件，声音、语言、操作入口和存读档混排；模式按钮直接启动战斗，没有统一出击准备。武器只有当前颜色及等级，换色时直接重置，因此单改拾取逻辑不足以支持三色记忆，还必须扩展关卡档与网络序列化。修复分别落在分类路由、出击准备、暂停难度处理及版本化状态存储中。
+
+Diagnosis: settings and pause reused a single flat block mixing audio, language, controls and saves. Mode buttons immediately started combat without a common setup step. Weapons stored only the equipped color/level and reset on switching; retaining three colors required checkpoint and network serialization changes in addition to pickup logic. The fix separates category navigation, launch setup, paused difficulty handling and versioned state storage.
+
 - 主菜单：单人游戏、多人游戏、设置；多人再选同屏双人或局域网双人。
 - 每种模式出击前：从头开始 / 选择出击点 / 读取存档。新游戏选择关卡后再选四档难度，然后开始。局域网房主在两位玩家就绪后设置。
 - 设置分为声音与震动、玩家与操作、画面与界面、游戏规则、语言。存读档不放在设置内。
