@@ -70,6 +70,8 @@ for family in ('iPhone','iPad'):
         run(['xcrun','simctl','io',uid,'screenshot',str(out/(family+'.png'))])
         locale_cases.append({'preferred':language,'expected':expected,'probe':probe,'status':'passed'})
     report['devices'].append({'family':family,'name':device['name'],'runtime':runtime,'wkwebview_probe':probe,'locale_cases':locale_cases,'status':'passed'})
-    run(['xcrun','simctl','shutdown',uid])
+    # 保留已经就绪的模拟器供下一步联机验收，先退出 App 释放 WebKit/音频资源。
+    # Keep the ready simulator for the following LAN check, terminating the app to release WebKit/audio resources.
+    run(['xcrun','simctl','terminate',uid,'io.github.hashiao.demonstar'])
 (out/'ios-verification.json').write_text(json.dumps(report,indent=2))
 print(json.dumps(report,indent=2))

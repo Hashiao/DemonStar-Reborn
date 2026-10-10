@@ -45,7 +45,16 @@ def main():
             probes.append(result)
         def launch(index, config):
             (containers[index] / 'lan-probe.js').write_text('window.lanProbeConfig=' + json.dumps(config) + ';\n' + script)
-            run('launch', '--terminate-running-process', devices[index]['udid'], PACKAGE, '--lan-probe')
+            # 常规验收已退出 App；避免把启动与终止合在一个容易卡住的冷启动命令中。
+            # The standard probe already terminated the app; avoid a combined cold terminate/launch command.
+            try:
+                run('launch', devices[index]['udid'], PACKAGE, '--lan-probe')
+            except subprocess.TimeoutExpired:
+                # 新报告证明 App 已经运行时继续观察，不因命令响应超时重启测试。
+                # A fresh report proves the app is running; keep observing instead of restarting on response timeout.
+                if not probes[index].exists():
+                    raise
+                print('Launch response timed out, but a fresh app probe exists; continuing observation.',flush=True)
         launch(0, {'role': 'host'})
         print('LAN: waiting for native host lobby',flush=True)
         lobby = wait_report(probes[0], ['lobby'])

@@ -5,6 +5,7 @@
   function report(status,extra){window.lanProbeResult=Object.assign({status:status,role:config.role,step:step},extra||{});}
   function fail(error){report('error',{error:String(error)});clearInterval(timer);}
   function clickLabel(key){var button=Array.from(document.querySelectorAll('#dialog-buttons button')).find(function(b){return b.textContent===DemonStarI18n.t(key);});if(!button)throw new Error('Missing button '+key);button.click();}
+  report('starting');
   var timer=setInterval(function(){try{
     if(!window.StarfallApp||!StarfallApp.native.capabilities.lan||!StarfallApp.renderer.presentationReady())return;
     var app=StarfallApp,g=app.game,room=app.lan,p=g.players&&g.players[1];

@@ -67,3 +67,7 @@ The Android native-pair test directly connects the signed Release host to a Debu
 未完成的真机项目逐项列在 [设备验收清单](M2_10_DEVICE_CHECKLIST.md)，空白与未测试不会记为通过。
 
 The linked physical-device checklist lists outstanding hardware evidence; blank/untested items are not passes.
+
+后续 `cb01bca` 运行 [38051544648](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38051544648) 已通过常规 iPhone/iPad 三语、音乐与 20 图集解码检查；双人步骤在主机 App 的 simctl 启动命令超过 180 秒，未进入联机验收。因此保留失败记录，改为常规检查后退出 App、保留已就绪模拟器，供双人步骤直接启动；若启动命令响应超时但已有新探针报告，则继续观察原进程。
+
+Run 38051544648 for `cb01bca` passed standard iPhone/iPad locale, music and twenty-atlas checks. The LAN step timed out after 180 seconds in the host app launch command before multiplayer verification. It remains a failed run. The harness now terminates the app after standard checks while retaining ready simulators for direct LAN launch; a fresh app report allows continued observation if the launch command response times out.
