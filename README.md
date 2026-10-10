@@ -6,15 +6,29 @@
 
 DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12+**。保留红色战机和经典工业科幻风格，参考本地原版素材用 imagegen 重绘，游戏实现代码开放。
 
-游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。M2.9 发布包没有联网权限；M2.10 开发分支为可选局域网联机增加本地网络相关权限。
+游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前已发布 M2.9（v0.2.9）补齐十八关缺失原型和敌弹映射，仍不是已验收的完整 1:1 移植。** 原版 1–18 关优先；19–25 关尚未开发。完整的确认项、推断值与差异见 [还原状态](docs/FIDELITY.md)。
+**当前里程碑 M2.10（v0.2.10）提供单人/双人操作、原生局域网、关卡档案及原作表现修复，仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
 
-开发分支 `codex/multiplayer-controls` 正在实现 M2.10：四人协议预留、当前单人/双人玩法、双人触屏、多种操作/改键、关卡存读档、原生局域网与震动，以及原作表现修复。红色 P1/蓝色 P2 与原作式图标 HUD 已按用户确认保留。完整双端验收与新安装包尚未发布，上方下载仍为正式版；进度和测试边界见 [开发记录](docs/M2_10_DEVELOPMENT.md) 与 [局域网记录](docs/M2_10_NETWORK.md)。
 
 ![菜单](docs/screenshots/menu.png)
 
-## 当前里程碑 M2.9
+## 当前里程碑 M2.10
+
+- 当前开放单人、同机双人和双人局域网；3P/4P 仅协议/内核预留，人数菜单与房间不会开放四人。
+- 双人可同时触屏移动/开火/投弹；固定摇杆可调位置大小、浮动摇杆随触点建立中心、八方向按键斜向限速；支持键盘、鼠标、手柄分配及简单改键，重复手柄分配会提示并停用冲突座位。
+- 保留红色 P1、蓝色 P2 与经典图标 HUD。右下角小蓝机在能量条左侧，炸弹在上方。
+- 设置/暂停可选择全部 18 关；自动档及三个手动槽位保存关卡起点的双人生命、装备和得分。联机由房主开始、继续、切关及读档；客户端可暂停和断线重连。
+- 原生触感有保存开关与能力检测；冷主菜单尝试播放 BGM；iOS 使用原生播放器，尊重静音、音量与后台。
+- 按原作标志区分原位爆炸与金标中的侧上漂移，新增九种受损机体及首尾多点爆炸；结算改为战场叠层、玩家框和图标奖励；两端统一像素图标。
+
+168 项引擎/单元测试及 17 组浏览器检查通过。Android 项目签名 Release、Debug、Lint 和 API 37 现有模拟器已验收；[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38056089782) 通过 iPhoneOS 构建及 iOS 18.5 的 iPhone/iPad 检查，包括 20 张战役/敌弹/受损图集解码。Android 两个原生 App 进程和 iOS 两个模拟器分别验证了双人原生 TCP。真机热点、Android–iOS 原生双机、实体外设和振动手感未实测，不能将模拟器结果视为这些项目通过。最低系统目标不等于已测版本。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.10/DemonStar-Reborn-release.apk) · [IPA（未签名）](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.10/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.10/SHA256SUMS.txt) · [完整报告](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.10/verification.json)
+
+[双人 HUD](docs/screenshots/m210-classic-2p.png) · [原作式结算](docs/screenshots/m210-results-2p.png) · [实现与边界](docs/M2_10_DEVELOPMENT.md) · [真机待验收清单](docs/M2_10_DEVICE_CHECKLIST.md)。原作 HP、伤害与战役表未变；火球关键帧、碎片和墙钟时序仍有近似，不宣称完整 1:1。
+
+## M2.9 已完成内容
 
 - 全战役 251 个原型建立显式映射，实际 18 关使用 244 个；补齐 213 个缺失原型，移除敌机编号取模和通用地物回退。第二关锅盖、坦克、雷达与炮台恢复各自外形。
 - 15 种实际敌弹按原始帧名、颜色和可见尺寸映射，补上绑定炮口的五帧红色激光；伤害仍取原表。
@@ -129,14 +143,17 @@ M2 的 IPA 文件名统一为纯字母 `DemonStar.ipa`；包内目录及可执�
 
 ## 操作
 
-| 动作 | 手机 / 平板 | 电脑 |
-|---|---|---|
-| 移动 | 左侧虚拟摇杆 | WASD / 方向键 |
-| 开火 | 按住右侧 A，松开停止 | 按住 Z / J |
-| 超级武器 | 右侧 B | 空格 / X / K |
-| 暂停 | Ⅱ / 系统返回 | Esc / P |
+设置 → 玩家与操作可选择单人/双人、触控方式、摇杆位置大小、鼠标归属、手柄和动作映射。移动有速度上限，松开/失焦/设备断开会释放输入。
 
-接触补给拾取，持续躲避弹幕并留意装甲。当前各难度分别保存最高分与解锁进度。
+| 输入 | 默认方式 |
+|---|---|
+| 触屏 | 各自的摇杆/方向键移动、A 开火、B 炸弹；双人触点独立 |
+| 单人键盘 | WASD 或方向键，Z/J 开火，Space/X/K 炸弹，P/Esc 暂停 |
+| 双人键盘 | P1：WASD、Z/X；P2：方向键、右 Ctrl/右 Shift；可改键 |
+| 鼠标 | 在设置分配玩家；战场指针引导限速移动，左键开火、右键炸弹 |
+| 手柄 | 默认左摇杆/方向键移动、按钮 0/1 开火/炸弹；按设备重新映射 |
+
+局域网需要安装版：设备先连接同一 Wi-Fi/热点，房主建房，另一台输入显示地址和六位房间码。当前每台一名玩家、总计双人。本机双人是独立模式。关卡档从该关起点恢复；切关以初始装备出击，先保存可保留原关入口状态。设置支持三语即时切换。
 
 ## 构建
 
@@ -173,6 +190,8 @@ open ios/DemonStar.xcodeproj
 在 Xcode 选择自己的 Team 后真机安装。无 Mac 可使用 [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/workflows/ios.yml)：在 macOS 编译 ARM64 未签名 IPA，复用已安装的 iPhone/iPad 模拟器，记录实际系统和 WKWebView 探针结果。不会把模拟器包改名冒充 IPA。
 
 ## 测试
+
+M2.10 的 168 项引擎/单元及 17 组浏览器检查通过，Android 两种构建/Lint（0 错误、12 提示）、现有 API 37 模拟器及 iOS 双端构建/模拟器证据详见上方里程碑。完整报告分别记录原生双应用、iOS 双模拟器和未测试真机项目。IPA 未签名，须自行签名。
 
 M2.9 的 109 项引擎/声音/语言回归与十组浏览器检查通过。全部 244 个实际使用原型通过实绘可见像素检查，十八关 54 个场景、15 种敌弹和五类炮台的 32 朝向通过；当前关新增图集解码量最高 78 MiB，不代表 App 总内存。Android Debug/项目签名 Release、Lint（0 错误、4 提示）及现有 Android 17/API37 AVD 的三语、操作、旋转、后台恢复和独立血条设置通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38028435099) 通过 iPhoneOS ARM64 构建及 iOS 18.5 的 iPhone 16 Pro、iPad Pro 11-inch (M4) 检查；四种原生语言场景均逐张解码并绘制全部 18 张新增图集。两包版本 0.2.9（11），脚本、图集、音频、本地化资源与构建输入一致，仅允许 HTML/CSS 平台换行差异。IPA 未签名，须自行签名；最低系统及真机未实测。[完整验收](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.9/verification.json)。
 

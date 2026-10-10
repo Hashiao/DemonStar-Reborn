@@ -6,15 +6,29 @@
 
 An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 12+**. Imagegen redraws reference the local original while preserving its red fighter and industrial science-fiction style. The independently implemented game code is open source.
 
-The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Published M2.9 packages have no network permissions; the M2.10 development branch adds permissions for optional LAN play.
+The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
 
-**Current published milestone M2.9 (v0.2.9) fills missing object and enemy-projectile art across eighteen stages. This is not a verified complete 1:1 port.** The original 18 stages come first; stages 19–25 have not been developed. See [fidelity status](docs/FIDELITY.en.md) for confirmed behavior, estimates and remaining differences.
+**Current milestone M2.10 (v0.2.10) adds solo/two-player controls, native LAN, stage checkpoints and original presentation fixes. This is not a complete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
 
-Development branch `codex/multiplayer-controls` is implementing M2.10: four-seat protocol reserves, currently solo/two-player modes, two-player touch controls, multiple input/remapping options, stage saves, native LAN/haptics and original presentation fixes. Red P1/blue P2 and the original icon HUD follow the user's confirmed direction. Full platform acceptance and new packages are not yet published; the download links above still target the released version. See the [development record](docs/M2_10_DEVELOPMENT.md) and [LAN record](docs/M2_10_NETWORK.md) for progress and verification limits.
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.9
+## Current milestone M2.10
+
+- Expose solo, same-device two-player and two-player LAN modes. P3/P4 remain protocol/core reserves; menus and rooms do not offer four-player play.
+- Two touch players can move/fire/bomb together. Fixed sticks support layout/size changes, floating sticks use touch-down centers, and eight-way pads cap diagonal speed. Keyboard/mouse/controller assignment and simple remapping are available; duplicate controllers produce feedback and disable the conflicting seat.
+- Preserve red P1, blue P2 and the classic icon HUD. The bottom-right blue ship sits left of the energy bar, with bombs above.
+- Settings/pause can select all eighteen stages. Automatic and three manual slots retain both players' stage-entry lives/equipment/scores. The host controls launch/resume/stage/load; guests can pause and reconnect.
+- Native haptics have saved preferences and capability checks. Cold-menu BGM attempts playback using a native iOS player while respecting mute, volume and background state.
+- Original flags distinguish in-place explosions from reference-style sideways/upward deaths. Add nine damaged hulls and initial/final multi-point blasts; results use battlefield player/icon panels, and both platforms share a pixel launcher icon.
+
+168 engine/unit checks and seventeen browser suites passed. Android project-signed Release, Debug, Lint and the existing API 37 emulator were verified. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38056089782) passed the iPhoneOS build and iOS 18.5 iPhone/iPad checks, including twenty campaign/projectile/damaged-hull atlas decodes. Two native Android app processes and two iOS simulators independently exercised two-player native TCP. Physical hotspots, native Android–iOS device pairs, peripherals and haptic feel remain untested; simulator evidence does not certify them. Minimum deployment targets are not tested-version claims.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.10/DemonStar-Reborn-release.apk) · [Unsigned IPA](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.10/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.10/SHA256SUMS.txt) · [Full report](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.10/verification.json)
+
+[Two-player HUD](docs/screenshots/m210-classic-2p.png) · [Classic results](docs/screenshots/m210-results-2p.png) · [Implementation/limits](docs/M2_10_DEVELOPMENT.md) · [Outstanding device checks](docs/M2_10_DEVICE_CHECKLIST.md). Original HP, damage and campaign tables are unchanged. Fireball keyframes, debris and wall-clock timing remain approximate; complete 1:1 fidelity is not claimed.
+
+## M2.9 completed
 
 - Explicit mappings cover all 251 prototypes, including the 244 used by the eighteen stages. Add art for 213 missing prototypes and remove modulo enemy/generic terrain fallbacks. Stage-two lids, tanks, radar and turrets regain their own silhouettes.
 - All 15 used enemy projectile types map to source frame names, colors and visible sizes, including the five-frame muzzle-bound red laser. Damage still comes from the original table.
@@ -118,14 +132,17 @@ Every completed milestone ships matching source, APK, IPA and `SHA256SUMS.txt` w
 
 ## Controls
 
-| Action | Phone/tablet | Keyboard |
-|---|---|---|
-| Move | Left virtual stick | WASD/arrows |
-| Fire | Hold A; release to stop | Hold Z/J |
-| Superweapon | B | Space/X/K |
-| Pause | Ⅱ/system back | Esc/P |
+Settings → Players and controls selects solo/two-player modes, touch style/layout, mouse ownership, controllers and action bindings. Movement is bounded; release, focus loss and device disconnect clear input.
 
-Touch pickups, dodge fire and watch armor. High scores and unlocked stages are saved separately by difficulty.
+| Input | Defaults |
+|---|---|
+| Touch | Independent movement stick/pad, A fire and B bomb for each player |
+| Solo keyboard | WASD/arrows; Z/J fire; Space/X/K bomb; P/Esc pause |
+| Two-player keyboard | P1: WASD, Z/X; P2: arrows, right Ctrl/right Shift; remappable |
+| Mouse | Assign a player in settings; battlefield pointer guides bounded movement, left fire/right bomb |
+| Controller | Left stick/d-pad moves; buttons 0/1 fire/bomb; remap for the device |
+
+LAN requires installed apps on the same Wi-Fi/hotspot. The host creates a room and the guest enters its displayed address and six-digit code. Current rooms have two players, one per device; local two-player play is separate. Checkpoints restore the stage entry; selecting a stage starts with initial equipment. Save first to retain the previous entry. Settings switch all three languages immediately.
 
 ## Build
 
@@ -162,6 +179,8 @@ open ios/DemonStar.xcodeproj
 Choose your Team in Xcode for device installation. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/workflows/ios.yml) builds an ARM64 unsigned device IPA on macOS, reuses installed iPhone/iPad simulators and records actual runtimes and WKWebView probes. A simulator app is never renamed to an IPA.
 
 ## Verification
+
+M2.10 passed 168 engine/unit checks, seventeen browser suites, both Android builds/Lint (zero errors, 12 warnings), the existing API 37 emulator, and the linked iOS build/simulator checks. The report separates native app-pair/simulator evidence from untested physical hardware. The IPA is unsigned and requires user signing.
 
 M2.9 passed 109 engine/audio/locale regressions and ten browser suites. All 244 used prototypes passed visible-pixel rendering checks, alongside 54 actual stage scenes, fifteen enemy-shot types and 32 headings for five fixed-base turret families. Current-stage new atlases decode to at most 78 MiB, not total app memory. Android Debug/project-signed Release builds, Lint (0 errors, 4 warnings), and the existing Android 17/API37 AVD passed language, controls, rotation, background and independent-bar checks. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38028435099) passed the ARM64 iPhoneOS build and iOS 18.5 checks on iPhone 16 Pro and iPad Pro 11-inch (M4); all four native-language cases decoded and drew all eighteen new atlases. Both packages are version 0.2.9 (11); scripts, art, audio and locale resources match build inputs, allowing only HTML/CSS line-ending differences. The IPA is unsigned and requires user signing. Minimum OS versions and physical devices were not tested. [Full report](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.9/verification.json).
 
