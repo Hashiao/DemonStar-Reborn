@@ -8,12 +8,24 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
 
-**Current milestone M2.10 (v0.2.10) adds solo/two-player controls, native LAN, stage checkpoints and original presentation fixes. This is not a complete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
+**Current milestone M2.11 (v0.2.11) fixes iOS long-press selection and reorganizes solo, multiplayer and settings entries. This is not a complete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
 
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.10
+## Current milestone M2.11
+
+- Fix iOS text selection/callouts while holding A/B or sticks. Guards cover both players and fixed/floating/eight-way controls; LAN text fields retain selection and paste.
+- The first main entries are Single player → Multiplayer → Settings. Multiplayer offers same-device two-player or LAN play. Single player always starts P1; settings retain bindings without hiding LAN or player-count selection there.
+- Empty space no longer starts a run; Enter activates the focused option. Settings/multiplayer have explicit trilingual accessible names. Classic HUD, red P1/blue P2, combat numbers, stage saves and native music retain their behavior.
+
+168 engine/unit checks and six affected browser suites passed, plus Android build/Lint/API 37 controls, localization and native app-pair LAN. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38060772488) passed iPhoneOS compilation, iOS 18.5 iPhone/iPad checks, native simulator-pair LAN and XCTest system 1.6-second long presses on solo/two-player A, B and sticks. Browsers separately verify six simultaneous contacts. Simulators do not replace the user's physical-device retest.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.11/DemonStar-Reborn-release.apk) · [Unsigned IPA — requires user signing](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.11/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.11/SHA256SUMS.txt) · [Full report](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.11/verification.json)
+
+[Main menu](docs/screenshots/m211-main-menu.png) · [Multiplayer](docs/screenshots/m211-multiplayer-menu.png) · [Diagnosis and changes](docs/M2_11_INPUT_MENU.md). Public play still caps at two; P3/P4 remain protocol reserves. Physical hotspots, native Android–iOS device pairs, peripherals and haptic feel remain untested.
+
+## M2.10 completed
 
 - Expose solo, same-device two-player and two-player LAN modes. P3/P4 remain protocol/core reserves; menus and rooms do not offer four-player play.
 - Two touch players can move/fire/bomb together. Fixed sticks support layout/size changes, floating sticks use touch-down centers, and eight-way pads cap diagonal speed. Keyboard/mouse/controller assignment and simple remapping are available; duplicate controllers produce feedback and disable the conflicting seat.
@@ -132,7 +144,7 @@ Every completed milestone ships matching source, APK, IPA and `SHA256SUMS.txt` w
 
 ## Controls
 
-Settings → Players and controls selects solo/two-player modes, touch style/layout, mouse ownership, controllers and action bindings. Movement is bounded; release, focus loss and device disconnect clear input.
+Choose Single player or Multiplayer → same-device/LAN two-player play in the main menu. Settings → Players and controls configures touch style/layout, mouse ownership, controllers and action bindings. Movement is bounded; release, focus loss and device disconnect clear input.
 
 | Input | Defaults |
 |---|---|

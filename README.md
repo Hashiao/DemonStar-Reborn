@@ -8,12 +8,24 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前里程碑 M2.10（v0.2.10）提供单人/双人操作、原生局域网、关卡档案及原作表现修复，仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
+**当前里程碑 M2.11（v0.2.11）修复 iOS 长按选字并重排单人、多人和设置入口，仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
 
 
 ![菜单](docs/screenshots/menu.png)
 
-## 当前里程碑 M2.10
+## 当前里程碑 M2.11
+
+- 修复 iOS 长按 A/B、摇杆时的文字选择与长按菜单冲突；防护包含两位玩家、固定/浮动摇杆和八方向按键，联机文本框仍可选择与粘贴。
+- 主菜单前三项为“单人游戏 → 多人游戏 → 设置”。多人页提供“同屏双人 / 局域网双人”；单人入口固定启动 1P，设置保留操作映射，不再混放联机和人数入口。
+- 空白区域不再直接开局，Enter 激活聚焦菜单；设置和多人入口具有明确的三语可访问名称。经典 HUD、红 P1/蓝 P2、战斗数值、关卡档案和原生音乐保持原有行为。
+
+168 项引擎/单元和六组相关浏览器回归通过；Android 编译/Lint/API 37 模拟器操作、三语、双原生 App 联机通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38060772488) 通过 iPhoneOS 构建、iOS 18.5 iPhone/iPad 检查、原生双模拟器联机，以及 XCTest 系统长按 1.6 秒的单人/双人 A、B、摇杆检查。浏览器另测六触点同时长按；模拟器不代替用户真机复测。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.11/DemonStar-Reborn-release.apk) · [IPA（未签名，须自行签名）](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.11/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.11/SHA256SUMS.txt) · [完整报告](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.11/verification.json)
+
+[主菜单](docs/screenshots/m211-main-menu.png) · [多人入口](docs/screenshots/m211-multiplayer-menu.png) · [问题定位与修复](docs/M2_11_INPUT_MENU.md)。当前仍只开放单人/双人，3P/4P 仅协议预留。真机热点、Android–iOS 真机配对、实体外设及触感仍待实测。
+
+## M2.10 已完成内容
 
 - 当前开放单人、同机双人和双人局域网；3P/4P 仅协议/内核预留，人数菜单与房间不会开放四人。
 - 双人可同时触屏移动/开火/投弹；固定摇杆可调位置大小、浮动摇杆随触点建立中心、八方向按键斜向限速；支持键盘、鼠标、手柄分配及简单改键，重复手柄分配会提示并停用冲突座位。
@@ -143,7 +155,7 @@ M2 的 IPA 文件名统一为纯字母 `DemonStar.ipa`；包内目录及可执�
 
 ## 操作
 
-设置 → 玩家与操作可选择单人/双人、触控方式、摇杆位置大小、鼠标归属、手柄和动作映射。移动有速度上限，松开/失焦/设备断开会释放输入。
+主菜单选择单人游戏，或多人游戏 → 同屏双人／局域网双人。设置 → 玩家与操作可调整触控方式、摇杆位置大小、鼠标归属、手柄和动作映射。移动有速度上限，松开/失焦/设备断开会释放输入。
 
 | 输入 | 默认方式 |
 |---|---|

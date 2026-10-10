@@ -2,7 +2,7 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-Current milestone: **M2.10, two-player controls, LAN and original presentation fixes**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+Current milestone: **M2.11, iOS long-press and main-menu fixes**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
 
 | Area | Current status |
 |---|---|
@@ -26,3 +26,5 @@ M2.7 corrects the earlier ring interpretation: S_BPULSEA–D surrounds the playe
 M2.8 restores thin 4×8 homing missiles, eight units per tick, original turn steps/post-turn alignment, retained locks with cyclic reacquisition and a 101-tick fuse. Yellow pairs, three blue lengths composing six tiers, six red widths and decelerating 3×4 auxiliary pellets are corrected. Base HP, player damage tables and superweapon budgets are unchanged. Spawn-ID cycling differs from original 128-slot reuse; collision, trails and HD silhouettes remain approximate, and magnetic steering is unverified. See [M2.8 evidence](M2_8_RESEARCH.md) and [recording reference](REFERENCE_VIDEO.md).
 
 M2.10 retains red P1/blue P2 and the classic icon HUD: P2 sits bottom-right, with its blue ship left of the energy bar and bombs above. Results use battlefield player panels and three icon reward rows; both platforms share a pixel-redrawn launcher icon. Native iOS BGM timing verifies startup, pause/resume, enable/mute and volume. The eighteen-stage, HP and damage tables are unchanged. Animation, timing and hardware limitations above still preclude full-fidelity claims. See the [development record](M2_10_DEVELOPMENT.md), [presentation evidence](M2_10_PRESENTATION.md) and [device checklist](M2_10_DEVICE_CHECKLIST.md).
+
+M2.11: [iOS 长按与菜单修复 / iOS touch and menu fixes](M2_11_INPUT_MENU.md)。原作数据与上述还原边界未变。 / Original data and fidelity limitations above remain unchanged.

@@ -12,8 +12,12 @@ Fix: explicitly apply prefixed/unprefixed selection suppression and callout supp
 
 Settings moves from the small top-right control to the third main entry. First is Single player, explicitly one player; second is Multiplayer with same-device two-player and LAN choices. Settings no longer initiates LAN or changes player counts, but retains individual bindings. Network pause can still show the active room. Empty-area taps no longer launch; Enter activates the focused option and multiplayer children return to their parent. All three locales are updated; P3/P4 remain protocol reserves.
 
-验证：新增三语、五种尺寸的菜单可达性与路由检查；六触点长按 1.5 秒、单人覆盖旧双人偏好、文本框例外，以及既有双人/存档/键鼠手柄/局域网/旧触控回退回归。新增 XCTest 系统 `press(forDuration: 1.6)`，在既有 iPhone/iPad 模拟器检查单/双人 A、B、摇杆及实际动作。原生结果在正式发布前补齐；不把模拟器当作用户真机复测。
+验证：新增三语、五种尺寸的菜单可达性与路由检查；六触点长按 1.5 秒、单人覆盖旧双人偏好、文本框例外，以及既有双人/存档/键鼠手柄/局域网/旧触控回退回归。新增 XCTest 系统 `press(forDuration: 1.6)`，在既有 iPhone/iPad 模拟器检查单/双人 A、B、摇杆及实际动作。原生结果见下方最终验证；不把模拟器当作用户真机复测。
 
-Verification adds three-locale/five-size menu reachability and routing, six-contact 1.5-second holds, solo overriding prior two-player preferences, editable fields and existing multiplayer/save/input/LAN/legacy-touch regressions. New XCTest system `press(forDuration: 1.6)` checks solo/two-player A, B and sticks with actual gameplay responses on existing iPhone/iPad simulators. Native results must be recorded before release; simulators do not replace the user's physical-device retest.
+Verification adds three-locale/five-size menu reachability and routing, six-contact 1.5-second holds, solo overriding prior two-player preferences, editable fields and existing multiplayer/save/input/LAN/legacy-touch regressions. New XCTest system `press(forDuration: 1.6)` checks solo/two-player A, B and sticks with actual gameplay responses on existing iPhone/iPad simulators. Native results are recorded below; simulators do not replace the user's physical-device retest.
 
 依据 / References: [Apple Safari CSS reference](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariCSSRef/Articles/StandardCSSProperties.html), [WebKit: touch-action does not disable selection](https://bugs.webkit.org/show_bug.cgi?id=194812), [WebKit long-press callout behavior](https://bugs.webkit.org/show_bug.cgi?id=231161).
+
+最终验证 / Final verification: [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38060772488)，`3deed5364e0a872a181398ea4d40dfb80802c1c8`。以上系统长按检查已在 iOS 18.5 iPhone/iPad 模拟器通过；Android API 37 的安装、操作、三语及双原生 App 联机通过。 / System long-press checks passed on iOS 18.5 iPhone/iPad simulators; Android API 37 installation, controls, localization and two-native-app LAN checks passed.
+
+原生系统长按检查使用默认固定摇杆；浮动、八方向及六触点同时操作另由浏览器回归覆盖，不能将其写成全部模式均已在 iOS 真机实测。 / Native long presses use the default fixed stick. Floating/eight-way modes and six simultaneous contacts are covered by separate browser regressions, not physical iOS certification of every mode.
