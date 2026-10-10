@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
 const browser=await chromium.launch({channel:'chrome',headless:true}),errors=[];
 try{
-  const page=await browser.newPage({viewport:{width:480,height:900},deviceScaleFactor:2,hasTouch:true,isMobile:true});page.on('pageerror',e=>errors.push(String(e)));
+  const page=await browser.newPage({locale:'zh-CN',viewport:{width:480,height:900},deviceScaleFactor:2,hasTouch:true,isMobile:true});page.on('pageerror',e=>errors.push(String(e)));
   await page.goto(process.env.GAME_URL||'http://127.0.0.1:4174');await page.waitForFunction(()=>StarfallApp.renderer.carriers.naturalWidth&&StarfallApp.renderer.playerMotion.naturalWidth);
   await page.locator('#start').tap();await page.waitForFunction(()=>StarfallApp.game.phase==='playing');
   await page.evaluate(()=>{const g=StarfallApp.game;g.recordEvents=[];g.enemies=[];g.player.invincible=100;g.spawnPickup(10,g.player.x,g.player.y);g.pickups[0].speed=1;g.update(.035);});

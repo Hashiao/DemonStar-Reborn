@@ -1,16 +1,30 @@
 # DemonStar Reborn / 恶魔之星·重生
 
+**[简体中文](README.md) · [English](README.en.md)**
+
 **[下载 Android APK](https://github.com/Hashiao/DemonStar-Reborn/releases/latest/download/DemonStar-Reborn-release.apk)** · **[下载 iPhone / iPad IPA（未签名）](https://github.com/Hashiao/DemonStar-Reborn/releases/latest/download/DemonStar.ipa)** · [全部里程碑](https://github.com/Hashiao/DemonStar-Reborn/releases)
 
 DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12+**。保留红色战机和经典工业科幻风格，参考本地原版素材用 imagegen 重绘，游戏实现代码开放。
 
-首个里程碑仅提供中文界面，后续再加入英文语言包。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点、联网权限或内购。
+游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点、联网权限或内购。
 
-**当前 M2.5（v0.2.5）补齐母舰出击、命中/击毁特效、可读底栏、地面残骸与关末奖励，仍不是已验收的完整 1:1 移植。** 原版 1–18 关优先；19–25 关尚未开发。完整的确认项、推断值与差异见 [还原状态](docs/FIDELITY.md)。
+**当前 M2.6（v0.2.6）加入三语界面与长期中英双语维护，仍不是已验收的完整 1:1 移植。** 原版 1–18 关优先；19–25 关尚未开发。完整的确认项、推断值与差异见 [还原状态](docs/FIDELITY.md)。
 
 ![Menu](docs/screenshots/menu.png)
 
-## 当前里程碑 M2.5
+## 当前里程碑 M2.6
+
+- 首次启动优先使用原生系统语言：简体中文、繁体中文（含台湾、香港、澳门）或英语回退；明确 Hans/Hant 字形优先。
+- 主菜单及暂停设置可立即切换三语，手动选择优先并保存；不重开战斗、不重置装备、分数、难度、解锁或声音偏好。
+- 菜单、HUD、帮助、补给提示、Boss 名称、结算及无障碍文案全部本地化；桌面显示名跟随系统。英文无线电录音和 DemonStar 标志保持原样。
+- 繁体版独立改写，采用「設定、主選單、搖桿、飛彈、電漿砲、強化火力」等通用表达，不机械转字。
+- [项目规范](AGENTS.md)、[贡献约定](CONTRIBUTING.md)、核心注释、README、重要提交和 Release 提供简体中文及英文；[语言规范](docs/LOCALIZATION.md)规定后续验收要求。
+
+本版双端验收完成后更新构建记录。
+
+[简体菜单](docs/screenshots/menu-zh-Hans.png) · [繁体菜单](docs/screenshots/menu-zh-Hant.png) · [英文菜单](docs/screenshots/menu-en.png) · [语言设置](docs/screenshots/settings-en.png)。繁体文案未声称经过地区母语玩家审校。
+
+## M2.5 已完成内容
 
 - 开始和换关增加机械舱门与母舰甲板出击，母舰离场后才开始关卡计时、操作和无线电；出击期间可暂停/后台恢复。
 - 左下 HUD 去掉透明留白并设置最低显示尺寸；默认双发弹体恢复清晰的 3×13，黄色增强/导弹也使用紧裁切。
@@ -74,7 +88,7 @@ M2.1 的固定掉落、换色归零、死亡掉球、满级三色清屏继续保
 
 **IPA 需要用自己的 Apple 身份签名后才能安装，下载不等于可直接安装。当前没有 TestFlight 邀请。** 仓库不包含账号、证书、配置描述文件或签名私钥。最低部署目标不代表已在最低版本实机验收。
 
-M2 的 IPA 文件名统一为纯字母 `DemonStar.ipa`；包内目录及可执行文件也是英文，桌面显示名保留中文。此前安装器报错的确切原因尚未确认，文件命名调整不代表所有签名/安装工具均已验收。
+M2 的 IPA 文件名统一为纯字母 `DemonStar.ipa`；包内目录及可执行文件也是英文，桌面显示名支持三语。此前安装器报错的确切原因尚未确认，文件命名调整不代表所有签名/安装工具均已验收。
 
 每个完成的里程碑都提交对应源码并发布 APK、IPA 与 `SHA256SUMS.txt`；不覆盖已有版本标签。GitHub Release 与 README 会明确列出实际测试的系统版本和仍未完成的事项。
 
@@ -144,5 +158,7 @@ M2.5 的 80 项引擎/声音回归与六组浏览器检查通过，覆盖出击�
 ```sh
 python tools/import-campaign.py "/path/to/your/DemonStar"
 ```
+
+贡献前请阅读 [双语贡献约定](CONTRIBUTING.md)。新增/修改的核心注释、重要 Git 信息及发布说明提供简体中文和英文，两个 README 同步维护。
 
 独立实现代码采用 [MIT](LICENSE)。该许可不重新授权原作的名称、设计、关卡或其他第三方内容；AI 重绘也不表示原设计进入公有领域。本项目不代表 Mountain King Studios / Scott Host。

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.net.Uri;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowManager;
@@ -15,7 +16,7 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import java.io.ByteArrayInputStream;
 
-/** Offline game host. No JavaScript bridge, network permission, accounts or trackers. */
+/** 离线游戏宿主，无 JS 桥接/联网权限/账号/追踪。 Offline host without bridges, network, accounts or trackers. */
 public final class MainActivity extends Activity {
     private WebView web;
     private boolean foreground;
@@ -35,7 +36,7 @@ public final class MainActivity extends Activity {
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        // The web game manages a single music element and unlocks it on interaction.
+        // 游戏管理单个音乐元素，并在用户交互时解锁。 / The game unlocks its music element on interaction.
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setSupportZoom(false);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -61,10 +62,13 @@ public final class MainActivity extends Activity {
         setContentView(host);
         host.requestApplyInsets();
         if (Build.VERSION.SDK_INT >= 33) getOnBackInvokedDispatcher().registerOnBackInvokedCallback(0, this::gameBack);
-        web.loadUrl("file:///android_asset/index.html");
+        // 用本地片段传递原生首选语言，避免 WebView 默认语言与系统不一致。
+        // Pass the native preferred language locally; WebView defaults can differ from the system.
+        String language = getResources().getConfiguration().getLocales().get(0).toLanguageTag();
+        web.loadUrl("file:///android_asset/index.html#system-language=" + Uri.encode(language));
     }
     private void gameBack() { if (web != null) web.evaluateJavascript("window.StarfallApp && StarfallApp.back()", null); }
-    // API 33+ uses the registered OnBackInvokedCallback above; this is only the legacy fallback.
+    // API 33+ 用上方回调，以下兼容旧系统。 / API 33+ uses the callback above; this is the legacy fallback.
     @SuppressLint("GestureBackNavigation")
     @Override public void onBackPressed() { gameBack(); }
     @Override protected void onPause() {

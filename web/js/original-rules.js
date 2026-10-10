@@ -2,8 +2,10 @@
 (() => {
   'use strict';
   const C=globalThis.DemonStarCampaign,P=globalThis.DemonStarPlayerRules,A=globalThis.DemonStarEnemyArt;
+  // 原作基础节拍为 35ms，渲染独立运行。
   // 4.04's base wait is 35 ms (0x41ae07). Rendering remains independent.
   const W=400,H=480,STEP=.035,TICK=1/STEP;
+  // 按原作可见区域校准手机移动距离，不改变世界计时。
   // Match the classic 320x400 visible-area traversal in our 400x480 playfield.
   // This is mobile control calibration, not a change to enemy/world timing.
   const PLAYER_STEP_X=4*(W-32)/(320-32),PLAYER_STEP_Y=4*(H-104)/(400-104);
@@ -11,6 +13,7 @@
   const rng=seed=>{let a=seed>>>0;return()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};};
   const intersects=(x1,y1,x2,y2,x,y,r)=>{const dx=x2-x1,dy=y2-y1,t=clamp(((x-x1)*dx+(y-y1)*dy)/(dx*dx+dy*dy||1),0,1);return(x1+dx*t-x)**2+(y1+dy*t-y)**2<=r*r;};
   const DIFFICULTIES=[{name:'容易',key:'easy',fire:1.3},{name:'一般',key:'normal',fire:1},{name:'较难',key:'hard',fire:.85},{name:'疯狂',key:'insane',fire:.7}];
+  // 撞机和敌弹采用不同的原作伤害分支。
   // Original collision and projectile handlers use different rules.
   const projectileDamage=(base,difficulty)=>base<=0?base:difficulty===0?Math.max(1,Math.floor(base/2)):base+(difficulty===2?1:difficulty===3?2:0);
   const IMPACT={"40":1,"41":1,"44":1,"43":1,"42":10,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"24":0,"25":0,"26":0,"27":1,"28":1,"29":0,"30":1,"31":10,"48":10,"49":10,"50":10,"32":0,"33":0,"34":0,"35":0,"36":1,"37":10,"38":10,"39":10,"45":10,"46":10,"47":3,"51":10,"52":10,"53":10,"54":0,"55":0,"56":1,"57":1,"58":10,"59":10,"60":3,"61":10};
@@ -34,6 +37,7 @@
       if(this.aim){this.angle=(Math.atan2(game.player.x-x,-(game.player.y-y))*1024/Math.PI+r[8])&2047;this.aim=false;}
       if(enemy.y>=0&&enemy.y<H+enemy.r&&game.enemyFireLock<=0&&!enemy.dying){
         const a=this.angle*Math.PI/1024,s=Math.max(1,r[12])*TICK;
+        // 9 号弹是绑定炮口的四帧光束，伤害取原始模板。
         // Type 9 is a four-frame beam attached to its emitter (0x429722),
         // not a travelling bullet. Damage comes from its original template.
         const beam=r[2]===9?{beam:true,owner:enemy.uid,offsetX:x-enemy.x,offsetY:y-enemy.y,age:0,life:4*STEP}:{};
@@ -45,6 +49,7 @@
   class Game {
     constructor(seed=Date.now()){this.seed=seed;this.random=rng(seed);this.events=[];this.phase='menu';}
     start(difficulty=1,stage=1,presentation=false){
+      // 无界面测试可跳过演出，正式 App 总是开启。
       // Headless combat callers may omit presentation; the app always enables it.
       this.presentation=presentation;
       this.difficulty=clamp(Math.floor(difficulty),0,3);this.rules=DIFFICULTIES[this.difficulty];this.random=rng(this.seed);
@@ -75,6 +80,7 @@
       if(part!=='base'&&!p.defaultWeapon){
         for(const [type,muzzle] of P.slots[p.weapon+1].levels[p.power-1]){
           const [x,y]=P.muzzles[muzzle];let angle=({18:-146,19:146,20:-234,21:234,22:-146,23:146,24:-234,25:234})[type]||0;
+          // 等离子辅助弹沿用原作交替的十六相位扇形。
           // Plasma auxiliary rays use the original alternating 16-phase fan layout.
           if(type>=32&&type<=37)angle=P.plasmaPhases[type][p.shotPhase++&15];
           this.emitPlayerShot(type,p.x-16+x,p.y-16+y,angle);
@@ -130,6 +136,7 @@
       if(d.mode===9||d.mode===10){
         if(e.pathFinished){e.x+=(e.exitX||0)*speed*dt;e.y+=(e.exitY??1)*speed*dt;return;}
         const dx=e.pathX-e.x,dy=e.pathY-e.y,dist=Math.hypot(dx,dy);
+        // 到指定路径节点后，每 tick 向出口速度逼近 1。
         // 0x410934: move with the current speed, then approach exitSpeed by
         // one unit per tick once the target's index reaches speedNode.
         if(e.pathIndex-1>=d.speedNode&&d.speedNode>=0)e.speed+=Math.sign(Math.max(1,d.exitSpeed)-e.speed);
@@ -143,6 +150,7 @@
     finishPath(e){
       e.pathFinished=true;
       if(e.def.pathFlags&1){
+        // 只在路径出口记录一次玩家位置，后续不继续追踪。
         // 0x410a03 snapshots the player exactly once, then enters state 2.
         // Subsequent updates only advance along this stored heading.
         const a=Math.atan2(this.player.y-e.y,this.player.x-e.x);
@@ -157,6 +165,7 @@
     }
     impact(b,e){
       const effect=IMPACT[b.shotType]||0,heavy=effect!==0,short=effect===10;
+      // 弹型模板 +44 决定小火花或大命中火球。
       // Original projectile-template +44 chooses S_EXPLO1 or S_SEXPNEW.
       this.addEffect(effect===3?2:heavy?1:0,clamp(b.x,e.x-e.def.width/2,e.x+e.def.width/2),e.y+e.def.height*.28,heavy?40:16,heavy?(short?16:24):12);
     }
@@ -180,6 +189,7 @@
       if(item.speed>2)item.speed--;else{if(item.angle>512&&item.angle<1536)item.y++;if(item.x<45)item.x++;else if(item.x>W-45)item.x--;}
     }
     automaticDrops(e){
+      // 0x200 标记触发额外补给，与地图掉落字段独立。
       // Enemy flag 0x200 calls 0x423c70 independently of its map drop field.
       const sequence=[2,3,4,13,14],limit=this.stage.id<=6?3:5;
       const weapon=sequence[this.supplyIndex];this.supplyIndex=(this.supplyIndex+1)%limit;
@@ -194,6 +204,7 @@
       const ground=!!(e.def.flags&0x40),large=e.def.width>=32,size=e.boss?112:large?Math.max(48,Math.min(96,e.def.width)):28;
       this.addEffect(ground?3:2,e.x,e.y+(e.dying?e.fall*.55:0),size,e.boss?36:large?24:18,ground);
       this.explode(e.x,e.y,'#ffb05c',e.boss?85:16);
+      // 必须同时有 0x40/0x80 才留残骸；残骸不再战斗、掉落或计分。
       // 0x4113d2: both 0x40 and 0x80 are required. Remnants cannot fire,
       // collide, receive damage, score or drop equipment a second time.
       if((e.def.flags&0xc0)===0xc0){
@@ -206,6 +217,7 @@
       if(e.def.sprite==='S_ENEMY28A'&&!e.dying)e.animationFrame=((e.animationFrame||0)+1)%6;
       if(e.animation&&!e.dying)this.updateEnemyAnimation(e);
       if(e.x>=0&&e.x<W&&e.y>=0&&e.y<H)e.entered=true;
+      // 濒死阈值按基础 HP 计算，包括出生时翻倍的 Boss。
       // Original warnings compare against base HP, including for doubled Boss HP.
       e.critical=e.hp>0&&e.hp<Math.floor(e.def.hp/4);e.burning=e.boss&&(e.dying||e.hp<Math.floor(e.def.hp/16));
       e.criticalTicks=e.critical?(e.criticalTicks||0)+1:0;
@@ -282,6 +294,7 @@
     updateSpecials(){
       if(this.phase!=='playing')return;
       const p=this.player;
+      // 保持原有 4 秒持续时间与每四 tick 的 3×240 伤害预算。
       // Keep the existing 4 s duration and 3*240 damage per four-tick burst frozen.
       if(p.mega>0&&p.respawn<=0){if((p.megaTick++||0)%4===0){this.addBullet(p.x,p.y-20,0,-950,true,3*240,1,{shotType:61,pulse:true,r:18,hitEnemies:[]});this.events.push({type:'super-pulse'});}}
       for(const s of this.specials){s.px=s.x;s.py=s.y;s.ticks++;
@@ -293,6 +306,7 @@
         this.enemyFireLock=Math.max(this.enemyFireLock,s.type===0?30:5);
         this.bullets=this.bullets.filter(b=>b.friendly);this.shake=s.type===0?5:2;
         for(const e of this.enemies){if(!this.targetable(e)||s.hits.includes(e.uid)||Math.hypot(e.x-s.x,e.y-s.y)>s.radius+e.r)continue;
+          // 保留旧版单敌伤害上限，散射子弹共享上限。
           // Frozen v0.2.1 per-enemy damage budgets; scatter siblings share the cap.
           s.hits.push(e.uid);e.hp-=s.type===0?4500:2400;e.hit=.06;if(e.hp<=0)this.killEnemy(e);
         }
@@ -355,6 +369,7 @@
           const owner=this.enemies.find(e=>e.uid===b.owner&&!e.dead&&!e.dying);
           if(!owner||b.dead||++b.age>=4){b.dead=true;continue;}
           b.px=b.x;b.py=b.y;b.x=owner.x+b.offsetX;b.y=owner.y+b.offsetY;b.life-=dt;
+          // 原作光束宽 8 像素、向下 480 像素，命中后不消失。
           // Original 0x428a77: vertical rectangle eight pixels wide, reaching
           // 480 pixels below the muzzle. Hitting does not consume the beam.
           if(p.respawn<=0&&Math.abs(p.x-b.x)<=p.r+4&&p.y+p.r>=b.y&&p.y-p.r<=b.y+480)this.hitPlayer(b.damage);

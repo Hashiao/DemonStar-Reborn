@@ -29,7 +29,8 @@ def main():
     checksum.write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in paths),encoding='ascii');paths.append(checksum)
     api=GitHub();base='/repos/'+REPO
     releases=api.request(base+'/releases?per_page=100');release=next((r for r in releases if r['tag_name']==args.tag),None)
-    notes=args.notes.read_text(encoding='utf-8')+'\n\n源码提交：`'+head+'`\n构建与验收提交：`'+args.build_sha+'`\n'
+    # 公开提交信息保持中英对照。 / Keep public commit metadata bilingual.
+    notes=args.notes.read_text(encoding='utf-8')+'\n\n源码提交 / Source commit: `'+head+'`\n构建与验收提交 / Build and verification commit: `'+args.build_sha+'`\n'
     if release is None:release=api.request(base+'/releases','POST',{'tag_name':args.tag,'target_commitish':head,'name':args.title or '恶魔之星·重生 '+args.tag,'body':notes,'draft':True,'prerelease':False})
     for file in paths:
         data=file.read_bytes();expected='sha256:'+hashlib.sha256(data).hexdigest();asset=next((a for a in release['assets'] if a['name']==file.name),None)

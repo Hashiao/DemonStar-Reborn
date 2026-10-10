@@ -3,7 +3,7 @@ import {writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
 const browser=await chromium.launch({channel:'chrome',headless:true}),errors=[];
-const page=await browser.newPage({viewport:{width:480,height:900},deviceScaleFactor:2,hasTouch:true,isMobile:true});
+const page=await browser.newPage({locale:'zh-CN',viewport:{width:480,height:900},deviceScaleFactor:2,hasTouch:true,isMobile:true});
 page.on('pageerror',e=>errors.push(String(e)));
 try{
   await page.goto(process.env.GAME_URL||'http://127.0.0.1:4174');await page.waitForFunction(()=>StarfallApp.renderer.enemyArtReady());await page.locator('#start').tap();
