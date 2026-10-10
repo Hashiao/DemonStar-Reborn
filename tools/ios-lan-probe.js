@@ -10,13 +10,16 @@
     var app=StarfallApp,g=app.game,room=app.lan,p=g.players&&g.players[1];
     if(step===0){
       if(app.music.audio.readyState<2||app.music.audio.currentTime<=0)return;
+      // 直接记录断线事件，避免繁忙模拟器的定时轮询漏掉短暂断线。
+      // Capture the disconnect event directly so a busy simulator cannot miss it between polling ticks.
+      if(config.role==='host')app.native.on(function(event){if(step>=3&&event.type==='disconnected')disconnected=true;});
       app.showRoom();
       if(config.role==='host')document.getElementById('lan-host').click();
       else{document.getElementById('lan-address').value='127.0.0.1';document.getElementById('lan-code').value=config.code;document.getElementById('lan-join').click();}
       step=1;report('connecting',{startupBGM:true});return;
     }
     if(room.status==='error'||room.status==='rejected')throw new Error(room.error);
-    report('running',{gamePhase:g.phase,roomStatus:room.status,frame:g.frame,players:g.players.length,connected:room.members.map(function(m){return m.connected;}),shots:p?p.shotsFired:0,bombs:p?p.bombs:0,roomError:room.error});
+    report('running',{gamePhase:g.phase,roomStatus:room.status,frame:g.frame||0,players:(g.players||[]).length,connected:room.members.map(function(m){return m.connected;}),shots:p?p.shotsFired:0,bombs:p?p.bombs:0,roomError:room.error});
     if(config.role==='host'){
       if(step===1&&room.status==='lobby'){
         report('lobby',{code:room.code,startupBGM:true});if(room.members.length!==2)return;
@@ -37,7 +40,9 @@
         report('passed',{players:g.players.length,localSlot:room.localSlot,platforms:room.members.map(function(m){return m.platform;}),startupBGM:true,actions:actions,pausedFrame:pausedFrame,finalFrame:g.frame,stage:g.stage.id,score:g.score,rear:p.rear,reconnected:disconnected});clearInterval(timer);
       }
     }else{
-      if(step===1&&g.phase==='playing'){
+      // 等待出击事件释放旧输入后再注入动作，与常规原生探针一致。
+      // Wait until launch-event input cleanup finishes, matching the standard native probe.
+      if(step===1&&g.phase==='playing'&&g.frame>=6){
         if(g.players.length!==2||room.localSlot!==2)throw new Error('Wrong client ownership');
         startX=p.x;app.input.move(0,.5,0);app.input.touchFire(0,41,true);app.input.pulse(0,'bomb');step=2;return;
       }
