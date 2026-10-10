@@ -58,3 +58,9 @@ This is explicit representative-frame coverage, not a frame-by-frame certificati
 2026-10-10：本轮复看先前采集的 P1 缓存帧 222、224、226、228、232 秒。222 秒为 Boss 机体与局部爆点，224 秒为大范围爆炸和碎片；226 秒出现 MISSION COMPLETE 与 Player 1 奖励框，228/232 秒可见完整三行奖励。用于定位死亡表现和结算构图，不能据此宣称精确坠毁时长或十八关完整死亡动画已验收。细节见 [定位报告](FEATURE_AUDIT_2026_10_10.md)。
 
 2026-10-10: this audit re-examined previously captured P1 frames at 222, 224, 226, 228 and 232 seconds. They show the Boss with local effects, a large explosion/debris field, then MISSION COMPLETE and the Player 1 reward panel. This supports diagnosis of death presentation and results composition, not exact crash timing or complete eighteen-stage death-animation verification. See the linked audit report.
+
+## 双人 HUD 补充参考
+
+2026-10-10：用户另提供双人原作截图并确认以图中排列为准。明确可见红色 P1、蓝色 P2、蓝色 P2 余命小飞机，以及右下角“小蓝机在能量条左端、炸弹在上方”的状态组。截图未附时间戳，不记为新审看的录像时刻。原图保存在忽略的 `.local/reference/m210/user-p2-hud.png`；重绘与验证见 [蓝色 P2 记录](ART_M2_10_P2.md)。
+
+2026-10-10: a user-supplied two-player original screenshot confirms red P1, blue P2, blue P2 spare-life icons and a bottom-right status group with the blue ship left of energy and bombs above. No timestamp was supplied, so this is not logged as a newly watched video timestamp. The reference remains ignored; see the linked redraw/verification record.

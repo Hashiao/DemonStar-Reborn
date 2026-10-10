@@ -66,3 +66,7 @@ Phase checks: 130 unit/engine checks passed, plus existing solo browser/localiza
 上述是桌面浏览器输入/设备注入与兼容构建检查，不代表实际手柄、手机震动、真屏六指或原生冷启动已验收。局域网、原生触感、Boss 死亡分支、原作结算和统一重绘图标仍在完整目标内。
 
 These are desktop-browser input/device fixtures and compatibility-build checks, not physical controller, haptic, six-finger touchscreen or native cold-start certification. LAN, native haptics, Boss death branches, original results presentation and the unified redrawn icon remain in the full objective.
+
+P2 后续纠正：以用户最新确认的双人截图为准，右下角组不镜像，小蓝机在能量条左端、炸弹在上方。P2 机体/余命/状态图标已接入本地原作参考的蓝色重绘，原暖色尾焰保留；P3/P4 扩展复用红/蓝并带编号。详见 [P2 素材与验证](ART_M2_10_P2.md)，包含 17 姿态蓝色路由和 HUD 顺序检查。
+
+P2 follow-up correction follows the user's final screenshot choice: the bottom-right group is not mirrored; its blue ship is left of the energy bar and bombs are above. Blue P2 body/life/status redraws now reference the local original, retaining warm exhaust. Extended P3/P4 reuse red/blue with numbers. The linked record covers all seventeen blue pose routes and HUD ordering.

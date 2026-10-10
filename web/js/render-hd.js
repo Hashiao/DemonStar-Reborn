@@ -4,7 +4,7 @@
   const enemyArt=DemonStarEnemyArt,presentationArt=DemonStarPresentationArt,campaignArt=DemonStarCampaignArt,enemyShots=DemonStarEnemyShots;
   const load=src=>{const im=new Image();im.src=src;return im;};
   class Renderer {
-    constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.time=0;this.effects=load('assets/combat-effects-hd.png');this.playerWeapons=load(DemonStarWeaponArt.asset);this.attacks=load('assets/enemy-attacks-hd.png');this.enemyAtlases={};for(const name in enemyArt.sprites)this.enemyAtlases[name]=load(enemyArt.sprites[name].asset);this.tintCache=new Map();this.enemyHealthBars=false;this.superWeapon=load('assets/pulse-laser-hd.png');this.launchCarrier=load('assets/launch-carrier-hd.png');this.launchDoors=load('assets/launch-doors-hd.png');this.blasts=load('assets/blast-animation-hd.png');this.wreckAtlas=load('assets/ground-wrecks-hd.png');this.ships=load('assets/ships-hd.png');this.bosses=load('assets/bosses-07-18-hd.png');this.hangar=load('assets/hangar-hd.png');this.mission1=load('assets/mission1-hd.png');this.weapons=load('assets/weapons-hd.png');this.pickups=load('assets/pickups-hd.png');this.playerMotion=load('assets/player-motion-hd.png');this.carriers=load('assets/supply-carriers-hd.png');this.terrain=[load('assets/terrain-01-06-hd.png'),load('assets/terrain-07-12-hd.png'),load('assets/terrain-13-18-hd.png')];this.mission1Names=['S_ENEMY14','S_ENEMY20','S_ENEMY21','S_ENEMY34A','S_ASTER1A','S_ASTER2A','S_ASTER3A','S_ENBON1','S_ENBON3','S_SPTNKRA','S_ENEMY22','S_ENEMY28A','S_PIPE1','S_PIPE2','S_PIPE3','S_BHOLE1A'];const r=rng(654);this.stars=Array.from({length:100},()=>[r()*W,r()*H,r()*1.3+.3]);this.resize();}
+    constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d',{alpha:false});this.time=0;this.effects=load('assets/combat-effects-hd.png');this.playerWeapons=load(DemonStarWeaponArt.asset);this.attacks=load('assets/enemy-attacks-hd.png');this.enemyAtlases={};for(const name in enemyArt.sprites)this.enemyAtlases[name]=load(enemyArt.sprites[name].asset);this.tintCache=new Map();this.enemyHealthBars=false;this.superWeapon=load('assets/pulse-laser-hd.png');this.launchCarrier=load('assets/launch-carrier-hd.png');this.launchDoors=load('assets/launch-doors-hd.png');this.blasts=load('assets/blast-animation-hd.png');this.wreckAtlas=load('assets/ground-wrecks-hd.png');this.ships=load('assets/ships-hd.png');this.bosses=load('assets/bosses-07-18-hd.png');this.hangar=load('assets/hangar-hd.png');this.mission1=load('assets/mission1-hd.png');this.weapons=load('assets/weapons-hd.png');this.pickups=load('assets/pickups-hd.png');this.playerMotion=load('assets/player-motion-hd.png');this.player2Motion=load('assets/player2-motion-hd.png');this.carriers=load('assets/supply-carriers-hd.png');this.terrain=[load('assets/terrain-01-06-hd.png'),load('assets/terrain-07-12-hd.png'),load('assets/terrain-13-18-hd.png')];this.mission1Names=['S_ENEMY14','S_ENEMY20','S_ENEMY21','S_ENEMY34A','S_ASTER1A','S_ASTER2A','S_ASTER3A','S_ENBON1','S_ENBON3','S_SPTNKRA','S_ENEMY22','S_ENEMY28A','S_PIPE1','S_PIPE2','S_PIPE3','S_BHOLE1A'];const r=rng(654);this.stars=Array.from({length:100},()=>[r()*W,r()*H,r()*1.3+.3]);this.resize();}
     prepareStage(id=1){
       if(!this.campaignAtlases){this.campaignAtlases=new Map();this.shotAtlases=new Map(Object.keys(enemyShots.assets).map(path=>[path,load(path)]));this.oreImages=new Map();this.missingSprites=new Set();this.missingShotTypes=new Set();}
       if(this.artStage===id)return;
@@ -17,7 +17,7 @@
     }
     campaignReady(id=this.artStage||1){this.prepareStage(id);return [...this.campaignAtlases.values(),...this.shotAtlases.values()].every(im=>im.complete&&im.naturalWidth>0);}
     enemyArtReady(){return Object.keys(enemyArt.sprites).every(name=>this.enemyAtlases[name].naturalWidth>0);}
-    presentationReady(){return this.campaignReady()&&this.playerWeapons.naturalWidth>0&&this.launchCarrier.naturalWidth>0&&this.launchDoors.naturalWidth>0&&this.blasts.naturalWidth>0&&this.wreckAtlas.naturalWidth>0&&this.superWeapon.naturalWidth>0;}
+    presentationReady(){return this.campaignReady()&&this.playerWeapons.naturalWidth>0&&this.player2Motion.complete&&this.player2Motion.naturalWidth>0&&this.launchCarrier.naturalWidth>0&&this.launchDoors.naturalWidth>0&&this.blasts.naturalWidth>0&&this.wreckAtlas.naturalWidth>0&&this.superWeapon.naturalWidth>0;}
     oreImage(name,spec){
       if(this.oreImages.has(name))return this.oreImages.get(name);
       const im=document.createElement('canvas');im.width=spec.width*4;im.height=spec.height*4;
@@ -128,6 +128,10 @@
     }
     player(x,y,power,time,scale=1,state={bank:8,thrust:0}){
       const c=this.c,bank=Math.max(0,Math.min(16,Math.round(state.bank??8))),thrust=state.thrust||0;
+      // 原作 P2 使用蓝色机体；扩展 P4 沿用蓝色。尾焰独立保留原暖色图集。
+      // Original P2 is blue; extended P4 reuses blue. Exhaust keeps the independent warm atlas.
+      const blue=state.id===2||state.id===4,body=blue?this.player2Motion:this.playerMotion;
+      if(blue&&(!body.complete||!body.naturalWidth))return;
       const flicker=1+.15*Math.sin(time*57)+.08*Math.sin(time*103),length=(thrust>0?16+thrust*10:14+thrust*7)*flicker;
       const spread=5.8*(1-Math.abs(bank-8)*.035),shift=(bank-8)*.2;
       for(const side of [-1,1]){
@@ -136,7 +140,7 @@
           const g=c.createLinearGradient(fx,fy-length/2,fx,fy+length/2);g.addColorStop(0,'#fffbe1');g.addColorStop(.3,'#ffe462');g.addColorStop(.75,'#fa6c12');g.addColorStop(1,'#ce271000');c.fillStyle=g;c.fillRect(fx-2*scale,fy-length/2,4*scale,length);
         }
       }
-      if(!this.cell(this.playerMotion,bank,5,4,x,y,40*scale,40*scale*(1-thrust*.025)))this.cell(this.ships,0,4,4,x,y,39*scale,39*scale);
+      if(!this.cell(body,bank,5,4,x,y,40*scale,40*scale*(1-thrust*.025))&&!blue)this.cell(this.ships,0,4,4,x,y,39*scale,39*scale);
     }
     draw(game,dt){const c=this.c,l=this.layout;if(game.phase!=='paused')this.time+=dt;c.setTransform(this.dpr,0,0,this.dpr,0,0);c.fillStyle='#090e16';c.fillRect(0,0,l.w,l.h);const active=game.phase!=='menu';this.prepareStage(game.stage?.id||1);
       if(!active&&this.hangar.complete&&this.hangar.naturalWidth){const scale=Math.max(l.w/this.hangar.naturalWidth,l.h/this.hangar.naturalHeight),w=this.hangar.naturalWidth*scale,h=this.hangar.naturalHeight*scale;c.drawImage(this.hangar,(l.w-w)/2,(l.h-h)/2,w,h);c.fillStyle='#02030a55';c.fillRect(0,0,l.w,l.h);return;}

@@ -2,6 +2,8 @@
 
 - 多人 HUD 必须沿用已核实 1P 的原作风格：飞机余命图标、逐枚且区分类型的炸弹图标、16 格能量条。只扩展玩家位置与标识，不得替换为“生命/炸弹/能量”文字表或现代状态卡。
   Multiplayer HUD must reuse the verified 1P style: spare-ship icons, individual typed bomb icons and sixteen energy segments. Extend placement and player identity only; never replace these with text summaries or modern status cards.
+- P2 战机、余命与状态小飞机必须为原作蓝色。以用户于 2026-10-10 最后确认的双人截图排列为准：P2 整组在右下角，小蓝机在能量条左端，炸弹在上方；此前“左右镜像”的口述已被该截图确认取代。
+  P2's fighter and HUD ship icons must use the original blue palette. Follow the user's final confirmed two-player screenshot from 2026-10-10: the P2 group is anchored bottom-right, its blue ship is left of the energy bar, and bombs are above. This supersedes the earlier verbal mirror-layout description.
 
 - M2.9：全战役原型和敌弹必须按 `campaign-art.js` / `enemy-shots.js` 显式映射，不得重新引入编号取模飞机或通用地物回退。保留五类炮台固定底座/独立炮管、按关加载与完整图片解码检查。基础外形覆盖不代表全部动画已还原；见 `docs/M2_9_RESEARCH.md`。
   M2.9: use explicit campaign-object and enemy-shot mappings; never reintroduce modulo fighters or generic scenery fallbacks. Preserve five fixed-base turret layers, per-stage loading and complete-image readiness. Base-art coverage is not full animation fidelity; see the M2.9 research document.
