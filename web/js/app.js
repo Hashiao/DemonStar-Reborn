@@ -189,7 +189,7 @@
     const content=won?bonus:`<div class="result-score">${fmt(game.score)}</div><div class="stat-row">${t('kills')}<b>${game.kills}</b></div><div class="stat-row">${t('accuracy')}<b>${accuracy}%</b></div><div class="stat-row">${t('flightTime')}<b>${Math.floor(game.totalTime/60)}:${String(Math.floor(game.totalTime%60)).padStart(2,'0')}</b></div><div class="stat-row">${t('currentStage')}<b>${game.stage.id} / 18</b></div>`;
     const actions=lan.role==='client'?[[t('lanRoom'),showRoom]]:game.phase==='cleared'?[[t('nextStage'),()=>{game.nextStage();music.stage(game.stage.id);music.resume();hideDialog();lastPhase=game.phase;clearInput();updateHud();if(lan.role==='host')lan.flush();}]]:[[t('retry'),()=>start(game.phase==='victory'?1:game.stage.id)]];
     actions.push([t('hangar'),showMenu,true]);
-    dialog(t(won?'missionComplete':'combatLog'),t(won?'missionComplete':'gameOver'),content,actions);
+    dialog(t(won?'missionComplete':'combatLog'),t(won?'missionComplete':'gameOver'),content,actions,showMenu);
     if(won)$('dialog').classList.add('classic-results');
   }
   function updateHud(){
@@ -216,7 +216,7 @@
     const bluePilot=p.defaultWeapon&&(p.id===2||p.id===4);$('weapon-icon').style.backgroundImage=bluePilot?"url('assets/player2-motion-hd.png')":'';$('weapon-icon').style.backgroundSize=bluePilot?'1015.9420289855% 831.1111111111%':'';$('weapon-icon').style.backgroundPosition=bluePilot?'50% 91.4893617021%':`${id%4/3*100}% ${Math.floor(id/4)/4*100}%`;
     $('power-meter').style.color=p.defaultWeapon?'#9da8b5':colors[p.weapon];label('power-meter',t('powerAria',{n:p.power}));
     Array.from($('power-meter').children).forEach((segment,i)=>segment.classList.toggle('filled',i<p.power));
-    text('shield-label',t(game.launch?'launch':game.phase==='aftermath'?'missionComplete':p.defaultWeapon?'chooseWeapon':p.power===6?'maxPower':'sameColor'));
+    text('shield-label',t(game.launch?'launch':game.phase==='aftermath'?'missionComplete':p.defaultWeapon?'chooseWeapon':p.power===6?'maxPower':game.retainWeaponLevels?'retainedHint':'sameColor'));
     const gear=[p.missileAmmo?{id:p.missileType,text:t(p.missileType===9?'gearHoming':'gearMissile',{n:p.missileAmmo})} : null,p.side?{id:12,text:t('gearSide',{n:p.side})} : null,p.rear?{id:13,text:t('gearRear',{n:p.rear})} : null,p.shield>0?{id:7,text:t('gearShield')} : null].filter(Boolean);
     const gearKey=gear.map(g=>g.id+':'+g.text).join('|');if($('aux-equipment').dataset.key!==gearKey){$('aux-equipment').innerHTML=gear.map(g=>`<span><i class="gear-icon gear-${g.id}" aria-hidden="true"></i>${g.text}</span>`).join('');$('aux-equipment').dataset.key=gearKey;}
     text('bomb-count',String(p.bombs));$('bomb').disabled=game.phase!=='playing'||p.bombs<=0||p.bombCooldown>1e-9||p.respawn>0;label('bomb',t('bombAria',{n:p.bombs}));
@@ -279,7 +279,7 @@
   window.addEventListener('pagehide',()=>{saveScore();background();});
   window.addEventListener('resize',()=>{clearInput();renderer.resize();touch.layout(renderer.layout);});
   globalThis.StarfallApp={game,i18n:I,input,touch,saves,lan,native:DemonStarNative,background,foreground,back,start,startLocal,showMenu,showSettings,showPauseDialog,showMultiplayer,showControls,showSaves,showMissions,showRoom,renderer,music,audio};
-  document.addEventListener('click',e=>{if(e.target.closest('button')){music.unlock();if(saved.sound){audio.unlock();if(!['fire','bomb','start'].includes(e.target.closest('button').id))audio.effect('menu');}}});
+  document.addEventListener('click',e=>{if(e.target.closest('button')){music.unlock();if(saved.sound){audio.unlock();if(!['fire','bomb','start','setup-start'].includes(e.target.closest('button').id))audio.effect('menu');}}});
   // 原生容器允许首屏播放；浏览器若拒绝，后续交互仍会再次尝试。
   // Native hosts allow startup playback; browser gesture handlers retry if autoplay is rejected.
   menuInfo();music.update(false);music.unlock();requestAnimationFrame(frame);

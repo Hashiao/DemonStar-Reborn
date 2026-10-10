@@ -74,6 +74,7 @@
     powerAria:['增强等级 {n} / 6','火力等級 {n} / 6','Power level {n} / 6'],
     chooseWeapon:['拾取颜色球选择武器','拾取彩色能量球切換武器','Collect a colored orb to choose a weapon'],
     sameColor:['同色升档 · 换色重置','同色升級・換色重置','Match colors to power up · New color resets'],
+    retainedHint:['三色独立升级 · 死亡清空','三色各自升級・死亡清空','Each color levels up · Resets on death'],
     maxPower:['同色或 S 触发清屏','同色或 S，發動清場攻擊','Same color or S unleashes a screen attack'],
     launch:['母舰出击中','正從母艦起飛','Launching from carrier'],
     move:['移动','移動','Move'],fire:['开火','射擊','Fire'],bombLabel:['炸弹','炸彈','Bomb'],
