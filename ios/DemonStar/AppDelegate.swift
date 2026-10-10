@@ -21,6 +21,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 final class GameViewController: UIViewController, WKNavigationDelegate {
     private var web: WKWebView!
     private var bridge: GameBridge!
+    #if targetEnvironment(simulator)
+    private var touchProbeLabel: UILabel?
+    #endif
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation { .portrait }
     override var shouldAutorotate: Bool { true }
     override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
@@ -64,6 +67,7 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
     // Explicit CI probes exercise the packaged WebView; the standard smoke test does not open LAN connections.
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         #if targetEnvironment(simulator)
+        if ProcessInfo.processInfo.arguments.contains("--touch-probe") { installTouchProbe(); return }
         // 仅模拟器显式参数读取 CI 放入沙盒的探针，不包含在 iPhoneOS 分支。
         // Only an explicit simulator argument loads the sandbox CI probe; excluded from iPhoneOS.
         if ProcessInfo.processInfo.arguments.contains("--lan-probe"),
@@ -166,6 +170,39 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
         }
     }
     #if targetEnvironment(simulator)
+    // 仅显式模拟器 UI 测试提供状态读数；手势由 XCTest 从系统层发送。
+    // Explicit simulator UI tests expose observations only; XCTest sends gestures through the system.
+    private func installTouchProbe() {
+        let label = UILabel(frame: CGRect(x: 0, y: view.safeAreaInsets.top, width: 100, height: 12))
+        label.text = "Touch probe"; label.font = .systemFont(ofSize: 8); label.isAccessibilityElement = true
+        label.accessibilityIdentifier = "touch-probe"; view.addSubview(label); touchProbeLabel = label
+        let script = """
+        (function(){var held={},holds={},selected=false,cancels=0;
+          document.addEventListener('touchstart',function(e){Array.from(e.changedTouches).forEach(function(t){var el=t.target.closest('.touch-stick,.touch-actions button');if(el)held[t.identifier]={id:el.id,at:performance.now()};});},{passive:true});
+          ['touchend','touchcancel'].forEach(function(type){document.addEventListener(type,function(e){Array.from(e.changedTouches).forEach(function(t){var h=held[t.identifier];if(h){holds[h.id]=Math.max(holds[h.id]||0,(performance.now()-h.at)/1000);if(type==='touchcancel')cancels++;delete held[t.identifier];}});},{passive:true});});
+          setInterval(function(){var a=window.StarfallApp;if(!a)return;var g=a.game;if(g.phase==='playing'){g.recordEvents=[];g.enemies=[];g.bullets=[];g.players.forEach(function(p){p.invincible=999;});if(String(getSelection()))selected=true;}
+            var rects={};['fire','bomb','joystick','fire-2','bomb-2','joystick-2'].forEach(function(id){var e=document.getElementById(id),r=e.getBoundingClientRect();rects[id]={x:r.x,y:r.y,w:r.width,h:r.height};});
+            window.touchProbeResult={phase:g.phase,players:(g.players||[]).map(function(p){return {x:p.x,shots:p.shotsFired,bombs:p.bombs};}),holds:holds,selected:selected,cancels:cancels,rects:rects,guard:getComputedStyle(document.querySelector('#fire b')).webkitUserSelect};
+          },100);
+        })();
+        """
+        web.evaluateJavaScript(script) { [weak self] _, _ in self?.collectTouchProbe() }
+    }
+    private func collectTouchProbe() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+            self?.web.evaluateJavaScript("window.touchProbeResult || null") { [weak self] result, _ in
+                guard let self = self else { return }
+                if let value = result as? [String: Any], let data = try? JSONSerialization.data(withJSONObject: value), let text = String(data: data, encoding: .utf8) {
+                    self.touchProbeLabel?.accessibilityLabel = text
+                    if value["phase"] as? String == "playing", let players = value["players"] as? [Any],
+                       let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                        try? data.write(to: dir.appendingPathComponent("touch-probe-\(players.count).json"), options: .atomic)
+                    }
+                }
+                self.collectTouchProbe()
+            }
+        }
+    }
     private func saveLANProbe(_ value: [String: Any]) {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
            let data = try? JSONSerialization.data(withJSONObject: value) {

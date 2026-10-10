@@ -4,6 +4,13 @@
   class TouchControls {
     constructor(input,active,unlock){
       this.input=input;this.active=active;this.unlock=unlock;this.groups=[];
+      // iOS 的文字选择/长按菜单独立于 pointer 默认行为，必须拦截真实触控默认动作。
+      // iOS selection/callouts are separate from pointer defaults; cancel native touch defaults on controls.
+      // 只保护操作区，联机地址等表单仍可正常选择、粘贴和滚动。
+      // Scope this to gameplay controls so LAN fields retain selection, paste and scrolling.
+      const controls=$('controls'),block=e=>{if(e.cancelable)e.preventDefault();};
+      for(const type of ['touchstart','touchmove','touchend'])controls.addEventListener(type,block,{passive:false});
+      for(const type of ['selectstart','contextmenu','dragstart'])controls.addEventListener(type,block);
       for(let i=0;i<2;i++){
         const suffix=i?'-2':'',stick=i?$('joystick').cloneNode(true):$('joystick'),actions=i?document.querySelector('.action-buttons').cloneNode(true):document.querySelector('.action-buttons');
         if(i){stick.querySelector('.direction-pad')?.remove();actions.querySelector('.touch-badge')?.remove();for(const e of [stick,...stick.querySelectorAll('[id]'),...actions.querySelectorAll('[id]')])e.id+='-2';$('controls').append(stick,actions);}

@@ -20,7 +20,7 @@ try{
     const context=await browser.newContext({viewport:{width:480,height:900},locale:'en-US'}),page=await context.newPage();pages.push(page);page.on('pageerror',e=>errors.push({device:i,error:e.message}));
     await page.exposeFunction('__nativeFixture',raw=>{chain=chain.then(()=>native(i,raw));return chain;});
     await page.addInitScript(()=>{window.DemonStarHost={command:raw=>{window.__nativeFixture(raw);}};const listen=window.addEventListener.bind(window);window.addEventListener=(type,...args)=>{if(type!=='blur'&&type!=='focus')listen(type,...args);};});
-    await page.goto(process.env.GAME_URL||'http://127.0.0.1:4173');await page.waitForFunction(()=>window.StarfallApp&&StarfallApp.native.capabilities.lan);await page.locator('#settings').click();await page.locator('#lan-settings').click();
+    await page.goto(process.env.GAME_URL||'http://127.0.0.1:4173');await page.waitForFunction(()=>window.StarfallApp&&StarfallApp.native.capabilities.lan);await page.locator('#multiplayer').click();await page.locator('#lan-multiplayer').click();
   }
   await pages[1].evaluate(()=>{StarfallApp.input.config.mousePlayer=2;});
   await pages[0].locator('#lan-host').click();await pages[0].waitForFunction(()=>StarfallApp.lan.status==='lobby');const code=await pages[0].evaluate(()=>StarfallApp.lan.code);

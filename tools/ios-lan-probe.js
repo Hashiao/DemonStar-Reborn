@@ -14,7 +14,7 @@
       // 直接记录断线事件，避免繁忙模拟器的定时轮询漏掉短暂断线。
       // Capture the disconnect event directly so a busy simulator cannot miss it between polling ticks.
       if(config.role==='host')app.native.on(function(event){if(step>=3&&event.type==='disconnected')disconnected=true;});
-      app.showRoom();
+      document.getElementById('multiplayer').click();document.getElementById('lan-multiplayer').click();
       if(config.role==='host')document.getElementById('lan-host').click();
       else{document.getElementById('lan-address').value='127.0.0.1';document.getElementById('lan-code').value=config.code;document.getElementById('lan-join').click();}
       step=1;report('connecting',{startupBGM:true,startupMusic:startupMusic});return;

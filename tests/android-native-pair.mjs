@@ -17,7 +17,7 @@ try{
   const command=(method,params={})=>new Promise((resolve,reject)=>{const id=++sequence,timeout=setTimeout(()=>{pending.delete(id);reject(new Error('CDP request timed out: '+method));},15000);pending.set(id,{resolve,reject,timer:timeout});ws.send(JSON.stringify({id,method,params}));});
   evaluate=async expression=>{const r=await command('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw new Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
   await until(()=>evaluate('!!window.StarfallApp?.native.capabilities.lan'));await evaluate('StarfallApp.showMenu();true');
-  run('shell','am','force-stop',host);run('shell','am','start','-n',host+'/.MainActivity');await sleep(1800);await tap('settings');await tap('lan-settings');await tap('lan-host');
+  run('shell','am','force-stop',host);run('shell','am','start','-n',host+'/.MainActivity');await sleep(1800);await tap('multiplayer');await tap('lan-multiplayer');await tap('lan-host');
   let code;await until(()=>{const texts=nodes().map(n=>n.text);code=texts.map(t=>t.match(/(?:^|\D)(\d{6})(?!\d)/)?.[1]).find(Boolean);return !!code;});
   await evaluate('StarfallApp.lan.join("127.0.0.1",'+JSON.stringify(code)+')');await until(()=>evaluate('StarfallApp.lan.status==="lobby"'));
   let controls={x:0,y:0,fire:false,bomb:0};timer=setInterval(async()=>{if(busy)return;busy=true;try{await evaluate('StarfallApp.lan.update(.05,'+JSON.stringify(controls)+');true');}catch{}finally{busy=false;}},100);

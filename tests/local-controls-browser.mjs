@@ -6,9 +6,9 @@ const browser=await chromium.launch({channel:'chrome',headless:true,args:['--aut
 try{
   const context=await browser.newContext({locale:'zh-CN',viewport:{width:480,height:900},hasTouch:true,isMobile:true}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
   await page.goto(process.env.GAME_URL||'http://127.0.0.1:4173');await page.waitForFunction(()=>window.StarfallApp&&StarfallApp.renderer.presentationReady());await page.waitForFunction(()=>!StarfallApp.music.audio.paused&&StarfallApp.music.audio.currentTime>0);checks.push('startup-BGM-with-autoplay-permitted');
-  await page.locator('#settings').tap();await page.locator('#control-settings').tap();await page.locator('#player-count').selectOption('2');
+  await page.locator('#settings').tap();await page.locator('#control-settings').tap();
   await page.locator('[data-binding="fire"]').tap();await page.keyboard.press('f');assert.ok((await page.locator('[data-binding="fire"]').textContent()).includes('F'));
-  await page.locator('#control-player').selectOption('1');await page.locator('#touch-mode').selectOption('floating');await page.getByRole('button',{name:'返回设置',exact:true}).tap();await page.getByRole('button',{name:'返回机库',exact:true}).tap();await page.locator('#start').tap();await page.waitForFunction(()=>StarfallApp.game.phase==='playing');
+  await page.locator('#control-player').selectOption('1');await page.locator('#touch-mode').selectOption('floating');await page.getByRole('button',{name:'返回设置',exact:true}).tap();await page.getByRole('button',{name:'返回机库',exact:true}).tap();await page.locator('#multiplayer').tap();await page.locator('#local-multiplayer').tap();await page.waitForFunction(()=>StarfallApp.game.phase==='playing');
   await page.evaluate(()=>{const g=StarfallApp.game;g.recordEvents=[];g.enemies=[];g.bullets=[];for(const p of g.players)p.invincible=999;});
   assert.equal(await page.evaluate(()=>StarfallApp.game.players.length),2);await mkdir('artifacts',{recursive:true});await page.screenshot({path:'artifacts/m210-local-two-player.png'});
   const session=await context.newCDPSession(page),point=async(selector,id,rx=.5)=>{const r=await page.locator(selector).boundingBox();return {id,x:r.x+r.width*rx,y:r.y+r.height*.5};};

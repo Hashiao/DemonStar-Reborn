@@ -40,7 +40,7 @@ try{
   await page.evaluate(()=>{StarfallApp.game.addBullet(200,210,0,-400,true,5000);});await page.waitForFunction(()=>audioEvents.includes('explosion'));
   report.push({surface:'desktop',keyboardFire:true,movement:true,pause:true,bomb:true,missionVoiceOnce:true,enemyHitSound:true,explosionSound:true});
   const mobile=await browser.newContext({locale:'zh-CN',viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true}),phone=await open(mobile);
-  await phone.screenshot({path:'artifacts/mobile-menu.png'});await phone.locator('.title h2').tap();await resetArena(phone);
+  await phone.screenshot({path:'artifacts/mobile-menu.png'});await phone.locator('.title h2').tap();assert.equal(await phone.evaluate(()=>StarfallApp.game.phase),'menu');await phone.locator('#start').tap();await resetArena(phone);
   assert.equal(await phone.locator('#lives .ship-icon').count(),3);assert.equal(await phone.locator('#energy .filled').count(),16);assert.equal(await phone.locator('#bomb-stock i').count(),3);
   // Real simultaneous touch contacts: joystick movement and A held together.
   const session=await mobile.newCDPSession(phone),stick=await phone.locator('#joystick').boundingBox(),fire=await phone.locator('#fire').boundingBox();

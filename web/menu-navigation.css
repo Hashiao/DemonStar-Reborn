@@ -1,0 +1,13 @@
+/* 主菜单依序展示模式与设置，窄屏保持所有入口可见。 / Ordered mode/settings entries stay visible on compact screens. */
+.menu .menu-bottom{position:static;margin-top:auto;transform:none}
+.menu .menu-bottom .record{position:static;margin:0 0 8px;line-height:16px}
+.menu .menu-primary .primary{min-height:44px;font-size:21px;padding:7px 3px;line-height:1.3}
+.menu .menu-options button{font-size:14px;line-height:18px;min-height:30px;padding:6px 0}
+.menu .menu-hint{margin:8px 0 0;line-height:14px}
+@media(orientation:landscape) and (max-height:560px){
+  .menu .menu-bottom{position:absolute;top:50%;left:52%;right:15px;transform:translateY(-50%);margin:0}
+  .menu .menu-primary .primary{min-height:40px;font-size:19px;padding:6px 0}
+  .menu .menu-options button{min-height:28px;padding:5px 0;font-size:13px}
+  .menu .menu-bottom .record{margin-bottom:4px;font-size:8px}
+  .menu .menu-hint{margin-top:4px;font-size:8px}
+}

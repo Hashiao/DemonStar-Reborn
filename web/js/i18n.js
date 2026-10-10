@@ -5,6 +5,7 @@
   // 繁体文案独立编写，不自动转字；数组顺序固定为简中、繁中、英文。
   // Traditional Chinese is authored separately; column order is Hans, Hant, English.
   const copy={
+    singlePlayer:['单人游戏','單人遊戲','Single player'],multiplayer:['多人游戏','多人遊戲','Multiplayer'],localMultiplayer:['同屏双人','同屏雙人','Two players · same device'],lanMultiplayer:['局域网双人','區域網路雙人','Two players · LAN'],backMultiplayer:['返回多人游戏','返回多人遊戲','Back to multiplayer'],multiplayerHint:['选择在同一台设备上双人游玩，或通过同一 Wi-Fi／热点连接两台设备。','選擇在同一台裝置上雙人遊玩，或透過同一個 Wi-Fi／熱點連接兩台裝置。','Play together on one device, or connect two devices over the same Wi-Fi/hotspot.'],
     lanTitle:['局域网联机','區域網路連線','LAN multiplayer'],lanRoom:['联机房间','連線房間','Multiplayer room'],lanCreate:['创建房间','建立房間','Create room'],lanJoin:['加入房间','加入房間','Join room'],lanAddress:['主机地址','主機位址','Host address'],lanCode:['六位房间码','六位房間碼','Six-digit room code'],lanStart:['全员出击','全員出擊','Launch together'],lanLeave:['离开房间','離開房間','Leave room'],lanReconnect:['重新连接','重新連線','Reconnect'],lanLocalPlayer:['本机：玩家 {n}','本機：玩家 {n}','This device: Player {n}'],
     lanInputHint:['联机时每台设备控制自己的战机；这里的操作设置仅影响本机。','連線時每台裝置控制自己的戰機；這裡的操作設定只影響本機。','Each connected device controls its own ship. These controls affect this device only.'],
     lanHint:['先让设备连接同一 Wi-Fi 或手机热点。房主创建房间，其他玩家输入房主显示的地址与房间码。安卓和 iOS 可混合，当前支持双人，每台设备一名玩家。','請先將裝置連接同一個 Wi-Fi 或手機熱點。房主建立房間，其他玩家輸入房主顯示的位址與房間碼。Android 與 iOS 可一起遊玩，目前支援雙人，每台裝置一名玩家。','Connect devices to the same Wi-Fi or personal hotspot. The host creates a room; others enter its address and room code. Android and iOS can join together, two players, one per device.'],lanNativeOnly:['请使用 Android 或 iOS 安装版进行局域网联机。浏览器仍可进行本机多人游玩。','區域網路連線請使用 Android 或 iOS 安裝版。瀏覽器仍可在同一台裝置多人遊玩。','Use the Android or iOS app for LAN play. Local multiplayer remains available in the browser.'],lanHostRules:['房主控制开始、继续、切关和读档。任何玩家都可以请求暂停；断线后保留座位等待重连。','房主控制開始、繼續、換關與讀檔。任何玩家都能要求暫停；斷線後會保留位置供重新連線。','The host controls launch, resume, stage changes and loading. Anyone can request a pause. Disconnected seats are retained for reconnection.'],lanHostOnly:['等待房主继续、切关或读档。','請等待房主繼續、換關或讀檔。','Wait for the host to resume, change stage or load a save.'],
@@ -14,7 +15,7 @@
     haptics:['震动反馈','震動回饋','Haptic feedback'],hapticsHint:['受伤、投弹和拾取时震动；仅在支持触感的手机 App 中生效。','受傷、投彈及拾取時提供震動；僅適用於支援觸感的手機 App。','Feedback for hits, bombs and pickups. Available in the phone app on supported hardware.'],
     inputSettings:['玩家与操作','玩家與操作','Players and controls'],playerCount:['同机人数','同機人數','Local players'],playerCountValue:['{n} 人','{n} 人','{n} players'],configurePlayer:['配置玩家','設定玩家','Configure player'],playerNumber:['玩家 {n}','玩家 {n}','Player {n}'],
     playerLimit:['当前版本仅开放单人和双人游玩。','目前版本僅開放單人及雙人遊玩。','This version supports solo and two-player play.'],
-    localPlayersHint:['当前支持单人或双人，两人可以同时触屏操作，也可使用键盘或手柄。人数在主菜单设置。','目前支援單人或雙人，兩人可同時使用觸控，也可使用鍵盤或控制器。人數請在主選單設定。','Play solo or with two players using simultaneous touch, a keyboard or controllers. Set the player count from the main menu.'],
+    localPlayersHint:['在主菜单选择单人游戏，或多人游戏 → 同屏双人。这里分别设置两位玩家的触控、键鼠和手柄操作。','請在主選單選擇單人遊戲，或多人遊戲 → 同屏雙人。這裡可分別設定兩位玩家的觸控、鍵鼠及控制器操作。','Choose Single player or Multiplayer → Two players · same device from the main menu. Configure each player’s touch, keyboard, mouse and controller here.'],
     touchMode:['触控方式','觸控方式','Touch mode'],touchfixed:['固定摇杆','固定搖桿','Fixed stick'],touchfloating:['浮动摇杆','浮動搖桿','Floating stick'],touchdpad:['八方向按键','八方向按鍵','Eight-direction pad'],stickSize:['摇杆大小','搖桿大小','Stick size'],stickHorizontal:['摇杆水平位置','搖桿水平位置','Stick horizontal position'],stickVertical:['摇杆垂直位置','搖桿垂直位置','Stick vertical position'],
     mouseControl:['鼠标移动控制','滑鼠移動控制','Mouse movement'],controller:['手柄分配','控制器分配','Controller assignment'],controllerNumber:['手柄 {n}','控制器 {n}','Controller {n}'],mouseButton:['鼠标键 {n}','滑鼠鍵 {n}','Mouse {n}'],padButton:['手柄键 {n}','控制器鍵 {n}','Pad {n}'],
     controllerConflict:['该手柄已分配给另一位玩家。','這個控制器已分配給另一位玩家。','That controller is assigned to another player.'],
@@ -59,7 +60,7 @@
     difficulty0:['容易','簡單','Easy'],difficulty1:['一般','普通','Normal'],difficulty2:['较难','困難','Hard'],difficulty3:['疯狂','瘋狂','Insane'],
     missions:['选择关卡','選擇關卡','Select stage'],
     helpMenu:['怎么玩 ↗','怎麼玩 ↗','How to play ↗'],
-    tapStart:['轻触屏幕以开始游戏','輕觸螢幕開始遊戲','Tap the screen to start'],
+    tapStart:['请选择游戏模式','請選擇遊戲模式','Choose a game mode'],
     baseWeapon:['双联机炮','雙聯機砲','Twin cannon'],
     weapon0:['质子激光','質子雷射','Proton laser'],weapon1:['离子炮','離子砲','Ion cannon'],weapon2:['等离子炮','電漿砲','Plasma cannon'],weapon3:['磁力脉冲','磁力脈衝','Magnetic pulse'],
     weaponLevel:['{name} · {n} 级','{name}・{n} 級','{name} · Lv {n}'],

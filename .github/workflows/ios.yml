@@ -2,7 +2,7 @@ name: iOS build and simulator smoke test
 on:
   push:
     branches: [main]
-    paths: ['web/**', 'ios/**', 'tools/sync.mjs', 'tools/generate-ios-project.py', 'tools/test-ios-simulator.py', 'tools/test-ios-lan.py', 'tools/ios-lan-probe.js', 'tests/*.test.mjs', '.github/workflows/ios.yml', 'package.json', 'pnpm-lock.yaml']
+    paths: ['web/**', 'ios/**', 'tools/sync.mjs', 'tools/generate-ios-project.py', 'tools/test-ios-simulator.py', 'tools/test-ios-lan.py', 'tools/test-ios-touch.py', 'tools/ios-lan-probe.js', 'tests/*.test.mjs', '.github/workflows/ios.yml', 'package.json', 'pnpm-lock.yaml']
   pull_request:
     paths: ['web/**', 'ios/**', 'tools/**', 'tests/**', '.github/workflows/ios.yml', 'package.json']
   workflow_dispatch:
@@ -44,6 +44,8 @@ jobs:
         run: python3 tools/test-ios-simulator.py
       - name: Verify two-player native LAN on existing iPhone and iPad simulators
         run: python3 tools/test-ios-lan.py
+      - name: Verify system long presses and game-mode entries on existing iPhone and iPad
+        run: python3 tools/test-ios-touch.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -52,6 +54,7 @@ jobs:
             artifacts/*.ipa
             artifacts/*.png
             artifacts/*.json
+            artifacts/*.xcresult
             .local/*build.log
           if-no-files-found: error
           include-hidden-files: true
