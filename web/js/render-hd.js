@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: MIT. See docs/ART.md for generated asset provenance. */
 (() => {
-  const {W,H,STEP,DROPS,rng,HEALTH_BAR_MIN_HP}=StarfallCore;
+  const {W,H,STEP,DROPS,rng,deathScale,HEALTH_BAR_MIN_HP}=StarfallCore;
   const enemyArt=DemonStarEnemyArt,presentationArt=DemonStarPresentationArt,campaignArt=DemonStarCampaignArt,enemyShots=DemonStarEnemyShots;
   const load=src=>{const im=new Image();im.src=src;return im;};
   class Renderer {
@@ -105,10 +105,15 @@
     redImage(image){if(!image.naturalWidth)return image;let tinted=this.tintCache.get(image);if(!tinted){tinted=document.createElement('canvas');tinted.width=image.naturalWidth;tinted.height=image.naturalHeight;const c=tinted.getContext('2d');c.drawImage(image,0,0);c.globalCompositeOperation='source-atop';c.fillStyle='rgba(255,45,30,.64)';c.fillRect(0,0,tinted.width,tinted.height);tinted.complete=true;tinted.naturalWidth=tinted.width;tinted.naturalHeight=tinted.height;this.tintCache.set(image,tinted);}return tinted;}
     terrainDraw(stage,scroll){const c=this.c,idx=stage-1,im=this.terrain[Math.floor(idx/6)],cell=idx%6;if(im?.complete&&im.naturalWidth){const cw=im.naturalWidth/3,ch=im.naturalHeight/2,sy=Math.floor(cell/3)*ch,sx=cell%3*cw,y=scroll%H;c.drawImage(im,sx,sy,cw,ch,0,y-H,W,H);c.drawImage(im,sx,sy,cw,ch,0,y,W,H);}else{c.fillStyle='#010205';c.fillRect(0,0,W,H);for(const [x,y,s] of this.stars){c.fillStyle='#9aa293';c.globalAlpha=s*.4;c.fillRect(x,(y+scroll)%H,s,s);}c.globalAlpha=1;}}
     object(e){const c=this.c,d=e.def,w=d.width,h=d.height;
-      c.save();c.translate(e.x,e.y);if(e.dying){c.translate((d.flags&0x40)?0:e.fall*.12,e.fall*.55);c.rotate((d.flags&0x40)?0:e.fall*.004);}else if(e.facing!==undefined&&campaignArt.routes[d.sprite]?.kind!=='campaign'&&!enemyArt.sprites[d.sprite]?.directional)c.rotate((e.facing-16)*Math.PI/16);c.translate(-e.x,-e.y);
+      c.save();
+      // 原作高效果坠毁以画面中心透视缩小，没有统一向右侧翻。
+      // Original high-detail death uses a center-based perspective shrink, without a universal rightward roll.
+      if(e.dying){const scale=deathScale(e.fall);c.translate(W/2,H/2);c.scale(scale,scale);c.translate(-W/2,-H/2);}
+      else if(e.facing!==undefined&&campaignArt.routes[d.sprite]?.kind!=='campaign'&&!enemyArt.sprites[d.sprite]?.directional){c.translate(e.x,e.y);c.rotate((e.facing-16)*Math.PI/16);c.translate(-e.x,-e.y);}
       const red=e.critical&&e.criticalTicks%10<3;
-      this.objectBody(e,red);c.restore();
-      if(e.burning){const n=e.dying?9:5;for(let i=0;i<n;i++){const x=e.x+Math.sin(i*2.4)*w*.34,y=e.y+Math.cos(i*3.1)*h*.3+(e.dying?e.fall*.55:0);this.effectCell(16+((Math.floor(e.time*12)+i)%2),x,y,18+Math.sin(e.time*23+i)*3,28+Math.sin(e.time*19+i)*5);}}
+      this.objectBody(e,red);
+      if(e.burning){const n=e.dying?9:5;for(let i=0;i<n;i++){const x=e.x+Math.sin(i*2.4)*w*.34,y=e.y+Math.cos(i*3.1)*h*.3;this.effectCell(16+((Math.floor(e.time*12)+i)%2),x,y,18+Math.sin(e.time*23+i)*3,28+Math.sin(e.time*19+i)*5);}}
+      c.restore();
       if(this.showsEnemyHealth(e)){const width=Math.min(52,Math.max(24,w*.8)),x=e.x-width/2,y=e.y-h*.6-5;c.fillStyle='#080c12dc';c.fillRect(x-1,y-1,width+2,4);c.fillStyle=e.critical?'#ff5343':'#88b6ca';c.fillRect(x,y,width*Math.max(0,e.hp/e.maxHp),2);}
     }
     objectBody(e,red){

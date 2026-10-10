@@ -17,7 +17,7 @@ test('laser stops at the nearest visible enemy and preserves one damage budget p
   assert.equal(near.hp,9280);assert.equal(g.bullets[0].endY,276);for(let i=0;i<3;i++)g.update(STEP);assert.equal(near.hp,9280);g.update(STEP);assert.equal(near.hp,8560);for(const e of [far,side,behind,offscreen])assert.equal(e.hp,10000);
 });
 test('full sustained beam can deplete the existing first-boss HP without changing its values',()=>{
-  const g=arena(),boss=enemy(g,200,120,16000,true);g.player.bombInventory=[2];g.useBomb();for(let i=0;i<114&&!boss.dying;i++)g.update(STEP);assert.equal(boss.maxHp,16000);assert.equal(boss.hp,0);assert.ok(boss.dying);assert.ok(g.elapsed<4);
+  const g=arena(),boss=enemy(g,200,120,16000,true);g.player.bombInventory=[2];g.useBomb();for(let i=0;i<114&&!boss.dead;i++)g.update(STEP);assert.equal(boss.maxHp,16000);assert.equal(boss.hp,0);assert.ok(boss.dead);assert.ok(g.elapsed<4);
 });
 test('beam expires with its weapon and stage changes clear aura/beam state',()=>{
   const g=arena();g.player.bombInventory=[2];g.useBomb();for(let i=0;i<130;i++)g.update(STEP);assert.equal(g.player.mega,0);assert.equal(g.shotsFired,29);assert.equal(g.bullets.filter(b=>b.playerBeam).length,0);

@@ -44,7 +44,7 @@ test('deterministic campaign simulation reaches each original boss without NaNs'
     assert.ok(g.bossSpawned,`stage ${stage} never spawned boss`);assert.ok(g.boss,`stage ${stage} boss missing`);
     for(let i=0;i<900;i++){g.player.invincible=100;g.player.fire=100;g.update(1/60);for(const e of g.enemies){assert.ok(Number.isFinite(e.x)&&Number.isFinite(e.y));}}
     assert.ok(g.boss.y>-100&&g.boss.y<480,`stage ${stage} boss left field: ${g.boss.y}`);
-    assert.ok(g.bullets.length<1802);g.boss.hp=0;g.killEnemy(g.boss);assert.equal(g.phase,'playing');for(let t=0;t<60&&g.phase==='playing';t++)g.update(STEP);assert.equal(g.phase,stage===18?'victory':'cleared');
+    assert.ok(g.bullets.length<1802);const falls=(g.boss.def.flags&0xc0)===0x80;g.boss.hp=0;g.killEnemy(g.boss);if(falls)assert.equal(g.phase,'playing');for(let t=0;t<60&&g.phase==='playing';t++)g.update(STEP);assert.equal(g.phase,stage===18?'victory':'cleared');
     if(stage<18){assert.ok(g.nextStage());assert.equal(g.stage.id,stage+1);}else assert.equal(g.nextStage(),false);
   }
 });

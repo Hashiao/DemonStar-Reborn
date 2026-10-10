@@ -13,6 +13,9 @@
   // This is mobile control calibration, not a change to enemy/world timing.
   const PLAYER_STEP_X=4*(W-32)/(320-32),PLAYER_STEP_Y=4*(H-104)/(400-104);
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  // 0x414940 的定点透视投影，深度输入先截为整数。
+  // Fixed-point perspective from 0x414940, with integer depth input.
+  const deathScale=fall=>65536/(65536+Math.floor(fall)*327);
   const rng=seed=>{let a=seed>>>0;const random=()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};random.state=()=>a;random.restore=value=>{a=value>>>0;};return random;};
   const MAX_PLAYERS=4;
   // 玩家 ID 稳定为 1–4；保留 player 作为一号玩家兼容入口。
@@ -258,12 +261,19 @@
       this.spawnPickup(weapon,e.x,e.y);
     }
     targetable(e){const d=e.def,inside=e.x>=0&&e.x<W&&e.y>=0&&e.y<H;return !e.dead&&!e.dying&&!e.scenery&&(e.entered||inside)&&e.x+d.width/2>0&&e.x-d.width/2<W&&e.y+d.height/2>0&&e.y-d.height/2<H;}
-    killEnemy(e,p=this.player){if(e.dead||e.dying||e.scenery)return;e.killerId=p.id;if(e.boss){e.hp=0;e.dying=true;e.deathTicks=0;e.fall=0;e.fallSpeed=.25;this.events.push({type:'boss-dying',playerId:p.id});return;}this.finishEnemy(e);}
+    killEnemy(e,p=this.player){
+      if(e.dead||e.dying||e.scenery)return;e.killerId=p.id;if(e.boss)e.hp=0;
+      // 0x40fdb0 只让带 0x80 且非地面的对象进入坠毁；其余 Boss 原地爆炸。
+      // 0x40fdb0 gates falling on 0x80 without ground 0x40; other Bosses explode in place.
+      if(e.boss&&(e.def.flags&0xc0)===0x80){e.hp=0;e.dying=true;e.deathTicks=0;e.fall=0;e.fallSpeed=.25;this.events.push({type:'boss-dying',playerId:p.id});return;}
+      this.finishEnemy(e);
+    }
     finishEnemy(e){
       if(e.dead)return;e.dead=true;this.kills++;this.score+=e.def.score;const killer=this.playerById(e.killerId)||this.player;killer.kills++;killer.score+=e.def.score;
       const ground=!!(e.def.flags&0x40),large=e.def.width>=32,size=e.boss?112:large?Math.max(48,Math.min(96,e.def.width)):28;
-      this.addEffect(ground?3:2,e.x,e.y+(e.dying?e.fall*.55:0),size,e.boss?36:large?24:18,ground);
-      this.explode(e.x,e.y,'#ffb05c',e.boss?85:16);
+      const scale=e.dying?deathScale(e.fall):1,x=W/2+(e.x-W/2)*scale,y=H/2+(e.y-H/2)*scale;
+      this.addEffect(ground?3:2,x,y,size,e.boss?36:large?24:18,ground);
+      this.explode(x,y,'#ffb05c',e.boss?85:16);
       // 必须同时有 0x40/0x80 才留残骸；残骸不再战斗、掉落或计分。
       // 0x4113d2: both 0x40 and 0x80 are required. Remnants cannot fire,
       // collide, receive damage, score or drop equipment a second time.
@@ -281,7 +291,7 @@
       // Original warnings compare against base HP, including for doubled Boss HP.
       e.critical=e.hp>0&&e.hp<Math.floor(e.def.hp/4);e.burning=e.boss&&(e.dying||e.hp<Math.floor(e.def.hp/16));
       e.criticalTicks=e.critical?(e.criticalTicks||0)+1:0;
-      if(e.dying){e.deathTicks++;e.fall+=e.fallSpeed;e.fallSpeed=Math.min(4,e.fallSpeed+.25);if(e.fall>120)this.finishEnemy(e);return;}
+      if(e.dying){e.deathTicks++;if(e.fall>120){this.finishEnemy(e);return;}e.fall+=e.fallSpeed;e.fallSpeed=Math.min(4,e.fallSpeed+.25);return;}
       if((e.def.flags&0x800)&&e.entered){e.engineTicks=(e.engineTicks||0)-1;if(e.engineTicks<=0){e.engineTicks=120;const f=e.def.flags,variant=f&0x100000?2:f&0x200000?3:f&0x400000?4:f&0x800000?5:f&0x4000000?6:1;this.events.push({type:'boss-engine',variant});}}
       if(e.def.flags&0x400){
         const p=this.targetPlayer(e.x,e.y),target=(Math.round(Math.atan2(p.x-e.x,-(p.y-e.y))*16/Math.PI)+32)%32;
@@ -483,5 +493,5 @@
       this.pickups=this.pickups.filter(i=>!i.dead&&i.y<H+30);this.particles=this.particles.filter(v=>v.life>0);
     }
   }
-  globalThis.StarfallCore={W,H,TICK,STEP,MAX_PLAYERS,createPlayer,validCheckpoint,LAUNCH_SPEED,HEALTH_BAR_MIN_HP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};
+  globalThis.StarfallCore={W,H,TICK,STEP,MAX_PLAYERS,createPlayer,validCheckpoint,deathScale,LAUNCH_SPEED,HEALTH_BAR_MIN_HP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};
 })();

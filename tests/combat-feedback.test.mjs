@@ -44,7 +44,7 @@ test('low-health visuals use original base-HP thresholds without passive HP loss
   e.hp=99;for(let i=0;i<30;i++)g.update(STEP);assert.ok(e.burning);assert.equal(e.hp,99);
 });
 test('Boss arrival radio waits 60 ticks, destruction animates before score and stage completion',()=>{
-  const g=arena();g.spawnRecord(g.stage.map.events.find(r=>C.definitions[C.byId[r[2]]].flags&1));g.drainEvents();
+  const g=arena();g.start(1,3);g.recordEvents=[];g.player.invincible=999;g.spawnRecord(g.stage.map.events.find(r=>C.definitions[C.byId[r[2]]].flags&1));g.drainEvents();
   for(let i=0;i<59;i++)g.update(STEP);assert.ok(!g.drainEvents().some(e=>e.type==='boss-radio'));g.update(STEP);assert.equal(g.drainEvents().filter(e=>e.type==='boss-radio').length,1);
   const b=g.boss;b.hp=0;g.killEnemy(b);assert.equal(g.phase,'playing');assert.equal(g.score,0);assert.ok(b.dying);
   g.pause();const fall=b.fall;g.update(1);assert.equal(b.fall,fall);g.resume();for(let i=0;i<50;i++)g.update(STEP);

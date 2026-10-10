@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id), I=DemonStarI18n, t=I.t;
-  const VERSION='0.2.10-dev', weaponName=n=>t('weapon'+n);
+  const VERSION='0.2.10', weaponName=n=>t('weapon'+n);
   let settingsContext='menu',pickupKey=null,storageAvailable=true;
   function hideDialog(){const el=$('dialog');el.hidden=true;el.setAttribute('aria-modal','false');el.setAttribute('aria-hidden','true');}
   const { Game, DIFFICULTIES, STAGES, WEAPONS, W, H, clamp } = StarfallCore;
@@ -52,6 +52,7 @@
   function showMenu(){roomOpen=false;if(lan.role!=='offline')lan.leave();input.setCount(input.config.count);touch.localSlot=1;touch.partyCount=input.count;audio.stopAll();audio.setScene('menu');saveScore();game.phase='menu';music.resume();music.menu();$('menu').hidden=false;hideDialog();$('controls').hidden=true;$('hud').hidden=true;$('toast').hidden=true;clearInput();menuInfo();$('start').focus({preventScroll:true});}
   function dialog(tag,title,content,buttons){
     roomOpen=false;captureBinding=null;
+    $('dialog').classList.remove('classic-results');
     clearInput();$('dialog-tag').textContent=tag;$('dialog-title').textContent=title;$('dialog-content').innerHTML=content;$('dialog-buttons').replaceChildren();
     for(const [label,action,secondary] of buttons){const b=document.createElement('button');b.textContent=label;b.className=secondary?'secondary':'primary';b.addEventListener('click',()=>{audio.unlock();action();});$('dialog-buttons').append(b);}
     $('dialog').hidden=false;$('dialog').setAttribute('aria-modal','true');$('dialog').setAttribute('aria-hidden','false');$('dialog').scrollTop=0;requestAnimationFrame(()=>($('dialog-content').querySelector('select,input,button')||$('dialog-buttons').querySelector('button'))?.focus({preventScroll:true}));
@@ -131,11 +132,14 @@
     music.results();saveScore();const won=game.phase==='cleared'||game.phase==='victory';
     if(won){saved.unlocked[game.difficulty]=Math.max(saved.unlocked[game.difficulty],Math.min(18,game.stage.id+1));persist();}
     const accuracy=game.shotsFired?Math.min(100,Math.round(game.shotsHit/game.shotsFired*100)):0;
-    const bonus=won&&game.stageBonus?`<div class="result-bonus"><div class="stat-row">${t('bonusBombs',{n:game.stageBonus.bombs})}<b>+${game.stageBonus.bombScore}</b></div><div class="stat-row">${t('bonusMedals',{n:game.stageBonus.medals})}<b>+${game.stageBonus.medalScore}</b></div><div class="stat-row">${t('bonusTotal')}<b>+${game.stageBonus.total}</b></div></div>`:'';
-    const content=`${bonus}<div class="result-score">${fmt(game.score)}</div><div class="stat-row">${t('kills')}<b>${game.kills}</b></div><div class="stat-row">${t('accuracy')}<b>${accuracy}%</b></div><div class="stat-row">${t('flightTime')}<b>${Math.floor(game.totalTime/60)}:${String(Math.floor(game.totalTime%60)).padStart(2,'0')}</b></div><div class="stat-row">${t('currentStage')}<b>${game.stage.id} / 18</b></div>`;
+    // 通关沿用原作战场叠层与每位玩家的图标奖励框。
+    // Stage completion uses the original battlefield overlay and per-player icon reward panels.
+    const bonus=won?`<div class="result-players">${game.stageBonuses.map(row=>`<section class="result-player" data-player="${row.playerId}" aria-label="${t('playerNumber',{n:row.playerId})}"><h3>${t('playerNumber',{n:row.playerId})}</h3><div class="result-bonus"><div class="bonus-row" aria-label="${t('bonusBombs',{n:row.bombs})}"><span class="bonus-icons" aria-hidden="true"><i class="hud-sprite bomb-icon-0"></i><i class="hud-sprite bomb-icon-1"></i></span><b>${row.bombScore}</b></div><div class="bonus-row" aria-label="${t('bonusMedals',{n:row.medals})}"><i class="gear-icon result-medal" aria-hidden="true"></i><b>${row.medalScore}</b></div><div class="bonus-row bonus-total"><span>${t('resultTotal')}</span><b>${row.total}</b></div></div></section>`).join('')}</div>`:'';
+    const content=won?bonus:`<div class="result-score">${fmt(game.score)}</div><div class="stat-row">${t('kills')}<b>${game.kills}</b></div><div class="stat-row">${t('accuracy')}<b>${accuracy}%</b></div><div class="stat-row">${t('flightTime')}<b>${Math.floor(game.totalTime/60)}:${String(Math.floor(game.totalTime%60)).padStart(2,'0')}</b></div><div class="stat-row">${t('currentStage')}<b>${game.stage.id} / 18</b></div>`;
     const actions=lan.role==='client'?[[t('lanRoom'),showRoom]]:game.phase==='cleared'?[[t('nextStage'),()=>{game.nextStage();music.stage(game.stage.id);music.resume();hideDialog();lastPhase=game.phase;clearInput();updateHud();if(lan.role==='host')lan.flush();}]]:[[t('retry'),()=>start(game.phase==='victory'?1:game.stage.id)]];
     actions.push([t('hangar'),showMenu,true]);
-    dialog(t(won?'missionComplete':'combatLog'),t(game.phase==='victory'?'victory':won?'stageClear':'gameOver'),content,actions);
+    dialog(t(won?'missionComplete':'combatLog'),t(won?'missionComplete':'gameOver'),content,actions);
+    if(won)$('dialog').classList.add('classic-results');
   }
   function updateHud(){
     if(!game.player)return;

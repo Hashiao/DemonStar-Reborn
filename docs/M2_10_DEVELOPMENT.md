@@ -11,11 +11,11 @@ Baseline: M2.9 `7b9a543`. The linked audit defines the full scope. On 2026-10-10
 | 同机双人 / Local cooperative play | 至少两人同时触屏移动开火投弹；沿用 1P 原作 HUD / Simultaneous touch players using the original 1P HUD style | 六触点浏览器检查通过；真屏待验收 / Six browser contacts passed; physical touch pending |
 | 局域网 / LAN | Android–Android、Android–iOS、iOS–iOS；当前双人；四人仅协议预留；热点、重连、同步 / All platform pairings, two players now, four reserved in protocol, hotspots, reconnection and synchronization | 双人房间与同步已接入；Android 主机实收发通过，跨平台热点与 iOS 原生联局待验收 / Rooms/sync integrated; Android host transport passed, mixed hotspots and iOS native game sessions pending |
 | 触感 / Haptics | 原生调用、开关、能力检测 / Native feedback, preference and capability handling | 两端代码已接入；Android 模拟器调用通过，真实手感待验收 / Both implementations added; Android emulator call passed, physical feel pending |
-| Boss / Boss deaths | 按本地原作分支和录像核对，修复动画 / Branch-specific evidence and presentation | 待实现 / Pending |
-| 结算 / Results | 原作战场叠层、玩家奖励框、三语 / Original battlefield overlay, player rewards, three locales | 待实现 / Pending |
+| Boss / Boss deaths | 按本地原作分支和录像核对，修复动画 / Branch-specific evidence and presentation | 分支与投影已修正，受损素材仍有差异 / Branch/projection fixed; damaged art remains approximate |
+| 结算 / Results | 原作战场叠层、玩家奖励框、三语 / Original battlefield overlay, player rewards, three locales | 单/双人三语浏览器检查通过 / Solo/two-player locale checks passed |
 | 选关 / Stage selection | 设置/暂停随时切关；联机房主同步决定 / Available from settings/pause, host coordinated online | 本地与主机统一切关已实现，双端浏览器流程通过 / Local and host-coordinated stage changes passed two-client browser flow |
 | 存档 / Saves | 关卡起点快照、版本校验、装备生命分数、多人 / Versioned stage-entry snapshots with equipment, lives, scores and players | 自动档、三个槽位与主机读档同步已实现，双端浏览器流程通过 / Automatic/three slots and host load synchronization passed two-client browser flow |
-| 图标 / Icon | 原作参考重绘，统一两端像素构图 / Redrawn from original reference, shared pixel composition | 待实现 / Pending |
+| 图标 / Icon | 原作参考重绘，统一两端像素构图 / Redrawn from original reference, shared pixel composition | 两端共用重绘像素图，待新包验收 / Shared pixel redraw packaged; native verification pending |
 | 首屏音乐 / Startup BGM | 原生自动播放，尊重静音、音量和后台 / Native startup playback respecting mute, volume and lifecycle | JS 首屏播放已修复；原生冷启动待验收 / Startup play fixed; native verification pending |
 | 发布 / Release | 引擎/浏览器/Android构建Lint模拟器/iOS构建模拟器；独立签名APK、unsigned IPA、哈希、中英说明 / Applicable checks, independently signed APK, unsigned IPA, hashes and bilingual notes | 待验收 / Pending |
 
@@ -102,3 +102,7 @@ On 2026-10-10, 148 unit/engine checks passed. The two-player full-app browser fl
 Android 双人复验：Debug 编译/Lint 通过；API 37 模拟器的打包主机连接一名桌面协议客户端，移动、开火、投弹、同帧暂停和 P2 保留装备重连通过。报告 `artifacts/m210-android-lan-game.json`。
 
 Android two-player recheck: Debug build/Lint passed. The packaged API 37 emulator host connected one desktop protocol client through movement, firing, bombs, shared pause and equipment-preserving P2 reconnect. See the ignored local report above.
+
+Boss、结算与图标的证据及遗留差异见 [表现修正记录](M2_10_PRESENTATION.md)。
+
+See the linked presentation record for Boss/results/icon evidence and remaining differences.

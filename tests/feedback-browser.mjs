@@ -29,7 +29,7 @@ try{
     await page.evaluate(({weapon,power})=>{const g=StarfallApp.game;g.start();g.recordEvents=[];g.events=[];g.player.defaultWeapon=false;g.player.weapon=weapon;g.player.power=power;g.player.invincible=0;g.firePlayer();for(const b of g.bullets){b.y=b.py=190;b.x=b.px+=b.defaultShot?0:50;}g.pause();document.getElementById('toast').hidden=true;document.getElementById('pickup-status').textContent='';},{weapon,power});
     await page.waitForTimeout(90);await page.screenshot({path:`artifacts/weapon-${weapon}-${power}.png`});
   }
-  await page.evaluate(()=>{const g=StarfallApp.game;g.start();g.recordEvents=[];g.events=[];g.spawnRecord(g.stage.map.events.find(r=>DemonStarCampaign.definitions[DemonStarCampaign.byId[r[2]]].flags&1));const e=g.boss;e.x=e.px=200;e.y=e.py=160;e.hp=Math.floor(e.def.hp/16)-1;g.updateEnemyState(e);g.pause();g.events=[];document.getElementById('toast').hidden=true;});
+  await page.evaluate(()=>{const g=StarfallApp.game;g.start(1,3);g.recordEvents=[];g.events=[];g.spawnRecord(g.stage.map.events.find(r=>DemonStarCampaign.definitions[DemonStarCampaign.byId[r[2]]].flags&1));const e=g.boss;e.x=e.px=200;e.y=e.py=160;e.hp=Math.floor(e.def.hp/16)-1;g.updateEnemyState(e);g.pause();g.events=[];document.getElementById('toast').hidden=true;});
   await page.waitForTimeout(80);await page.screenshot({path:'artifacts/boss-burning.png'});
   await page.evaluate(()=>{const g=StarfallApp.game;g.resume();g.killEnemy(g.boss);for(let i=0;i<18;i++)g.update(.035);g.pause();g.events=[];});
   assert.equal(await page.evaluate(()=>StarfallApp.game.boss.dying),true);await page.screenshot({path:'artifacts/boss-falling.png'});
@@ -40,7 +40,7 @@ try{
     await page.setViewportSize(size);await page.waitForTimeout(80);const r=await page.evaluate(()=>{const b=document.querySelector('.weapon-status').getBoundingClientRect(),l=StarfallApp.renderer.layout;return {x:b.x,y:b.y,right:b.right,bottom:b.bottom,w:innerWidth,h:innerHeight,fieldBottom:l.y+480*l.scale,fieldLeft:l.x,wide:l.wide};});
     assert.ok(r.x>=-1&&r.y>=-1&&r.right<=r.w+1&&r.bottom<=r.h+1,JSON.stringify(r));assert.ok(r.wide?r.right<=r.fieldLeft+1:r.y>=r.fieldBottom-1,JSON.stringify(r));
   }
-  await page.evaluate(()=>{StarfallApp.game.phase='cleared';});await page.waitForFunction(()=>document.getElementById('dialog-title').textContent==='防线已突破');
+  await page.evaluate(()=>{StarfallApp.game.phase='cleared';});await page.waitForFunction(()=>document.getElementById('dialog-title').textContent==='任务完成');
   await page.evaluate(()=>StarfallApp.background());assert.equal(await page.evaluate(()=>StarfallApp.music.paused),true);
   await page.getByRole('button',{name:'下一关 →',exact:true}).click();await page.waitForFunction(()=>StarfallApp.music.track==='MDS_SLOWRKET'&&StarfallApp.music.audio.currentTime>.2&&!StarfallApp.music.paused);
   const source=JSON.parse(await readFile('docs/music-manifest.json','utf8'));
