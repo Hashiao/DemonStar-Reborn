@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import '../web/js/campaign.js';
-import '../web/js/player-rules.js';
+import '../web/js/player-rules.js';import '../web/js/projectile-rules.js';import '../web/js/weapon-art.js';
 import '../web/js/enemy-art.js';
 import '../web/js/original-rules.js';
 const {Game,Gun,STEP}=StarfallCore,C=DemonStarCampaign,A=DemonStarEnemyArt;

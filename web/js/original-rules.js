@@ -4,7 +4,7 @@
   const C=globalThis.DemonStarCampaign,P=globalThis.DemonStarPlayerRules,A=globalThis.DemonStarEnemyArt;
   // 原作基础节拍为 35ms，渲染独立运行。
   // 4.04's base wait is 35 ms (0x41ae07). Rendering remains independent.
-  const W=400,H=480,STEP=.035,TICK=1/STEP;
+  const W=400,H=480,STEP=.035,TICK=1/STEP,SHOT_RULES=globalThis.DemonStarProjectileRules;
   // 出击演出独立按约 60Hz 标定，保留原作每演出帧下移 3；不加速战斗。
   // Calibrate launch presentation near 60Hz, retaining 3 source pixels per frame; combat stays unchanged.
   const LAUNCH_SPEED=3*(H/400)*60,HEALTH_BAR_MIN_HP=C.definitions[C.byId[17]].hp;
@@ -61,7 +61,7 @@
       Object.defineProperty(this.player,'bombs',{enumerable:true,get(){return this.bombInventory.length;}});
       this.loadStage(clamp(Math.floor(stage),1,18));
     }
-    loadStage(id){this.stage=STAGES[id-1];this.elapsed=0;this.scroll=0;this.previousScroll=0;this.cursor=0;this.frame=0;this.pendingTime=0;this.dropSequence=0;this.enemySerial=0;this.recordEvents=[...this.stage.map.events].sort((a,b)=>a[1]-b[1]);this.enemies=[];this.bullets=[];this.specials=[];this.enemyFireLock=0;this.bossRadioTicks=0;this.pickups=[];this.particles=[];this.boss=null;this.bossSpawned=false;this.flash=0;this.shake=0;this.bombRing=0;this.phase='playing';this.player.x=this.player.px=200;this.player.y=this.player.py=H-70;this.player.invincible=2.5;this.player.bank=8;this.player.thrust=0;this.beginPresentation();this.events.push({type:'stage',stage:id,deferredLaunch:this.presentation});}
+    loadStage(id){this.stage=STAGES[id-1];this.elapsed=0;this.scroll=0;this.previousScroll=0;this.cursor=0;this.frame=0;this.pendingTime=0;this.dropSequence=0;this.enemySerial=0;this.homingCursor=0;this.recordEvents=[...this.stage.map.events].sort((a,b)=>a[1]-b[1]);this.enemies=[];this.bullets=[];this.specials=[];this.enemyFireLock=0;this.bossRadioTicks=0;this.pickups=[];this.particles=[];this.boss=null;this.bossSpawned=false;this.flash=0;this.shake=0;this.bombRing=0;this.phase='playing';this.player.x=this.player.px=200;this.player.y=this.player.py=H-70;this.player.invincible=2.5;this.player.bank=8;this.player.thrust=0;this.beginPresentation();this.events.push({type:'stage',stage:id,deferredLaunch:this.presentation});}
     nextStage(){if(this.phase!=='cleared'||this.stage.id>=18)return false;this.loadStage(this.stage.id+1);return true;}
     beginPresentation(){
       this.effects=[];this.wrecks=[];this.stageBonus=null;this.player.medals=0;this.launch=null;
@@ -74,9 +74,31 @@
     move(dx,dy){if(this.phase==='playing'){this.player.x=clamp(this.player.x+dx,16,W-16);this.player.y=clamp(this.player.y+dy,64,H-40);}}
     addBullet(x,y,vx,vy,friendly=false,damage=1,style=0,extra={}){if(this.bullets.length>1800)return;this.bullets.push({x,y,px:x,py:y,vx,vy,friendly,damage,style,r:friendly?3:3,life:5,...extra});if(friendly)this.shotsFired++;}
     emitPlayerShot(type,x,y,angle=0,extra={}){
-      let speed=type<=25?24:type<=31||type>=48&&type<=50?16:type<=33?20:type===34?21:type===35?22:type<=37?24:type===38?9:type===39?8:type>=51&&type<=53?17:12;
+      const rule=SHOT_RULES.shots[type],speed=rule?rule.speed:type>=51&&type<=53?17:12;
       const style=type>=26&&type<=28?1:type>=29&&type<=37||type>=48&&type<=50?2:type>=54?3:0;
-      const a=angle*Math.PI/1024;this.addBullet(x,y,Math.sin(a)*speed*TICK,-Math.cos(a)*speed*TICK,true,P.damage[type],style,{shotType:type,defaultShot:type===15,missile:type===38||type===39,homing:type===39,...extra});
+      const homing=type===39,a=angle*Math.PI/1024;
+      this.addBullet(x,y,Math.sin(a)*speed*TICK,-Math.cos(a)*speed*TICK,true,P.damage[type],style,{shotType:type,defaultShot:type===15,missile:type===38||homing,homing,carryTicks:rule?.carryTicks||0,flightAngle:angle,speedStep:speed,...(homing?{targetUid:this.acquireHomingTarget()?.uid,life:(SHOT_RULES.homing.lifetimeTicks+1)*STEP}:{}),...extra});
+    }
+    acquireHomingTarget(){
+      // 原作 0x40fc90 循环分配活动目标；不按距离抢换已锁定目标。
+      // Original 0x40fc90 cycles active targets; it does not replace a lock with the nearest enemy.
+      const eligible=this.enemies.filter(e=>this.targetable(e)).sort((a,b)=>a.uid-b.uid);
+      const target=eligible.find(e=>e.uid>(this.homingCursor||0))||eligible[0];
+      if(target)this.homingCursor=target.uid;return target;
+    }
+    steerMissile(b){
+      let target=this.enemies.find(e=>e.uid===b.targetUid&&this.targetable(e));
+      if(!target){target=this.acquireHomingTarget();b.targetUid=target?.uid;}
+      if(target){
+        const desired=(Math.round(Math.atan2(target.x-b.x,b.y-target.y)*1024/Math.PI)+2048)%2048;
+        let delta=desired-b.flightAngle;if(delta>1024)delta-=2048;if(delta<-1024)delta+=2048;
+        const step=SHOT_RULES.homing.turnStep;
+        b.flightAngle=(b.flightAngle+Math.sign(delta)*step+2048)%2048;
+        // 0x428993 在转动后再检查 64 阈值并对齐，避免丢掉原作的近角度吸附。
+        // 0x428993 snaps within 64 units AFTER turning; retain that final alignment step.
+        if(Math.abs(desired-b.flightAngle)<=SHOT_RULES.homing.snapThreshold)b.flightAngle=desired;
+      }
+      const a=b.flightAngle*Math.PI/1024;b.vx=Math.sin(a)*b.speedStep*TICK;b.vy=-Math.cos(a)*b.speedStep*TICK;
     }
     firePlayer(part='all'){
       const p=this.player;
@@ -397,8 +419,15 @@
           if(p.respawn<=0&&Math.abs(p.x-b.x)<=p.r+4&&p.y+p.r>=b.y&&p.y-p.r<=b.y+480)this.hitPlayer(b.damage);
           continue;
         }
-        if(b.homing){const targets=this.enemies.filter(e=>this.targetable(e));let target=null,dist=Infinity;for(const e of targets){const n=Math.hypot(e.x-b.x,e.y-b.y);if(n<dist){dist=n;target=e;}}if(target){const a=Math.atan2(target.y-b.y,target.x-b.x),s=Math.hypot(b.vx,b.vy);b.vx+=(Math.cos(a)*s-b.vx)*Math.min(1,dt*6);b.vy+=(Math.sin(a)*s-b.vy)*Math.min(1,dt*6);}}
+        if(b.homing&&b.shotType!==39){const targets=this.enemies.filter(e=>this.targetable(e));let target=null,dist=Infinity;for(const e of targets){const n=Math.hypot(e.x-b.x,e.y-b.y);if(n<dist){dist=n;target=e;}}if(target){const a=Math.atan2(target.y-b.y,target.x-b.x),s=Math.hypot(b.vx,b.vy);b.vx+=(Math.cos(a)*s-b.vx)*Math.min(1,dt*6);b.vy+=(Math.sin(a)*s-b.vy)*Math.min(1,dt*6);}}
         b.age=(b.age||0)+1;b.px=b.x;b.py=b.y;b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;
+        if(b.shotType===39){this.steerMissile(b);if(b.age>=SHOT_RULES.homing.lifetimeTicks){b.dead=true;this.addEffect(1,b.x,b.y,40,16);continue;}if(b.x<-16||b.x>W+16||b.y<-16||b.y>H+16){b.dead=true;continue;}}
+        const rule=b.friendly&&SHOT_RULES.shots[b.shotType];
+        if(rule?.acceleration){b.speedStep=Math.max(rule.minimumSpeed,b.speedStep+rule.acceleration);const a=b.flightAngle*Math.PI/1024;b.vx=Math.sin(a)*b.speedStep*TICK;b.vy=-Math.cos(a)*b.speedStep*TICK;}
+        // 原作主炮继承前两步主机位移，追踪弹仅继承一步，普通导弹不继承。
+        // Original main shots inherit two player displacements; homing missiles one, ordinary missiles none.
+        if(b.carryTicks>0){b.x+=p.x-p.px;b.y+=p.y-p.py;b.carryTicks--;}
+        if(b.friendly&&b.missile&&this.particles.length<350){const a=(b.flightAngle||0)*Math.PI/1024;this.particles.push({x:b.x-Math.sin(a)*4,y:b.y+Math.cos(a)*4,vx:0,vy:0,life:.28,maxLife:.28,size:1.6,smoke:true,color:'#aab0b8'});}
         if(b.nova!==undefined)for(const hostile of this.bullets){if(!hostile.friendly&&!hostile.dead&&intersects(b.px,b.py,b.x,b.y,hostile.x,hostile.y,b.r+hostile.r+4))hostile.dead=true;}
         if(b.friendly){for(const e of this.enemies){if(!this.targetable(e)||b.hitEnemies?.includes(e.uid))continue;if(intersects(b.px,b.py,b.x,b.y,e.x,e.y,e.r+b.r)){e.hp-=b.damage;e.hit=.06;if(b.hitEnemies)b.hitEnemies.push(e.uid);else b.dead=true;this.shotsHit++;this.impact(b,e);if(e.hp<=0)this.killEnemy(e);else this.events.push({type:'enemy-hit'});if(b.dead)break;}}}
         else if(!b.dead&&p.respawn<=0&&intersects(b.px,b.py,b.x,b.y,p.x,p.y,p.r+b.r)){if(this.hitPlayer(b.damage))b.dead=true;}

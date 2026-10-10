@@ -2,7 +2,7 @@ import '../web/js/enemy-art.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 await import('../web/js/campaign.js');
-await import('../web/js/player-rules.js');
+await import('../web/js/player-rules.js');await import('../web/js/projectile-rules.js');await import('../web/js/weapon-art.js');
 await import('../web/js/original-rules.js');
 const {Game,Gun,STAGES,STEP,TICK,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,intersects}=globalThis.StarfallCore;
 const campaign=globalThis.DemonStarCampaign;

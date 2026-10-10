@@ -2,7 +2,7 @@ import '../web/js/enemy-art.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import '../web/js/campaign.js';
-import '../web/js/player-rules.js';
+import '../web/js/player-rules.js';import '../web/js/projectile-rules.js';import '../web/js/weapon-art.js';
 import '../web/js/original-rules.js';
 const C=DemonStarCampaign,{Game,Gun,STEP}=StarfallCore;
 const create=()=>{const g=new Game(23);g.start();g.recordEvents=[];g.player.invincible=999;return g;};

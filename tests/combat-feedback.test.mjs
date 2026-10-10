@@ -1,7 +1,7 @@
 import '../web/js/enemy-art.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-await import('../web/js/campaign.js');await import('../web/js/player-rules.js');await import('../web/js/combat-visuals.js');await import('../web/js/original-rules.js');await import('../web/js/music-bank.js');
+await import('../web/js/campaign.js');await import('../web/js/player-rules.js');await import('../web/js/projectile-rules.js');await import('../web/js/weapon-art.js');await import('../web/js/combat-visuals.js');await import('../web/js/original-rules.js');await import('../web/js/music-bank.js');
 const {Game,STEP,Gun}=StarfallCore,C=DemonStarCampaign;
 function arena(){const g=new Game(5);g.start();g.recordEvents=[];g.player.invincible=999;return g;}
 function enemy(g,x,y,hp=10000){const d={width:40,height:40,hp,flags:0,score:10,sprite:'S_ENEMY14',mode:0};const e={uid:++g.enemySerial,x,y,px:x,py:y,r:16,hp,maxHp:hp,def:d,record:[0,0,0,0,0,-1],guns:[],speed:0,time:0};g.enemies.push(e);return e;}
@@ -51,8 +51,8 @@ test('Boss arrival radio waits 60 ticks, destruction animates before score and s
   assert.equal(g.phase,'cleared');assert.equal(g.score,b.def.score+3000);g.killEnemy(b);assert.equal(g.score,b.def.score+3000);
 });
 test('red six-tier width and blue three-tier length come from distinct original sprites',()=>{
-  assert.deepEqual([29,30,31,48,49,50].map(t=>DemonStarCombatVisuals.shot(t).width),[1.5,4.5,7.5,13.5,16.5,19.5]);
-  assert.deepEqual([26,27,28].map(t=>DemonStarCombatVisuals.shot(t).height),[12,18,24]);
+  assert.deepEqual([29,30,31,48,49,50].map(t=>DemonStarCombatVisuals.shot(t).width),[1,3,5,9,11,13]);
+  assert.deepEqual([26,27,28].map(t=>DemonStarCombatVisuals.shot(t).height),[8,12,16]);
 });
 test('all 18 stage music selections match the original jump table, including repeated tracks',()=>{
   assert.deepEqual(DemonStarMusic.stages,['PHASER','SLOWRKET','8GALS','PHATTY','BLIP','ENDLEV','SMACK','SPACTOUT','SLOWRKET','SIMP','8GALS','ASTEROID','BLIP','PACE','SPACEBL','DAVIS_C','WARP','NO_GOOD'].map(n=>'MDS_'+n));

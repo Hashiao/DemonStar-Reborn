@@ -48,3 +48,6 @@
 
 - M2.7：普通高血量敌机（最大 HP≥905）与 Boss 血条独立，默认仅 Boss 开启；旧设置只迁移一次。蓝色炸弹是主角紫色护罩加向前激光，不是发射圆环；保留现有伤害预算，参见 docs/M2_7_RESEARCH.md。
   M2.7: independent regular (max HP ≥905) and boss bars default to boss-only, with a one-time legacy migration. The blue bomb is a player aura plus a forward laser, not travelling rings. Preserve the existing damage budget; see docs/M2_7_RESEARCH.md.
+
+- 用户指定的十八关原作录像 `https://www.bilibili.com/video/BV1Xf4y1p7F1/`（分享 `https://b23.tv/DWFiNlB`）是长期视觉/行为金标。保留原作画风，可用 imagegen 高清重绘。按 docs/REFERENCE_VIDEO.md 记录实际观看时刻，不能把抽样写成全程逐帧验收。M2.8 追踪和三色武器修复依据 docs/M2_8_RESEARCH.md；保留已核实规则与原始伤害表。
+  The user-designated eighteen-stage recording above is a long-term visual/behavioral reference. Preserve original art direction while permitting imagegen HD redraws. Record actual reviewed timestamps in docs/REFERENCE_VIDEO.md; sampled frames are not complete-run frame-by-frame verification. Preserve verified M2.8 homing/weapon rules and original damage tables; see docs/M2_8_RESEARCH.md.

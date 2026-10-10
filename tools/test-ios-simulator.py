@@ -43,6 +43,7 @@ for family in ('iPhone','iPad'):
         assert probe.get('healthBarDefaults')=={'regular':False,'boss':True} and probe.get('independentHealthBarSwitches'),probe
         assert probe.get('languagePreservesCombat') and all(c['passed'] for c in probe['languageChecks']) and len(probe['languageChecks'])==3,probe
         assert probe.get('launchSeen') and probe.get('presentationReady'),probe
+        assert probe.get('weaponArtReady') and probe.get('weaponSizes')=={'homing':[4,8],'red':[1,3,5,9,11,13],'blue':[8,12,16]},probe
         assert probe.get('phase')=='playing',probe;assert probe.get('assetsReady'),probe;assert probe.get('score',0)>=0,probe
         assert probe.get('shotsFired',0)>=2 and probe.get('playerX',0)>200,probe
         assert probe.get('bombs')==2 and probe.get('lives')==4 and probe.get('energy')==16,probe

@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id), I=DemonStarI18n, t=I.t;
-  const VERSION='0.2.7', weaponName=n=>t('weapon'+n);
+  const VERSION='0.2.8', weaponName=n=>t('weapon'+n);
   let settingsContext='menu',pickupKey=null,storageAvailable=true;
   function hideDialog(){const el=$('dialog');el.hidden=true;el.setAttribute('aria-modal','false');el.setAttribute('aria-hidden','true');}
   const { Game, DIFFICULTIES, STAGES, WEAPONS, W, H, clamp } = StarfallCore;

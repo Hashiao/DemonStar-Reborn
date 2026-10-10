@@ -8,11 +8,22 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics, purchases or network permissions.
 
-**Current milestone M2.7 (v0.2.7) fixes carrier launch, tanker proportions, separate health bars and the blue laser. This is not a verified complete 1:1 port.** The original 18 stages come first; stages 19–25 have not been developed. See [fidelity status](docs/FIDELITY.en.md) for confirmed behavior, estimates and remaining differences.
+**Current milestone M2.8 (v0.2.8) audits and corrects homing missiles and six tiers per weapon color. This is not a verified complete 1:1 port.** The original 18 stages come first; stages 19–25 have not been developed. See [fidelity status](docs/FIDELITY.en.md) for confirmed behavior, estimates and remaining differences.
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.7
+## Current milestone M2.8
+
+- Homing missiles restore the original thin 4×8 body and eight-unit speed per tick. Initial targets cycle, locks persist until invalid, and turning no longer causes cumulative speed loss.
+- Restore source turn steps and post-turn alignment, sixteen headings, a 101-tick fuse and brief player-motion inheritance.
+- Yellow side shots regain paired silhouettes; three blue lengths compose six tiers; red main bars widen per tier with separate decelerating auxiliary pellets. Remove the previous extra 1.5 enlargement of red/blue art.
+- Keep the [user's eighteen-stage recording](docs/REFERENCE_VIDEO.md) as a long-term visual reference with explicit reviewed timestamps. All eighteen color/tier combinations are also audited against local original tables and sprites. HP, player damage, main cadence and superweapon budgets are unchanged.
+
+Build records will be updated after this release's Android and iOS verification finishes.
+
+[Yellow tiers](docs/screenshots/weapon-yellow-levels.png) · [Blue tiers](docs/screenshots/weapon-blue-levels.png) · [Red tiers](docs/screenshots/weapon-red-levels.png) · [Thin homing missiles](docs/screenshots/homing-missiles.png) · [Evidence and limits](docs/M2_8_RESEARCH.md) · [Built-in imagegen asset and full prompts](docs/ART_M2_8.md). Target-slot reuse, collision and trails remain approximate; magnetic steering is not verified in this pass.
+
+## Completed M2.7
 
 - Carrier launch including doors takes about 3.7 seconds with smooth interpolation. Combat speed and stage time are unchanged. Timing is a reference-based calibration, not an exact original-runtime measurement.
 - The large stage-one tanker uses the original 44×87 visible silhouette ratio, retaining its 700 HP and collision geometry.

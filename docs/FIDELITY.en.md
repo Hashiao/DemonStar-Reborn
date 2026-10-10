@@ -2,7 +2,7 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-Current milestone: **M2.7, carrier launch, tanker proportions, independent health bars and blue laser**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+Current milestone: **M2.8, homing missiles and six tiers per weapon color**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
 
 | Area | Current status |
 |---|---|
@@ -22,3 +22,5 @@ M2.4 authorized the verified incoming-damage corrections. Base enemy HP, player 
 Next work: calibrate original runtime timing; verify special projectile, boss-part and drop/chain behavior; replace shared art; check superweapon interactions; and test Android 10/iOS 12 on actual supported devices. Deployment targets are not minimum-system verification. Historical evidence remains in [M2.4 research](M2_4_RESEARCH.md), [M2.5 research](M2_5_RESEARCH.md) and earlier original-combat documents in their original language.
 
 M2.7 corrects the earlier ring interpretation: S_BPULSEA–D surrounds the player; projectile 61 uses tiled S_ESHOT6L2A–D laser art. The beam follows the player and stops at the nearest eligible target. The old 4-second, 720-per-four-tick budget remains; original duration counters and scan damage are not substituted. Violet follows user feedback; original blend parameters are not fully decoded. Regular bars require maximum HP ≥905 and are independent of boss bars; only boss bars default on. See [M2.7 research](M2_7_RESEARCH.md).
+
+M2.8 restores thin 4×8 homing missiles, eight units per tick, original turn steps/post-turn alignment, retained locks with cyclic reacquisition and a 101-tick fuse. Yellow pairs, three blue lengths composing six tiers, six red widths and decelerating 3×4 auxiliary pellets are corrected. Base HP, player damage tables and superweapon budgets are unchanged. Spawn-ID cycling differs from original 128-slot reuse; collision, trails and HD silhouettes remain approximate, and magnetic steering is unverified. See [M2.8 evidence](M2_8_RESEARCH.md) and [recording reference](REFERENCE_VIDEO.md).
