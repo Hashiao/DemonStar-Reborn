@@ -49,7 +49,7 @@
     introNoteHtml:['原版地图编排 · AI 高清重绘<br>非官方恶魔之星高清重制','原作關卡配置・AI 高畫質重繪<br>非官方惡魔之星重製版','Original stage layouts · AI-redrawn art<br>Unofficial DemonStar HD remake'],
     howTo:['操作指南','操作說明','How to play'],
     gameAria:['恶魔之星重生游戏','惡魔之星重生遊戲','DemonStar Reborn game'],
-    fieldAria:['飞行战场，左摇杆移动，A 切换开火，B 释放炸弹','飛行戰場：左側搖桿移動，A 切換射擊，按 B 使用炸彈','Battlefield. Move with the left stick, press A to toggle fire, press B for a bomb.'],
+    fieldAria:['飞行战场，摇杆移动，A 按所选方式开火，B 释放炸弹','飛行戰場：搖桿移動，A 依所選方式射擊，B 使用炸彈','Battlefield. Move with the stick. A uses your selected fire mode; B releases a bomb.'],
     score:['得分 {n}','分數 {n}','Score {n}'],
     lives:['剩余 {n} 条生命，备用战机 {spares} 架','剩餘生命 {n}，備用戰機 {spares} 架','Lives: {n}. Spare ships: {spares}.'],
     stage:['关卡 {n}','第 {n} 關','Stage {n}'],
