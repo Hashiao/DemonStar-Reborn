@@ -10,7 +10,7 @@ The game supports Simplified Chinese, Traditional Chinese and English. First lau
 
 **Current milestone M2.19 (v0.2.19) unifies player mobility across difficulties and controls, with full-speed diagonal axes. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
 
-The development branch is investigating stage 2/3 feedback: ground chains and falling snake parts are implemented, while two reports still need identification. The 0.2.20 candidate is not released. See the [work record](docs/M2_20_STRUCTURES.md).
+The development branch is investigating stage 2/3 feedback: ground chains and falling snake parts are implemented, while two reports still need identification. The 0.2.20 candidate is not released. See the [work record](docs/M2_20_STRUCTURES.md). 387 engine tests, 28 browser suites, 16 scripted combat cases and Android builds/emulator checks passed. Complete iOS CI is not yet passing; the candidates are not official releases.
 
 **Final-phase plan, not implemented:** ship separate Windows/macOS/Linux packages without user development setup, targeting LAN between any two of those platforms and Android/iOS. Public play remains solo/two-player. Desktop releases do not yet exist; physical interoperability and signing/distribution gaps remain unverified. See [platform delivery plan and gaps](docs/FINAL_PLATFORM_DELIVERY.md). Complete existing game work before starting this phase.
 

@@ -66,8 +66,28 @@ The third run changes only the UI-test harness: cold-boot one selected existing 
 
 - 387 项引擎/单元测试通过；新增传播边界、延迟、基础伤害、管道参与、覆盖而非叠加、双人归属、暂停改难度、完整蛇身、坠毁生命周期与快照检查。
 - 新增浏览器用原作地图的六节点结构验证渐次爆炸，核验第 3/10 关完好/受损部件实际像素与按关释放。截图为重制版受控场景，不冒充原作游玩录像。
-- 完整浏览器回归与 Android/iOS 构建/模拟器验收尚在进行；未发布新 Release，未宣称真机通过。
+- 28 组浏览器检查、16 组脚本交火检查及 Android Release/Debug/Lint/API 37 模拟器五组检查通过。iOS 编译与功能检查通过，但完整 CI 未通过，见中断记录；未发布正式 Release。
 - 房间规则版本 6，旧版缺少这次规则和受损图集，双方需更新。玩法仍只开放单人/双人。
 - 原始定义、主机机动、世界时钟、弹速/射速/主武器伤害、音频、三语文案与存档格式未调整。原作录像只作下列记录的抽样审看，不是全程逐帧验收。
 
-387 engine/unit tests passed, including new chain boundaries/timing/damage/pipes/overwrites/ownership/pause-difficulty cases and snake completeness/death/snapshot checks. A new browser suite verifies sequential destruction of a six-node source-map structure, visible intact/damaged parts in stages 3/10, and stage-scoped asset release. These are controlled remake scenes, not original playthroughs. Full browser/native checks are pending; no new Release or physical-device claim is made. Room revision 6 requires updated peers. Public play stays solo/two-player; source definitions, player mobility, world timing, projectile/firing/main-weapon damage, audio, localization and save format remain unchanged.
+387 engine/unit tests passed, including new chain boundaries/timing/damage/pipes/overwrites/ownership/pause-difficulty cases and snake completeness/death/snapshot checks. A new browser suite verifies sequential destruction of a six-node source-map structure, visible intact/damaged parts in stages 3/10, and stage-scoped asset release. These are controlled remake scenes, not original playthroughs. All 28 browser suites, 16 scripted combat cases and Android Release/Debug/Lint/five API 37 emulator suites passed. iOS compilation and functional checks passed, but complete CI remains unsuccessful; see interruption history. No official Release or physical-device claim is made. Room revision 6 requires updated peers. Public play stays solo/two-player; source definitions, player mobility, world timing, projectile/firing/main-weapon damage, audio, localization and save format remain unchanged.
+
+
+## 候选包与未完成项 / Candidate packages and remaining work
+
+候选目录为 `artifacts/v0.2.20-candidate/`，两包内部均为 **0.2.20 / 22**，全部网页资源逐文件一致；Android 签名证书与安装后拉回哈希已核验。IPA 为未签名 ARM64 iPhoneOS 包，须自行签名。此为开发候选，**验收状态为 incomplete，不是正式发布**。
+
+Both local candidates identify internally as **0.2.20 / 22** and contain matching web resources. Android's project signature and pulled-back installed hash are verified. The unsigned ARM64 iPhoneOS IPA requires user signing. This is a development candidate with **incomplete verification, not an official release**.
+
+两包源码提交均为 `b1fff70485dc0d0059575e68c15d5ae282d89fd9`。后续提交仅修改测试启动隔离及记录，游戏文件未变。候选 IPA 来自第 2 轮 CI：功能与 LAN 通过，iPhone 系统触控通过，iPad XCTest 超时。第 3 轮 `38153590283` 的功能检查通过，但 LAN 步骤失败，系统触控步骤未执行；记录时完整日志仍在上传，原因尚未确认。不得把不同轮次拼接成“一次完整通过”。
+
+Both packages use source commit `b1fff70485dc0d0059575e68c15d5ae282d89fd9`. Later commits change only test startup isolation and documentation. The candidate IPA comes from attempt 2: functional/LAN and iPhone system-touch checks passed; iPad XCTest timed out. Follow-up run `38153590283` passed functional checks but failed its LAN step, so system touch was skipped; complete logs were still uploading when recorded and the cause was not yet confirmed. Do not combine attempts into a claim of one complete passing run.
+
+当前仍需两项对象定位信息：斜向导弹的发射敌人/出现时段，以及“补给固定”指未破坏的箱子还是掉落物、异常移动方向。另需完成完整 iOS 验收。草稿 PR 不代表这些工作已完成。
+
+Two identification details are still needed: the diagonal missile emitter/time, and whether the supply report concerns an intact carrier or a dropped pickup and which motion is wrong. Complete iOS verification also remains outstanding. A draft PR does not mean these items are complete.
+
+| 文件 / File | SHA-256 |
+|---|---|
+| `DemonStar-Reborn-release.apk` | `cbe70fa346a000bda6405d552f9815634bcb24d5403d75c73e781e2ba45e98f7` |
+| `DemonStar.ipa` | `6f2a0c35e0c158c6d07620e3483294f6e9fe689b93c4c5606fe1a7998a50688d` |
