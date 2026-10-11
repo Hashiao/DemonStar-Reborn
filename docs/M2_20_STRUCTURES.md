@@ -48,6 +48,20 @@ Ground supply carriers S_ENBON2/4 use mode 8, speed 1, matching native downward 
 
 Stage-two ground turrets emit native spherical types 2/7; missile aircraft emit vertical type 8. Types 43/44 are separate fixed diagonal branches at 0x4ea/0x316 and do not occur in the stage-two gun placements. The native table has been rechecked; type 8 is not remapped by angle in its constructor. The reported emitter/time is still needed before changing artwork or trajectories.
 
+## iPad 验收中断记录 / iPad validation interruptions
+
+2026-10-11/12 的 CI 并非一次全绿；以下失败保留，不能用后续结果覆盖历史。
+The October 11/12 CI sequence did not pass on its first attempt. Preserve these failures even if a later run passes.
+
+| 轮次 / Attempt | 已通过 / Passed | 未通过 / Not passed |
+|---|---|---|
+| [38149253384 / 1](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38149253384/attempts/1) | iPhoneOS 编译、三个 iPhone 语言功能用例 / Device build and three iPhone locale probes | iPad simctl launch 超时 600 秒 / iPad launch timed out after 600 s |
+| [38149253384 / 2](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38149253384/attempts/2) | iPhoneOS、iPhone/iPad 功能、原生 LAN、iPhone 系统触控 / Device build, both functional probes, native LAN, iPhone system touch | iPad XCTest 在测试正文开始前超时 600 秒 / iPad XCTest timed out before its test body started |
+
+第三轮只调整 `tools/test-ios-touch.py`：系统触控用例顺序冷启动一台已选中的模拟器，并关闭另一台本轮测试设备；不下载/新建模拟器，不重试或删除断言，仍保留每台 600 秒时限。用于验证启动状态隔离是否消除中断，不据此宣称已确定 CoreSimulator 的内部原因。游戏代码未再改变。
+
+The third run changes only the UI-test harness: cold-boot one selected existing simulator at a time and shut down the other test device. No runtimes/devices are downloaded or created, no assertions are retried/removed, and the 600-second per-device limit remains. This tests startup isolation without claiming a proven internal CoreSimulator cause. Game code is unchanged.
+
 ## 验证与边界 / Verification and limits
 
 - 387 项引擎/单元测试通过；新增传播边界、延迟、基础伤害、管道参与、覆盖而非叠加、双人归属、暂停改难度、完整蛇身、坠毁生命周期与快照检查。

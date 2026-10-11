@@ -7,8 +7,8 @@ standard=json.loads((out/'ios-verification.json').read_text());reports=[]
 tested_ids=[next(d['udid'] for d in available[t['runtime']] if d['name']==t['name']) for t in standard['devices']]
 for tested in standard['devices']:
  device=next(d for d in available[tested['runtime']] if d['name']==tested['name']);uid=device['udid'];family=tested['family']
- # LAN 留下的双模拟器/测试宿主会拖住 iPad Runner 启动；UI 测试单设备冷启动，不重试断言。
- # Clear the preceding LAN/two-simulator test hosts before each UI run; never retry assertions.
+ # 隔离 LAN 后的模拟器/测试宿主状态以排查 iPad Runner 启动卡住；不重试断言。
+ # Isolate post-LAN simulator/test-host state when diagnosing iPad Runner stalls; never retry assertions.
  live=json.loads(run(['xcrun','simctl','list','devices','available','-j']))['devices']
  for devices in live.values():
   for other in devices:
