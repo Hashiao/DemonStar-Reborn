@@ -8,12 +8,27 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
 
-**Current milestone M2.15 (v0.2.15) adds follow-finger movement, double-tap bombing, 18-bomb inventory and persistent settings scrollbars. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
+**Current milestone M2.16 (v0.2.16) targets iOS audio transitions and recovery while retaining Android playback implementations. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
 
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.15
+## Current milestone M2.16
+
+- Enable a dedicated audio adapter only on iOS, with short effect attacks/releases to reduce stealing and stop discontinuities.
+- Prevent paused iOS dialogs from resuming battle effects and coalesce menu transitions so the old stage BGM is not resumed first.
+- Native iOS BGM uses short fades and volume ramps, with interruption, headset-route and media-service-reset handling. Battle resumes through the existing resume/calibration flow.
+- Android effect/music implementations and native source remain unchanged; only the package version advances. Both platforms retain original three-slot priorities, shot filtering, recordings and combat values.
+
+202 engine/unit tests and 24 browser suites passed. An offline test signal's stop discontinuity falls from 0.5 to about 0.001302; this verifies envelopes, not physical-device listening quality. Android Release/Debug, Lint (0 errors and 12 warnings each), API 37 controls/localization/settings/native-pair LAN and original audio-class selection passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38115128622) passed iPhoneOS compilation, real packaged WebKit effect release/silent paused settings on iOS 18.5 iPhone/iPad, native music clocks/volume, localization, simulator-pair LAN and system long presses.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.16/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.16/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.16/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.16/verification.json)
+
+This is an iOS-focused mitigation, not yet listening-tested on the user’s iPhone 18 Pro / iOS 27.0.1, Bluetooth headphones or actual system interruptions. Original three-slot priorities can still intentionally omit shots; elimination of every crackle/missing sound is not claimed. Physical hotspots, cross-platform device pairs and minimum-OS hardware remain untested. The IPA is unsigned and requires user signing; public play remains solo/two-player with P3/P4 reserved in the protocol.
+
+[定位与范围 / Analysis and scope](docs/M2_16_IOS_AUDIO.md)
+
+## M2.15 completed work
 
 - Follow finger replaces persistent tap destinations: touch anywhere in the battlefield and move while held; release or cancel stops immediately under the existing mobility limits. One shared-device player maximum.
 - A separate Double-tap bomb checkbox defaults off. Double-tap from the score area through energy/bomb HUD in solo or one-local-player LAN play; shared-device play disables it.

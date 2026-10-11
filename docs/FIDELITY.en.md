@@ -2,7 +2,7 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-Current milestone: **M2.15, follow-finger movement, double-tap bombing and menu refinements**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+Current milestone: **M2.16, iOS audio transitions and recovery**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
 
 | Area | Current status |
 |---|---|
@@ -55,3 +55,15 @@ Physical tilt feel, hotspots, Android–iOS hardware pairs and minimum-OS hardwa
 194 engine/unit tests and 23 browser suites passed. Android Release/Debug builds, Lint (0 errors and 12 warnings each), API 37 native controls/localization/settings/follow release/double-tap bombing/motion bridge/app-pair TCP passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38111104820) passed iPhoneOS compilation, iOS 18.5 iPhone/iPad localization/music, follow release and double-tap bombing, sensor fallback, simulator-pair LAN and system long presses.
 
 Physical tilt feel, hotspots, Android–iOS device pairs and minimum-OS hardware remain untested. Simulators and PointerEvent-disabled browser compatibility checks do not replace physical hardware. The IPA is unsigned and requires user signing. Public play remains solo/two-player; P3/P4 are protocol reserves. The 18-bomb capacity is a requested extension, not the original capacity; full 1:1 fidelity remains incomplete.
+
+
+## M2.16
+
+- Enable a dedicated audio adapter only on iOS, with short effect attacks/releases to reduce stealing and stop discontinuities.
+- Prevent paused iOS dialogs from resuming battle effects and coalesce menu transitions so the old stage BGM is not resumed first.
+- Native iOS BGM uses short fades and volume ramps, with interruption, headset-route and media-service-reset handling. Battle resumes through the existing resume/calibration flow.
+- Android effect/music implementations and native source remain unchanged; only the package version advances. Both platforms retain original three-slot priorities, shot filtering, recordings and combat values.
+
+202 engine/unit tests and 24 browser suites passed. An offline test signal's stop discontinuity falls from 0.5 to about 0.001302; this verifies envelopes, not physical-device listening quality. Android Release/Debug, Lint (0 errors and 12 warnings each), API 37 controls/localization/settings/native-pair LAN and original audio-class selection passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38115128622) passed iPhoneOS compilation, real packaged WebKit effect release/silent paused settings on iOS 18.5 iPhone/iPad, native music clocks/volume, localization, simulator-pair LAN and system long presses.
+
+This is an iOS-focused mitigation, not yet listening-tested on the user’s iPhone 18 Pro / iOS 27.0.1, Bluetooth headphones or actual system interruptions. Original three-slot priorities can still intentionally omit shots; elimination of every crackle/missing sound is not claimed. Physical hotspots, cross-platform device pairs and minimum-OS hardware remain untested. The IPA is unsigned and requires user signing; public play remains solo/two-player with P3/P4 reserved in the protocol.

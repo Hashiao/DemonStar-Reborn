@@ -8,12 +8,27 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前里程碑 M2.15（v0.2.15）改为跟手移动，新增双击投弹、18 枚炸弹及常驻设置滚动条，仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
+**当前里程碑 M2.16（v0.2.16）仅针对 iOS 音频启停与恢复做定向修复，Android 播放实现保持原样；仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
 
 
 ![菜单](docs/screenshots/menu.png)
 
-## 当前里程碑 M2.15
+## 当前里程碑 M2.16
+
+- 仅 iOS 启用独立音频适配层：音效短起音/释放，减少节点抢占和停止造成的突变。
+- 修正 iOS 暂停弹窗误恢复战斗音效，以及回主菜单时先恢复旧关卡 BGM 的指令顺序。
+- iOS 原生 BGM 采用短淡入淡出和音量渐变，补齐中断、耳机路由变化及媒体服务重置处理；战斗通过原有继续/校准流程恢复。
+- Android 音效/音乐实现与原生源码保持不变，仅安装包版本号同步。两端继续保留原作三路优先级、射击过滤、原始音源与所有战斗数值。
+
+202 项引擎/单元测试和 24 组浏览器回归通过。离线测试信号停止点的相邻采样跳变由 0.5 降至约 0.001302；这是包络验证，不是真机听感测量。Android Release/Debug、Lint（各 0 错误、12 条警告）、API 37 原生操作/三语/设置/双 App 联机及原音频类选择检查通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38115128622) 通过 iPhoneOS 构建、iOS 18.5 iPhone/iPad 的实际 WebKit 音效释放与暂停设置静音、原生音乐时钟/音量、三语、双模拟器 LAN 和系统长按。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.16/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.16/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.16/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.16/verification.json)
+
+本次为 iOS 定向试修，尚未在用户的 iPhone 18 Pro / iOS 27.0.1、蓝牙耳机或真实系统中断场景完成听感复测。原作三路优先级仍可能主动省略射击声，不承诺完全消除所有爆音/漏音。真机热点、跨平台双机和最低系统硬件仍未实测。IPA 未签名，须自行签名；当前玩法限单人/双人，3P/4P 仅协议预留。
+
+[定位与范围 / Analysis and scope](docs/M2_16_IOS_AUDIO.md)
+
+## M2.15 已完成内容
 
 - 跟手移动替代点按后自动飞行：触碰战场任意位置并移动，松手或取消即停；维持原有机动上限。同屏双人仍最多一人使用。
 - 操作设置新增独立“双击投弹”复选框，默认关闭；战场分数至能量/炸弹区域可双击，单人和每机一人的 LAN 可用，同机双人禁用。
