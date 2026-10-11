@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- 最后阶段规划：用户于 2026-10-11 同意各系统分别提供安装包，将 Windows/macOS/Linux 桌面免开发环境交付与五平台双人局域网互通放在项目最后阶段。当前只固化需求，不启动实现；具体缺口、签名/分发条件、25 个房主/客户端平台组合及待决策项见 `docs/FINAL_PLATFORM_DELIVERY.md`。Electron 是评估候选，尚未选定；普通浏览器独立联机不作安装包方案的必要前提，3P/4P 仍仅协议预留。不得将规划或模拟器证据写成桌面包/跨平台真机已通过。
+  Final-phase plan: on 2026-10-11 the user accepted separate OS packages and deferred turnkey Windows/macOS/Linux delivery and five-platform two-player LAN to the project's final phase. Record requirements now without implementing them; see `docs/FINAL_PLATFORM_DELIVERY.md` for gaps, signing/distribution conditions, 25 host/guest platform categories and deferred decisions. Electron is a candidate, not selected; browser-only LAN is not a prerequisite for packaged delivery, and P3/P4 remain protocol reserves. Do not report plans or simulator evidence as delivered desktop packages or verified cross-platform hardware.
+
 - M2.16：用户明确要求只修复 iOS 音频行为，Android 音效/音乐类及原生逻辑保持原样。iOS 适配层由 WKWebView 的 demonstar 消息桥选择；保留三路音效优先级、55 毫秒射击过滤和原始音源，采用短启停过渡、同轮次 BGM 状态合并、暂停菜单静音和系统音频中断恢复。不得把模拟器/离线波形回归写成用户 iPhone 18 Pro / iOS 27.0.1 真机已消除爆音。见 `docs/M2_16_IOS_AUDIO.md`。
   M2.16: the user explicitly scopes audio behavior fixes to iOS. Preserve Android's original effect/music classes and native logic. Select the iOS adapter through WKWebView's demonstar bridge. Retain three-slot priorities, the 55 ms shot filter and original recordings; add short start/stop envelopes, same-turn BGM coalescing, silent paused dialogs and system-audio interruption recovery. Simulator/offline waveform checks do not prove that crackling is eliminated on the user's iPhone 18 Pro / iOS 27.0.1. See `docs/M2_16_IOS_AUDIO.md`.
 

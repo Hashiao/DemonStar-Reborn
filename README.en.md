@@ -10,6 +10,8 @@ The game supports Simplified Chinese, Traditional Chinese and English. First lau
 
 **Current milestone M2.16 (v0.2.16) targets iOS audio transitions and recovery while retaining Android playback implementations. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
 
+**Final-phase plan, not implemented:** ship separate Windows/macOS/Linux packages without user development setup, targeting LAN between any two of those platforms and Android/iOS. Public play remains solo/two-player. Desktop releases do not yet exist; physical interoperability and signing/distribution gaps remain unverified. See [platform delivery plan and gaps](docs/FINAL_PLATFORM_DELIVERY.md). Complete existing game work before starting this phase.
+
 
 ![Menu](docs/screenshots/menu-en.png)
 

@@ -10,6 +10,8 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 **当前里程碑 M2.16（v0.2.16）仅针对 iOS 音频启停与恢复做定向修复，Android 播放实现保持原样；仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
 
+**最后阶段规划，尚未实施：** 分别提供 Windows/macOS/Linux 安装包，用户无需配置开发环境；目标与 Android/iOS 任意两端局域网互通，玩法仍限单人/双人。当前没有桌面发行包，真机互通与签名/分发缺口尚待验收；详见 [各平台交付规划与不足](docs/FINAL_PLATFORM_DELIVERY.md)。先完成既定游戏工作，再启动本阶段。
+
 
 ![菜单](docs/screenshots/menu.png)
 
