@@ -10,10 +10,9 @@
   // 出击演出独立按约 60Hz 标定，保留原作每演出帧下移 3；不加速战斗。
   // Calibrate launch presentation near 60Hz, retaining 3 source pixels per frame; combat stays unchanged.
   const LAUNCH_SPEED=3*(H/400)*60,HEALTH_BAR_MIN_HP=C.definitions[C.byId[17]].hp;
-  // 按原作可见区域校准手机移动距离，不改变世界计时。
-  // Match the classic 320x400 visible-area traversal in our 400x480 playfield.
-  // This is mobile control calibration, not a change to enemy/world timing.
-  const PLAYER_STEP_X=4*(W-32)/(320-32),PLAYER_STEP_Y=4*(H-104)/(400-104);
+  // 按原作鼠标/模拟摇杆每轴 6 的上限校准穿屏时间；难度及世界计时不变。
+  // Calibrate traversal to the original mouse/analog cap of 6 per axis; difficulty and world timing stay unchanged.
+  const PLAYER_STEP_X=6*(W-32)/(320-32),PLAYER_STEP_Y=6*(H-104)/(400-104);
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   // 0x414940 的定点透视投影，深度输入先截为整数。
   // Fixed-point perspective from 0x414940, with integer depth input.
@@ -500,8 +499,7 @@
       // 目标也走相同逐步移动；最后一步只缩短剩余距离，网络客户端不能直接改坐标。
       // Targets use the same movement step, shortening only the final distance; clients never set positions.
       if(!dx&&!dy&&Number.isFinite(input.target?.x)&&Number.isFinite(input.target?.y)){
-        dx=(clamp(input.target.x,16,W-16)-p.x)/PLAYER_STEP_X;dy=(clamp(input.target.y,64,H-40)-p.y)/PLAYER_STEP_Y;
-        const length=Math.max(1,Math.hypot(dx,dy));dx/=length;dy/=length;
+        dx=clamp((clamp(input.target.x,16,W-16)-p.x)/PLAYER_STEP_X,-1,1);dy=clamp((clamp(input.target.y,64,H-40)-p.y)/PLAYER_STEP_Y,-1,1);
       }
       if(p.respawn<=0)this.move(dx*PLAYER_STEP_X,dy*PLAYER_STEP_Y,p);
       p.bank+=clamp(8+dx*8-p.bank,-1,1);p.thrust+=clamp(-dy-p.thrust,-.25,.25);

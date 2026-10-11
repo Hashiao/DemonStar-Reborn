@@ -1,9 +1,9 @@
 /* SPDX-License-Identifier: MIT. 四人主机权威局域网会话 / Four-seat authoritative LAN session. */
 (() => {
   'use strict';
-  // 本版恢复原作人数/难度波次，入房时拒绝仍使用旧出场规则的端。
-  // Reject older room revisions that still use the previous player/difficulty spawning rules.
-  const INPUT_VERSION=4,PROTOCOL='demonstar-lan-1',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  // 本版统一新机动上限及每轴斜向输入，拒绝旧移动规则的端。
+  // This revision shares the new mobility cap and per-axis diagonals; reject peers with older movement rules.
+  const INPUT_VERSION=5,PROTOCOL='demonstar-lan-1',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
   const idle=()=>({x:0,y:0,fire:false,bomb:0});
   const validRoster=list=>Array.isArray(list)&&list.length>=1&&list.length<=4&&list.every((m,i)=>m.slot===i+1&&typeof m.connected==='boolean'&&['android','ios','browser'].includes(m.platform));
   function token(){const bytes=new Uint8Array(16);if(globalThis.crypto?.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<16;i++)bytes[i]=Math.floor(Math.random()*256);return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');}
@@ -68,7 +68,7 @@
       if(p.type!=='input'||p.epoch!==this.epoch||!Number.isSafeInteger(p.sequence)||p.sequence<=member.lastSeq)return;
       if(!Number.isFinite(p.x)||!Number.isFinite(p.y)||typeof p.fire!=='boolean'||!Number.isSafeInteger(p.bomb)||p.bomb<0)return;
       if(p.target!=null&&(!Number.isFinite(p.target.x)||!Number.isFinite(p.target.y)||p.target.x<16||p.target.x>384||p.target.y<64||p.target.y>440))return;
-      const length=Math.max(1,Math.hypot(p.x,p.y));member.lastSeq=p.sequence;member.input={x:clamp(p.x/length,-1,1),y:clamp(p.y/length,-1,1),fire:p.fire,bomb:p.bomb,...(p.target?{target:{x:p.target.x,y:p.target.y}}:{})};member.inputAt=this.clock();
+      member.lastSeq=p.sequence;member.input={x:clamp(p.x,-1,1),y:clamp(p.y,-1,1),fire:p.fire,bomb:p.bomb,...(p.target?{target:{x:p.target.x,y:p.target.y}}:{})};member.inputAt=this.clock();
     }
     clientPacket(peer,p){
       if(peer!=='host')return;this.lastRx=this.clock();

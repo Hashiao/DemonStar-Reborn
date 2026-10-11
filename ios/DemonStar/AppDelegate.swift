@@ -165,6 +165,14 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
               function waitFor(check,label){return new Promise(function(resolve,reject){var limit=Date.now()+8000;var poll=setInterval(function(){if(check()){clearInterval(poll);resolve();}else if(Date.now()>limit){clearInterval(poll);reject(new Error('Advanced controls timeout: '+label+' '+JSON.stringify({phase:g.phase,x:g.player.x,y:g.player.y,target:StarfallApp.input.states[0].target,mode:StarfallApp.input.mode(0),dialog:!document.getElementById('dialog').hidden})));}},40);});}
               function mode(value){StarfallApp.showControls();var select=document.getElementById('touch-mode');select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}));StarfallApp.back();StarfallApp.back();StarfallApp.back();}
               g.recordEvents=[];g.enemies=[];g.bullets=[];g.player.invincible=999;
+              // 四难度验证同一机动上限；秒数为逻辑步换算。
+              // Verify one mobility cap across four difficulties; seconds are simulation-step conversions.
+              for(var difficulty=0;difficulty<4;difficulty++){
+                var mobility=new StarfallCore.Game(19),hitX=0,hitY=0;mobility.start(difficulty);mobility.recordEvents=[];mobility.player.x=16;mobility.player.y=64;mobility.player.invincible=999;
+                for(var tick=1;tick<=50;tick++){mobility.update(0.035,{x:1,y:1});if(!hitX&&mobility.player.x>=384-0.000001)hitX=tick;if(!hitY&&mobility.player.y>=440-0.000001)hitY=tick;}
+                if(hitX!==48||hitY!==50)throw new Error('Wrong mobility traversal');
+              }
+              result.mobility={difficulties:4,horizontalTicks:48,verticalTicks:50,diagonalAxesRetainSpeed:true};
               mode('point');var layout=renderer.layout;document.getElementById('game').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerId:812,pointerType:'touch',clientX:layout.x+100*layout.scale,clientY:layout.y+200*layout.scale}));
               var destination=StarfallApp.input.states[0].target;if(!destination||Math.abs(destination.x-100)>2||Math.abs(destination.y-200)>2)throw new Error('Point event not captured');
               await waitFor(function(){return Math.abs(g.player.x-destination.x)<0.01&&Math.abs(g.player.y-destination.y)<0.01;},'point-arrival');

@@ -18,8 +18,8 @@ test('lobby load starts all peers with saved rules; paused difficulty and banks 
   const {host,clients}=await room(2,2),g=new Game(8);g.start(2,1,false,{playerCount:2,retainWeaponLevels:true});g.upgradeWeapon(0,true,g.players[1]);g.upgradeWeapon(1,false,g.players[1]);g.loadStage(3);const cp=g.checkpoint();assert.equal(clients[0].load(cp),false);assert.ok(host.load(cp));assert.equal(clients[0].game.stage.id,3);assert.deepEqual(clients[0].game.players[1].weaponLevels,[6,1,0]);assert.equal(clients[0].game.retainWeaponLevels,true);assert.equal(host.load(cp),false);
   host.game.pause();const frame=host.game.frame,epoch=host.epoch;assert.ok(host.game.setDifficulty(0));host.flush();assert.equal(host.epoch,epoch);assert.equal(clients[0].game.frame,frame);assert.equal(clients[0].game.difficulty,0);await clients[0].native.request('stop');await clients[0].connect();assert.equal(clients[0].game.difficulty,0);assert.deepEqual(clients[0].game.players[1].weaponLevels,[6,1,0]);assert.ok(host.load(cp));assert.ok(host.epoch>epoch);assert.equal(clients[0].game.difficulty,2);
 });
-test('old spawn-rule room revision is rejected at handshake without reserving a seat',async()=>{
-  const {hub,host}=await room(1,2),guest=hub.transport('ios'),packets=[];guest.on(e=>{if(e.type==='message')packets.push(JSON.parse(e.data));});await guest.request('join');guest.send('host',{protocol:PROTOCOL,type:'hello',code:host.code,token:'e'.repeat(32),platform:'ios',inputVersion:3,stateVersion:2});assert.equal(host.members.length,1);assert.ok(packets.some(p=>p.type==='rejected'&&p.reason==='protocol-version'));
+test('old movement-rule room revision is rejected at handshake without reserving a seat',async()=>{
+  const {hub,host}=await room(1,2),guest=hub.transport('ios'),packets=[];guest.on(e=>{if(e.type==='message')packets.push(JSON.parse(e.data));});await guest.request('join');guest.send('host',{protocol:PROTOCOL,type:'hello',code:host.code,token:'e'.repeat(32),platform:'ios',inputVersion:4,stateVersion:2});assert.equal(host.members.length,1);assert.ok(packets.some(p=>p.type==='rejected'&&p.reason==='protocol-version'));
   const client=new Session(hub.transport('ios'),new Game());client.role='client';client.clientPacket('host',{type:'welcome',slot:2,roster:[{slot:1,connected:true,platform:'ios'},{slot:2,connected:true,platform:'ios'}],epoch:0});assert.equal(client.error,'protocol-version');assert.equal(client.authenticated,false);
 });
 
@@ -71,6 +71,15 @@ test('overlapping room actions do not revive an obsolete host request',async()=>
 });
 
 // 准备屏门控及目标坐标使用主机移动规则。 / Ready barriers and targets use authoritative movement.
+test('LAN preserves full diagonal axes and target travel across all four difficulties',async()=>{
+ for(const difficulty of [0,1,2,3]){
+  const {host,clients}=await room(2,2);host.start(difficulty);const g=host.game;g.phase='playing';g.launch=null;g.recordEvents=[];for(const p of g.players){p.x=16;p.y=64;p.invincible=999;}host.flush();
+  for(let tick=0;tick<50;tick++){clients[0].sendControls({x:1,y:1,fire:false,bomb:0});g.update(STEP,host.inputs({x:1,y:1,fire:false,bomb:0}));host.flush();if(tick===0){assert.equal(g.players[0].x,g.players[1].x);assert.equal(g.players[0].y,g.players[1].y);}if(tick===47)assert.ok(g.players.every(p=>Math.abs(p.x-384)<1e-8));}
+  assert.ok(g.players.every(p=>p.x===384&&p.y===440));assert.equal(clients[0].game.players[1].y,440);
+  clients[0].sendControls({x:0,y:0,fire:false,bomb:0,target:{x:16,y:64}});for(let tick=0;tick<50;tick++){g.update(STEP,host.inputs());host.flush();}assert.equal(clients[0].game.players[1].x,16);assert.equal(clients[0].game.players[1].y,64);
+  clients[0].sendControls({x:999,y:-999,fire:false,bomb:0});assert.equal(host.inputs().players[1].x,1);assert.equal(host.inputs().players[1].y,-1);
+ }
+});
 test('LAN ready barrier waits for both players and point targets arrive on the host',async()=>{
  const {host,clients}=await room(2,2);host.start();host.game.phase='playing';host.game.launch=null;host.game.recordEvents=[];host.flush();let local,remote,completed=0;host.onPrepare=done=>local=done;clients[0].onPrepare=done=>remote=done;
  host.beginReady(()=>{completed++;host.game.resume();host.flush();});assert.equal(host.game.phase,'paused');local();assert.equal(completed,0);remote();assert.equal(completed,1);remote();assert.equal(completed,1);
