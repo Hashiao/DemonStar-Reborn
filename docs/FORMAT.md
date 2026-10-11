@@ -1,5 +1,9 @@
 # DemonStar 4.04 format research
 
+2026-10-11 补充：完整逐条地图、四难度/人数准入、分组触发刻度、生成坐标及定义参数见 [原作逐关设计恢复](original-stage-design/README.md)。原始归档顺序必须保留；当前运行时的稳定 Y 排序不是原作非零编队组的等价实现。未因此改动导入器或玩法。
+
+2026-10-11 supplement: the [recovered stage ledger](original-stage-design/README.md) records every placement, difficulty/player gate, group trigger, spawn coordinate and extracted definition. Preserve archive order; the current stable Y sort is not equivalent to original nonzero-group dispatch. This research changes neither importer nor gameplay.
+
 The importer reads the user's local installation. It never copies executable code, audio or original imagery to the web application. `campaign.js` contains numerical gameplay records and sprite identifiers. The source archive SHA-256 values are included for reproducibility. Original intellectual property is not relicensed by the code license.
 
 ## Confirmed file structures

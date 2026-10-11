@@ -14,6 +14,8 @@ The game supports Simplified Chinese, Traditional Chinese and English. First lau
 
 **Level editor plan, not implemented:** let non-programmers copy any of the eighteen built-in stages, edit visually, playtest and save/share. Originals remain read-only and custom works are independent. Full-editing device coverage and custom numeric permissions remain pending; see [editor design and acceptance](docs/LEVEL_EDITOR_PLAN.md).
 
+**Original-stage research, with no resulting gameplay changes yet:** the [eighteen-stage design ledger](docs/original-stage-design/README.md) records difficulty/player conditions, dispatch scroll, spawn positions, formations, paths and guns for all 8,368 placements, with a later implementation checklist. Static verification is distinguished from actual visible-entry timing; complete native frame-by-frame certification is not claimed.
+
 
 ![Menu](docs/screenshots/menu-en.png)
 

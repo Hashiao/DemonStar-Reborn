@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- 2026-10-11 原作逐关设计恢复：用户明确要求先逐关核对四难度、人数、每个对象的出现时机和位置并本地固化，暂不修改代码。入口为 `docs/original-stage-design/README.md`：18 份逐关完整表、8,368 条放置、144 种静态组合、387 个定义，以及 `RULES.md` / `IMPLEMENTATION_CHECKLIST.md`。按原始分组区分地图 Y、触发刻度、出生中心和首次可见；名义 35 ms 换算不等于原机实测。所有后续修改项仍待实施，原始数值冻结及既有用户扩展不因研究解除；不要只拿总数或对称关系修复波次。
+  Original per-stage recovery (2026-10-11): the user requires local evidence for all four difficulties, player counts and each object's timing/position before any code changes. Start at `docs/original-stage-design/README.md` for eighteen full ledgers, 8,368 placements, 144 static cases, 387 definitions, rules and the implementation checklist. Distinguish map Y, dispatch scroll, spawn center and first visibility using original groups; nominal 35 ms conversion is not native measurement. All fixes remain pending, and research does not lift numeric freezes or undo approved extensions. Never repair waves using totals or symmetry alone.
+
 - 2026-10-11 波次取证：当前遗漏地图 `record[7]` 的人数/难度出场条件。补给载机不是一律留左，也不是随机左右，更不能把所有对称敌机砍半；按固定记录的 0x04/0x08 条件处理。已核对金标第 1/3 分集和原程序，见 `docs/WAVE_SPAWN_AUDIT_2026_10_11.md`。本轮仅定位，尚未修复；不据此改变 HP/伤害或宣称十八关完整波次已验收。
   Spawn audit on 2026-10-11: the current implementation omits player/difficulty conditions in map `record[7]`. Supply carriers are not always left-only or randomly sided; never halve every symmetric formation. Follow each fixed placement's 0x04/0x08 conditions. Reference parts 1/3 and native-code evidence are in `docs/WAVE_SPAWN_AUDIT_2026_10_11.md`. This is diagnosis only, not a fix, HP/damage authorization or full eighteen-stage wave certification.
 
