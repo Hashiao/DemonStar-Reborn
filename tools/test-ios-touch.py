@@ -30,7 +30,6 @@ for tested in standard['devices']:
   reports.append({'family':family,'runtime':tested['runtime'],'players':count,'probe':data})
  # LAN 在所有单设备检查完成后才启动双机，避免后台 Runner 累积。
  # Start the LAN pair only after single-device checks, avoiding accumulated background runners.
- run(['xcrun','simctl','terminate',uid,'io.github.hashiao.demonstar'])
  run(['xcrun','simctl','shutdown',uid])
 result={'status':'passed','input':'XCTest system 1.6-second presses, floating-stick drag and fire re-tap; not DOM event injection','devices':reports,'physical_device_tested':False}
 (out/'ios-touch-verification.json').write_text(json.dumps(result,indent=2));print(json.dumps(result))
