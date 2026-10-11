@@ -1,9 +1,9 @@
 /* SPDX-License-Identifier: MIT. 四人主机权威局域网会话 / Four-seat authoritative LAN session. */
 (() => {
   'use strict';
-  // 本版统一新机动上限及每轴斜向输入，拒绝旧移动规则的端。
-  // This revision shares the new mobility cap and per-axis diagonals; reject peers with older movement rules.
-  const INPUT_VERSION=5,PROTOCOL='demonstar-lan-1',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  // 连锁地物与蛇形部件坠毁需要双方采用同一规则与图集。
+  // Ground chains and falling snake parts require matching rules and artwork on both peers.
+  const INPUT_VERSION=6,PROTOCOL='demonstar-lan-1',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
   const idle=()=>({x:0,y:0,fire:false,bomb:0});
   const validRoster=list=>Array.isArray(list)&&list.length>=1&&list.length<=4&&list.every((m,i)=>m.slot===i+1&&typeof m.connected==='boolean'&&['android','ios','browser'].includes(m.platform));
   function token(){const bytes=new Uint8Array(16);if(globalThis.crypto?.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<16;i++)bytes[i]=Math.floor(Math.random()*256);return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');}

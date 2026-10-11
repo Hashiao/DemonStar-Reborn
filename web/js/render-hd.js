@@ -11,7 +11,10 @@
       // 只保留当前关的重绘图集，同时释放对应染色缓存，避免手机解码全部 18 关素材。
       // Retain only this stage's redraw atlases and tint caches, avoiding full-campaign decoded memory.
       const needed=new Set(campaignArt.stageAssets[id]);
-      const deathSprite=deathArt.sprites[deathArt.stages[id]];if(deathSprite)needed.add(deathSprite.asset);
+        const deathSprite=deathArt.sprites[deathArt.stages[id]];if(deathSprite)needed.add(deathSprite.asset);
+        // 只在包含蛇形编队的关卡加载损毁部件，沿用按关释放。
+        // Load damaged snake parts only in stages that use them, preserving stage-scoped release.
+        for(const record of DemonStarCampaign.levels[id-1].events){const s=deathArt.segments?.[DemonStarCampaign.definitions[DemonStarCampaign.byId[record[2]]].sprite];if(s)needed.add(s.asset);}
       for(const [path,image] of this.campaignAtlases)if(!needed.has(path)){this.tintCache.delete(image);this.campaignAtlases.delete(path);}
       for(const path of needed)if(!this.campaignAtlases.has(path))this.campaignAtlases.set(path,load(path));
       this.artStage=id;
@@ -119,7 +122,7 @@
     }
     objectBody(e,red){
       const d=e.def,w=d.width,h=d.height,route=campaignArt.routes[d.sprite],im=image=>red?this.redImage(image):image;
-      if(e.dying){const s=deathArt.sprites[d.id];if(!s){this.missingSprites.add(d.sprite+':death');return;}const image=this.campaignAtlases.get(s.asset);if(image?.complete&&image.naturalWidth)this.cropped(image,s.crop,e.x+s.offset[0],e.y+s.offset[1],...s.size);return;}
+      if(e.dying){const s=deathArt.sprites[d.id]||deathArt.segments?.[d.sprite];if(!s){this.missingSprites.add(d.sprite+':death');return;}const image=this.campaignAtlases.get(s.asset);if(image?.complete&&image.naturalWidth)this.cropped(image,s.crop,e.x+s.offset[0],e.y+s.offset[1],...s.size);return;}
       // 每个原型都有显式路由；未知名称只记录诊断，不再替换成红色飞机。
       // Every prototype has an explicit route; unknown names are diagnosed, never replaced with red fighters.
       if(!route){this.missingSprites.add(d.sprite);return;}

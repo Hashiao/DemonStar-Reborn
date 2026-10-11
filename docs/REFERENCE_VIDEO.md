@@ -80,3 +80,10 @@ This audit inspected player screenshots at P1: 40, 44, 48, 49.5, 50, 50.5, 51, 5
 确认 P1 50.5–51 秒左侧金色载机、74–75 秒左侧橙色载机、104 秒右侧橙色载机，以及 P3 53–56 秒右侧金色载机。结合本地程序 `0x42d731–0x42d7a1` 与地图记录，侧别由固定放置决定，不能一律砍掉右侧或随机保留一侧。仅抽查两个分集，不是十八关全程验收；没有直接审看难度选择菜单。详见 [波次定位报告](WAVE_SPAWN_AUDIT_2026_10_11.md)。
 
 Confirmed a left gold carrier at P1 50.5–51 s, left orange at 74–75 s, right orange at 104 s and right gold at P3 53–56 s. The native branch and map records establish fixed-placement eligibility, not blanket removal of the right side or random side selection. This samples two parts, not all eighteen complete runs; the difficulty-selection menu was not directly reviewed. See the linked audit.
+
+
+## 2026-10-11 第二、三关结构反馈 / Stage 2–3 structure feedback
+
+本轮通过网页播放器取帧并实际审看：P2 的 25、30、40、44、50、58、60、61、70、80、90、100、110、120、130 秒；P3 的 25、60、61.2、61.4、61.6、61.8、62、63、64、65、65.2、65.4、65.6、66、67 秒。25/60/65 部分时刻最初复看缓存，其余重新采集；未审看的已采集帧不列入。P2 展示相连球形地物和渐次爆炸残骸；P3 展示完整三段中身及持续开火下的连续爆点。录像本身不证明“头死后无需继续命中也全组死亡”，原程序/定义证据另见 [记录](M2_20_STRUCTURES.md)。
+
+This review actually inspected P2 at 25, 30, 40, 44, 50, 58, 60, 61, 70, 80, 90, 100, 110, 120 and 130 seconds; P3 at 25, 60, 61.2, 61.4, 61.6, 61.8, 62, 63, 64, 65, 65.2, 65.4, 65.6, 66 and 67 seconds. Some 25/60/65-second frames were initially rechecked from cache; the others were freshly captured from the webpage player. Captured but uninspected frames are excluded. Stage two shows connected orbs and successive burnt remnants; stage three shows intact middle sections and successive blasts under sustained fire. This does not establish unconditional head-linked destruction without subsequent hits. Native evidence is recorded separately. Sampling is not a full-run certification.

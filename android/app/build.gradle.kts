@@ -8,8 +8,8 @@ android {
         applicationId = "io.github.hashiao.demonstar"
         minSdk = 29
         targetSdk = 37
-        versionCode = 21
-        versionName = "0.2.19"
+        versionCode = 22
+        versionName = "0.2.20"
     }
     val signingFile = rootProject.file("../.local/release-signing.properties")
     if (signingFile.isFile) {
