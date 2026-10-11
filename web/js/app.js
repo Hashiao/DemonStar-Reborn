@@ -313,7 +313,7 @@
   function showFireHint(index,now){const el=fireHints[index],l=renderer.layout;el.textContent=t('toggleHoldToast');el.dataset.until=String(now+3000);el.hidden=false;const width=Math.min(input.count>1?l.w/2-12:300,l.w-16);Object.assign(el.style,{width:width+'px',left:(input.count>1?index*l.w/2+6:(l.w-width)/2)+'px',top:Math.max(6,l.y+H*l.scale-112)+'px'});}
   touch=new DemonStarTouchControls(input,activeInput,()=>{audio.unlock();music.unlock();});touch.layout(renderer.layout);
   window.addEventListener('pointerdown',e=>{if(captureBinding&&e.pointerType==='mouse'){e.preventDefault();e.stopPropagation();acceptBinding('mouse:'+e.button);}},true);
-  battle=new DemonStarBattleGestures(input,$('game'),()=>renderer.layout,activeInput,()=>{if(lan.role==='client'&&activeInput())lan.sendControls(input.sample(gamepads(),[game.playerById(lan.localSlot)],true).players[0]);});
+  battle=new DemonStarBattleGestures(input,$('game'),()=>renderer.layout,activeInput,()=>{if(lan.role==='client'&&activeInput()){const commands=input.sample(gamepads(),[game.playerById(lan.localSlot)],true);if(commands.pause)input.pausePulse=true;lan.sendControls(commands.players[0]);}});
   new DemonStarDialogScroll($('dialog'),$('dialog-content'),$('dialog-scrollbar'));
   $('game').addEventListener('pointerdown',()=>{if(activeInput()){audio.unlock();music.unlock();}});
   // 只接受结算出现后的新轻触；捕获阶段消费点击，避免穿透至下一关的准备按钮。
