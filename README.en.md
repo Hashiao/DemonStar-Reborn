@@ -8,7 +8,7 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
 
-**Current milestone M2.17 (v0.2.17) restores difficulty-aware waves, formation timing and spawn positions. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
+**Current milestone M2.18 (v0.2.18) shares audio scheduling, protects shots during dense explosions and retains iOS smoothing. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
 
 **Final-phase plan, not implemented:** ship separate Windows/macOS/Linux packages without user development setup, targeting LAN between any two of those platforms and Android/iOS. Public play remains solo/two-player. Desktop releases do not yet exist; physical interoperability and signing/distribution gaps remain unverified. See [platform delivery plan and gaps](docs/FINAL_PLATFORM_DELIVERY.md). Complete existing game work before starting this phase.
 
@@ -19,7 +19,22 @@ The game supports Simplified Chinese, Traditional Chinese and English. First lau
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.17
+## Current milestone M2.18
+
+- Android and iOS share one allocator: eight world-effect voices plus two protected shot voices per player. Explosions and enemy fire no longer steal main-gun sounds.
+- The 55 ms shot filter runs independently per player and advances only on playback; stage changes and iOS context resets clear stale clocks.
+- iOS retains its own short attack/release, silent pause, interruption recovery and music-state coalescing without duplicating allocation rules.
+- Shared mix headroom accompanies the larger pool. Identical effect input is about 1.94 dB quieter; recordings, BGM, firing rates, damage, difficulty and LAN protocol are unchanged.
+
+365 engine/unit tests and 26 browser suites passed. Both playback classes started 40/40 two-player shots under dense mixing without world-effect stealing; the twelve-voice offline mix peaked near 0.930 with no out-of-range samples. Android Release/Debug, Lint (0 errors and 12 warnings each), API 37 settings/localization/two-app LAN and 40/40 packaged-WebView shots passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38139470522) passed iPhoneOS compilation, iPhone/iPad simulator localization/audio (20/20 two-player shots per probe), native-pair LAN and system long presses.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.18/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.18/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.18/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.18/verification.json)
+
+This authorized modern mixing extension does not reproduce the original three-voice limit. Physical speakers, Bluetooth, minimum-OS hardware and final listening quality on the user’s devices require verification; this does not certify every phone as free of missing sounds or crackles. Public play remains solo/two-player, with P3/P4 reserved in the core. The unsigned IPA requires user signing.
+
+[Evidence and verification limits](docs/M2_18_AUDIO_VOICES.md)
+
+## M2.17 completed work
 
 - Restore original difficulty/player gates for enemies and supplies with fixed placement sides, without halving symmetric formations.
 - Dispatch original formations together at distinct birth heights; fix side/scenery entry, first path targets and trailing post-boss map records.

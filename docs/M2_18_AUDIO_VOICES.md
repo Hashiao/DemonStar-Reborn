@@ -27,6 +27,14 @@ This is an explicit modern mixing extension, not a claim of original three-voice
 
 Regressions cover dense combat/two-player shots, shared implementation inheritance, world-pool overflow, ownership, rejected-request clocks, stage/context reset, tail cleanup and offline mix headroom. The new browser stress probe also runs in packaged Android WebView. iPhone/iPad simulator probes exercise shared scheduling/two-player shots while retaining iOS release-tail and silent paused-settings checks.
 
-发布验收结果待构建完成后补充。真机扬声器、蓝牙、最低系统硬件及用户设备的最终听感仍需复测；不得把调度测试写成全部手机已无漏音或爆音。
+真机扬声器、蓝牙、最低系统硬件及用户设备的最终听感仍需复测；不得把调度测试写成全部手机已无漏音或爆音。
 
-Release verification results will be recorded after builds finish. Physical speakers, Bluetooth, minimum-OS hardware and the user's listening experience remain unverified; scheduling tests do not certify every device as free of missing sounds or crackles.
+Physical speakers, Bluetooth, minimum-OS hardware and the user's listening experience remain unverified; scheduling tests do not certify every device as free of missing sounds or crackles.
+
+365 项引擎/单元测试、26 组浏览器检查通过。密集混音探针在两套播放类各成功播放 40/40 次双人射击，无世界音效抢占；十二路离线混音峰值约 0.930，无越界采样。Android Release/Debug、Lint（各 0 错误、12 条警告）、API 37 原生设置/三语/双 App LAN 及打包 WebView 的 40/40 次射击检查通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38139470522) 通过 iPhoneOS 构建、iPhone/iPad 模拟器三语/音频（每次探针 20/20 次双人射击）、原生双端 LAN 和系统长按检查。
+
+365 engine/unit tests and 26 browser suites passed. Both playback classes started 40/40 two-player shots under dense mixing without world-effect stealing; the twelve-voice offline mix peaked near 0.930 with no out-of-range samples. Android Release/Debug, Lint (0 errors and 12 warnings each), API 37 settings/localization/two-app LAN and 40/40 packaged-WebView shots passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38139470522) passed iPhoneOS compilation, iPhone/iPad simulator localization/audio (20/20 two-player shots per probe), native-pair LAN and system long presses.
+
+首次 Android 音频探针发现模拟器仍安装上一版，之前检查结果作废。安装本次 Release/Debug、核对版本并拉取 Release APK 对比哈希后，重跑五组 Android 检查全部通过。
+
+The first Android audio probe detected the previously installed version, invalidating earlier Android checks. After installing the current Release/Debug, checking versions and comparing the pulled Release APK hash, all five Android suites were rerun successfully.
