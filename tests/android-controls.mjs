@@ -1,6 +1,6 @@
 // 同一既有模拟器中的 Release 主机与 Debug 原生客户端；不代替两台手机的热点测试。
 // Native release host/debug client on one existing emulator; this does not replace two-phone hotspot tests.
-import {execFileSync} from 'node:child_process';import {writeFile} from 'node:fs/promises';import assert from 'node:assert/strict';
+import {execFileSync} from 'node:child_process';import {readFile,writeFile} from 'node:fs/promises';import assert from 'node:assert/strict';
 const adb=process.env.ADB||'K:/android/sdk/platform-tools/adb.exe',serial=process.env.ANDROID_SERIAL||'emulator-5554',host='io.github.hashiao.demonstar',guest=host+'.debug';
 const run=(...args)=>execFileSync(adb,['-s',serial,...args],{encoding:'utf8',timeout:30000}).trim(),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const until=async(f,ms=30000)=>{const end=Date.now()+ms;while(Date.now()<end){if(await f())return;await sleep(100);}throw new Error('Native Android pair timed out');};
@@ -20,6 +20,7 @@ try{
   assert.equal(await evaluate('StarfallApp.audio.constructor===StarfallAudio&&StarfallApp.music.constructor===DemonStarMusicPlayer&&!DemonStarIOSAudio.supported()'),true);
   await evaluate('StarfallApp.showMenu();StarfallApp.input.config.count=1;StarfallApp.input.config.players[0].touch="point";StarfallApp.start();true');
   await until(()=>evaluate('StarfallApp.game.phase==="playing"'));
+  const sharedAudio=await evaluate((await readFile('tests/audio-voice-probe.js','utf8'))+'(StarfallAudio)');assert.equal(sharedAudio.shotStarts,40);assert.equal(sharedAudio.shotRejects,0);assert.equal(sharedAudio.sharedScheduler,true);
   await evaluate('StarfallApp.game.recordEvents=[];StarfallApp.game.enemies=[];StarfallApp.game.bullets=[];StarfallApp.game.player.invincible=999;true');
   const l=await evaluate('StarfallApp.renderer.layout');
   await command('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:72,x:l.x+90*l.scale,y:l.y+180*l.scale}]});
@@ -35,5 +36,5 @@ try{
   const supported=await evaluate('!StarfallApp.input.motionFallback'),sample=await evaluate('StarfallApp.tilt.latest');
   if(supported){assert.ok(sample);assert.equal(await evaluate('StarfallApp.game.phase'),'paused');await evaluate('document.getElementById("tilt-ready").click();true');await until(()=>evaluate('StarfallApp.game.phase==="playing"'));await evaluate('document.getElementById("pause").click();StarfallApp.back();true');await until(()=>evaluate('document.getElementById("tilt-ready")&&!document.getElementById("tilt-ready").disabled'));await evaluate('document.getElementById("tilt-ready").click();true');}
   await evaluate('StarfallApp.showMenu();StarfallApp.showControls();var modeSelect=document.getElementById("touch-mode");modeSelect.value="floating";modeSelect.dispatchEvent(new Event("change"));StarfallApp.showMenu();true');
-  const report={status:'passed',source_commit:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),nativeMotionAvailable:supported,sample,checks:['packaged-follow-touch-move-and-release-stop','packaged-double-tap-bomb','physical-hold-toast-threshold-duration','no-selection','native-motion-request-and-ready-or-fallback'],scope:'Existing Android emulator; real native sensor bridge with emulator-generated gravity when available, not physical device tilt feel.'};await writeFile('artifacts/m215-android-controls.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
+  const report={status:'passed',source_commit:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),sharedAudio,nativeMotionAvailable:supported,sample,checks:['packaged-shared-audio-dense-combat','packaged-follow-touch-move-and-release-stop','packaged-double-tap-bomb','physical-hold-toast-threshold-duration','no-selection','native-motion-request-and-ready-or-fallback'],scope:'Existing Android emulator; real native sensor bridge with emulator-generated gravity when available, not physical device tilt feel or speaker listening quality.'};await writeFile('artifacts/m215-android-controls.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
 }finally{if(ws)ws.close();if(port)try{run('forward','--remove','tcp:'+port);}catch{}}

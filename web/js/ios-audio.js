@@ -1,10 +1,10 @@
-/* SPDX-License-Identifier: MIT. iOS 专用音频平滑与恢复；Android 使用原有实现。
- * iOS-only smoothing and recovery; Android retains the original implementation. */
+/* SPDX-License-Identifier: MIT. 共用调度，仅 iOS 启用平滑与恢复。
+ * Shared scheduling, with iOS-only smoothing and recovery. */
 (() => {
-  const ATTACK=.004,RELEASE=.008,RADIO=new Set(['missionStart','bossWarning','fullPowerA','fullPowerB','missionComplete','stagePraise']);
+  const ATTACK=.004,RELEASE=.008;
   class IOSAudio extends StarfallAudio {
     static supported(){return !!globalThis.webkit?.messageHandlers?.demonstar;}
-    constructor(canPlay=()=>true){super();this.canPlay=canPlay;this.halted=false;this.pauseSerial=0;this.pauseTimer=null;this.resuming=null;this.sources=new Set();}
+    constructor(canPlay=()=>true){super();this.canPlay=canPlay;this.halted=false;this.pauseSerial=0;this.pauseTimer=null;this.resuming=null;}
     unlock(){
       if(!this.enabled||!this.canPlay())return;
       this.halted=false;this.pauseSerial++;clearTimeout(this.pauseTimer);
@@ -16,20 +16,11 @@
       }else if(this.ctx.state==='running')ready();
     }
     setVolume(value){this.volume=value;if(!this.master)return;const now=this.ctx.currentTime,p=this.master.gain,target=this.halted?0:.4*value;if(p.value===target)return;p.cancelScheduledValues(now);p.setValueAtTime(p.value,now);p.linearRampToValueAtTime(target,now+RELEASE);}
-    releaseSlot(source){this.active=this.active.filter(s=>s!==source);this.voices=this.active.length;if(this.missionSource===source)this.missionSource=null;if(this.ambient===source)this.ambient=null;}
-    sample(kind,volume=1,loop=false){
-      if(this.halted||!this.canPlay()||!this.enabled||!this.ctx||this.ctx.state!=='running')return null;
-      const asset=DemonStarSounds[kind];if(!asset)return null;const priority=asset.priority||0;
-      // 保持原作三路与同类上限；释放尾音不再占用逻辑槽位。
-      // Preserve the three-slot and per-kind limits; releasing tails no longer occupy logical slots.
-      const same=this.active.filter(s=>s.kind===kind),limit=['proton','ion','plasma'].includes(kind)?2:1;
-      if(!loop){if(same.length>=limit)this.stopSource(same[0]);if(this.active.length>=3){const weakest=this.active.reduce((a,b)=>a.priority>b.priority?a:b);if(weakest.priority<=priority)return null;this.stopSource(weakest);}}
-      const buffer=this.buffers[kind]||this.makeBuffer(kind),source=this.ctx.createBufferSource(),gain=this.ctx.createGain(),now=this.ctx.currentTime,target=volume*(this.missionSource&&!RADIO.has(kind)?.4:1),duration=buffer.length/buffer.sampleRate;
-      Object.assign(source,{buffer,loop,kind,priority,level:target,gainNode:gain,began:now,ends:loop?Infinity:now+duration});source.connect(gain);gain.connect(this.master);
+    canSample(){return !this.halted&&this.canPlay()&&super.canSample();}
+    configureSource(source){
+      const {gainNode:gain,began:now,level:target,loop,buffer}=source,duration=buffer.length/buffer.sampleRate;
       gain.gain.setValueAtTime(0,now);gain.gain.linearRampToValueAtTime(target,now+Math.min(ATTACK,duration/2));
-      if(!loop){gain.gain.setValueAtTime(target,now+Math.max(duration/2,duration-RELEASE));gain.gain.linearRampToValueAtTime(0,now+duration);this.active.push(source);}
-      this.voices=this.active.length;this.sources.add(source);
-      source.onended=()=>{if(source.finished)return;source.finished=true;this.releaseSlot(source);this.sources.delete(source);source.disconnect();gain.disconnect();};source.start();return source;
+      if(!loop){gain.gain.setValueAtTime(target,now+Math.max(duration/2,duration-RELEASE));gain.gain.linearRampToValueAtTime(0,now+duration);}
     }
     stopSource(source){
       if(!source||source.finished||source.releasing)return;
@@ -47,7 +38,7 @@
         this.pauseTimer=setTimeout(()=>{if(serial!==this.pauseSerial||!this.halted)return;this.ctx.suspend().then(()=>{if(!this.halted&&this.canPlay())this.unlock();}).catch(()=>{});},RELEASE*1000+4);
       }else if(this.ctx.state==='interrupted')this.ctx.suspend().catch(()=>{});
     }
-    reset(){this.pauseSerial++;clearTimeout(this.pauseTimer);for(const s of [...this.sources]){try{s.stop();}catch{}s.onended();}this.ctx?.close?.().catch(()=>{});this.ctx=this.master=this.compressor=null;this.resuming=null;}
+    reset(){this.pauseSerial++;clearTimeout(this.pauseTimer);for(const s of [...this.sources]){try{s.stop();}catch{}s.onended();}this.ctx?.close?.().catch(()=>{});this.ctx=this.master=this.compressor=this.output=null;this.resuming=null;this.resetEffectTimers();}
   }
   class IOSMusic extends DemonStarMusicPlayer {
     // 同一 JS 轮次只发送最终状态，避免“恢复旧曲→切菜单曲”。

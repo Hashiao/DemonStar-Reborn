@@ -178,6 +178,18 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
               await waitFor(function(){return g.player.bombs===2;},'double-tap-bomb');StarfallApp.input.config.doubleTapBomb=false;
               var sound=StarfallApp.audio;
               if(!(sound instanceof DemonStarIOSAudio)||!(StarfallApp.music instanceof DemonStarIOSMusic))throw new Error('iOS audio adapters not selected');
+              // 验证共用调度及双人射击保留；不代表扬声器听感实测。
+              // Verify shared scheduling and protected two-player shots, not speaker listening quality.
+              if(DemonStarIOSAudio.prototype.sample!==StarfallAudio.prototype.sample)throw new Error('Duplicated platform scheduler');
+              sound.stopAll();sound.resetEffectTimers();var accepted=0,nextShot=sound.ctx.currentTime;
+              for(var round=0;round<10;round++){
+                await waitFor(function(){return sound.ctx.currentTime>=nextShot;},'audio-shot-clock');
+                for(var effect of ['explosion','groundExplosion','heavyExplosion','hit','enemyShot','enemyMissile','enemyLaser','bossEngine1'])sound.sample(effect);
+                for(var owner of [1,2]){var previous=sound.lastShots.get(owner);sound.effect('shot',{weapon:owner-1,playerId:owner});if(sound.lastShots.get(owner)!==previous)accepted++;}
+                if(sound.active.filter(function(s){return s.voiceGroup==='world';}).length>8||sound.active.filter(function(s){return s.playerId>0;}).length>4)throw new Error('Unbounded audio voices');
+                nextShot=Math.max(sound.lastShots.get(1),sound.lastShots.get(2))+0.09;
+              }
+              if(accepted!==20)throw new Error('Dense combat lost player shots');result.sharedAudio={sharedScheduler:true,shotsAccepted:accepted};
               sound.stopAll();var fading=sound.sample('hit');if(!fading)throw new Error('iOS sound did not start');sound.stopSource(fading);
               if(fading.finished||sound.active.indexOf(fading)>=0)throw new Error('iOS sound disconnected before release tail');
               await waitFor(function(){return fading.finished;},'audio-release-tail');

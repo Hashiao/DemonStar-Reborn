@@ -50,9 +50,9 @@ test('equipment, bombs, ground explosions and radio use their original distinct 
   a.stopMission();assert.equal(a.missionSource,null);
 });
 
-test('original three-slot sound priority prevents an impact wall and preserves radio',()=>{
+test('bounded world effects prevent an impact wall and preserve radio beside player shots',()=>{
   const a=new StarfallAudio();a.unlock();for(let i=0;i<40;i++){a.ctx.currentTime+=.04;a.effect('enemy-hit');}assert.equal(a.active.filter(s=>s.kind==='hit').length,1);
-  a.radio('bossWarning');for(let i=0;i<40;i++){a.ctx.currentTime+=.06;a.effect('shot');}assert.ok(a.active.length<=3);assert.ok(a.missionSource);assert.equal(a.missionSource.kind,'bossWarning');
+  a.radio('bossWarning');for(let i=0;i<40;i++){a.ctx.currentTime+=.06;a.effect('shot');}assert.equal(a.active.filter(s=>s.voiceGroup==='world').length,2);assert.equal(a.active.filter(s=>s.voiceGroup==='player:1').length,2);assert.ok(a.missionSource);assert.equal(a.missionSource.kind,'bossWarning');
   a.stopAll();assert.equal(a.active.length,0);assert.equal(a.ambient,null);
 });
 
@@ -67,7 +67,7 @@ test('completion radio sequence follows stage and cancels on a new mission',()=>
 });
 
 test('equal-priority incoming effects do not evict an already playing radio',()=>{
-  const a=new StarfallAudio();a.unlock();a.sample('groundExplosion');a.sample('nova');a.radio('bossWarning');const voice=a.missionSource;assert.ok(voice);assert.equal(a.active.length,3);
+  const a=new StarfallAudio();a.unlock();for(const kind of ['groundExplosion','nova','playerLaunch','fullPowerA','missionComplete','missionStart','stagePraise'])a.sample(kind);a.radio('bossWarning');const voice=a.missionSource;assert.ok(voice);assert.equal(a.active.length,8);
   assert.equal(a.sample('megaBomb'),null);assert.equal(a.missionSource,voice);assert.equal(voice.finished,undefined);
 });
 

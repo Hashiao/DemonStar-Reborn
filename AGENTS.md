@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.18：用户授权两端共用音效调度修复，取代 M2.16 保留三路/Android 音效类冻结的历史范围。`audio.js` 统一八路世界音效及每位玩家两路射击保留、归属/55 ms 过滤与固定混音余量；`ios-audio.js` 继承分配，仅保留 iOS 启停平滑和系统恢复。保持原音源、优先级及战斗数值；这不是原作三路混音的 1:1 还原。见 `docs/M2_18_AUDIO_VOICES.md`。
+  M2.18: the user authorizes shared scheduling on both platforms, superseding M2.16's historical three-slot/unchanged-Android scope. `audio.js` owns eight world voices, two protected shot voices per player, ownership/55 ms filtering and fixed mix headroom. `ios-audio.js` inherits allocation and retains iOS smoothing/recovery. Preserve recordings, priorities and combat values; this is not original three-voice mixing fidelity. See `docs/M2_18_AUDIO_VOICES.md`.
+
 - M2.17：用户已解除前轮“仅取证”限制，授权按逐关清单修复四难度的数量/时机/位置，接受非逐帧精度。恢复每条记录准入、原始相邻编队及出生偏移、侧面/地物入场、mode 10 首目标、Boss 后调度；房间版本 4，当前玩法仍限单/双人。见 `docs/M2_17_SPAWNS.md`。自动补给归属序列、跨关补给、HP/伤害及循环战役仍待后续，不能随本次修复擅改；原作清单的“当前实现”字段固定指其取证基线，不重写历史数据。
   M2.17 supersedes the earlier research-only restriction: the user authorizes ledger-based difficulty/count/timing/position fixes without exact frame timing. Restore per-record gates, adjacent formations/offsets, side/scenery entry, mode-10 first targets and post-boss dispatch; room revision 4 still exposes solo/two-player play. See `docs/M2_17_SPAWNS.md`. Supply ownership/sequences, stage replenishment, HP/damage and campaign looping remain separate future work. Ledger current-runtime fields stay tied to their historical baseline.
 
