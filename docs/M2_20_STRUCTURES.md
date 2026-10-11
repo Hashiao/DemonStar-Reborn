@@ -79,9 +79,9 @@ The third run changes only the UI-test harness: cold-boot one selected existing 
 
 Both local candidates identify internally as **0.2.20 / 22** and contain matching web resources. Android's project signature and pulled-back installed hash are verified. The unsigned ARM64 iPhoneOS IPA requires user signing. This is a development candidate with **incomplete verification, not an official release**.
 
-两包源码提交均为 `b1fff70485dc0d0059575e68c15d5ae282d89fd9`。后续提交仅修改测试启动隔离及记录，游戏文件未变。候选 IPA 来自第 2 轮 CI：功能与 LAN 通过，iPhone 系统触控通过，iPad XCTest 超时。第 3 轮 `38153590283` 的功能检查通过，但 LAN 步骤失败，系统触控步骤未执行；记录时完整日志仍在上传，原因尚未确认。不得把不同轮次拼接成“一次完整通过”。
+两包源码提交均为 `b1fff70485dc0d0059575e68c15d5ae282d89fd9`。后续提交仅修改测试启动隔离及记录，游戏文件未变。候选 IPA 来自第 2 轮 CI：功能与 LAN 通过，iPhone 系统触控通过，iPad XCTest 超时。第 3 轮 `38153590283` 的功能检查与 LAN 断言全部通过；补读完整日志确认，步骤失败发生在 finally 关闭 iPhone 模拟器时（60 秒超时），因此系统触控步骤未执行。现将清理超时独立记录，保留原有联机断言及其失败传播；完整 iPad 触控仍待验收。不得把不同轮次拼接成“一次完整通过”。
 
-Both packages use source commit `b1fff70485dc0d0059575e68c15d5ae282d89fd9`. Later commits change only test startup isolation and documentation. The candidate IPA comes from attempt 2: functional/LAN and iPhone system-touch checks passed; iPad XCTest timed out. Follow-up run `38153590283` passed functional checks but failed its LAN step, so system touch was skipped; complete logs were still uploading when recorded and the cause was not yet confirmed. Do not combine attempts into a claim of one complete passing run.
+Both packages use source commit `b1fff70485dc0d0059575e68c15d5ae282d89fd9`. Later commits change only test startup isolation and documentation. The candidate IPA comes from attempt 2: functional/LAN and iPhone system-touch checks passed; iPad XCTest timed out. Complete logs for follow-up run `38153590283` confirm that functional checks and every LAN assertion passed. Its finally-block iPhone simulator shutdown timed out after 60 seconds, failing the step and skipping system touch. Cleanup timeouts are now recorded separately, preserving assertions and propagation of functional failures; complete iPad touch verification remains pending. Do not combine attempts into a claim of one complete passing run.
 
 当前仍需两项对象定位信息：斜向导弹的发射敌人/出现时段，以及“补给固定”指未破坏的箱子还是掉落物、异常移动方向。另需完成完整 iOS 验收。草稿 PR 不代表这些工作已完成。
 
