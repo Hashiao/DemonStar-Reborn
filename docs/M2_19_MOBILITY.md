@@ -37,10 +37,14 @@ M2.18 audio is preserved. Original maps/numeric tables, enemy motion, independen
 
 ## 验证与边界 / Verification and limits
 
-373 项单元/引擎测试通过，新增全难度八种输入三方向的 96 组合、轻推幅度、独立双人、暂停切难度/读档、联机主机斜向/目标限速与旧版本拒绝。打包浏览器另核对 96 组合以及真实浮动触屏斜推和松开。完整浏览器、Android/iOS 编译和模拟器结果在发包前补齐。
+373 项单元/引擎测试通过，新增全难度八种输入三方向的 96 组合、轻推幅度、独立双人、暂停切难度/读档、联机主机斜向/目标限速与旧版本拒绝。打包浏览器另核对 96 组合以及真实浮动触屏斜推和松开。完整发布检查结果如下。
 
-373 unit/engine tests passed, adding 96 combinations of four difficulties/eight inputs/three directions, partial magnitude, independent players, paused difficulty/checkpoint transitions, authoritative LAN diagonal/target limits and old-version rejection. The built-browser probe also checks those 96 combinations plus real floating-touch diagonals and release. Complete browser, Android/iOS build and simulator results will be recorded before release.
+373 unit/engine tests passed, adding 96 combinations of four difficulties/eight inputs/three directions, partial magnitude, independent players, paused difficulty/checkpoint transitions, authoritative LAN diagonal/target limits and old-version rejection. The built-browser probe also checks those 96 combinations plus real floating-touch diagonals and release. Complete release checks are recorded below.
 
 上述秒数是固定逻辑步换算，不含输入采样、显示刷新、联网往返或设备卡顿。模拟器和浏览器结果不等于真机手感、最低系统硬件或真实热点互通验收。IPA 仍未签名，须自行签名。
 
 These times are fixed-step conversions, excluding input sampling, display refresh, network round trips and device stalls. Browser/simulator checks do not certify physical feel, minimum-OS hardware or real-hotspot interoperability. The IPA remains unsigned and requires user signing.
+
+373 项引擎/单元测试、27 组浏览器检查通过；新增四难度、八种输入、三个方向的 96 组合，及真实浮动触屏斜向/松开检查。Android Release/Debug、Lint（各 0 错误、12 条警告）、API 37 的新包版本/哈希、设置/三语/双 App LAN、96 组合机动探针和音频回归通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38144102621) 通过 iPhoneOS 构建、iPhone/iPad 模拟器四难度机动、三语/音频/跟手/传感器回退、双端 LAN 和系统长按检查。
+
+373 engine/unit tests and 27 browser suites passed, including 96 combinations of four difficulties/eight inputs/three directions and actual floating-touch diagonal/release checks. Android Release/Debug, Lint (0 errors and 12 warnings each), API 37 package version/hash, settings/localization/two-app LAN, the 96-case mobility probe and audio regressions passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38144102621) passed iPhoneOS compilation, iPhone/iPad simulator four-difficulty mobility, localization/audio/follow/sensor fallback, native-pair LAN and system long presses.

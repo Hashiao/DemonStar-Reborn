@@ -2,7 +2,7 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-Current milestone: **M2.18, shared audio scheduling and protected shots**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+Current milestone: **M2.19, unified player mobility**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
 
 | Area | Current status |
 |---|---|
@@ -82,3 +82,14 @@ Restore player/difficulty admission, original formation batches and birth offset
 This authorized modern mixing extension does not reproduce the original three-voice limit. Physical speakers, Bluetooth, minimum-OS hardware and final listening quality on the user’s devices require verification; this does not certify every phone as free of missing sounds or crackles. Public play remains solo/two-player, with P3/P4 reserved in the core. The unsigned IPA requires user signing.
 
 [Evidence and verification](M2_18_AUDIO_VOICES.md). M2.16’s three-slot/unchanged-Android statements describe its historical scope, superseded by this user-authorized shared fix.
+
+## M2.19 player mobility
+
+- All four difficulties, input methods and solo/two-player modes share the original mouse/analog cap of six per axis as their calibration basis; straight-line caps are 50% higher than M2.18.
+- Full horizontal traversal takes 48 ticks/1.68 s. Ideal vertical traversal is about 1.73 s, rounding to 50 ticks/1.75 s at 35 ms. Diagonals retain both full axis speeds.
+- Fully deflected circular touch sticks/gamepads reach both diagonal caps while partial deflection preserves slower movement. Mouse and follow-finger share per-axis target limits without final-step overshoot.
+- Paused difficulty changes, stages and checkpoints preserve the cap. World timing, enemies/projectile speed/firing cadence/damage and M2.18 audio remain unchanged. Room input revision 5 requires both peers to update.
+
+Traversal seconds are fixed-step conversions, excluding input/display/network latency, not measured native-game or phone wall time. Physical feel, minimum-OS hardware, real hotspots and Android–iOS hardware pairs remain unverified. Public play stays solo/two-player with four core-only seats. The unsigned IPA requires user signing.
+
+[Evidence and verification](M2_19_MOBILITY.md). Earlier keyboard-cap/normalized-diagonal descriptions are historical; this user-authorized change unifies the faster input baseline.

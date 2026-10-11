@@ -8,7 +8,7 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
 
-**Current milestone M2.18 (v0.2.18) shares audio scheduling, protects shots during dense explosions and retains iOS smoothing. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
+**Current milestone M2.19 (v0.2.19) unifies player mobility across difficulties and controls, with full-speed diagonal axes. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
 
 **Final-phase plan, not implemented:** ship separate Windows/macOS/Linux packages without user development setup, targeting LAN between any two of those platforms and Android/iOS. Public play remains solo/two-player. Desktop releases do not yet exist; physical interoperability and signing/distribution gaps remain unverified. See [platform delivery plan and gaps](docs/FINAL_PLATFORM_DELIVERY.md). Complete existing game work before starting this phase.
 
@@ -19,7 +19,22 @@ The game supports Simplified Chinese, Traditional Chinese and English. First lau
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.18
+## Current milestone M2.19
+
+- All four difficulties, input methods and solo/two-player modes share the original mouse/analog cap of six per axis as their calibration basis; straight-line caps are 50% higher than M2.18.
+- Full horizontal traversal takes 48 ticks/1.68 s. Ideal vertical traversal is about 1.73 s, rounding to 50 ticks/1.75 s at 35 ms. Diagonals retain both full axis speeds.
+- Fully deflected circular touch sticks/gamepads reach both diagonal caps while partial deflection preserves slower movement. Mouse and follow-finger share per-axis target limits without final-step overshoot.
+- Paused difficulty changes, stages and checkpoints preserve the cap. World timing, enemies/projectile speed/firing cadence/damage and M2.18 audio remain unchanged. Room input revision 5 requires both peers to update.
+
+373 engine/unit tests and 27 browser suites passed, including 96 combinations of four difficulties/eight inputs/three directions and actual floating-touch diagonal/release checks. Android Release/Debug, Lint (0 errors and 12 warnings each), API 37 package version/hash, settings/localization/two-app LAN, the 96-case mobility probe and audio regressions passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38144102621) passed iPhoneOS compilation, iPhone/iPad simulator four-difficulty mobility, localization/audio/follow/sensor fallback, native-pair LAN and system long presses.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.19/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.19/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.19/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.19/verification.json)
+
+Traversal seconds are fixed-step conversions, excluding input/display/network latency, not measured native-game or phone wall time. Physical feel, minimum-OS hardware, real hotspots and Android–iOS hardware pairs remain unverified. Public play stays solo/two-player with four core-only seats. The unsigned IPA requires user signing.
+
+[Mobility evidence and verification limits](docs/M2_19_MOBILITY.md)
+
+## M2.18 completed work
 
 - Android and iOS share one allocator: eight world-effect voices plus two protected shot voices per player. Explosions and enemy fire no longer steal main-gun sounds.
 - The 55 ms shot filter runs independently per player and advances only on playback; stage changes and iOS context resets clear stale clocks.
