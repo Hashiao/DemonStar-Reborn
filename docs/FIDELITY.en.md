@@ -2,7 +2,7 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-Current milestone: **M2.17, difficulty-aware waves and spawn positions**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+Current milestone: **M2.18, shared audio scheduling and protected shots**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
 
 | Area | Current status |
 |---|---|
@@ -12,7 +12,7 @@ Current milestone: **M2.17, difficulty-aware waves and spawn positions**. This i
 | Damage and time | Fixed 35ms simulation; original wall-clock speed remains uncalibrated. Enemy shots follow four difficulty branches, collisions use width brackets and deal 305 damage to enemies. No extra ordinary-hit invulnerability; critical surviving hits downgrade colored weapons. Collision shapes and some enemy-fire difficulty factors remain approximate. Bosses retain doubled base HP. |
 | Art and presentation | Explicit mappings cover 251 prototypes and visible renders of all 244 used names. Add 213 named redraw/ore-fleck mappings, removing generic enemy/scenery fallbacks; fifteen actual enemy-shot types use named frames and original visible sizes. Preserve player banking/flames, existing frame atlases, launch, impacts and weapon tiers. Some new headings/rotation use single-pose redraws; complete animations, shadows, wreck details and launch wall-clock timing remain approximate. |
 | Stage bonuses | Remaining bombs ×1000, medals ×2000, awarded once; death/stage changes reset medals. Award timing is adapted for mobile. Difficulty-specific between-stage health/ammo replenishment is not implemented. |
-| Audio | Authorized MP3 copies with source/hash manifests, original 18-stage BGM indices and three-voice effect priorities. Original-speaker A/B audition and full timing are incomplete. W_PULSE is absent from authorized MP3 sources. |
+| Audio | Authorized MP3 copies with source/hash manifests, original 18-stage BGM indices and source priorities. M2.18 shares eight world voices plus two protected shot voices per player. Original-speaker A/B audition and full timing are incomplete. W_PULSE is absent from authorized MP3 sources. |
 | Languages | Simplified Chinese, independently worded shared Traditional Chinese and English. Native first-run selection, saved override, instant settings switching and accessibility translation. English radio remains; regional native-speaker review is not claimed. |
 | Mobile | Fixed/floating sticks, follow-finger movement, digital tilt, optional double-tap bombing, eight-way pads, keyboard/mouse/controller assignment/remapping, independent two-player touch, pause/background input release, native haptic preferences, stage checkpoints and responsive portrait/landscape layouts. Resizing preserves the stage. Foldable sizes are simulated, not physically tested. |
 | Other modes | Same-device two-player play, native Android/iOS two-player LAN and stage-entry saves/loads are implemented. Menus/rooms cap at two; P3/P4 remain protocol/core reserves. Two native Android processes and two iOS simulators are verified; physical hotspots and native Android–iOS device pairs remain untested. The map editor and arbitrary battle-frame continuation are not implemented. |
@@ -71,3 +71,14 @@ This is an iOS-focused mitigation, not yet listening-tested on the user’s iPho
 ## M2.17 waves and positions
 
 Restore player/difficulty admission, original formation batches and birth offsets, side/scenery entry, mode-10 first targets and post-boss dispatch. Paused difficulty changes apply to future batches without resetting existing entities or replaying skipped rows. All 144 static ledger cases, every difficulty transition direction and LAN synchronization are covered by regressions; native frame-clock identity is not claimed. Supply ownership/sequences and stage replenishment remain later work. See [M2.17 details](M2_17_SPAWNS.md).
+
+## M2.18 shared audio scheduling
+
+- Android and iOS share one allocator: eight world-effect voices plus two protected shot voices per player. Explosions and enemy fire no longer steal main-gun sounds.
+- The 55 ms shot filter runs independently per player and advances only on playback; stage changes and iOS context resets clear stale clocks.
+- iOS retains its own short attack/release, silent pause, interruption recovery and music-state coalescing without duplicating allocation rules.
+- Shared mix headroom accompanies the larger pool. Identical effect input is about 1.94 dB quieter; recordings, BGM, firing rates, damage, difficulty and LAN protocol are unchanged.
+
+This authorized modern mixing extension does not reproduce the original three-voice limit. Physical speakers, Bluetooth, minimum-OS hardware and final listening quality on the user’s devices require verification; this does not certify every phone as free of missing sounds or crackles. Public play remains solo/two-player, with P3/P4 reserved in the core. The unsigned IPA requires user signing.
+
+[Evidence and verification](M2_18_AUDIO_VOICES.md). M2.16’s three-slot/unchanged-Android statements describe its historical scope, superseded by this user-authorized shared fix.

@@ -8,7 +8,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前里程碑 M2.17（v0.2.17）恢复四难度波次准入、编队时机与出场位置；仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
+**当前里程碑 M2.18（v0.2.18）统一双端音效调度，修复密集爆炸时的射击漏音，保留 iOS 防爆音处理；仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
 
 **最后阶段规划，尚未实施：** 分别提供 Windows/macOS/Linux 安装包，用户无需配置开发环境；目标与 Android/iOS 任意两端局域网互通，玩法仍限单人/双人。当前没有桌面发行包，真机互通与签名/分发缺口尚待验收；详见 [各平台交付规划与不足](docs/FINAL_PLATFORM_DELIVERY.md)。先完成既定游戏工作，再启动本阶段。
 
@@ -19,7 +19,22 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 ![菜单](docs/screenshots/menu.png)
 
-## 当前里程碑 M2.17
+## 当前里程碑 M2.18
+
+- Android 与 iOS 使用同一套音效分配：世界音效八路，每位玩家另有两路射击保留，爆炸和敌弹不再抢占主炮声音。
+- 55 毫秒射击过滤按玩家独立计时，未播放的请求不消耗计时；换关与 iOS 音频重建清理旧计时。
+- iOS 继续保留独立的短起音/释放、暂停静音、系统中断恢复与音乐状态合并，避免复制两份通道规则。
+- 扩大并发后加入两端共用混音余量；相同输入的音效输出降低约 1.94 dB，原音源、BGM、射速、伤害、难度与联机协议不变。
+
+365 项引擎/单元测试、26 组浏览器检查通过。密集混音探针在两套播放类各成功播放 40/40 次双人射击，无世界音效抢占；十二路离线混音峰值约 0.930，无越界采样。Android Release/Debug、Lint（各 0 错误、12 条警告）、API 37 原生设置/三语/双 App LAN 及打包 WebView 的 40/40 次射击检查通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38139470522) 通过 iPhoneOS 构建、iPhone/iPad 模拟器三语/音频（每次探针 20/20 次双人射击）、原生双端 LAN 和系统长按检查。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.18/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.18/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.18/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.18/verification.json)
+
+这是已授权的现代混音扩展，不是原作三路限制的 1:1 复刻。真机扬声器、蓝牙、最低系统硬件及用户设备最终听感仍需复测；不宣称所有手机已无漏音/爆音。玩法仍限单人/双人，3P/4P 仅底层预留。IPA 未签名，须自行签名。
+
+[修复依据与验收边界](docs/M2_18_AUDIO_VOICES.md)
+
+## M2.17 已完成内容
 
 - 按原作记录恢复四难度、单双人的敌机和补给出场条件，固定左右位置；不按对称关系删半。
 - 原始编队按同一批次及不同出生高度进入；修正侧面/地物出场、首路径目标和 Boss 后仍需调度的地图记录。

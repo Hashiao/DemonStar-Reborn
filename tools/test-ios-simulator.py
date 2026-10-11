@@ -71,6 +71,7 @@ for family in ('iPhone','iPad'):
         assert probe.get('musicBackend')=='ios-native' and probe['startupMusic']['backend']=='ios-native' and probe['startupMusic']['currentTime']>0 and not probe['startupMusic']['paused'],probe
         assert probe.get('nativeMusicChecks')=={'backend':'ios-native','pauseClockStable':True,'resumeClockAdvanced':True,'muteRespected':True,'volumeRespected':True,'zeroVolumeRespected':True},probe
         assert probe.get('iosAudio')=={'nativeAdapters':True,'releaseTail':True,'pausedSettingsSilent':True},probe
+        assert probe.get('sharedAudio')=={'sharedScheduler':True,'shotsAccepted':20},probe
         assert probe.get('motionReady') and probe.get('carriersReady') and probe.get('soundbankReady') and probe.get('bankAfterRelease')==8,probe
         run(['xcrun','simctl','io',uid,'screenshot',str(out/(family+'.png'))])
         locale_cases.append({'preferred':language,'expected':expected,'probe':probe,'status':'passed'})
