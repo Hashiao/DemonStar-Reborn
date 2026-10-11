@@ -313,7 +313,7 @@
   $('game').addEventListener('pointerdown',e=>{if(!activeInput()||e.pointerType==='mouse'&&e.button!==0)return;const index=Array.from({length:input.count},(_,i)=>i).find(i=>input.mode(i)==='point');if(index===undefined)return;const l=renderer.layout,x=(e.clientX-l.x)/l.scale,y=(e.clientY-l.y)/l.scale;if(x<0||x>W||y<0||y>H)return;e.preventDefault();input.point(index,x,y);audio.unlock();});
   for(const kind of ['touchstart','touchmove','touchend','contextmenu','selectstart'])$('game').addEventListener(kind,e=>{if(activeInput()&&input.config.players.some((_,i)=>i<input.count&&input.mode(i)==='point')&&e.cancelable)e.preventDefault();},{passive:false});
   $('game').addEventListener('pointermove',e=>{if(!activeInput()||e.pointerType!=='mouse'||!input.mouseOwner||input.mode(input.mouseOwner-1)==='point')return;const l=renderer.layout;input.mouseTarget={x:clamp((e.clientX-l.x)/l.scale,16,W-16),y:clamp((e.clientY-l.y)/l.scale,64,H-40)};});
-  $('game').addEventListener('pointerdown',e=>{if(!activeInput()||e.pointerType!=='mouse'||!input.mouseOwner||input.mode(input.mouseOwner-1)==='point')return;e.preventDefault();input.mouseButton(e.button,true);});
+  $('game').addEventListener('pointerdown',e=>{if(!activeInput()||e.pointerType!=='mouse'||!input.mouseOwner)return;e.preventDefault();input.mouseButton(e.button,true);});
   window.addEventListener('pointerup',e=>{if(e.pointerType==='mouse')input.mouseButton(e.button,false);});$('game').addEventListener('contextmenu',e=>{if(activeInput()&&input.mouseOwner)e.preventDefault();});
   window.addEventListener('keydown',e=>{
     const key=e.key.length===1?e.key.toLowerCase():e.key;
