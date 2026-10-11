@@ -3,6 +3,14 @@
   'use strict';
   const actions=['up','down','left','right','fire','bomb','pause'];
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,n)),copy=v=>JSON.parse(JSON.stringify(v));
+  // 圆形杆满幅斜推时两轴满速；径向幅度和死区仍控制轻推速度。
+  // A fully tilted circular stick reaches both axis caps; radial magnitude/dead zone preserve partial speed.
+  function stickAxes(x,y,deadZone=0){
+    if(!Number.isFinite(x)||!Number.isFinite(y))return {x:0,y:0};
+    const radius=Math.hypot(x,y);if(radius<=deadZone||!radius)return {x:0,y:0};
+    const magnitude=(Math.min(1,radius)-deadZone)/(1-deadZone),peak=Math.max(Math.abs(x),Math.abs(y));
+    return {x:x/peak*magnitude,y:y/peak*magnitude};
+  }
   const tokenValid=t=>typeof t==='string'&&/^(key:[A-Za-z0-9]{1,32}|mouse:[0-4]|pad:(?:[0-9]|[12][0-9]|3[01]))$/.test(t);
   function defaults(index,count=1){
     const rows=[['KeyW','KeyS','KeyA','KeyD','KeyZ','KeyX','KeyP'],['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ControlRight','ShiftRight','Pause'],['Numpad8','Numpad2','Numpad4','Numpad6','Numpad0','NumpadDecimal','NumpadEnter'],['KeyI','KeyK','KeyJ','KeyL','KeyN','KeyM','KeyO']];
@@ -56,7 +64,7 @@
     point(index,x,y){if(this.mode(index)==='point'&&Number.isFinite(x)&&Number.isFinite(y))this.states[index].target={x:clamp(x,16,384),y:clamp(y,64,440)};}
     holdHints(now){const hints=[];for(let i=0;i<this.count;i++){const s=this.states[i];if(s.physicalFire&&s.fireEnabled&&this.config.players[i].fireMode==='toggle'&&s.fireLatched){if(s.holdStart==null)s.holdStart=now;if(!s.holdNotified&&now-s.holdStart>=1200){s.holdNotified=true;hints.push(i);}}else{s.holdStart=null;s.holdNotified=false;}}return hints;}
     commit(){for(const s of this.states){s.firePulse=false;s.bomb=0;}}
-    move(index,x,y){const length=Math.hypot(x,y)||1;this.states[index].x=x/Math.max(1,length);this.states[index].y=y/Math.max(1,length);}
+    move(index,x,y){this.states[index].x=clamp(Number.isFinite(x)?x:0,-1,1);this.states[index].y=clamp(Number.isFinite(y)?y:0,-1,1);}
     touchFire(index,id,down){const s=this.states[index];if(down){if(!s.fire.has(id))this.pulse(index,'fire');s.fire.add(id);}else s.fire.delete(id);}
     pulse(index,action){if(action==='bomb')this.states[index].bomb=++this.sequence;else if(action==='fire'){const s=this.states[index];if(!s.fireEnabled)return;if(this.config.players[index].fireMode==='toggle')s.fireLatched=!s.fireLatched;else s.firePulse=true;}}
     key(event,down,fireAllowed=true){const token=keyToken(event);if(down){if(!this.keys.has(token))for(let i=0;i<this.count;i++){const b=this.bindings(i);if(fireAllowed&&b.fire.includes(token))this.pulse(i,'fire');if(b.bomb.includes(token)){this.pulse(i,'bomb');this.states[i].previousBomb=true;}if(b.pause.includes(token)){this.pausePulse=true;this.states[i].previousPause=true;}}this.keys.add(token);this.mouseTarget=null;}else this.keys.delete(token);return token;}
@@ -85,13 +93,15 @@
         const ready=pad&&!this.padBlocked.has(config.pad);
         const held=action=>map[action].some(t=>t.startsWith('key:')?this.keys.has(t):t.startsWith('mouse:')?this.mouseOwner===index+1&&this.mouse.has(Number(t.slice(6))):ready&&pressed[Number(t.slice(4))]);
         const padFire=!!ready&&map.fire.some(t=>t.startsWith('pad:')&&pressed[Number(t.slice(4))]);if(!padFire)s.blockPadFire=false;if(s.fireEnabled&&padFire&&!s.previousPadFire&&!s.blockPadFire)this.pulse(index,'fire');s.previousPadFire=padFire;
-        const axis=n=>ready&&Number.isFinite(axes[n])&&Math.abs(axes[n])>.18?Math.sign(axes[n])*(Math.abs(axes[n])-.18)/.82:0;
-        let x=s.x+Number(held('right'))-Number(held('left'))+axis(0),y=s.y+Number(held('down'))-Number(held('up'))+axis(1);
-        if(this.mouseOwner===index+1&&this.mouseTarget&&players[index]&&!x&&!y){x=(this.mouseTarget.x-players[index].x)/18;y=(this.mouseTarget.y-players[index].y)/18;if(Math.hypot(x,y)<.12)x=y=0;}
+        const stick=ready?stickAxes(axes[0]||0,axes[1]||0,.18):{x:0,y:0};
+        let x=s.x+Number(held('right'))-Number(held('left'))+stick.x,y=s.y+Number(held('down'))-Number(held('up'))+stick.y;
         if(this.mode(index)==='tilt'&&this.tiltAxes){x+=this.tiltAxes.x;y+=this.tiltAxes.y;}
         if(x||y)s.target=null;
-        const target=active&&this.mode(index)==='point'&&s.fireEnabled?s.target:null;
-        const length=Math.max(1,Math.hypot(x,y));x/=length;y/=length;
+        let target=active&&this.mode(index)==='point'&&s.fireEnabled?s.target:null;
+        // 鼠标与跟手共用引擎目标限速，靠近目标只缩短最后一步。
+        // Mouse and follow-finger share engine target limits, shortening only the final step.
+        if(active&&s.fireEnabled&&!x&&!y&&this.mouseOwner===index+1&&this.mouseTarget&&players[index])target={x:clamp(this.mouseTarget.x,16,384),y:clamp(this.mouseTarget.y,64,440)};
+        x=clamp(x,-1,1);y=clamp(y,-1,1);
         const bomb=!!held('bomb'),paused=!!held('pause');if(bomb&&!s.previousBomb)this.pulse(index,'bomb');if(paused&&!s.previousPause)pause=true;s.previousBomb=bomb;s.previousPause=paused;
         s.fireActive=s.fireEnabled&&(s.fire.size>0||s.firePulse||map.fire.some(t=>t.startsWith('key:')?this.keys.has(t):t.startsWith('mouse:')?this.mouseOwner===index+1&&this.mouse.has(Number(t.slice(6))):padFire&&!s.blockPadFire));
         s.physicalFire=s.fireActive&&!s.firePulse;
@@ -100,5 +110,5 @@
     }
     export(){return copy(this.config);}
   }
-  globalThis.DemonStarInput={Input,preferences,defaults,actions,keyToken,tokenValid};
+  globalThis.DemonStarInput={Input,preferences,defaults,actions,keyToken,tokenValid,stickAxes};
 })();

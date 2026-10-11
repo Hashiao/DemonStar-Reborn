@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.19：用户要求所有难度/操作方式对齐原作鼠标与模拟摇杆满速，横向 48 步/1.68 秒，纵向理论约 1.73 秒、离散 50 步/1.75 秒。玩家每轴以原作 6 校准，斜向两轴满速；圆形摇杆保留轻推幅度，鼠标/跟手不越过目标。联机输入版本 5；只调玩家机动，不改世界时钟、敌机/弹速/射速/伤害及 M2.18 音频。见 `docs/M2_19_MOBILITY.md`。
+  M2.19: all difficulties/input methods use the original mouse/analog full-speed basis: horizontal 48 ticks/1.68 s, vertical ideal ~1.73 s or discrete 50 ticks/1.75 s. Calibrate each axis from 6; diagonals retain both caps. Circular sticks preserve partial magnitude and mouse/follow targets never overshoot. Room input revision 5; change player mobility only, preserving world timing, enemies/projectile speed/firing cadence/damage and M2.18 audio. See `docs/M2_19_MOBILITY.md`.
+
 - M2.18：用户授权两端共用音效调度修复，取代 M2.16 保留三路/Android 音效类冻结的历史范围。`audio.js` 统一八路世界音效及每位玩家两路射击保留、归属/55 ms 过滤与固定混音余量；`ios-audio.js` 继承分配，仅保留 iOS 启停平滑和系统恢复。保持原音源、优先级及战斗数值；这不是原作三路混音的 1:1 还原。见 `docs/M2_18_AUDIO_VOICES.md`。
   M2.18: the user authorizes shared scheduling on both platforms, superseding M2.16's historical three-slot/unchanged-Android scope. `audio.js` owns eight world voices, two protected shot voices per player, ownership/55 ms filtering and fixed mix headroom. `ios-audio.js` inherits allocation and retains iOS smoothing/recovery. Preserve recordings, priorities and combat values; this is not original three-voice mixing fidelity. See `docs/M2_18_AUDIO_VOICES.md`.
 

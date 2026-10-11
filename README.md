@@ -8,7 +8,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前里程碑 M2.18（v0.2.18）统一双端音效调度，修复密集爆炸时的射击漏音，保留 iOS 防爆音处理；仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
+**当前里程碑 M2.19（v0.2.19）统一所有难度与操作方式的玩家机动上限，斜向两轴满速；仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
 
 **最后阶段规划，尚未实施：** 分别提供 Windows/macOS/Linux 安装包，用户无需配置开发环境；目标与 Android/iOS 任意两端局域网互通，玩法仍限单人/双人。当前没有桌面发行包，真机互通与签名/分发缺口尚待验收；详见 [各平台交付规划与不足](docs/FINAL_PLATFORM_DELIVERY.md)。先完成既定游戏工作，再启动本阶段。
 
@@ -19,7 +19,22 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 ![菜单](docs/screenshots/menu.png)
 
-## 当前里程碑 M2.18
+## 当前里程碑 M2.19
+
+- 四档难度、所有操作方式及单双人共用以原作鼠标/模拟摇杆每轴 6 为基准的机动上限，直线速度比 M2.18 提高 50%。
+- 水平完整跨度 48 步/1.68 秒；垂直理论约 1.73 秒，按 35 毫秒步长取整为 50 步/1.75 秒。斜向两轴分别满速，不再归一降速。
+- 圆形触屏摇杆/手柄满幅斜推达到两轴上限，轻推保留较低速度；鼠标与跟手共用逐轴目标限速，最后一步不越过目标。
+- 暂停切难度、换关、读档保持同一上限。世界计时、敌机/弹速/射速/伤害及 M2.18 音频不变；联机房间输入版本为 5，双方须更新。
+
+373 项引擎/单元测试、27 组浏览器检查通过；新增四难度、八种输入、三个方向的 96 组合，及真实浮动触屏斜向/松开检查。Android Release/Debug、Lint（各 0 错误、12 条警告）、API 37 的新包版本/哈希、设置/三语/双 App LAN、96 组合机动探针和音频回归通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38144102621) 通过 iPhoneOS 构建、iPhone/iPad 模拟器四难度机动、三语/音频/跟手/传感器回退、双端 LAN 和系统长按检查。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.19/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.19/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.19/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.19/verification.json)
+
+穿越秒数按固定逻辑步计算，不含输入/显示/网络延迟，也不是原作或手机实测墙钟时间。真机手感、最低系统硬件、真实热点及 Android–iOS 双真机仍需验收。当前玩法限单人/双人，四席仅底层预留。IPA 未签名，须自行签名。
+
+[机动依据与验收边界](docs/M2_19_MOBILITY.md)
+
+## M2.18 已完成内容
 
 - Android 与 iOS 使用同一套音效分配：世界音效八路，每位玩家另有两路射击保留，爆炸和敌弹不再抢占主炮声音。
 - 55 毫秒射击过滤按玩家独立计时，未播放的请求不消耗计时；换关与 iOS 音频重建清理旧计时。

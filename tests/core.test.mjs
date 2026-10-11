@@ -113,7 +113,7 @@ test('bank and thrust follow input and settle, preserving original 17-pose range
   const g=new Game(1);g.start();g.recordEvents=[];for(let i=0;i<8;i++)g.update(STEP,{x:-1,y:-1});assert.equal(g.player.bank,0);assert.equal(g.player.thrust,1);
   for(let i=0;i<16;i++)g.update(STEP,{x:1,y:1});assert.equal(g.player.bank,16);assert.equal(g.player.thrust,-1);
   for(let i=0;i<8;i++)g.update(STEP);assert.equal(g.player.bank,8);assert.equal(g.player.thrust,0);
-  assert.ok(PLAYER_STEP_X>4&&PLAYER_STEP_Y>4);assert.equal((400-32)/PLAYER_STEP_X,72);
+  assert.ok(PLAYER_STEP_X>6&&PLAYER_STEP_Y>6);assert.equal((400-32)/PLAYER_STEP_X,48);
 });
 
 test('base cannons remain active with every enhanced color and exact max-tier shot IDs',()=>{

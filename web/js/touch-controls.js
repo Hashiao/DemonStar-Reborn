@@ -34,9 +34,9 @@
       for(const type of ['pointerup','pointercancel','lostpointercapture'])window.addEventListener(type,e=>{for(const g of this.groups){const owned=g.pointer===e.pointerId||this.input.states[g.index].fire.has(e.pointerId);if(g.pointer===e.pointerId){g.pointer=null;this.input.move(g.index,0,0);g.knob.style.transform='translate(0,0)';g.stick.style.left=g.home.x+'px';g.stick.style.top=g.home.y+'px';}this.input.touchFire(g.index,e.pointerId,false);g.fire.classList.toggle('held',this.input.firing(g.index));if(type==='pointercancel'&&owned)this.input.states[g.index].firePulse=false;}});
     }
     capture(el,id){try{el.setPointerCapture(id);}catch{/* 旧 WebKit 合成事件 / Legacy WebKit synthetic events. */}}
-    move(g,e){const radius=g.stick.getBoundingClientRect().width*.36;let x=(e.clientX-g.center.x)/radius,y=(e.clientY-g.center.y)/radius,length=Math.hypot(x,y);
-      if(length<.12)x=y=0;else if(this.input.mode(g.index)==='dpad'){const angle=Math.round(Math.atan2(y,x)/(Math.PI/4))*Math.PI/4;x=Math.cos(angle);y=Math.sin(angle);}else if(length>1){x/=length;y/=length;}
-      this.input.move(g.index,x,y);g.knob.style.transform=`translate(${x*radius*.65}px,${y*radius*.65}px)`;
+    move(g,e){const radius=g.stick.getBoundingClientRect().width*.36;let x=(e.clientX-g.center.x)/radius,y=(e.clientY-g.center.y)/radius,length=Math.hypot(x,y),knobX=x/Math.max(1,length),knobY=y/Math.max(1,length);
+      if(length<.12){x=y=knobX=knobY=0;}else if(this.input.mode(g.index)==='dpad'){const angle=Math.round(Math.atan2(y,x)/(Math.PI/4))*Math.PI/4;x=Math.round(Math.cos(angle));y=Math.round(Math.sin(angle));}else{const axes=DemonStarInput.stickAxes(x,y);x=axes.x;y=axes.y;}
+      this.input.move(g.index,x,y);g.knob.style.transform=`translate(${knobX*radius*.65}px,${knobY*radius*.65}px)`;
     }
     clear(){for(const g of this.groups){g.pointer=null;g.knob.style.transform='translate(0,0)';g.fire.classList.toggle('held',this.input.firing(g.index));}if(this.lastLayout)this.layout(this.lastLayout);}
     layout(layout){
