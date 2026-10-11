@@ -2,7 +2,7 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-Current milestone: **M2.16, iOS audio transitions and recovery**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+Current milestone: **M2.17, difficulty-aware waves and spawn positions**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
 
 | Area | Current status |
 |---|---|
@@ -67,3 +67,7 @@ Physical tilt feel, hotspots, Android–iOS device pairs and minimum-OS hardware
 202 engine/unit tests and 24 browser suites passed. An offline test signal's stop discontinuity falls from 0.5 to about 0.001302; this verifies envelopes, not physical-device listening quality. Android Release/Debug, Lint (0 errors and 12 warnings each), API 37 controls/localization/settings/native-pair LAN and original audio-class selection passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38115128622) passed iPhoneOS compilation, real packaged WebKit effect release/silent paused settings on iOS 18.5 iPhone/iPad, native music clocks/volume, localization, simulator-pair LAN and system long presses.
 
 This is an iOS-focused mitigation, not yet listening-tested on the user’s iPhone 18 Pro / iOS 27.0.1, Bluetooth headphones or actual system interruptions. Original three-slot priorities can still intentionally omit shots; elimination of every crackle/missing sound is not claimed. Physical hotspots, cross-platform device pairs and minimum-OS hardware remain untested. The IPA is unsigned and requires user signing; public play remains solo/two-player with P3/P4 reserved in the protocol.
+
+## M2.17 waves and positions
+
+Restore player/difficulty admission, original formation batches and birth offsets, side/scenery entry, mode-10 first targets and post-boss dispatch. Paused difficulty changes apply to future batches without resetting existing entities or replaying skipped rows. All 144 static ledger cases, every difficulty transition direction and LAN synchronization are covered by regressions; native frame-clock identity is not claimed. Supply ownership/sequences and stage replenishment remain later work. See [M2.17 details](M2_17_SPAWNS.md).

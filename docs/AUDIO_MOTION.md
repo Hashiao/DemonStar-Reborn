@@ -1,5 +1,9 @@
 # M2.1 原版补给、飞行与声音核对
 
+> 2026-10-11 取证补充：下文“开局两架应依次掉落”未考虑放置记录的人数/难度准入，不能作为原作一般单人必定生成两架的依据。原作自动火力序列还按玩家分别推进。后续以 [逐关设计规则 R01/R05](original-stage-design/RULES.md) 和对应逐条清单为准；这里保留历史实现记录。
+>
+> Research correction, 2026-10-11: the historical “first two enemies drop in sequence” statement omitted placement admission and does not prove both spawn in Normal solo play. Original automatic weapon sequences also advance separately per player. Use the linked R01/R05 rules and placement ledgers for later changes; preserve this historical implementation record.
+
 > 本文记录 M2.1 历史实现。M2.2 已纠正 Boss 播报和两种炸弹绑定，并补全出击/环境声音与优先级；以 [M2.2 核对](M2_2_RESEARCH.md) 和 [当前音源清单](audio-manifest.json) 为准。
 
 适用于本地 DemonStar 4.04，程序哈希与地址基准沿用 `ORIGINAL_COMBAT_RESEARCH.md`。这里只把已查明的事实列为原版行为；移动端调校和音源来源均另行说明。

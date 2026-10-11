@@ -8,16 +8,33 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前里程碑 M2.16（v0.2.16）仅针对 iOS 音频启停与恢复做定向修复，Android 播放实现保持原样；仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
+**当前里程碑 M2.17（v0.2.17）恢复四难度波次准入、编队时机与出场位置；仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
 
 **最后阶段规划，尚未实施：** 分别提供 Windows/macOS/Linux 安装包，用户无需配置开发环境；目标与 Android/iOS 任意两端局域网互通，玩法仍限单人/双人。当前没有桌面发行包，真机互通与签名/分发缺口尚待验收；详见 [各平台交付规划与不足](docs/FINAL_PLATFORM_DELIVERY.md)。先完成既定游戏工作，再启动本阶段。
 
 **关卡编辑器规划，尚未实施：** 面向不懂编程的玩家，复制内置 18 关后可视化修改、试玩和保存分享；原作关卡只读，自定义作品独立。完整编辑设备范围和自定义数值权限仍待确认，见 [编辑器方案与验收](docs/LEVEL_EDITOR_PLAN.md)。
 
+**原作逐关研究记录：** [18 关设计恢复清单](docs/original-stage-design/README.md) 列出全部 8,368 条对象的难度/人数条件、触发刻度、出生位置、编队、路径及炮口配置，M2.17 已实施出场相关修复，其余项目按清单后续处理。静态核对与真实可见入场时刻分开标注，不宣称完整原机逐帧验收。
+
 
 ![菜单](docs/screenshots/menu.png)
 
-## 当前里程碑 M2.16
+## 当前里程碑 M2.17
+
+- 按原作记录恢复四难度、单双人的敌机和补给出场条件，固定左右位置；不按对称关系删半。
+- 原始编队按同一批次及不同出生高度进入；修正侧面/地物出场、首路径目标和 Boss 后仍需调度的地图记录。
+- **游戏中仍可暂停改难度，下一批按新难度生成。** 已有对象不重置，跳过的过去波次不补刷，联机由房主统一生效。
+- 旧关卡档可读，换关/读档重建调度；房间版本为 4，联机双方须更新。玩法仍限单人/双人。
+
+356 项引擎/单元测试、25 组浏览器检查通过，包含 144 个关卡/难度/人数逐条清单组合、四档难度全部 12 种切换方向及联机下一批出场验证。Android Release/Debug、Lint（各 0 错误、12 条警告）、API 37 原生操作/设置/三语/双 App LAN 通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38135345464) 通过 iPhoneOS 构建、iPhone/iPad 模拟器功能/三语/音频、原生双端 LAN 和系统长按检查。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.17/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.17/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.17/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.17/verification.json)
+
+以大体忠于原作为目标，不宣称精确逐帧计时或完整 1:1。自动补给归属/序列、跨关补充等仍待后续；HP/伤害、用户已批准的操作与规则扩展、两端音频实现未改。真机热点、Android–iOS 双真机、最低系统硬件及用户 iPhone 音频听感仍未实测。IPA 未签名，须自行签名。
+
+[修复依据与验收边界](docs/M2_17_SPAWNS.md) · [逐关设计与后续清单](docs/original-stage-design/README.md)
+
+## M2.16 已完成内容
 
 - 仅 iOS 启用独立音频适配层：音效短起音/释放，减少节点抢占和停止造成的突变。
 - 修正 iOS 暂停弹窗误恢复战斗音效，以及回主菜单时先恢复旧关卡 BGM 的指令顺序。

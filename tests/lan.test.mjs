@@ -18,9 +18,20 @@ test('lobby load starts all peers with saved rules; paused difficulty and banks 
   const {host,clients}=await room(2,2),g=new Game(8);g.start(2,1,false,{playerCount:2,retainWeaponLevels:true});g.upgradeWeapon(0,true,g.players[1]);g.upgradeWeapon(1,false,g.players[1]);g.loadStage(3);const cp=g.checkpoint();assert.equal(clients[0].load(cp),false);assert.ok(host.load(cp));assert.equal(clients[0].game.stage.id,3);assert.deepEqual(clients[0].game.players[1].weaponLevels,[6,1,0]);assert.equal(clients[0].game.retainWeaponLevels,true);assert.equal(host.load(cp),false);
   host.game.pause();const frame=host.game.frame,epoch=host.epoch;assert.ok(host.game.setDifficulty(0));host.flush();assert.equal(host.epoch,epoch);assert.equal(clients[0].game.frame,frame);assert.equal(clients[0].game.difficulty,0);await clients[0].native.request('stop');await clients[0].connect();assert.equal(clients[0].game.difficulty,0);assert.deepEqual(clients[0].game.players[1].weaponLevels,[6,1,0]);assert.ok(host.load(cp));assert.ok(host.epoch>epoch);assert.equal(clients[0].game.difficulty,2);
 });
-test('old snapshot versions are rejected at handshake without reserving a seat',async()=>{
-  const {hub,host}=await room(1,2),guest=hub.transport('ios'),packets=[];guest.on(e=>{if(e.type==='message')packets.push(JSON.parse(e.data));});await guest.request('join');guest.send('host',{protocol:PROTOCOL,type:'hello',code:host.code,token:'e'.repeat(32),platform:'ios',inputVersion:2,stateVersion:2});assert.equal(host.members.length,1);assert.ok(packets.some(p=>p.type==='rejected'&&p.reason==='protocol-version'));
+test('old spawn-rule room revision is rejected at handshake without reserving a seat',async()=>{
+  const {hub,host}=await room(1,2),guest=hub.transport('ios'),packets=[];guest.on(e=>{if(e.type==='message')packets.push(JSON.parse(e.data));});await guest.request('join');guest.send('host',{protocol:PROTOCOL,type:'hello',code:host.code,token:'e'.repeat(32),platform:'ios',inputVersion:3,stateVersion:2});assert.equal(host.members.length,1);assert.ok(packets.some(p=>p.type==='rejected'&&p.reason==='protocol-version'));
   const client=new Session(hub.transport('ios'),new Game());client.role='client';client.clientPacket('host',{type:'welcome',slot:2,roster:[{slot:1,connected:true,platform:'ios'},{slot:2,connected:true,platform:'ios'}],epoch:0});assert.equal(client.error,'protocol-version');assert.equal(client.authenticated,false);
+});
+
+test('host difficulty changes update the next wave on both peers without replacing the current world',async()=>{
+  const {host,clients}=await room(2,2);assert.ok(host.start());const g=host.game,client=clients[0].game,epoch=host.epoch;
+  g.phase='playing';g.launch=null;g.recordEvents=[8,16,24].map(y=>[136,y,86,0,1,2,0,4]);
+  g.pause();assert.ok(g.setDifficulty(2));host.flush();assert.equal(client.difficulty,2);g.resume();g.scroll=8;g.dispatchRecords();host.flush();
+  assert.equal(client.enemies.length,1);const uid=g.enemies[0].uid;
+  g.pause();assert.ok(g.setDifficulty(0));host.flush();g.resume();g.scroll=16;g.dispatchRecords();host.flush();
+  assert.equal(client.difficulty,0);assert.equal(client.enemies.length,1);assert.equal(client.enemies[0].uid,uid);
+  g.pause();assert.ok(g.setDifficulty(3));host.flush();g.resume();g.scroll=24;g.dispatchRecords();host.flush();
+  assert.equal(client.difficulty,3);assert.equal(client.enemies.length,2);assert.equal(g.cursor,3);assert.equal(host.epoch,epoch);
 });
 test('two-player product limit rejects a third player without applying later state',async()=>{
   const {hub,host,clients}=await room(3,2),rejected=clients[1];assert.equal(host.members.length,2);assert.equal(rejected.status,'rejected');assert.equal(rejected.authenticated,false);assert.ok(host.start());assert.equal(clients[0].game.players.length,2);const phase=rejected.game.phase;rejected.clientPacket('host',host.packet('state',{epoch:host.epoch,sequence:999,state:DemonStarNetworkState.encode(host.game)}));assert.equal(rejected.game.phase,phase);assert.equal(rejected.status,'rejected');

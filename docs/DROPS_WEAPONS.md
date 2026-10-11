@@ -1,5 +1,9 @@
 # 原版掉落、换色、档位与死亡规则
 
+2026-10-11：下列 411 条显式掉落与 191 个自动补给点是原始地图总记录，不是每种难度/人数每局都会生成的数量。逐条准入、时机、坐标及每位玩家序列见 [18 关设计恢复清单](original-stage-design/README.md)。本轮仅研究，未据此改玩法。
+
+2026-10-11: the 411 explicit-drop and 191 automatic-supply placements below are raw-map totals, not guaranteed spawns for every difficulty/player case. See the linked eighteen-stage ledger for individual gates, timing, coordinates and per-player sequences. This research does not change gameplay.
+
 依据本地 DemonStar 4.04 的地图和程序。数值表可由 `tools/audit-drops.py`、`tools/import-player-rules.py` 重建；普通构建不需要原作或反汇编工具。原始程序、图片不进入仓库。用户明确提供并授权使用的 MP3 音效/BGM 另按声音清单处理。
 
 ## 全战役装备来源

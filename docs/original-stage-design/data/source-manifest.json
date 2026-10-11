@@ -1,0 +1,39 @@
+{
+  "recorded": "2026-10-11",
+  "code_baseline": "ec1b52b / v0.2.16",
+  "source_hashes": {
+    "ds.exe": "d3d9d0205b069e5d134fdedba7b9fbd74ebcafd9785b7c9ce3d2e5ed847691b2",
+    "Game.glb": "867481929e2382d2bf9a55f9c58a59bd85d2833c3039a6a54a8b19e4eab23429",
+    "game1.glb": "68d78f08a79ca2e959505d2ea100a353be789dbabba7efef376a029b7e8762d4",
+    "game2.glb": "05606e2820c91cf9c74c7f585e370a0bc29e177a712e65f01a2a25eff4fc9501",
+    "Game3.glb": "9546271d5b3b4ba1988ffd45e11362ca8d7003db483adb199f5b029a1c9472e6"
+  },
+  "difficulty_labels": [
+    "EASY",
+    "NORMAL",
+    "HARD",
+    "INSANE"
+  ],
+  "assumptions": {
+    "registered": true,
+    "map_count": 18,
+    "active_players": "1 or 2, constant per summary case",
+    "difficulty": "0..3, constant per summary case",
+    "object_pool": "available; admission counts are not observed kills or onscreen counts"
+  },
+  "source_binaries_included": false,
+  "evidence_addresses": [
+    "0x42d650",
+    "0x42d840",
+    "0x40f320",
+    "0x4233d0",
+    "0x423c70",
+    "0x4236f0",
+    "0x426820",
+    "0x42d1d0",
+    "0x40f050",
+    "0x40f770",
+    "0x410934",
+    "0x419efb"
+  ]
+}
