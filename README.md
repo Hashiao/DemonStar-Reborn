@@ -8,12 +8,28 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前里程碑 M2.14（v0.2.14）新增点按移动、数字陀螺仪与长按提示，仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
+**当前里程碑 M2.15（v0.2.15）改为跟手移动，新增双击投弹、18 枚炸弹及常驻设置滚动条，仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
 
 
 ![菜单](docs/screenshots/menu.png)
 
-## 当前里程碑 M2.14
+## 当前里程碑 M2.15
+
+- 跟手移动替代点按后自动飞行：触碰战场任意位置并移动，松手或取消即停；维持原有机动上限。同屏双人仍最多一人使用。
+- 操作设置新增独立“双击投弹”复选框，默认关闭；战场分数至能量/炸弹区域可双击，单人和每机一人的 LAN 可用，同机双人禁用。
+- 炸弹容量扩展到 18 枚，保留原作分类图标，每排 6 枚、最多三排。同步更新关卡档和联机校验，原作自动补给频率及伤害不变。联机双方须更新至兼容版本。
+- 陀螺仪新默认角度为 6°，保留已有保存值；普通关卡结算可轻触全屏空白处进入下一关，仍由 LAN 房主推进。
+- 设置内容独立滚动，溢出时常驻显示纵向滚动条，底部“返回”固定可见；简化返回及重置文案，支持三语。
+
+194 项引擎/单元测试、23 组浏览器回归通过。Android Release/Debug 构建、Lint（各 0 错误、12 条警告）、API 37 原生操作/三语/设置/跟手松开/双击投弹/传感器接口/双 App TCP 通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38111104820) 通过 iPhoneOS 构建、iOS 18.5 iPhone/iPad 三语与音乐、跟手松开和双击投弹、传感器回退、双模拟器 LAN 及系统长按。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.15/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.15/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.15/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.15/verification.json)
+
+陀螺仪真机手感、真机热点、Android–iOS 真机混联及最低系统硬件仍未实测；模拟器及禁用 PointerEvent 的浏览器兼容检查不替代真机。IPA 未签名，须自行签名。当前玩法限单人/双人，3P/4P 仅协议预留。18 枚容量是用户指定扩展，不是原作容量；完整 1:1 还原仍未完成。
+
+[Controls / 操作说明](docs/M2_15_CONTROLS.md) · [Settings / 设置](docs/screenshots/m215-settings-landscape.png) · [Bomb HUD / 炸弹栏](docs/screenshots/m215-bombs-18.png)
+
+## M2.14 已完成内容
 
 - 新增点按目标移动：点战场即可前往，松手继续、到点停止，保持既有速度上限。同屏双人最多一人使用。
 - 新增陀螺仪方向控制：可调角度死区（默认 10°，范围 3–30°），超过阈值按方向键满强度移动，支持双轴反向。每次出击、换关及暂停恢复确认中立位；LAN 双方准备后一起恢复。

@@ -8,12 +8,28 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
 
-**Current milestone M2.14 (v0.2.14) adds point movement, digital tilt and physical-hold hints. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
+**Current milestone M2.15 (v0.2.15) adds follow-finger movement, double-tap bombing, 18-bomb inventory and persistent settings scrollbars. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
 
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.14
+## Current milestone M2.15
+
+- Follow finger replaces persistent tap destinations: touch anywhere in the battlefield and move while held; release or cancel stops immediately under the existing mobility limits. One shared-device player maximum.
+- A separate Double-tap bomb checkbox defaults off. Double-tap from the score area through energy/bomb HUD in solo or one-local-player LAN play; shared-device play disables it.
+- Bomb capacity increases to 18 with classic typed icons, six per row and three rows maximum. Stage-save and network validation support it, while original automatic supply frequency and damage stay unchanged. Both LAN peers must use compatible versions.
+- New tilt defaults use 6°, preserving saved values. Ordinary results accept a tap in blank space anywhere on screen for the next stage; LAN advancement remains host-only.
+- Settings content scrolls independently with a persistent vertical scrollbar when overflowing and a fixed Back footer. Back/reset labels are shortened in all three languages.
+
+194 engine/unit tests and 23 browser suites passed. Android Release/Debug builds, Lint (0 errors and 12 warnings each), API 37 native controls/localization/settings/follow release/double-tap bombing/motion bridge/app-pair TCP passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38111104820) passed iPhoneOS compilation, iOS 18.5 iPhone/iPad localization/music, follow release and double-tap bombing, sensor fallback, simulator-pair LAN and system long presses.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.15/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.15/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.15/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.15/verification.json)
+
+Physical tilt feel, hotspots, Android–iOS device pairs and minimum-OS hardware remain untested. Simulators and PointerEvent-disabled browser compatibility checks do not replace physical hardware. The IPA is unsigned and requires user signing. Public play remains solo/two-player; P3/P4 are protocol reserves. The 18-bomb capacity is a requested extension, not the original capacity; full 1:1 fidelity remains incomplete.
+
+[Controls / 操作说明](docs/M2_15_CONTROLS.md) · [Settings / 设置](docs/screenshots/m215-settings-landscape.png) · [Bomb HUD / 炸弹栏](docs/screenshots/m215-bombs-18.png)
+
+## M2.14 completed work
 
 - Tap a battlefield destination, release and keep travelling until arrival, under the existing speed limit. At most one player per shared device uses it.
 - Digital tilt control adds an adjustable angular dead zone (10° default, 3–30° range), full-direction input beyond the threshold, and independent axis inversions. Confirm neutral at every run/stage start and resume; LAN resumes after both peers are ready.

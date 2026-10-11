@@ -2,19 +2,19 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-Current milestone: **M2.14, point targets, digital tilt and hold hints**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+Current milestone: **M2.15, follow-finger movement, double-tap bombing and menu refinements**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
 
 | Area | Current status |
 |---|---|
 | Campaign | 18 original maps, 8,368 placements and 387 definitions retain numeric HP, speed, scores, paths, guns and drop metadata. Original frame-by-frame timing is not fully verified. |
 | Enemies and bosses | Original gun delay, bursts, aim, angles, speed and finite cycles drive attacks. Stage-one stars, three blue laser volleys, snapshot meteor aim, accelerated spinners, corrected fighter, fixed turrets and asteroid frames are restored. Original flags distinguish in-place Boss explosions from sideways/upward deaths, with nine damaged hulls and initial/final multi-point blasts; six-keyframe fireballs and debris remain approximate. Boss transformations, parts, invisibility and some special attacks remain incomplete. |
-| Player | Paired default guns; four starting lives, 16 energy and three bombs. Six-tier weapons, 16 pickup types, color cycles, same-color upgrades, switching resets, full-power overflow, death drops, missiles and persistent side/rear upgrades. Superweapon propagation and special interactions need further verification. |
+| Player | Paired default guns; four starting lives, 16 energy and three bombs. User-requested capacity is eighteen rather than the original six, with unchanged automatic supply thresholds. Six-tier weapons, 16 pickup types, color cycles, same-color upgrades, switching resets, full-power overflow, death drops, missiles and persistent side/rear upgrades. Superweapon propagation and special interactions need further verification. |
 | Damage and time | Fixed 35ms simulation; original wall-clock speed remains uncalibrated. Enemy shots follow four difficulty branches, collisions use width brackets and deal 305 damage to enemies. No extra ordinary-hit invulnerability; critical surviving hits downgrade colored weapons. Collision shapes and some enemy-fire difficulty factors remain approximate. Bosses retain doubled base HP. |
 | Art and presentation | Explicit mappings cover 251 prototypes and visible renders of all 244 used names. Add 213 named redraw/ore-fleck mappings, removing generic enemy/scenery fallbacks; fifteen actual enemy-shot types use named frames and original visible sizes. Preserve player banking/flames, existing frame atlases, launch, impacts and weapon tiers. Some new headings/rotation use single-pose redraws; complete animations, shadows, wreck details and launch wall-clock timing remain approximate. |
 | Stage bonuses | Remaining bombs ×1000, medals ×2000, awarded once; death/stage changes reset medals. Award timing is adapted for mobile. Difficulty-specific between-stage health/ammo replenishment is not implemented. |
 | Audio | Authorized MP3 copies with source/hash manifests, original 18-stage BGM indices and three-voice effect priorities. Original-speaker A/B audition and full timing are incomplete. W_PULSE is absent from authorized MP3 sources. |
 | Languages | Simplified Chinese, independently worded shared Traditional Chinese and English. Native first-run selection, saved override, instant settings switching and accessibility translation. English radio remains; regional native-speaker review is not claimed. |
-| Mobile | Fixed/floating sticks, eight-way pads, keyboard/mouse/controller assignment/remapping, independent two-player touch, pause/background input release, native haptic preferences, stage checkpoints and responsive portrait/landscape layouts. Resizing preserves the stage. Foldable sizes are simulated, not physically tested. |
+| Mobile | Fixed/floating sticks, follow-finger movement, digital tilt, optional double-tap bombing, eight-way pads, keyboard/mouse/controller assignment/remapping, independent two-player touch, pause/background input release, native haptic preferences, stage checkpoints and responsive portrait/landscape layouts. Resizing preserves the stage. Foldable sizes are simulated, not physically tested. |
 | Other modes | Same-device two-player play, native Android/iOS two-player LAN and stage-entry saves/loads are implemented. Menus/rooms cap at two; P3/P4 remain protocol/core reserves. Two native Android processes and two iOS simulators are verified; physical hotspots and native Android–iOS device pairs remain untested. The map editor and arbitrary battle-frame continuation are not implemented. |
 
 M2.4 authorized the verified incoming-damage corrections. Base enemy HP, player weapon damage and existing superweapon budgets remain frozen. M2.7 changes blue-laser propagation while preserving its old numeric budget.
@@ -42,3 +42,16 @@ M2.13: [快速开局与操作规则 / Quick setup and control rules](M2_13_CONTR
 - A physical 1.2-second hold in toggle-fire mode shows a 3-second hint once per hold across touch, keyboard, mouse and gamepad. Floating defaults, original HUD, color banks, firing lifecycle and accepted bomb behavior are retained.
 
 Physical tilt feel, hotspots, Android–iOS hardware pairs and minimum-OS hardware remain untested. Emulator gravity and injected samples are not physical-device tilt validation. The IPA is unsigned and requires user signing. Public play remains solo/two-player; P3/P4 are protocol reserves. Full original-game 1:1 fidelity remains incomplete.
+
+
+## M2.15
+
+- Follow finger replaces persistent tap destinations: touch anywhere in the battlefield and move while held; release or cancel stops immediately under the existing mobility limits. One shared-device player maximum.
+- A separate Double-tap bomb checkbox defaults off. Double-tap from the score area through energy/bomb HUD in solo or one-local-player LAN play; shared-device play disables it.
+- Bomb capacity increases to 18 with classic typed icons, six per row and three rows maximum. Stage-save and network validation support it, while original automatic supply frequency and damage stay unchanged. Both LAN peers must use compatible versions.
+- New tilt defaults use 6°, preserving saved values. Ordinary results accept a tap in blank space anywhere on screen for the next stage; LAN advancement remains host-only.
+- Settings content scrolls independently with a persistent vertical scrollbar when overflowing and a fixed Back footer. Back/reset labels are shortened in all three languages.
+
+194 engine/unit tests and 23 browser suites passed. Android Release/Debug builds, Lint (0 errors and 12 warnings each), API 37 native controls/localization/settings/follow release/double-tap bombing/motion bridge/app-pair TCP passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38111104820) passed iPhoneOS compilation, iOS 18.5 iPhone/iPad localization/music, follow release and double-tap bombing, sensor fallback, simulator-pair LAN and system long presses.
+
+Physical tilt feel, hotspots, Android–iOS device pairs and minimum-OS hardware remain untested. Simulators and PointerEvent-disabled browser compatibility checks do not replace physical hardware. The IPA is unsigned and requires user signing. Public play remains solo/two-player; P3/P4 are protocol reserves. The 18-bomb capacity is a requested extension, not the original capacity; full 1:1 fidelity remains incomplete.
