@@ -162,16 +162,17 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
             // 打包 WebKit 中验证目标移动及传感器不可用回退，不宣称模拟器有真实倾斜。
             // Verify target travel and unavailable-sensor fallback in packaged WebKit, not physical tilt.
             async function verifyAdvancedControls(){
-              function waitFor(check){return new Promise(function(resolve,reject){var limit=Date.now()+8000;var poll=setInterval(function(){if(check()){clearInterval(poll);resolve();}else if(Date.now()>limit){clearInterval(poll);reject(new Error('Advanced controls timeout'));}},40);});}
+              function waitFor(check,label){return new Promise(function(resolve,reject){var limit=Date.now()+8000;var poll=setInterval(function(){if(check()){clearInterval(poll);resolve();}else if(Date.now()>limit){clearInterval(poll);reject(new Error('Advanced controls timeout: '+label+' '+JSON.stringify({phase:g.phase,x:g.player.x,y:g.player.y,target:StarfallApp.input.states[0].target,mode:StarfallApp.input.mode(0),dialog:!document.getElementById('dialog').hidden})));}},40);});}
               function mode(value){StarfallApp.showControls();var select=document.getElementById('touch-mode');select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}));StarfallApp.back();StarfallApp.back();StarfallApp.back();}
               g.recordEvents=[];g.enemies=[];g.bullets=[];g.player.invincible=999;
               mode('point');var layout=renderer.layout;document.getElementById('game').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerId:812,pointerType:'touch',clientX:layout.x+100*layout.scale,clientY:layout.y+200*layout.scale}));
-              await waitFor(function(){return Math.abs(g.player.x-100)<0.01&&Math.abs(g.player.y-200)<0.01;});
+              var destination=StarfallApp.input.states[0].target;if(!destination||Math.abs(destination.x-100)>2||Math.abs(destination.y-200)>2)throw new Error('Point event not captured');
+              await waitFor(function(){return Math.abs(g.player.x-destination.x)<0.01&&Math.abs(g.player.y-destination.y)<0.01;},'point-arrival');
               document.getElementById('pause').click();mode('tilt');
-              await waitFor(function(){return StarfallApp.input.motionFallback===true||!!document.getElementById('tilt-ready')&&!document.getElementById('tilt-ready').disabled;});
+              await waitFor(function(){return StarfallApp.input.motionFallback===true||!!document.getElementById('tilt-ready')&&!document.getElementById('tilt-ready').disabled;},'motion-ready');
               var fallback=StarfallApp.input.motionFallback===true;
               if(!fallback)document.getElementById('tilt-fallback').click();
-              await waitFor(function(){return g.phase==='playing';});
+              await waitFor(function(){return g.phase==='playing';},'motion-resume');
               document.getElementById('pause').click();StarfallApp.showControls();var select=document.getElementById('touch-mode');select.value='floating';select.dispatchEvent(new Event('change',{bubbles:true}));
               result.advancedControls={pointArrived:true,motionRequestCompleted:true,floatingFallback:StarfallApp.input.mode(0)==='floating',simulatorMotionUnavailable:fallback};
               StarfallApp.music.suspend();
