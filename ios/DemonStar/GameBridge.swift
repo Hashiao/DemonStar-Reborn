@@ -22,6 +22,10 @@ final class GameBridge: NSObject, WKScriptMessageHandler {
     private var music: AVAudioPlayer?
     private var musicTrack = ""
     private var musicAsset = ""
+    private var retiringMusic: [AVAudioPlayer] = []
+    private var musicToken = 0
+    private var sessionConfigured = false
+    private var resetPosition: TimeInterval = 0
     private let light = UIImpactFeedbackGenerator(style: .light)
     private let heavy = UIImpactFeedbackGenerator(style: .heavy)
     private final class Peer {
@@ -33,7 +37,53 @@ final class GameBridge: NSObject, WKScriptMessageHandler {
         var closed = false
         init(_ id: String, _ connection: NWConnection, _ generation: Int) { self.id = id; self.connection = connection; self.generation = generation }
     }
-    init(output: @escaping ([String: Any]) -> Void) { self.output = output; super.init() }
+    init(output: @escaping ([String: Any]) -> Void) {
+        self.output = output; super.init()
+        let center = NotificationCenter.default
+        center.addObserver(self, selector: #selector(audioInterruption(_:)), name: AVAudioSession.interruptionNotification, object: nil)
+        center.addObserver(self, selector: #selector(audioRouteChanged(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
+        center.addObserver(self, selector: #selector(audioServicesReset(_:)), name: AVAudioSession.mediaServicesWereResetNotification, object: nil)
+    }
+    deinit { NotificationCenter.default.removeObserver(self); music?.stop(); retiringMusic.forEach { $0.stop() } }
+    @objc private func audioInterruption(_ note: Notification) {
+        if !Thread.isMainThread { DispatchQueue.main.async { [weak self] in self?.audioInterruption(note) }; return }
+        guard let raw = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
+              let type = AVAudioSession.InterruptionType(rawValue: raw) else { return }
+        let interrupted = type == .began
+        if interrupted { musicToken += 1; music?.pause(); retiringMusic.forEach { $0.pause() } }
+        emit(["type": "audio-session", "state": interrupted ? "interrupted" : "available"])
+    }
+    @objc private func audioRouteChanged(_ note: Notification) {
+        if !Thread.isMainThread { DispatchQueue.main.async { [weak self] in self?.audioRouteChanged(note) }; return }
+        guard let raw = note.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt,
+              let reason = AVAudioSession.RouteChangeReason(rawValue: raw),
+              reason == .oldDeviceUnavailable || reason == .newDeviceAvailable else { return }
+        // 忽略自己设置类别引发的通知，避免开始播放时再次暂停。
+        // Ignore our own category changes to avoid pausing immediately after starting playback.
+        emit(["type": "audio-session", "state": "route-change"])
+    }
+    @objc private func audioServicesReset(_ note: Notification) {
+        if !Thread.isMainThread { DispatchQueue.main.async { [weak self] in self?.audioServicesReset(note) }; return }
+        resetPosition = music?.currentTime ?? 0; musicToken += 1
+        music?.stop(); music = nil; retiringMusic.forEach { $0.stop() }; retiringMusic.removeAll()
+        sessionConfigured = false
+        emit(["type": "audio-session", "state": "reset"])
+    }
+    private func retire(_ player: AVAudioPlayer) {
+        retiringMusic.append(player); player.setVolume(0, fadeDuration: 0.012)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.016) { [weak self, player] in
+            player.stop(); self?.retiringMusic.removeAll { $0 === player }
+        }
+    }
+    private func pauseMusic() {
+        musicToken += 1; let token = musicToken
+        retiringMusic.forEach { $0.pause() }
+        guard let player = music, player.isPlaying else { return }
+        player.setVolume(0, fadeDuration: 0.008)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.012) { [weak self, weak player] in
+            guard let self = self, self.musicToken == token else { return }; player?.pause()
+        }
+    }
     private func emit(_ value: [String: Any]) { DispatchQueue.main.async { [weak self] in self?.output(value) } }
     private func reply(_ request: [String: Any], _ value: Any = NSNull(), error: String? = nil) { guard (request["requestId"] as? Int ?? 0) != 0 else { return }; emit(["requestId": request["requestId"] ?? 0, "value": value, "error": error as Any? ?? NSNull()]) }
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -86,23 +136,29 @@ final class GameBridge: NSObject, WKScriptMessageHandler {
               let volume = request["volume"] as? Double, volume.isFinite else { reply(request, error: "music-invalid"); return }
         do {
             if musicTrack != track || musicAsset != asset || music == nil {
-                music?.stop(); music = nil; musicTrack = ""; musicAsset = ""
                 let name = String(asset.dropFirst("assets/music/".count).dropLast(4))
                 guard let url = Bundle.main.url(forResource: name, withExtension: "mp3", subdirectory: "Web/assets/music") else { reply(request, error: "music-file-missing"); return }
                 let player = try AVAudioPlayer(contentsOf: url)
-                player.numberOfLoops = -1
+                player.numberOfLoops = -1; player.volume = 0
                 guard player.prepareToPlay() else { reply(request, error: "music-prepare-failed"); return }
-                music = player; musicTrack = track; musicAsset = asset
+                if musicTrack == track && resetPosition > 0 { player.currentTime = min(resetPosition, player.duration) }
+                resetPosition = 0
+                if let old = music { retire(old) }
+                musicToken += 1; music = player; musicTrack = track; musicAsset = asset
             }
-            music?.volume = Float(max(0, min(1, volume)))
+            // 中断不保证有结束通知；明确恢复时让系统判断是否可重新激活。
+            // An interruption may lack an end notification; explicit resume asks the system to reactivate.
             if playing && UIApplication.shared.applicationState == .active {
+                musicToken += 1
                 if music?.isPlaying != true {
                     let session = AVAudioSession.sharedInstance()
-                    try session.setCategory(.ambient, mode: .default, options: [])
+                    if !sessionConfigured { try session.setCategory(.ambient, mode: .default, options: []); sessionConfigured = true }
                     try session.setActive(true)
+                    music?.volume = 0
                     guard music?.play() == true else { reply(request, error: "music-play-failed"); return }
                 }
-            } else { music?.pause() }
+                music?.setVolume(Float(max(0, min(1, volume))), fadeDuration: 0.03)
+            } else { pauseMusic() }
             reply(request, musicStatus())
         } catch { reply(request, error: "music-native-failed: " + error.localizedDescription) }
     }
@@ -113,7 +169,7 @@ final class GameBridge: NSObject, WKScriptMessageHandler {
     }
     // 原生生命周期直接停音；退出房间的 stop() 只管理网络，不中断主菜单音乐。
     // Native lifecycle pauses audio directly; room stop() manages networking without silencing menu music.
-    func suspendMusic() { motion.stopDeviceMotionUpdates(); music?.pause() }
+    func suspendMusic() { motion.stopDeviceMotionUpdates(); pauseMusic() }
     private func handle(_ request: [String: Any], _ method: String) {
         switch method {
         case "stop": stopOnQueue(); reply(request, true)

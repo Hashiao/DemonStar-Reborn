@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.16：用户明确要求只修复 iOS 音频行为，Android 音效/音乐类及原生逻辑保持原样。iOS 适配层由 WKWebView 的 demonstar 消息桥选择；保留三路音效优先级、55 毫秒射击过滤和原始音源，采用短启停过渡、同轮次 BGM 状态合并、暂停菜单静音和系统音频中断恢复。不得把模拟器/离线波形回归写成用户 iPhone 18 Pro / iOS 27.0.1 真机已消除爆音。见 `docs/M2_16_IOS_AUDIO.md`。
+  M2.16: the user explicitly scopes audio behavior fixes to iOS. Preserve Android's original effect/music classes and native logic. Select the iOS adapter through WKWebView's demonstar bridge. Retain three-slot priorities, the 55 ms shot filter and original recordings; add short start/stop envelopes, same-turn BGM coalescing, silent paused dialogs and system-audio interruption recovery. Simulator/offline waveform checks do not prove that crackling is eliminated on the user's iPhone 18 Pro / iOS 27.0.1. See `docs/M2_16_IOS_AUDIO.md`.
+
 - M2.15 取代 M2.14 的点按目标行为：跟随当前手指位置，松手/取消立即停止，不保留自动飞行目标；同屏双人仍限一人。陀螺仪新默认阈值 6°，保留已有显式设置。双击战场投弹为独立复选框，默认关闭，同机双人禁用。炸弹容量按用户扩展为 18，原作图标每排 6 枚、最多三排；不改变原作自动补给阈值或伤害。结算提示全屏轻触换关，联机仍仅房主可推进；设置内容独立滚动，滚动条常驻，返回固定底部。见 `docs/M2_15_CONTROLS.md`。
   M2.15 supersedes M2.14 tap targets: follow the currently held finger and stop on release/cancel, with no persistent autopilot target; one shared-device player maximum. New tilt defaults use 6°, preserving saved choices. Double-tap battlefield bombing is a separate default-off checkbox, disabled on shared devices. The user-requested bomb capacity is 18, six classic icons per row and three rows maximum; original automatic supply thresholds and damage stay unchanged. Results accept a full-screen tap to advance, host-only on LAN. Settings scroll independently with a persistent scrollbar and fixed Back footer. See `docs/M2_15_CONTROLS.md`.
 

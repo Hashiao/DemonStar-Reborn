@@ -17,6 +17,7 @@ try{
   evaluate=async expression=>{const r=await command('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw new Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
 
   await until(()=>evaluate('!!window.StarfallApp'));
+  assert.equal(await evaluate('StarfallApp.audio.constructor===StarfallAudio&&StarfallApp.music.constructor===DemonStarMusicPlayer&&!DemonStarIOSAudio.supported()'),true);
   await evaluate('StarfallApp.showMenu();StarfallApp.input.config.count=1;StarfallApp.input.config.players[0].touch="point";StarfallApp.start();true');
   await until(()=>evaluate('StarfallApp.game.phase==="playing"'));
   await evaluate('StarfallApp.game.recordEvents=[];StarfallApp.game.enemies=[];StarfallApp.game.bullets=[];StarfallApp.game.player.invincible=999;true');

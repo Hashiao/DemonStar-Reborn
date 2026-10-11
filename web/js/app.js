@@ -2,11 +2,11 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id), I=DemonStarI18n, t=I.t;
-  const VERSION='0.2.15', weaponName=n=>t('weapon'+n);
+  const VERSION='0.2.16', weaponName=n=>t('weapon'+n);
   let settingsContext='menu',settingsPage='home',setupBack=null,dialogBack=null,pickupKey=null,storageAvailable=true;
   function hideDialog(){const el=$('dialog');el.hidden=true;el.setAttribute('aria-modal','false');el.setAttribute('aria-hidden','true');}
   const { Game, DIFFICULTIES, STAGES, WEAPONS, W, H, clamp } = StarfallCore;
-  const game=new Game(), renderer=new StarfallRenderer($('game')), audio=new StarfallAudio(), music=new DemonStarMusicPlayer();
+  const game=new Game(), renderer=new StarfallRenderer($('game')), iosAudio=DemonStarIOSAudio.supported(), audio=iosAudio?new DemonStarIOSAudio(()=>game.phase!=='paused'&&!document.hidden):new StarfallAudio(), music=iosAudio?new DemonStarIOSMusic():new DemonStarMusicPlayer();
   let saved={language:I.detect(I.preferred()),best:[0,0,0,0],unlocked:[1,1,1,1],difficulty:1,sound:true,music:true,musicPreferenceVersion:1,enemyHealthBars:false,bossHealthBars:true,healthBarsVersion:1,musicVolume:.35,soundVolume:1};
   saved.haptics=true;saved.retainWeaponLevels=false;
   try { const s=JSON.parse(localStorage.getItem('demonstar-reborn-v1')||'null'); if(s && typeof s==='object'){
@@ -101,7 +101,7 @@
     if(page==='audio'){
       bindToggle('haptic-toggle','haptics','haptics');bindToggle('music-toggle','music','music',()=>music.setEnabled(saved.music));bindToggle('sfx-toggle','sound','sfx',()=>{audio.enabled=saved.sound;if(saved.sound)audio.unlock();else audio.stopAll();menuInfo();});
       $('music-volume').oninput=()=>{saved.musicVolume=Number($('music-volume').value)/100;music.volume=saved.musicVolume;music.update(!!audio.missionSource&&audio.enabled&&audio.volume>0);persist();};
-      $('sfx-volume').oninput=()=>{saved.soundVolume=Number($('sfx-volume').value)/100;audio.volume=saved.soundVolume;if(audio.master)audio.master.gain.value=.4*audio.volume;persist();};
+      $('sfx-volume').oninput=()=>{saved.soundVolume=Number($('sfx-volume').value)/100;audio.volume=saved.soundVolume;if(iosAudio)audio.setVolume(audio.volume);else if(audio.master)audio.master.gain.value=.4*audio.volume;persist();};
     }
   }
   // 模式入口先确定人数，再选择关卡和难度。 / Mode entries select the party before stage and difficulty setup.
@@ -339,6 +339,9 @@
   window.addEventListener('keyup',e=>input.key(e,false));
   function background(){clearInput();pause();audio.suspend();music.suspend();}
   function foreground(){previous=0;if(['menu','cleared','victory','gameover'].includes(game.phase)||lan.status==='playing'&&['playing','launch','aftermath'].includes(game.phase)){music.resume();audio.unlock();}}
+  // 原生中断先暂停战斗；恢复后由现有继续/校准流程接管，避免自动重开火。
+  // Pause battle on native interruptions; the existing resume/calibration flow retains control.
+  if(iosAudio)DemonStarNative.on(e=>{if(e.type!=='audio-session')return;if(['interrupted','reset','route-change'].includes(e.state)){background();if(e.state==='reset')audio.reset();if(e.state!=='interrupted')foreground();}else if(e.state==='available')foreground();});
   function back(){if(!$('dialog').hidden)(dialogBack||hideDialog)();else if(['playing','launch','aftermath'].includes(game.phase))pause();else if(game.phase==='paused')resume();else if(['cleared','victory','gameover'].includes(game.phase))showMenu();}
   document.addEventListener('visibilitychange',()=>{if(document.hidden)background();else foreground();});window.addEventListener('blur',background);window.addEventListener('focus',foreground);
   window.addEventListener('pagehide',()=>{saveScore();background();});
