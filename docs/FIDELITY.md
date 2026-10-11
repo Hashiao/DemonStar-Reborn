@@ -2,7 +2,7 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-当前是 **M2.12：分类设置、暂停难度与可选三色火力**，不是已验证的完整 1:1 移植。先还原 1–18 关，19–25 关尚未开发。
+当前是 **M2.13：单页开局、三色状态与开火模式**，不是已验证的完整 1:1 移植。先还原 1–18 关，19–25 关尚未开发。
 
 | 范围 | 当前状态 |
 |---|---|
@@ -48,3 +48,5 @@ M2.10 保留红 P1/蓝 P2 与原作图标 HUD：P2 右下角，小蓝机在能�
 M2.11: [iOS 长按与菜单修复 / iOS touch and menu fixes](M2_11_INPUT_MENU.md)。原作数据与上述还原边界未变。 / Original data and fidelity limitations above remain unchanged.
 
 M2.12: [分类设置与可选三色规则 / Categorized settings and optional retained colors](M2_12_SETTINGS.md)。默认仍使用已核实原作规则，新增保留模式是用户要求的可选扩展，不宣称原作行为。 / Verified classic rules remain the default; retained colors are a user-requested optional extension, not claimed original behavior.
+
+M2.13: [快速开局与操作规则 / Quick setup and control rules](M2_13_CONTROLS.md)。输入及状态显示改进，原作关卡、美术、HP/伤害参数未调整。 / Input and status improvements leave original stages, artwork and HP/damage tables unchanged.

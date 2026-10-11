@@ -8,12 +8,25 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
 
-**Current milestone M2.12 (v0.2.12) adds categorized settings, paused difficulty/load controls and optional retained color power. This is not a complete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
+**Current milestone M2.13 (v0.2.13) adds one-page setup, color-bank displays, floating sticks and independent fire modes. This is not a complete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
 
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.12
+## Current milestone M2.13
+
+- Single player opens one setup page with Start from stage 1 / Choose stage, difficulty, retained colors and save loading. Two-player modes share it.
+- Retained-color mode always shows each player's yellow/blue/red six-segment banks and equipped color below the battlefield. Classic life/bomb/energy HUD and blue P2 remain unchanged.
+- Fresh and existing players initialize to floating sticks, replacing old fixed/eight-way preferences while preserving bindings and device assignment. Later manual choices remain persistent.
+- Toggle fire is the default mode: press once to keep shooting with the entire A button pressed, again to stop. Touch, keyboard, mouse and gamepad support per-player mode settings. Ordinary pause preserves firing; death clears only its owner; stage/load/new-run transitions clear it. Changing fire mode in either direction stops and waits for a new action.
+
+182 engine/unit tests and 20 browser suites passed, covering compact trilingual setup, two-player color banks, firing lifecycle and immediate client mode-change updates. Android Release/Debug/Lint (0 errors, 12 warnings each), API 37 controls/localization/settings and native app-pair LAN passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38097784227) passed iPhoneOS compilation, iOS 18.5 iPhone/iPad localization/native music, paused fire-mode changes, simulator-pair LAN, and solo/two-player system long presses, floating drags and re-tap-to-stop.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.13/DemonStar-Reborn-release.apk) · [Unsigned IPA — requires user signing](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.13/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.13/SHA256SUMS.txt) · [Full report](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.13/verification.json)
+
+[One-page setup](docs/screenshots/m213-quick-start.png) · [Two-player color banks](docs/screenshots/m213-two-player-banks.png) · [Rules and implementation](docs/M2_13_CONTROLS.md). Public play remains solo/two-player; P3/P4 are protocol reserves. Physical hotspots, Android–iOS hardware pairs, peripherals and haptic feel remain untested; deployment targets are not tested-device claims.
+
+## M2.12 completed
 
 - Settings now separate sound/haptics, player controls, display/interface, game rules and language. Save/load entries move to setup and pause.
 - Solo, same-device two-player and LAN two-player games select a fresh start or stage, then difficulty. Difficulty can change while paused without restarting combat; LAN hosts control the shared change.

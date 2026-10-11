@@ -2,7 +2,7 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-Current milestone: **M2.12, categorized settings, live difficulty and optional retained power**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+Current milestone: **M2.13, one-page setup, color banks and fire modes**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
 
 | Area | Current status |
 |---|---|
@@ -30,3 +30,5 @@ M2.10 retains red P1/blue P2 and the classic icon HUD: P2 sits bottom-right, wit
 M2.11: [iOS 长按与菜单修复 / iOS touch and menu fixes](M2_11_INPUT_MENU.md)。原作数据与上述还原边界未变。 / Original data and fidelity limitations above remain unchanged.
 
 M2.12: [分类设置与可选三色规则 / Categorized settings and optional retained colors](M2_12_SETTINGS.md)。默认仍使用已核实原作规则，新增保留模式是用户要求的可选扩展，不宣称原作行为。 / Verified classic rules remain the default; retained colors are a user-requested optional extension, not claimed original behavior.
+
+M2.13: [快速开局与操作规则 / Quick setup and control rules](M2_13_CONTROLS.md)。输入及状态显示改进，原作关卡、美术、HP/伤害参数未调整。 / Input and status improvements leave original stages, artwork and HP/damage tables unchanged.
