@@ -2,7 +2,7 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-当前是 **M2.13：单页开局、三色状态与开火模式**，不是已验证的完整 1:1 移植。先还原 1–18 关，19–25 关尚未开发。
+当前是 **M2.14：点按目标、数字陀螺仪与长按提示**，不是已验证的完整 1:1 移植。先还原 1–18 关，19–25 关尚未开发。
 
 | 范围 | 当前状态 |
 |---|---|
@@ -50,3 +50,13 @@ M2.11: [iOS 长按与菜单修复 / iOS touch and menu fixes](M2_11_INPUT_MENU.m
 M2.12: [分类设置与可选三色规则 / Categorized settings and optional retained colors](M2_12_SETTINGS.md)。默认仍使用已核实原作规则，新增保留模式是用户要求的可选扩展，不宣称原作行为。 / Verified classic rules remain the default; retained colors are a user-requested optional extension, not claimed original behavior.
 
 M2.13: [快速开局与操作规则 / Quick setup and control rules](M2_13_CONTROLS.md)。输入及状态显示改进，原作关卡、美术、HP/伤害参数未调整。 / Input and status improvements leave original stages, artwork and HP/damage tables unchanged.
+
+
+## M2.14
+
+- 新增点按目标移动：点战场即可前往，松手继续、到点停止，保持既有速度上限。同屏双人最多一人使用。
+- 新增陀螺仪方向控制：可调角度死区（默认 10°，范围 3–30°），超过阈值按方向键满强度移动，支持双轴反向。每次出击、换关及暂停恢复确认中立位；LAN 双方准备后一起恢复。
+- 同屏双人禁用陀螺仪，保留个人偏好并临时使用浮动摇杆；传感器不可用或未授权也提供明确回退。
+- 切换开火模式下实际按住 1.2 秒显示 3 秒提示，同一次长按只触发一次，支持触屏、键鼠及手柄。默认浮动摇杆、原作 HUD、三色进度、既有开火生命周期与已接受的炸弹行为保留。
+
+陀螺仪的真机手感、真机热点、Android–iOS 真机混联及最低系统硬件仍未实测；模拟器重力数据和注入样本不是实物倾斜验证。IPA 未签名，须自行签名。当前玩法限单人/双人，3P/4P 仅协议保留；完整原作 1:1 还原仍未完成。

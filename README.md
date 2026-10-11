@@ -8,12 +8,27 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前里程碑 M2.13（v0.2.13）提供单页开局、三色进度显示、浮动摇杆与独立开火模式，仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
+**当前里程碑 M2.14（v0.2.14）新增点按移动、数字陀螺仪与长按提示，仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
 
 
 ![菜单](docs/screenshots/menu.png)
 
-## 当前里程碑 M2.13
+## 当前里程碑 M2.14
+
+- 新增点按目标移动：点战场即可前往，松手继续、到点停止，保持既有速度上限。同屏双人最多一人使用。
+- 新增陀螺仪方向控制：可调角度死区（默认 10°，范围 3–30°），超过阈值按方向键满强度移动，支持双轴反向。每次出击、换关及暂停恢复确认中立位；LAN 双方准备后一起恢复。
+- 同屏双人禁用陀螺仪，保留个人偏好并临时使用浮动摇杆；传感器不可用或未授权也提供明确回退。
+- 切换开火模式下实际按住 1.2 秒显示 3 秒提示，同一次长按只触发一次，支持触屏、键鼠及手柄。默认浮动摇杆、原作 HUD、三色进度、既有开火生命周期与已接受的炸弹行为保留。
+
+187 项引擎/单元测试、21 组浏览器回归通过。Android Release/Debug 与 Lint（0 错误，Release 12 条警告）、API 37 原生操作/三语/设置/点按与传感器接口/双 App TCP 通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38107061247) 通过 iPhoneOS 编译、iOS 18.5 iPhone/iPad 三语与音乐、点按/传感器回退、双模拟器 LAN 和系统长按。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.14/DemonStar-Reborn-release.apk) · [IPA（未签名，须自行签名）](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.14/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.14/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.14/verification.json)
+
+陀螺仪的真机手感、真机热点、Android–iOS 真机混联及最低系统硬件仍未实测；模拟器重力数据和注入样本不是实物倾斜验证。IPA 未签名，须自行签名。当前玩法限单人/双人，3P/4P 仅协议保留；完整原作 1:1 还原仍未完成。
+
+[操作说明](docs/M2_14_CONTROLS.md) · [长按提示](docs/screenshots/m214-fire-hint.png) · [中立位校准](docs/screenshots/m214-tilt-calibration.png)
+
+## M2.13 已完成内容
 
 - 单人开局直接同屏设置“从头开始 / 选择关卡”、难度、三色保留与读档，调好后开始游戏；双人共用这一页。
 - 三色保留开启后，战场下方常驻显示每位玩家黄/蓝/红各六格进度和当前颜色。原作生命、炸弹、能量 HUD 与蓝色 P2 保持原样。

@@ -8,12 +8,27 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
 
-**Current milestone M2.13 (v0.2.13) adds one-page setup, color-bank displays, floating sticks and independent fire modes. This is not a complete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
+**Current milestone M2.14 (v0.2.14) adds point movement, digital tilt and physical-hold hints. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
 
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.13
+## Current milestone M2.14
+
+- Tap a battlefield destination, release and keep travelling until arrival, under the existing speed limit. At most one player per shared device uses it.
+- Digital tilt control adds an adjustable angular dead zone (10° default, 3–30° range), full-direction input beyond the threshold, and independent axis inversions. Confirm neutral at every run/stage start and resume; LAN resumes after both peers are ready.
+- Shared-device play disables tilt and temporarily uses floating sticks without overwriting preferences. Missing or denied sensors also receive an explicit fallback.
+- A physical 1.2-second hold in toggle-fire mode shows a 3-second hint once per hold across touch, keyboard, mouse and gamepad. Floating defaults, original HUD, color banks, firing lifecycle and accepted bomb behavior are retained.
+
+187 engine/unit tests and 21 browser suites passed. Android Release/Debug and Lint (0 errors, 12 Release warnings), API 37 controls/localization/settings/point-and-motion bridge/native app-pair TCP passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38107061247) passed iPhoneOS compilation, iOS 18.5 iPhone/iPad localization/music, point/sensor fallback, simulator-pair LAN and system long presses.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.14/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.14/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.14/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.14/verification.json)
+
+Physical tilt feel, hotspots, Android–iOS hardware pairs and minimum-OS hardware remain untested. Emulator gravity and injected samples are not physical-device tilt validation. The IPA is unsigned and requires user signing. Public play remains solo/two-player; P3/P4 are protocol reserves. Full original-game 1:1 fidelity remains incomplete.
+
+[Control rules](docs/M2_14_CONTROLS.md) · [Hold hint](docs/screenshots/m214-fire-hint.png) · [Neutral calibration](docs/screenshots/m214-tilt-calibration.png)
+
+## M2.13 completed work
 
 - Single player opens one setup page with Start from stage 1 / Choose stage, difficulty, retained colors and save loading. Two-player modes share it.
 - Retained-color mode always shows each player's yellow/blue/red six-segment banks and equipped color below the battlefield. Classic life/bomb/energy HUD and blue P2 remain unchanged.

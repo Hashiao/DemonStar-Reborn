@@ -2,7 +2,7 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-Current milestone: **M2.13, one-page setup, color banks and fire modes**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+Current milestone: **M2.14, point targets, digital tilt and hold hints**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
 
 | Area | Current status |
 |---|---|
@@ -32,3 +32,13 @@ M2.11: [iOS 长按与菜单修复 / iOS touch and menu fixes](M2_11_INPUT_MENU.m
 M2.12: [分类设置与可选三色规则 / Categorized settings and optional retained colors](M2_12_SETTINGS.md)。默认仍使用已核实原作规则，新增保留模式是用户要求的可选扩展，不宣称原作行为。 / Verified classic rules remain the default; retained colors are a user-requested optional extension, not claimed original behavior.
 
 M2.13: [快速开局与操作规则 / Quick setup and control rules](M2_13_CONTROLS.md)。输入及状态显示改进，原作关卡、美术、HP/伤害参数未调整。 / Input and status improvements leave original stages, artwork and HP/damage tables unchanged.
+
+
+## M2.14
+
+- Tap a battlefield destination, release and keep travelling until arrival, under the existing speed limit. At most one player per shared device uses it.
+- Digital tilt control adds an adjustable angular dead zone (10° default, 3–30° range), full-direction input beyond the threshold, and independent axis inversions. Confirm neutral at every run/stage start and resume; LAN resumes after both peers are ready.
+- Shared-device play disables tilt and temporarily uses floating sticks without overwriting preferences. Missing or denied sensors also receive an explicit fallback.
+- A physical 1.2-second hold in toggle-fire mode shows a 3-second hint once per hold across touch, keyboard, mouse and gamepad. Floating defaults, original HUD, color banks, firing lifecycle and accepted bomb behavior are retained.
+
+Physical tilt feel, hotspots, Android–iOS hardware pairs and minimum-OS hardware remain untested. Emulator gravity and injected samples are not physical-device tilt validation. The IPA is unsigned and requires user signing. Public play remains solo/two-player; P3/P4 are protocol reserves. Full original-game 1:1 fidelity remains incomplete.
