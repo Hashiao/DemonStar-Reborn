@@ -87,3 +87,9 @@ Confirmed a left gold carrier at P1 50.5–51 s, left orange at 74–75 s, right
 本轮通过网页播放器取帧并实际审看：P2 的 25、30、40、44、50、58、60、61、70、80、90、100、110、120、130 秒；P3 的 25、60、61.2、61.4、61.6、61.8、62、63、64、65、65.2、65.4、65.6、66、67 秒。25/60/65 部分时刻最初复看缓存，其余重新采集；未审看的已采集帧不列入。P2 展示相连球形地物和渐次爆炸残骸；P3 展示完整三段中身及持续开火下的连续爆点。录像本身不证明“头死后无需继续命中也全组死亡”，原程序/定义证据另见 [记录](M2_20_STRUCTURES.md)。
 
 This review actually inspected P2 at 25, 30, 40, 44, 50, 58, 60, 61, 70, 80, 90, 100, 110, 120 and 130 seconds; P3 at 25, 60, 61.2, 61.4, 61.6, 61.8, 62, 63, 64, 65, 65.2, 65.4, 65.6, 66 and 67 seconds. Some 25/60/65-second frames were initially rechecked from cache; the others were freshly captured from the webpage player. Captured but uninspected frames are excluded. Stage two shows connected orbs and successive burnt remnants; stage three shows intact middle sections and successive blasts under sustained fire. This does not establish unconditional head-linked destruction without subsequent hits. Native evidence is recorded separately. Sampling is not a full-run certification.
+
+## 2026-10-12 地面装置后续取样 / Ground-object follow-up sampling
+
+新增审看 P2 85、91、96 秒单帧，以及 136、140、144、148、152、156、160、164 秒的播放器截图拼图；复看 100、110、120、130 秒已有帧。画面用于对象外形与场景对应。G_TNK2A 六帧开盖和时序字段的证据来自本地 Game.glb / SHIPDEFS_DAT，不冒充已逐帧测量视频开盖时长。未审看的 86、87、88、89、92、94 秒等其他抓帧不计入。详见 [后续定位](STAGE2_GROUND_FOLLOWUP.md)。
+
+Inspected new P2 frames at 85, 91 and 96 seconds, plus a contact sheet at 136, 140, 144, 148, 152, 156, 160 and 164 seconds; rechecked existing 100/110/120/130-second captures. These support object/scene identification. G_TNK2A's six poses and animation counters come from local Game.glb / SHIPDEFS_DAT, not frame-by-frame video timing. Other uninspected captures, including 86/87/88/89/92/94 seconds, are excluded.

@@ -1,8 +1,8 @@
-# 第二、三关结构与表现修复（开发中） / Stage 2–3 structures and presentation (in progress)
+# 第二、三关结构修复：已合并，发布待验收 / Stage 2–3 fixes: merged, release pending
 
-本轮以本地 DemonStar 4.04 程序及用户指定录像为依据。已实现地物延迟连锁、蛇形部件坠毁；斜向导弹与“补给固定”尚待用户补充具体对象，**不能将四项反馈都写成已修复**。候选版本 0.2.20 / build 22，尚未正式发布。
+PR #4 已于 2026-10-12 按用户授权合并 main，交付地物延迟连锁与蛇形部件损毁/坠毁源码。版本 0.2.20 / build 22 的 APK、未签名 IPA 已在本机准备，**完整 iOS 验收未通过，尚未创建正式 Release**。用户要求先发这版，再处理地面发射装置和补给箱后续反馈；不能将四项反馈都记为已修复。
 
-This work uses the local DemonStar 4.04 executable and the user's reference recording. Delayed ground chains and falling snake segments are implemented. The diagonal-missile and stationary-supply reports still need object identification; **do not describe all four reports as resolved**. Candidate version 0.2.20 / build 22 is not a published release.
+PR #4 was merged into main on October 12 under explicit user authorization, delivering ground-chain and damaged/falling-segment source changes. Local 0.2.20 / build 22 APK and unsigned IPA candidates are ready. **Complete iOS verification has not passed and no official Release exists.** The user requested shipping these fixes before further launcher/supply work; do not claim all four reports resolved.
 
 ## 1. 地面连锁 / Ground chains
 
@@ -39,14 +39,15 @@ The six definitions have the 0x80 falling flag, not the 0x20000 chain flag. Form
 
 The verified omission is ordinary segment death presentation: native 0x40fdb0 retains damaged artwork and a falling state, while the remake applied it only to Bosses. Snake parts now retain initial explosion, constant-size damaged hull, sideways/upward drift and final explosion. Reference state four uses the existing verified 0x5555 fixed-point increments and finishes on update 50. Other ordinary enemy families are outside this focused change. Three damaged frames are newly redrawn with built-in imagegen; original pixels are not published.
 
-## 3. 仍待对应的两条反馈 / Two reports still being identified
+## 3. 已补充的对象说明 / Clarified follow-up objects
 
-- 地面补给：本地 S_ENBON2 / S_ENBON4 为 mode 8、speed 1；原程序 `0x4107cc` 每步下移 1。当前代码也随地面卷动，未保留 M2.17 前“停在顶部”的旧逻辑。打爆后拾取物则统一进入 `0x405d30` 的漂浮分支。已询问用户具体指补给箱向上飞、箱子停在屏幕坐标，还是掉落物不动；未据含糊描述改写运动。
-- 斜向导弹：第 2 关放置的 G_TUR1A 发射类型 2，G_TNKSHT1A 发射类型 7；均为原作球形弹。S_ENEMY24/25 发射类型 8 竖直导弹。43/44 为独立左下/右下弹型，原程序构造器使用固定角度 0x4ea / 0x316，但当前第二关炮位没有这两种类型。已复核原始弹型表，未发现按角度把类型 8 转成 43/44 的规则。待用户给出时段或敌人外形后继续定位，不能凭“斜向”二字把球弹通用旋转。
+用户说明：黑色底座、棕色盖子、白色发射点的防空装置固定于地面并随地图向下；补给指未破坏的地面箱子，同样向下卷动，不是打爆后的漂浮物。
 
-Ground supply carriers S_ENBON2/4 use mode 8, speed 1, matching native downward map scroll and current code; the pre-M2.17 top-hold behavior is already gone. Dropped pickups use a separate floating branch. The user has been asked which object/motion is affected.
+The user described a black-base/brown-cover launcher with white firing points, fixed to terrain and scrolling down. Supplies mean intact terrain-bound boxes, not floating drops.
 
-Stage-two ground turrets emit native spherical types 2/7; missile aircraft emit vertical type 8. Types 43/44 are separate fixed diagonal branches at 0x4ea/0x316 and do not occur in the stage-two gun placements. The native table has been rechecked; type 8 is not remapped by angle in its constructor. The reported emitter/time is still needed before changing artwork or trajectories.
+当前 S_ENBON2/4 及 G_TNK2A 的卷动已通过受控核对，未复现固定在屏幕坐标。另确定 G_TNK2A 缺少原作六帧开盖/炮口动画，但尚未开发；这不等于已证明“斜向导弹”的具体根因。完整证据与边界见 [后续定位](STAGE2_GROUND_FOLLOWUP.md)。
+
+Controlled checks confirm scrolling for S_ENBON2/4 and G_TNK2A; a fixed-screen defect was not reproduced. G_TNK2A is missing its native six-frame cover/port animation, which is not yet implemented. This does not establish the exact diagonal-projectile complaint's cause. See the linked follow-up record.
 
 ## iPad 验收中断记录 / iPad validation interruptions
 
@@ -62,32 +63,30 @@ The October 11/12 CI sequence did not pass on its first attempt. Preserve these 
 
 The third run changes only the UI-test harness: cold-boot one selected existing simulator at a time and shut down the other test device. No runtimes/devices are downloaded or created, no assertions are retried/removed, and the 600-second per-device limit remains. This tests startup isolation without claiming a proven internal CoreSimulator cause. Game code is unchanged.
 
-## 验证与边界 / Verification and limits
+## 当前验证与未通过项 / Current verification and failures
 
-- 387 项引擎/单元测试通过；新增传播边界、延迟、基础伤害、管道参与、覆盖而非叠加、双人归属、暂停改难度、完整蛇身、坠毁生命周期与快照检查。
-- 新增浏览器用原作地图的六节点结构验证渐次爆炸，核验第 3/10 关完好/受损部件实际像素与按关释放。截图为重制版受控场景，不冒充原作游玩录像。
-- 28 组浏览器检查、16 组脚本交火检查及 Android Release/Debug/Lint/API 37 模拟器五组检查通过。iOS 编译与功能检查通过，但完整 CI 未通过，见中断记录；未发布正式 Release。
-- 房间规则版本 6，旧版缺少这次规则和受损图集，双方需更新。玩法仍只开放单人/双人。
-- 原始定义、主机机动、世界时钟、弹速/射速/主武器伤害、音频、三语文案与存档格式未调整。原作录像只作下列记录的抽样审看，不是全程逐帧验收。
+- 本地 387 项引擎/单元测试、28 组浏览器检查、16 组脚本交火、Android Release/Debug/Lint 和 API 37 模拟器五组检查通过。安装后回拉 APK 哈希、独立签名证书与包内版本已核验。 / Local validation passed: 387 engine tests, 28 browser suites, 16 scripted combat cases, Android Release/Debug/Lint and five API 37 emulator suites. Installed APK hash, project signing identity and internal version were checked.
+- 38153590283 的功能和 LAN 断言全部通过，但关闭 iPhone 模拟器超时导致步骤失败；清理现单列记录，不遮盖功能断言。38156213011 再次在 iPad 安装/启动时超时。 / Run 38153590283 passed functional/LAN assertions but failed during iPhone cleanup; cleanup is now recorded separately. Run 38156213011 again timed out during iPad installation/launch.
+- 38166279687 的功能与 iPhone/iPad 系统触控均通过，之后 LAN 房主启动超时。触控与 LAN 后来拆为同一提交下的独立 CI job。 / Run 38166279687 passed functional and both system-touch checks, then timed out launching the LAN host. Touch and LAN now use separate jobs at one commit.
+- 38167837399 的触控 job 在音频时钟探针超时；LAN 客机完成全部动作，房主计时却消耗在等待客机冷启动。显式探针已增加音频就绪/有限时钟检查，并分开大厅与对局的有界计时。正常游戏与音频实现未改变。 / Run 38167837399 hit an audio-clock probe timeout; its LAN client completed all actions but host polling expired after waiting for peer startup. Explicit probes now wait for audio readiness, reject non-finite clocks and separate bounded lobby/gameplay budgets. Normal gameplay/audio is unchanged.
+- 38169310314 的完整功能与 iPhone/iPad XCTest 均通过；LAN 客机 simctl launch 180 秒超时，没有生成探针，房主仍在大厅。本机候选 IPA 取自该轮通过的触控 job，不能把全轮标为通过。 / Run 38169310314 passed complete functional and iPhone/iPad XCTest checks. LAN guest launch timed out after 180 seconds without a probe; the host remained in its lobby. The local candidate IPA comes from the passing touch job, not a passing whole workflow.
+- 最后 [38170762970](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38170762970) 使用标准 Intel 执行器：两组功能检查通过；LAN 的 iPad boot 180 秒超时，iPhone 清理也超时；iPhone XCTest 通过，iPad 在打开多人菜单后查询无障碍快照超时（退出 65）。增加内存未消除失败，不能声称已证明 OOM 或已解决环境问题。 / Final run 38170762970 used the standard Intel runner. Both functional probes passed, but LAN iPad boot timed out after 180 seconds and iPhone cleanup also timed out. iPhone XCTest passed; iPad failed querying an accessibility snapshot after opening Multiplayer (exit 65). More memory did not eliminate the failures; no proven OOM or resolved-environment claim is made.
 
-387 engine/unit tests passed, including new chain boundaries/timing/damage/pipes/overwrites/ownership/pause-difficulty cases and snake completeness/death/snapshot checks. A new browser suite verifies sequential destruction of a six-node source-map structure, visible intact/damaged parts in stages 3/10, and stage-scoped asset release. These are controlled remake scenes, not original playthroughs. All 28 browser suites, 16 scripted combat cases and Android Release/Debug/Lint/five API 37 emulator suites passed. iOS compilation and functional checks passed, but complete CI remains unsuccessful; see interruption history. No official Release or physical-device claim is made. Room revision 6 requires updated peers. Public play stays solo/two-player; source definitions, player mobility, world timing, projectile/firing/main-weapon damage, audio, localization and save format remain unchanged.
+首次超时和随后失败都保留，不拼接成一次完整通过。正式发布脚本要求 verification.status 为 passed；当前仍为 incomplete。已向用户提供“先上传预发布包 / 继续完整验收”的选择，尚未得到新答复，不擅自改写验收状态。
 
+Initial timeouts and subsequent failures are retained, never combined into a clean passing run. The official publisher requires verification.status=passed; the current report remains incomplete. A prerelease-versus-complete-verification choice has been offered and has no response yet; verification status is not overridden.
 
-## 候选包与未完成项 / Candidate packages and remaining work
+## 本机候选包 / Local candidates
 
-候选目录为 `artifacts/v0.2.20-candidate/`，两包内部均为 **0.2.20 / 22**，全部网页资源逐文件一致；Android 签名证书与安装后拉回哈希已核验。IPA 为未签名 ARM64 iPhoneOS 包，须自行签名。此为开发候选，**验收状态为 incomplete，不是正式发布**。
+路径为 artifacts/v0.2.20-candidate/。两包内部均为 0.2.20 / build 22，完整网页资源逐文件一致。APK 来自 b1fff70485dc0d0059575e68c15d5ae282d89fd9；IPA 来自 6735579914f282fa505d8d6086c73a09e97c38fb，后续差异为验收脚本、显式探针及文档，常规玩法/音频未改。IPA 为 ARM64 iPhoneOS，部署目标 12.0，未签名，须自行签名。
 
-Both local candidates identify internally as **0.2.20 / 22** and contain matching web resources. Android's project signature and pulled-back installed hash are verified. The unsigned ARM64 iPhoneOS IPA requires user signing. This is a development candidate with **incomplete verification, not an official release**.
-
-两包源码提交均为 `b1fff70485dc0d0059575e68c15d5ae282d89fd9`。后续提交仅修改测试启动隔离及记录，游戏文件未变。候选 IPA 来自第 2 轮 CI：功能与 LAN 通过，iPhone 系统触控通过，iPad XCTest 超时。第 3 轮 `38153590283` 的功能检查与 LAN 断言全部通过；补读完整日志确认，步骤失败发生在 finally 关闭 iPhone 模拟器时（60 秒超时），因此系统触控步骤未执行。现将清理超时独立记录，保留原有联机断言及其失败传播；完整 iPad 触控仍待验收。不得把不同轮次拼接成“一次完整通过”。
-
-Both packages use source commit `b1fff70485dc0d0059575e68c15d5ae282d89fd9`. Later commits change only test startup isolation and documentation. The candidate IPA comes from attempt 2: functional/LAN and iPhone system-touch checks passed; iPad XCTest timed out. Complete logs for follow-up run `38153590283` confirm that functional checks and every LAN assertion passed. Its finally-block iPhone simulator shutdown timed out after 60 seconds, failing the step and skipping system touch. Cleanup timeouts are now recorded separately, preserving assertions and propagation of functional failures; complete iPad touch verification remains pending. Do not combine attempts into a claim of one complete passing run.
-
-当前仍需两项对象定位信息：斜向导弹的发射敌人/出现时段，以及“补给固定”指未破坏的箱子还是掉落物、异常移动方向。另需完成完整 iOS 验收。草稿 PR 不代表这些工作已完成。
-
-Two identification details are still needed: the diagonal missile emitter/time, and whether the supply report concerns an intact carrier or a dropped pickup and which motion is wrong. Complete iOS verification also remains outstanding. A draft PR does not mean these items are complete.
+Both local candidates identify as 0.2.20 / build 22 and contain matching web resources. The APK comes from b1fff70485dc0d0059575e68c15d5ae282d89fd9; the IPA comes from 6735579914f282fa505d8d6086c73a09e97c38fb. Later differences concern verification scripts, explicit probes and documentation, preserving normal gameplay/audio. The ARM64 iPhoneOS IPA targets iOS 12.0 and requires user signing.
 
 | 文件 / File | SHA-256 |
 |---|---|
 | `DemonStar-Reborn-release.apk` | `cbe70fa346a000bda6405d552f9815634bcb24d5403d75c73e781e2ba45e98f7` |
-| `DemonStar.ipa` | `6f2a0c35e0c158c6d07620e3483294f6e9fe689b93c4c5606fe1a7998a50688d` |
+| `DemonStar.ipa` | `990448ddaa34984225560259c4a2489a48c33fcfed938019f09ca5911f3baf10` |
+
+房间规则版本 6，玩法仅单/双人；四席仅底层预留。原作录像为抽样，脚本交火不是四难度全关通关；未认证最低系统硬件、用户真机听感、真实热点或跨平台双真机。
+
+Room revision 6 exposes solo/two-player play, with four core-only seats. Reference review is sampled; scripted combat is not full campaign-clear verification. Minimum-OS hardware, user-device audio, physical hotspots and cross-platform hardware pairs remain unverified.
