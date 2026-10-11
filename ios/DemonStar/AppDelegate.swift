@@ -168,13 +168,21 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
               mode('point');var layout=renderer.layout;document.getElementById('game').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerId:812,pointerType:'touch',clientX:layout.x+100*layout.scale,clientY:layout.y+200*layout.scale}));
               var destination=StarfallApp.input.states[0].target;if(!destination||Math.abs(destination.x-100)>2||Math.abs(destination.y-200)>2)throw new Error('Point event not captured');
               await waitFor(function(){return Math.abs(g.player.x-destination.x)<0.01&&Math.abs(g.player.y-destination.y)<0.01;},'point-arrival');
+              document.getElementById('game').dispatchEvent(new PointerEvent('pointermove',{bubbles:true,cancelable:true,pointerId:812,pointerType:'touch',clientX:layout.x+300*layout.scale,clientY:layout.y+300*layout.scale}));
+              await waitFor(function(){return g.player.x>110;},'follow-move');
+              document.getElementById('game').dispatchEvent(new PointerEvent('pointerup',{bubbles:true,cancelable:true,pointerId:812,pointerType:'touch',clientX:layout.x+300*layout.scale,clientY:layout.y+300*layout.scale}));
+              var released={x:g.player.x,y:g.player.y};await new Promise(function(resolve){setTimeout(resolve,200);});
+              if(StarfallApp.input.states[0].target!==null||g.player.x!==released.x||g.player.y!==released.y)throw new Error('Follow movement continued after release');
+              StarfallApp.input.config.doubleTapBomb=true;g.player.bombInventory=[0,1,2];g.player.bombCooldown=0;g.player.respawn=0;
+              for(var tap=0;tap<2;tap++)for(var eventType of ['pointerdown','pointerup'])document.getElementById('game').dispatchEvent(new PointerEvent(eventType,{bubbles:true,cancelable:true,pointerId:813,pointerType:'touch',clientX:layout.x+300*layout.scale,clientY:layout.y+300*layout.scale}));
+              await waitFor(function(){return g.player.bombs===2;},'double-tap-bomb');StarfallApp.input.config.doubleTapBomb=false;
               document.getElementById('pause').click();mode('tilt');
               await waitFor(function(){return StarfallApp.input.motionFallback===true||!!document.getElementById('tilt-ready')&&!document.getElementById('tilt-ready').disabled;},'motion-ready');
               var fallback=StarfallApp.input.motionFallback===true;
               if(!fallback)document.getElementById('tilt-fallback').click();
               await waitFor(function(){return g.phase==='playing';},'motion-resume');
               document.getElementById('pause').click();StarfallApp.showControls();var select=document.getElementById('touch-mode');select.value='floating';select.dispatchEvent(new Event('change',{bubbles:true}));
-              result.advancedControls={pointArrived:true,motionRequestCompleted:true,floatingFallback:StarfallApp.input.mode(0)==='floating',simulatorMotionUnavailable:fallback};
+              result.advancedControls={pointArrived:true,followReleaseStops:true,doubleTapBomb:true,motionRequestCompleted:true,floatingFallback:StarfallApp.input.mode(0)==='floating',simulatorMotionUnavailable:fallback};
               StarfallApp.music.suspend();
             }
             verifyMusic().then(function(checks){result.nativeMusicChecks=checks;return verifyAdvancedControls();}).then(function(){checkAtlas(0);}).catch(function(error){window.smokeResult=JSON.stringify({error:String(error)});});

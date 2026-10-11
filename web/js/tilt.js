@@ -30,7 +30,7 @@
     calibrate(){if(!this.fresh())return false;this.neutral={...this.latest};this.axes={x:0,y:0};return true;}
     sample(config){
       if(!this.fresh()||!this.neutral||this.latest.orientation!==this.neutral.orientation){this.axes={x:0,y:0};return this.axes;}
-      const threshold=clamp(Number(config.tiltAngle)||10,3,30),release=Math.max(1,threshold-2);
+      const threshold=clamp(Number(config.tiltAngle)||6,3,30),release=Math.max(1,threshold-2);
       // 施密特死区只消除阈值抖动，输出始终是方向键的 -1/0/1。
       // Schmitt dead zone prevents threshold chatter; output remains digital -1/0/1.
       for(const axis of ['x','y']){const d=delta(this.latest[axis],this.neutral[axis])*(config[axis==='x'?'tiltInvertX':'tiltInvertY']?-1:1),old=this.axes[axis];this.axes[axis]=Math.abs(d)>=threshold?Math.sign(d):Math.abs(d)<=release||Math.sign(d)!==old?0:old;}

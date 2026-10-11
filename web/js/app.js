@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id), I=DemonStarI18n, t=I.t;
-  const VERSION='0.2.14', weaponName=n=>t('weapon'+n);
+  const VERSION='0.2.15', weaponName=n=>t('weapon'+n);
   let settingsContext='menu',settingsPage='home',setupBack=null,dialogBack=null,pickupKey=null,storageAvailable=true;
   function hideDialog(){const el=$('dialog');el.hidden=true;el.setAttribute('aria-modal','false');el.setAttribute('aria-hidden','true');}
   const { Game, DIFFICULTIES, STAGES, WEAPONS, W, H, clamp } = StarfallCore;
@@ -23,7 +23,7 @@
     saved.musicVolume=clamp(Number.isFinite(s.musicVolume)&&(s.musicPreferenceVersion===1||s.musicVolume>0)?s.musicVolume:.35,0,1);saved.soundVolume=clamp(Number.isFinite(s.soundVolume)?s.soundVolume:1,0,1);if(s.healthBarsVersion===1){saved.enemyHealthBars=s.enemyHealthBars===true;saved.bossHealthBars=s.bossHealthBars!==false;}
   }} catch { /* 隐私模式/损坏存档可恢复。Private browsing/corrupt saves are recoverable. */ }
   I.select(saved.language);I.apply();
-  let selectedStage=1,previous=0,accumulator=0,toastTime=0,pickupTime=0,lastPhase='menu',hudTick=0,dialogReturn=null,touch,captureBinding=null,controlPlayer=0,roomOpen=false;
+  let selectedStage=1,previous=0,accumulator=0,toastTime=0,pickupTime=0,lastPhase='menu',hudTick=0,dialogReturn=null,touch,battle,resultReady=0,resultPointer=null,captureBinding=null,controlPlayer=0,roomOpen=false;
   const tilt=new DemonStarTilt(DemonStarNative);let calibration=null,calibrationSerial=0;
   const input=new DemonStarInput.Input(saved.input),saves=new DemonStarSaveStore({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
   // 当前开放单/双人；四人只保留底层协议能力。
@@ -45,7 +45,7 @@
     $('language').focus({preventScroll:true});
   }
   function saveScore(){if(game.score>saved.best[game.difficulty]){saved.best[game.difficulty]=game.score;persist();}}
-  function clearInput(resetFire=false){input.clear(!resetFire);touch?.clear();}
+  function clearInput(resetFire=false){input.clear(!resetFire);touch?.clear();battle?.clear();}
   function tiltEnabled(){return input.count===1&&input.mode(0)==='tilt';}
   function cancelCalibration(){calibrationSerial++;calibration=null;tilt.stop();input.tiltAxes=null;}
   function prepareMotion(done){
@@ -71,12 +71,12 @@
   function start(stage=selectedStage){if(lan.role==='client'){toast(t('lanHostOnly'));return;}game.start(saved.difficulty,stage,true,{playerCount:Math.min(2,lan.role==='host'?lan.members.length:input.config.count),mode:lan.role==='host'?'lan':'local',retainWeaponLevels:game.phase==='paused'?game.retainWeaponLevels:saved.retainWeaponLevels});applyConnections();enterRun();prepareRun();if(lan.role==='host')lan.flush();}
   function showMenu(){cancelCalibration();input.motionFallback=false;roomOpen=false;if(lan.role!=='offline')lan.leave();input.localOnly=false;input.setCount(input.config.count);touch.localSlot=1;touch.partyCount=input.count;audio.stopAll();audio.setScene('menu');saveScore();game.phase='menu';music.resume();music.menu();$('menu').hidden=false;hideDialog();$('controls').hidden=true;$('hud').hidden=true;$('toast').hidden=true;clearInput();menuInfo();$('start').focus({preventScroll:true});}
   function dialog(tag,title,content,buttons,onBack=hideDialog){
-    dialogBack=onBack;
+    dialogBack=onBack;resultReady=0;resultPointer=null;
     roomOpen=false;captureBinding=null;
     $('dialog').classList.remove('classic-results','quick-setup');
-    clearInput();$('dialog-tag').textContent=tag;$('dialog-title').textContent=title;$('dialog-content').innerHTML=content;$('dialog-buttons').replaceChildren();
+    clearInput();$('dialog-tag').textContent=tag;$('dialog-tag').hidden=tag===title;$('dialog-title').textContent=title;$('dialog-content').innerHTML=content;$('dialog-buttons').replaceChildren();
     for(const [label,action,secondary] of buttons){const b=document.createElement('button');b.textContent=label;b.className=secondary?'secondary':'primary';b.addEventListener('click',()=>{audio.unlock();action();});$('dialog-buttons').append(b);}
-    $('dialog').hidden=false;$('dialog').setAttribute('aria-modal','true');$('dialog').setAttribute('aria-hidden','false');$('dialog').scrollTop=0;requestAnimationFrame(()=>($('dialog-content').querySelector('select,input,button')||$('dialog-buttons').querySelector('button'))?.focus({preventScroll:true}));
+    $('dialog').hidden=false;$('dialog').setAttribute('aria-modal','true');$('dialog').setAttribute('aria-hidden','false');$('dialog').scrollTop=0;$('dialog-content').scrollTop=0;requestAnimationFrame(()=>($('dialog-content').querySelector('select,input,button')||$('dialog-buttons').querySelector('button'))?.focus({preventScroll:true}));
   }
   function resume(){if(calibration)return;if(lan.role==='client'){toast(t('lanHostOnly'));return;}if(lan.role==='host')lan.beginReady(resumeNow);else if(tiltEnabled())prepareMotion(resumeNow);else resumeNow();}
   const optionButton=(id,key,disabled=false)=>`<button id="${id}" class="secondary" ${disabled?'disabled':''}>${t(key)}</button>`;
@@ -182,11 +182,12 @@
   function showControls(note=''){
     if(lan.role!=='offline')controlPlayer=0;
     captureBinding=null;const p=input.config.players[controlPlayer],select=(id,options,value)=>`<select id="${id}">${options.map(([v,label])=>`<option value="${v}" ${String(v)===String(value)?'selected':''}>${label}</option>`).join('')}</select>`;
-    const body=`<p>${t(lan.role==='offline'?'localPlayersHint':'lanInputHint')}</p><label class="dialog-setting">${t('configurePlayer')}${select('control-player',[1,2].map(n=>[n-1,t('playerNumber',{n})]),controlPlayer)}</label><label class="dialog-setting">${t('fireMode')}${select('fire-mode',['toggle','hold'].map(m=>[m,t('fireMode'+m)]),p.fireMode)}</label><p class="language-hint">${t('fireModeHint')}</p><label class="dialog-setting">${t('touchMode')}${select('touch-mode',['fixed','floating','dpad','point','tilt'].map(m=>[m,t('touch'+m)]),p.touch)}</label><div id="stick-options"><label class="dialog-setting">${t('stickSize')}<input id="stick-size-setting" type="range" min="75" max="130" value="${Math.round(p.size*100)}"></label><label class="dialog-setting">${t('stickHorizontal')}<input id="stick-x-setting" type="range" min="0" max="100" value="${Math.round(p.stickX*100)}"></label><label class="dialog-setting">${t('stickVertical')}<input id="stick-y-setting" type="range" min="0" max="100" value="${Math.round(p.stickY*100)}"></label></div><div id="motion-options">${p.touch==='point'?`<p>${t('pointHint')}</p>`:p.touch==='tilt'?`<p>${t('tiltHint')}</p><label class="dialog-setting"><span id="tilt-angle-label">${t('tiltAngle',{n:p.tiltAngle})}</span><input id="tilt-angle" type="range" min="3" max="30" value="${p.tiltAngle}"></label>${toggleRow('tilt-invert-x','tiltInvertX',p.tiltInvertX)}${toggleRow('tilt-invert-y','tiltInvertY',p.tiltInvertY)}`:''}</div><label class="dialog-setting">${t('mouseControl')}${select('mouse-player',[[0,t('off')],...(lan.role==='offline'?[1,2].map(n=>[n,t('playerNumber',{n})]):[[1,t('lanLocalPlayer',{n:lan.localSlot})]])],input.mouseOwner)}</label><label class="dialog-setting">${t('controller')}${select('gamepad-index',[[-1,t('off')],...[0,1,2,3].map(n=>[n,t('controllerNumber',{n:n+1})])],p.pad)}</label><p>${t('bindingHint')}</p><p class="input-note" id="binding-status" role="status">${note}</p>${DemonStarInput.actions.map(action=>`<div class="mapping-row"><span>${t('action'+action)}</span><button class="secondary" data-binding="${action}">${input.bindings(controlPlayer)[action].map(bindingName).join(' / ')||t('unbound')}</button></div>`).join('')}`;
+    const body=`<p>${t(lan.role==='offline'?'localPlayersHint':'lanInputHint')}</p><label class="dialog-setting">${t('configurePlayer')}${select('control-player',[1,2].map(n=>[n-1,t('playerNumber',{n})]),controlPlayer)}</label><label class="dialog-setting">${t('fireMode')}${select('fire-mode',['toggle','hold'].map(m=>[m,t('fireMode'+m)]),p.fireMode)}</label><p class="language-hint">${t('fireModeHint')}</p><label class="dialog-setting">${t('touchMode')}${select('touch-mode',['fixed','floating','dpad','point','tilt'].map(m=>[m,t('touch'+m)]),p.touch)}</label><div id="stick-options"><label class="dialog-setting">${t('stickSize')}<input id="stick-size-setting" type="range" min="75" max="130" value="${Math.round(p.size*100)}"></label><label class="dialog-setting">${t('stickHorizontal')}<input id="stick-x-setting" type="range" min="0" max="100" value="${Math.round(p.stickX*100)}"></label><label class="dialog-setting">${t('stickVertical')}<input id="stick-y-setting" type="range" min="0" max="100" value="${Math.round(p.stickY*100)}"></label></div><div id="motion-options">${p.touch==='point'?`<p>${t('pointHint')}</p>`:p.touch==='tilt'?`<p>${t('tiltHint')}</p><label class="dialog-setting"><span id="tilt-angle-label">${t('tiltAngle',{n:p.tiltAngle})}</span><input id="tilt-angle" type="range" min="3" max="30" value="${p.tiltAngle}"></label>${toggleRow('tilt-invert-x','tiltInvertX',p.tiltInvertX)}${toggleRow('tilt-invert-y','tiltInvertY',p.tiltInvertY)}`:''}</div><label class="dialog-setting checkbox-setting"><span>${t('doubleTapBomb')}</span><input id="double-tap-bomb" type="checkbox" ${input.config.doubleTapBomb?'checked':''} ${input.count>1?'disabled':''}></label><p class="language-hint">${t('doubleTapBombHint')}</p><label class="dialog-setting">${t('mouseControl')}${select('mouse-player',[[0,t('off')],...(lan.role==='offline'?[1,2].map(n=>[n,t('playerNumber',{n})]):[[1,t('lanLocalPlayer',{n:lan.localSlot})]])],input.mouseOwner)}</label><label class="dialog-setting">${t('controller')}${select('gamepad-index',[[-1,t('off')],...[0,1,2,3].map(n=>[n,t('controllerNumber',{n:n+1})])],p.pad)}</label><p>${t('bindingHint')}</p><p class="input-note" id="binding-status" role="status">${note}</p>${DemonStarInput.actions.map(action=>`<div class="mapping-row"><span>${t('action'+action)}</span><button class="secondary" data-binding="${action}">${input.bindings(controlPlayer)[action].map(bindingName).join(' / ')||t('unbound')}</button></div>`).join('')}`;
     dialog(t('inputSettings'),t('inputSettings'),body,[[t('backSettings'),backSettings],[t('resetControls'),()=>{input.resetFire(controlPlayer);input.config.players[controlPlayer]=DemonStarInput.preferences().players[controlPlayer];persistInput();showControls();},true]],backSettings);
     $('control-player').disabled=lan.role!=='offline';if(lan.role!=='offline')$('control-player').selectedOptions[0].textContent=t('lanLocalPlayer',{n:lan.localSlot});
     $('control-player').onchange=()=>{controlPlayer=Number($('control-player').value);showControls();};
     $('fire-mode').onchange=()=>{input.setFireMode(controlPlayer,$('fire-mode').value);persistInput();touch.update(game);if(lan.role==='client')lan.sendControls(input.sample(gamepads(),[game.playerById(lan.localSlot)],false).players[0]);};
+    $('double-tap-bomb').onchange=()=>{input.config.doubleTapBomb=$('double-tap-bomb').checked;battle.clear();persistInput();};
     $('stick-options').hidden=['point','tilt'].includes(p.touch);
     for(const option of $('touch-mode').options)option.disabled=lan.role==='offline'&&input.count>1&&(option.value==='tilt'||option.value==='point'&&input.config.players.some((q,i)=>i!==controlPlayer&&i<input.count&&q.touch==='point'));
     if(p.touch==='tilt'&&input.count>1)$('binding-status').textContent=t('tiltLocalBlocked');
@@ -215,6 +216,7 @@
     if(!(lan.role==='host'?lan.load(cp):game.loadCheckpoint(cp,true))){report(t('saveFailed'));return;}
     applyConnections();saved.difficulty=game.difficulty;if(lan.role==='offline')input.config.count=game.players.length;persistInput();enterRun();prepareRun();if(lan.role==='host')lan.flush();
   }
+  function advanceStage(){if(game.phase!=='cleared'||lan.role==='client')return;resultReady=0;resultPointer=null;game.nextStage();music.stage(game.stage.id);music.resume();hideDialog();lastPhase=game.phase;clearInput(true);updateHud();prepareRun();if(lan.role==='host')lan.flush();}
   function results(){
     clearInput(true);music.results();saveScore();const won=game.phase==='cleared'||game.phase==='victory';
     if(won){saved.unlocked[game.difficulty]=Math.max(saved.unlocked[game.difficulty],Math.min(18,game.stage.id+1));persist();}
@@ -222,11 +224,12 @@
     // 通关沿用原作战场叠层与每位玩家的图标奖励框。
     // Stage completion uses the original battlefield overlay and per-player icon reward panels.
     const bonus=won?`<div class="result-players">${game.stageBonuses.map(row=>`<section class="result-player" data-player="${row.playerId}" aria-label="${t('playerNumber',{n:row.playerId})}"><h3>${t('playerNumber',{n:row.playerId})}</h3><div class="result-bonus"><div class="bonus-row" aria-label="${t('bonusBombs',{n:row.bombs})}"><span class="bonus-icons" aria-hidden="true"><i class="hud-sprite bomb-icon-0"></i><i class="hud-sprite bomb-icon-1"></i></span><b>${row.bombScore}</b></div><div class="bonus-row" aria-label="${t('bonusMedals',{n:row.medals})}"><i class="gear-icon result-medal" aria-hidden="true"></i><b>${row.medalScore}</b></div><div class="bonus-row bonus-total"><span>${t('resultTotal')}</span><b>${row.total}</b></div></div></section>`).join('')}</div>`:'';
-    const content=won?bonus:`<div class="result-score">${fmt(game.score)}</div><div class="stat-row">${t('kills')}<b>${game.kills}</b></div><div class="stat-row">${t('accuracy')}<b>${accuracy}%</b></div><div class="stat-row">${t('flightTime')}<b>${Math.floor(game.totalTime/60)}:${String(Math.floor(game.totalTime%60)).padStart(2,'0')}</b></div><div class="stat-row">${t('currentStage')}<b>${game.stage.id} / 18</b></div>`;
-    const actions=lan.role==='client'?[[t('lanRoom'),showRoom]]:game.phase==='cleared'?[[t('nextStage'),()=>{game.nextStage();music.stage(game.stage.id);music.resume();hideDialog();lastPhase=game.phase;clearInput(true);updateHud();prepareRun();if(lan.role==='host')lan.flush();}]]:[[t('retry'),()=>start(game.phase==='victory'?1:game.stage.id)]];
+    const content=won?bonus+(game.phase==='cleared'&&lan.role!=='client'?`<p class="next-stage-hint">${t('nextStageTap')}</p>`:''):`<div class="result-score">${fmt(game.score)}</div><div class="stat-row">${t('kills')}<b>${game.kills}</b></div><div class="stat-row">${t('accuracy')}<b>${accuracy}%</b></div><div class="stat-row">${t('flightTime')}<b>${Math.floor(game.totalTime/60)}:${String(Math.floor(game.totalTime%60)).padStart(2,'0')}</b></div><div class="stat-row">${t('currentStage')}<b>${game.stage.id} / 18</b></div>`;
+    const actions=lan.role==='client'?[[t('lanRoom'),showRoom]]:game.phase==='cleared'?[[t('nextStage'),advanceStage]]:[[t('retry'),()=>start(game.phase==='victory'?1:game.stage.id)]];
     actions.push([t('hangar'),showMenu,true]);
     dialog(t(won?'missionComplete':'combatLog'),t(won?'missionComplete':'gameOver'),content,actions,showMenu);
     if(won)$('dialog').classList.add('classic-results');
+    if(game.phase==='cleared'&&lan.role!=='client')resultReady=performance.now()+350;
   }
   function updateColorBanks(){
     const enabled=game.retainWeaponLevels===true,el=$('retained-power');el.hidden=!enabled;$('screen').classList.toggle('retained-mode',enabled);
@@ -287,7 +290,7 @@
     const events=game.drainEvents();for(const e of events){
       audio.effect(e.type,e);
       if(saved.haptics&&!document.hidden&&game.phase!=='paused'&&(lan.role==='offline'||e.playerId===lan.localSlot)&&['hit','bomb','player-death','pickup'].includes(e.type))DemonStarNative.haptic(e.type==='pickup'?'light':'heavy');
-      if(e.type==='player-death'){const index=lan.role==='client'?e.playerId===lan.localSlot?0:-1:e.playerId-1;if(index>=0)input.resetFire(index);}
+      if(e.type==='player-death'){const index=lan.role==='client'?e.playerId===lan.localSlot?0:-1:e.playerId-1;if(index>=0){input.resetFire(index);battle?.clear(input.count===1?undefined:index);}}
       if(e.type==='stage'){clearInput(true);music.stage(e.stage);$('toast').hidden=true;if(!saves.write('auto',game.checkpoint()))toast(t('saveFailed'));}
       if(e.type==='mission-start')clearInput(true);
       if(e.type==='pickup'||e.type==='nova'){
@@ -310,8 +313,16 @@
   function showFireHint(index,now){const el=fireHints[index],l=renderer.layout;el.textContent=t('toggleHoldToast');el.dataset.until=String(now+3000);el.hidden=false;const width=Math.min(input.count>1?l.w/2-12:300,l.w-16);Object.assign(el.style,{width:width+'px',left:(input.count>1?index*l.w/2+6:(l.w-width)/2)+'px',top:Math.max(6,l.y+H*l.scale-112)+'px'});}
   touch=new DemonStarTouchControls(input,activeInput,()=>{audio.unlock();music.unlock();});touch.layout(renderer.layout);
   window.addEventListener('pointerdown',e=>{if(captureBinding&&e.pointerType==='mouse'){e.preventDefault();e.stopPropagation();acceptBinding('mouse:'+e.button);}},true);
-  $('game').addEventListener('pointerdown',e=>{if(!activeInput()||e.pointerType==='mouse'&&e.button!==0)return;const index=Array.from({length:input.count},(_,i)=>i).find(i=>input.mode(i)==='point');if(index===undefined)return;const l=renderer.layout,x=(e.clientX-l.x)/l.scale,y=(e.clientY-l.y)/l.scale;if(x<0||x>W||y<0||y>H)return;e.preventDefault();input.point(index,x,y);audio.unlock();});
-  for(const kind of ['touchstart','touchmove','touchend','contextmenu','selectstart'])$('game').addEventListener(kind,e=>{if(activeInput()&&input.config.players.some((_,i)=>i<input.count&&input.mode(i)==='point')&&e.cancelable)e.preventDefault();},{passive:false});
+  battle=new DemonStarBattleGestures(input,$('game'),()=>renderer.layout,activeInput,()=>{if(lan.role==='client'&&activeInput())lan.sendControls(input.sample(gamepads(),[game.playerById(lan.localSlot)],true).players[0]);});
+  new DemonStarDialogScroll($('dialog'),$('dialog-content'),$('dialog-scrollbar'));
+  $('game').addEventListener('pointerdown',()=>{if(activeInput()){audio.unlock();music.unlock();}});
+  // 只接受结算出现后的新轻触；捕获阶段消费点击，避免穿透至下一关的准备按钮。
+  // Accept only a fresh tap after results; consume its click before the next-stage Ready dialog appears.
+  const resultActive=()=>resultReady>0&&performance.now()>=resultReady&&game.phase==='cleared'&&lan.role!=='client'&&!$('dialog').hidden&&$('dialog').classList.contains('classic-results');
+  const resultControl=e=>e.target.closest?.('button,a,input,select,[role="scrollbar"]');
+  window.addEventListener('pointerdown',e=>{resultPointer=resultActive()&&!resultControl(e)&&e.button===0?{id:e.pointerId,x:e.clientX,y:e.clientY,time:performance.now()}:null;},true);
+  window.addEventListener('pointercancel',()=>resultPointer=null,true);
+  window.addEventListener('click',e=>{const p=resultPointer;resultPointer=null;if(p&&resultActive()&&!resultControl(e)&&performance.now()-p.time<700&&Math.hypot(e.clientX-p.x,e.clientY-p.y)<18){e.preventDefault();e.stopImmediatePropagation();advanceStage();}},true);
   $('game').addEventListener('pointermove',e=>{if(!activeInput()||e.pointerType!=='mouse'||!input.mouseOwner||input.mode(input.mouseOwner-1)==='point')return;const l=renderer.layout;input.mouseTarget={x:clamp((e.clientX-l.x)/l.scale,16,W-16),y:clamp((e.clientY-l.y)/l.scale,64,H-40)};});
   $('game').addEventListener('pointerdown',e=>{if(!activeInput()||e.pointerType!=='mouse'||!input.mouseOwner)return;e.preventDefault();input.mouseButton(e.button,true);});
   window.addEventListener('pointerup',e=>{if(e.pointerType==='mouse')input.mouseButton(e.button,false);});$('game').addEventListener('contextmenu',e=>{if(activeInput()&&input.mouseOwner)e.preventDefault();});
@@ -332,7 +343,7 @@
   document.addEventListener('visibilitychange',()=>{if(document.hidden)background();else foreground();});window.addEventListener('blur',background);window.addEventListener('focus',foreground);
   window.addEventListener('pagehide',()=>{saveScore();background();});
   window.addEventListener('resize',()=>{clearInput();renderer.resize();touch.layout(renderer.layout);});
-  globalThis.StarfallApp={game,i18n:I,input,touch,tilt,saves,lan,native:DemonStarNative,background,foreground,back,start,startLocal,showMenu,showSettings,showPauseDialog,showMultiplayer,showControls,showSaves,showMissions,showRoom,renderer,music,audio};
+  globalThis.StarfallApp={game,i18n:I,input,touch,battle,tilt,saves,lan,native:DemonStarNative,background,foreground,back,start,startLocal,showMenu,showSettings,showPauseDialog,showMultiplayer,showControls,showSaves,showMissions,showRoom,renderer,music,audio};
   document.addEventListener('click',e=>{if(e.target.closest('button')){music.unlock();if(saved.sound){audio.unlock();if(!['fire','bomb','start','setup-start'].includes(e.target.closest('button').id))audio.effect('menu');}}});
   // 原生容器允许首屏播放；浏览器若拒绝，后续交互仍会再次尝试。
   // Native hosts allow startup playback; browser gesture handlers retry if autoplay is rejected.

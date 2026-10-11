@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.15 取代 M2.14 的点按目标行为：跟随当前手指位置，松手/取消立即停止，不保留自动飞行目标；同屏双人仍限一人。陀螺仪新默认阈值 6°，保留已有显式设置。双击战场投弹为独立复选框，默认关闭，同机双人禁用。炸弹容量按用户扩展为 18，原作图标每排 6 枚、最多三排；不改变原作自动补给阈值或伤害。结算提示全屏轻触换关，联机仍仅房主可推进；设置内容独立滚动，滚动条常驻，返回固定底部。见 `docs/M2_15_CONTROLS.md`。
+  M2.15 supersedes M2.14 tap targets: follow the currently held finger and stop on release/cancel, with no persistent autopilot target; one shared-device player maximum. New tilt defaults use 6°, preserving saved choices. Double-tap battlefield bombing is a separate default-off checkbox, disabled on shared devices. The user-requested bomb capacity is 18, six classic icons per row and three rows maximum; original automatic supply thresholds and damage stay unchanged. Results accept a full-screen tap to advance, host-only on LAN. Settings scroll independently with a persistent scrollbar and fixed Back footer. See `docs/M2_15_CONTROLS.md`.
+
 - M2.14：点按目标移动松手后继续、到点停止，沿用现有逐步机动性；同屏双人最多一人使用。陀螺仪同屏双人禁用，临时回退浮动且保留偏好。倾斜按可调角度死区产生满强度方向输入，保留双轴反向；每次出击（含换关）及恢复由玩家确认当前中立位，联机全员准备后恢复。切换开火实际长按 1.2 秒显示 3 秒提示，同一次长按仅一次。炸弹按用户确认保持现状。
   M2.14: tap targets continue after release and stop on arrival using existing movement steps; at most one shared-device player uses this mode. Tilt is disabled for shared-device play with temporary floating fallback that preserves preferences. An adjustable angular dead zone produces digital full-direction input with independent inversions. Confirm neutral at run/stage start and every resume; LAN waits for all peers. A physical toggle-fire hold of 1.2 s shows a 3 s toast once per hold. Preserve the accepted bomb behavior.
 

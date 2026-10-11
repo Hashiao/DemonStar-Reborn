@@ -12,7 +12,7 @@
     return result;
   }
   function preferences(value){
-    const result={version:3,count:clamp(Math.floor(Number(value?.count)||1),1,4),mousePlayer:clamp(Math.floor(Number(value?.mousePlayer)||0),0,4),players:[]};
+    const result={version:3,count:clamp(Math.floor(Number(value?.count)||1),1,4),doubleTapBomb:value?.doubleTapBomb===true,mousePlayer:clamp(Math.floor(Number(value?.mousePlayer)||0),0,4),players:[]};
     for(let i=0;i<4;i++){
       const v=value?.players?.[i]||{},bindings={};
       for(const action of actions)if(Array.isArray(v.bindings?.[action]))bindings[action]=v.bindings[action].filter(tokenValid).slice(0,12);
@@ -21,7 +21,7 @@
       if(!([2,3].includes(value?.version))&&i>0)for(const [action,button] of [['fire',0],['bomb',2]])if(bindings[action]?.length&&bindings[action].length<12&&!bindings[action].some(t=>t.startsWith('mouse:')))bindings[action].push('mouse:'+button);
       // 按用户要求统一改为浮动摇杆；本版之后的手动选择仍可保存。
       // Reset every pre-release touch preference to floating; subsequent explicit choices remain persistent.
-      result.players.push({touch:value?.version===3&&['fixed','floating','dpad','point','tilt'].includes(v.touch)?v.touch:'floating',tiltAngle:clamp(Number(v.tiltAngle)||10,3,30),tiltInvertX:v.tiltInvertX===true,tiltInvertY:v.tiltInvertY===true,fireMode:v.fireMode==='hold'?'hold':'toggle',size:clamp(Number(v.size)||1,.75,1.3),stickX:clamp(Number.isFinite(v.stickX)?v.stickX:.5,0,1),stickY:clamp(Number.isFinite(v.stickY)?v.stickY:.5,0,1),pad:Number.isInteger(v.pad)?clamp(v.pad,-1,15):i,bindings});
+      result.players.push({touch:value?.version===3&&['fixed','floating','dpad','point','tilt'].includes(v.touch)?v.touch:'floating',tiltAngle:clamp(Number(v.tiltAngle)||6,3,30),tiltInvertX:v.tiltInvertX===true,tiltInvertY:v.tiltInvertY===true,fireMode:v.fireMode==='hold'?'hold':'toggle',size:clamp(Number(v.size)||1,.75,1.3),stickX:clamp(Number.isFinite(v.stickX)?v.stickX:.5,0,1),stickY:clamp(Number.isFinite(v.stickY)?v.stickY:.5,0,1),pad:Number.isInteger(v.pad)?clamp(v.pad,-1,15):i,bindings});
     }return result;
   }
   function keyToken(event){

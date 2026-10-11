@@ -66,11 +66,11 @@ test('all original drop IDs, crystal healing, no invented extra-life drop',()=>{
   g.collect({type:'mega'});assert.equal(g.player.lives,4);assert.equal(g.player.bombInventory.at(-1),2);
 });
 
-test('mixed bomb inventory has capacity six and consumes newest first',()=>{
-  const g=new Game(1);g.start();g.collect({type:'scatter'});g.collect({type:'mega'});g.collect({type:'bomb'});g.collect({type:'scatter'});
-  assert.deepEqual(g.player.bombInventory,[0,0,0,1,2,0]);g.drainEvents();
-  g.recordEvents=[];for(let i=0;i<6;i++){assert.ok(g.useBomb());assert.equal(g.useBomb(),false);for(let t=0;t<35;t++)g.update(STEP);}assert.equal(g.useBomb(),false);
-  assert.deepEqual(g.drainEvents().filter(e=>e.type==='bomb').map(e=>e.bombType),[0,2,1,0,0,0]);
+test('mixed bomb inventory caps at eighteen and consumes newest first',()=>{
+  const g=new Game(1);g.start();for(let i=0;i<16;i++)g.collect({type:['bomb','scatter','mega'][i%3]});
+  const expected=[0,0,0,...Array.from({length:15},(_,i)=>i%3)];assert.deepEqual(g.player.bombInventory,expected);g.drainEvents();
+  g.recordEvents=[];for(let i=0;i<18;i++){assert.ok(g.useBomb());assert.equal(g.useBomb(),false);for(let t=0;t<35;t++)g.update(STEP);}assert.equal(g.useBomb(),false);
+  assert.deepEqual(g.drainEvents().filter(e=>e.type==='bomb').map(e=>e.bombType),expected.reverse());
 });
 
 test('pickup cycles use original first delay and 110-tick subsequent delay',()=>{

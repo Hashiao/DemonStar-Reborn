@@ -1,0 +1,24 @@
+/* SPDX-License-Identifier: MIT. 固定页脚、常驻滚动提示与三排炸弹。 / Fixed footer, persistent scrolling and three bomb rows. */
+.dialog:not(.classic-results):not(.quick-setup){align-items:center;overflow:hidden}
+.dialog:not(.classic-results):not(.quick-setup) .dialog-card{display:flex;flex-direction:column;max-height:100%;margin:auto;overflow:hidden}
+.dialog:not(.classic-results):not(.quick-setup) #dialog-tag,
+.dialog:not(.classic-results):not(.quick-setup) #dialog-title,
+.dialog:not(.classic-results):not(.quick-setup) #dialog-buttons{flex-shrink:0}
+.dialog:not(.classic-results):not(.quick-setup) #dialog-scroll{position:relative;display:flex;flex:1 1 auto;min-height:0}
+.dialog:not(.classic-results):not(.quick-setup) #dialog-content{flex:1;min-height:0;overflow-y:auto;padding-right:16px;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+.dialog:not(.classic-results):not(.quick-setup) #dialog-content::-webkit-scrollbar{display:none}
+.dialog:not(.classic-results):not(.quick-setup) #dialog-buttons{display:flex;gap:10px;padding-top:14px}
+.dialog:not(.classic-results):not(.quick-setup) #dialog-buttons button{flex:1;min-width:0;margin:0}
+#dialog-scrollbar{position:absolute;right:0;top:0;bottom:0;width:10px;border:1px solid #748c99;border-radius:5px;background:#1c2c36;touch-action:none;cursor:pointer}
+#dialog-scrollbar i{display:block;width:100%;min-height:24px;border-radius:4px;background:#d3e5ed;pointer-events:none}
+#dialog-scrollbar:focus{outline:2px solid #ffd661;outline-offset:2px}
+.checkbox-setting input[type=checkbox]{width:24px;height:24px;min-width:24px;accent-color:#ffd661}
+#bomb-stock,.classic-bomb-stock{flex-wrap:wrap;width:calc(102 * var(--u));height:auto;min-height:calc(19 * var(--u));align-content:flex-end}
+#bomb-stock .hud-sprite,.classic-bomb-stock .hud-sprite{flex:0 0 calc(14 * var(--u));margin-bottom:calc(5 * var(--u))}
+.classic-results .next-stage-hint{position:absolute;left:12px;right:12px;bottom:calc(78 * var(--u));margin:0;text-align:center;font-size:calc(11 * var(--u));color:#ffe6a4;text-shadow:1px 1px #000}
+@media(max-height:450px){
+ .dialog:not(.classic-results):not(.quick-setup) .dialog-card{padding:12px 18px}
+ .dialog:not(.classic-results):not(.quick-setup) #dialog-title{font-size:20px;margin:0 0 8px}
+ .dialog:not(.classic-results):not(.quick-setup) #dialog-tag{margin:0 0 4px}
+ .dialog:not(.classic-results):not(.quick-setup) #dialog-buttons{padding-top:8px}
+}

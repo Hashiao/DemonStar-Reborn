@@ -4,8 +4,8 @@ if(!Element.prototype.replaceChildren)Element.prototype.replaceChildren=function
 if(!window.PointerEvent){
   Element.prototype.setPointerCapture=function(){};
   (function(){
-    var screen=document.getElementById('screen');
-    var convert=function(type,event){for(var i=0;i<event.changedTouches.length;i++){var t=event.changedTouches[i],p=new Event(type,{bubbles:true,cancelable:true});p.pointerId=t.identifier;p.clientX=t.clientX;p.clientY=t.clientY;t.target.dispatchEvent(p);if(p.defaultPrevented)event.preventDefault();}};
+    var screen=document;
+    var convert=function(type,event){for(var i=0;i<event.changedTouches.length;i++){var t=event.changedTouches[i],p=new Event(type,{bubbles:true,cancelable:true});p.pointerId=t.identifier;p.pointerType='touch';p.button=0;p.clientX=t.clientX;p.clientY=t.clientY;t.target.dispatchEvent(p);if(p.defaultPrevented)event.preventDefault();}};
     screen.addEventListener('touchstart',function(e){convert('pointerdown',e);},{passive:false});
     screen.addEventListener('touchmove',function(e){convert('pointermove',e);},{passive:false});
     screen.addEventListener('touchend',function(e){convert('pointerup',e);},{passive:false});

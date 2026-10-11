@@ -4,7 +4,9 @@
   const C=globalThis.DemonStarCampaign,P=globalThis.DemonStarPlayerRules,A=globalThis.DemonStarEnemyArt;
   // 原作基础节拍为 35ms，渲染独立运行。
   // 4.04's base wait is 35 ms (0x41ae07). Rendering remains independent.
-  const W=400,H=480,STEP=.035,TICK=1/STEP,SHOT_RULES=globalThis.DemonStarProjectileRules;
+  // 用户指定容量扩展；原作按难度的自动补给阈值保持独立。
+  // User-requested inventory extension; original difficulty-dependent supply thresholds remain independent.
+  const BOMB_CAPACITY=18,W=400,H=480,STEP=.035,TICK=1/STEP,SHOT_RULES=globalThis.DemonStarProjectileRules;
   // 出击演出独立按约 60Hz 标定，保留原作每演出帧下移 3；不加速战斗。
   // Calibrate launch presentation near 60Hz, retaining 3 source pixels per frame; combat stays unchanged.
   const LAUNCH_SPEED=3*(H/400)*60,HEALTH_BAR_MIN_HP=C.definitions[C.byId[17]].hp;
@@ -36,7 +38,7 @@
     if(!Array.isArray(s.players)||s.players.length<1||s.players.length>MAX_PLAYERS||!s.players.some(p=>p&&p.lives>0))return false;
     if(!integer(s.supplyIndex,0,4)||!integer(s.supplyBombIndex,0,2))return false;
     for(const key of ['score','kills','shotsFired','shotsHit','totalTime'])if(!Number.isFinite(s[key])||s[key]<0||s[key]>1e12)return false;
-    return s.players.every((p,i)=>p&&p.id===i+1&&typeof p.defaultWeapon==='boolean'&&Array.isArray(p.bombInventory)&&p.bombInventory.length<=6&&p.bombInventory.every(b=>integer(b,0,2))&&Object.keys(checkpointFields).every(k=>Number.isFinite(p[k])&&p[k]>=checkpointFields[k][0]&&p[k]<=checkpointFields[k][1])&&['lives','weapon','power','missileAmmo','missileType','side','rear'].every(k=>Number.isInteger(p[k]))&&(p.defaultWeapon?p.power===0:p.power>=1));
+    return s.players.every((p,i)=>p&&p.id===i+1&&typeof p.defaultWeapon==='boolean'&&Array.isArray(p.bombInventory)&&p.bombInventory.length<=BOMB_CAPACITY&&p.bombInventory.every(b=>integer(b,0,2))&&Object.keys(checkpointFields).every(k=>Number.isFinite(p[k])&&p[k]>=checkpointFields[k][0]&&p[k]<=checkpointFields[k][1])&&['lives','weapon','power','missileAmmo','missileType','side','rear'].every(k=>Number.isInteger(p[k]))&&(p.defaultWeapon?p.power===0:p.power>=1));
   }
   const intersects=(x1,y1,x2,y2,x,y,r)=>{const dx=x2-x1,dy=y2-y1,t=clamp(((x-x1)*dx+(y-y1)*dy)/(dx*dx+dy*dy||1),0,1);return(x1+dx*t-x)**2+(y1+dy*t-y)**2<=r*r;};
   const DIFFICULTIES=[{name:'容易',key:'easy',fire:1.3},{name:'一般',key:'normal',fire:1},{name:'较难',key:'hard',fire:.85},{name:'疯狂',key:'insane',fire:.7}];
@@ -350,7 +352,7 @@
       const t=item.type;
       if(['weapon','ion','plasma','magnetic'].includes(t))this.upgradeWeapon(['weapon','ion','plasma','magnetic'].indexOf(t),false,p);
       if(t==='full')this.upgradeWeapon(p.defaultWeapon?0:p.weapon,true,p);
-      if(['bomb','scatter','mega'].includes(t)&&p.bombs<6)p.bombInventory.push(['bomb','scatter','mega'].indexOf(t));
+      if(['bomb','scatter','mega'].includes(t)&&p.bombs<BOMB_CAPACITY)p.bombInventory.push(['bomb','scatter','mega'].indexOf(t));
       if(t==='energy')p.energy=p.maxEnergy;
       if(t==='crystal')p.energy=Math.min(p.maxEnergy,p.energy+2);
       if(t==='shield')p.shield=360*STEP;
@@ -530,5 +532,5 @@
       this.pickups=this.pickups.filter(i=>!i.dead&&i.y<H+30);this.particles=this.particles.filter(v=>v.life>0);
     }
   }
-  globalThis.StarfallCore={W,H,TICK,STEP,MAX_PLAYERS,createPlayer,validCheckpoint,validWeaponLevels,deathScale,deathTransform,LAUNCH_SPEED,HEALTH_BAR_MIN_HP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};
+  globalThis.StarfallCore={BOMB_CAPACITY,W,H,TICK,STEP,MAX_PLAYERS,createPlayer,validCheckpoint,validWeaponLevels,deathScale,deathTransform,LAUNCH_SPEED,HEALTH_BAR_MIN_HP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};
 })();
