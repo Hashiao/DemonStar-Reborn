@@ -7,8 +7,8 @@ standard=json.loads((out/'ios-verification.json').read_text());reports=[]
 tested_ids=[next(d['udid'] for d in available[t['runtime']] if d['name']==t['name']) for t in standard['devices']]
 for tested in standard['devices']:
  device=next(d for d in available[tested['runtime']] if d['name']==tested['name']);uid=device['udid'];family=tested['family']
- # 隔离 LAN 后的模拟器/测试宿主状态以排查 iPad Runner 启动卡住；不重试断言。
- # Isolate post-LAN simulator/test-host state when diagnosing iPad Runner stalls; never retry assertions.
+ # 逐台隔离模拟器/测试宿主状态以排查 iPad Runner 启动卡住；不重试断言。
+ # Isolate each simulator/test-host state when diagnosing iPad Runner stalls; never retry assertions.
  live=json.loads(run(['xcrun','simctl','list','devices','available','-j']))['devices']
  for devices in live.values():
   for other in devices:
@@ -28,5 +28,9 @@ for tested in standard['devices']:
    assert data['players'][index]['shots']>8 and data['players'][index]['bombs']==2,data
    assert data['players'][index]['fireMode']=='toggle' and data['players'][index]['touch']=='floating' and data['players'][index]['latched'] is False,data
   reports.append({'family':family,'runtime':tested['runtime'],'players':count,'probe':data})
+ # LAN 在所有单设备检查完成后才启动双机，避免后台 Runner 累积。
+ # Start the LAN pair only after single-device checks, avoiding accumulated background runners.
+ run(['xcrun','simctl','terminate',uid,'io.github.hashiao.demonstar'])
+ run(['xcrun','simctl','shutdown',uid])
 result={'status':'passed','input':'XCTest system 1.6-second presses, floating-stick drag and fire re-tap; not DOM event injection','devices':reports,'physical_device_tested':False}
 (out/'ios-touch-verification.json').write_text(json.dumps(result,indent=2));print(json.dumps(result))
