@@ -189,11 +189,15 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
               // 验证共用调度及双人射击保留；不代表扬声器听感实测。
               // Verify shared scheduling and protected two-player shots, not speaker listening quality.
               if(DemonStarIOSAudio.prototype.sample!==StarfallAudio.prototype.sample)throw new Error('Duplicated platform scheduler');
+              // 菜单恢复异步完成后再测调度，避免未接受的首轮请求把下一次时钟变成 NaN。
+              // Await asynchronous menu resume before scheduler assertions; rejected initial shots would produce a NaN clock.
+              await waitFor(function(){return sound.canSample();},'audio-ready');
               sound.stopAll();sound.resetEffectTimers();var accepted=0,nextShot=sound.ctx.currentTime;
               for(var round=0;round<10;round++){
                 await waitFor(function(){return sound.ctx.currentTime>=nextShot;},'audio-shot-clock');
                 for(var effect of ['explosion','groundExplosion','heavyExplosion','hit','enemyShot','enemyMissile','enemyLaser','bossEngine1'])sound.sample(effect);
                 for(var owner of [1,2]){var previous=sound.lastShots.get(owner);sound.effect('shot',{weapon:owner-1,playerId:owner});if(sound.lastShots.get(owner)!==previous)accepted++;}
+                if(!Number.isFinite(sound.lastShots.get(1))||!Number.isFinite(sound.lastShots.get(2)))throw new Error('Ready audio rejected initial player shots');
                 if(sound.active.filter(function(s){return s.voiceGroup==='world';}).length>8||sound.active.filter(function(s){return s.playerId>0;}).length>4)throw new Error('Unbounded audio voices');
                 nextShot=Math.max(sound.lastShots.get(1),sound.lastShots.get(2))+0.09;
               }
@@ -277,15 +281,20 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
             try? data.write(to: dir.appendingPathComponent("lan-probe.json"), options: .atomic)
         }
     }
-    private func collectLANProbe(attempts: Int) {
+    private func collectLANProbe(attempts: Int, awaitingRun: Bool = true) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.web.evaluateJavaScript("window.lanProbeResult || null") { result, error in
+                var remaining = attempts
+                var waiting = awaitingRun
                 if let value = result as? [String: Any] {
                     self?.saveLANProbe(value)
                     if let status = value["status"] as? String, status == "passed" || status == "error" { return }
+                    // 客机冷启动不能消耗已入局的验收预算；大厅和对局各保留原有 360 次上限。
+                    // Peer cold boot must not consume the active-run budget; lobby and gameplay each retain the 360-poll cap.
+                    if waiting, let step = value["step"] as? Int, step >= 2 { remaining = 360; waiting = false }
                 }
-                if attempts > 0 { self?.collectLANProbe(attempts: attempts - 1) }
-                else { self?.saveLANProbe(["status": "error", "error": "Native LAN probe timed out"]) }
+                if remaining > 0 { self?.collectLANProbe(attempts: remaining - 1, awaitingRun: waiting) }
+                else { self?.saveLANProbe(["status": "error", "error": "Native LAN probe timed out", "awaitingRun": waiting, "lastProbe": result ?? NSNull()]) }
             }
         }
     }
