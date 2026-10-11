@@ -24,6 +24,18 @@ def main():
     # 联机报告必须来自同一次成功构建；旧里程碑可不要求此文件。
     # LAN evidence must come from the same successful run; older milestones need not require it.
     lan_files=list(destination.rglob('ios-lan-verification.json'))
+    if args.require_lan and not lan_files:
+        # 独立联机 job 必须来自同一成功 workflow/提交，不拼接其他轮次的成功记录。
+        # The isolated LAN job must belong to this same successful workflow/commit, never another attempt.
+        lan_artifact=next((a for a in artifacts if a['name']=='DemonStar-Reborn-iOS-LAN' and not a['expired']),None)
+        if not lan_artifact:raise RuntimeError('Missing same-run LAN artifact.')
+        lan_destination=ROOT/'.local'/('ios-ci-'+str(args.run)+'-lan');lan_destination.mkdir(parents=True,exist_ok=True)
+        lan_archive=lan_destination/'artifact.zip';api.download_artifact(base+'/actions/artifacts/'+str(lan_artifact['id'])+'/zip',lan_archive)
+        with zipfile.ZipFile(lan_archive) as z:
+            for item in z.infolist():
+                if not (lan_destination/item.filename).resolve().is_relative_to(lan_destination.resolve()):raise RuntimeError('Unsafe LAN archive path')
+            z.extractall(lan_destination)
+        lan_files=list(lan_destination.rglob('ios-lan-verification.json'))
     if args.require_lan and len(lan_files)!=1:raise RuntimeError('Missing or ambiguous native LAN verification.')
     if lan_files:
         if len(lan_files)!=1:raise RuntimeError('Ambiguous native LAN verification.')

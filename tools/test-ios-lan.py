@@ -32,7 +32,8 @@ def main():
     report = None
     script = (ROOT / 'tools/ios-lan-probe.js').read_text()
     try:
-        for device in devices:
+        def prepare(index):
+            device = devices[index]
             uid = device['udid']
             print('LAN: boot existing simulator '+device['name'],flush=True)
             if device['state'] != 'Booted':
@@ -56,9 +57,13 @@ def main():
                 if not probes[index].exists():
                     raise
                 print('Launch response timed out, but a fresh app probe exists; continuing observation.',flush=True)
+        # 先让房主 WebKit 就绪，再启动第二台，避免双机冷启动与首次加载同时争用资源。
+        # Warm the host WebKit before booting the peer, avoiding simultaneous cold starts/first loads.
+        prepare(0)
         launch(0, {'role': 'host'})
         print('LAN: waiting for native host lobby',flush=True)
         lobby = wait_report(probes[0], ['lobby'])
+        prepare(1)
         launch(1, {'role': 'client', 'code': lobby['code']})
         print('LAN: waiting for two-player actions, reconnect and stage pause',flush=True)
         results = [wait_report(probe, ['passed']) for probe in probes]

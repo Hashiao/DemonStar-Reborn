@@ -12,6 +12,12 @@ jobs:
   ios:
     runs-on: macos-15
     timeout-minutes: 45
+    # 触控 Runner 与双机联机分开占用模拟器；同提交运行全部断言。
+    # Isolate UI runners from paired LAN simulators while testing every assertion at the same commit.
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [touch, lan]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -43,15 +49,17 @@ jobs:
       - name: Build and launch on an existing iPhone simulator
         run: python3 tools/test-ios-simulator.py
       - name: Verify system long presses and game-mode entries on existing iPhone and iPad
+        if: matrix.check == 'touch'
         run: python3 tools/test-ios-touch.py
       - name: Verify two-player native LAN on existing iPhone and iPad simulators
+        if: matrix.check == 'lan'
         run: python3 tools/test-ios-lan.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: DemonStar-Reborn-iOS
+          name: ${{ matrix.check == 'touch' && 'DemonStar-Reborn-iOS' || 'DemonStar-Reborn-iOS-LAN' }}
           path: |
-            artifacts/*.ipa
+            ${{ matrix.check == 'touch' && 'artifacts/*.ipa' || '' }}
             artifacts/*.png
             artifacts/*.json
             artifacts/*.xcresult
