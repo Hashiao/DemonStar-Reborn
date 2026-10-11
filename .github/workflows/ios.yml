@@ -10,7 +10,10 @@ permissions:
   contents: read
 jobs:
   ios:
-    runs-on: macos-15
+    # 标准 Intel 执行器提供 14 GB 内存，减轻双模拟器在 7 GB ARM 执行器上的启动压力。
+    # The standard Intel runner has 14 GB RAM, reducing paired-simulator startup pressure versus 7 GB ARM.
+    # https://docs.github.com/en/actions/reference/runners/github-hosted-runners
+    runs-on: macos-15-intel
     timeout-minutes: 45
     # 触控 Runner 与双机联机分开占用模拟器；同提交运行全部断言。
     # Isolate UI runners from paired LAN simulators while testing every assertion at the same commit.
