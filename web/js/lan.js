@@ -106,6 +106,7 @@
       if(this.role!=='host'||!this.started)return;this.stageEpoch();this.send('*','state',{epoch:this.epoch,sequence:++this.frameSequence,state:DemonStarNetworkState.encode(this.game,this.bufferedEvents)});this.bufferedEvents=[];this.lastSend=this.clock();
     }
     requestPause(){if(this.role==='client')this.send('host','pause',{epoch:this.epoch});else{this.onPause();this.flush();}}
+    sendControls(local){if(this.role!=='client'||this.status!=='playing')return false;this.send('host','input',{epoch:this.epoch,sequence:++this.sequence,...local});this.lastSend=this.clock();return true;}
     update(dt,local=idle(),events=[]){
       const now=this.clock();
       if(this.role==='host'){
@@ -117,7 +118,7 @@
       }else if(this.role==='client'){
         if(this.status==='disconnected'&&!this.busy&&this.retries<5&&now>=this.retryAt){this.retries++;this.connect();}
         if(['playing','lobby','connecting'].includes(this.status)&&!this.busy&&now-this.lastRx>6000)this.lost('timeout');
-        if(this.status==='playing'){this.game.pendingTime=Math.min(StarfallCore.STEP,(this.game.pendingTime||0)+dt);if(now-this.lastSend>=50){this.send('host','input',{epoch:this.epoch,sequence:++this.sequence,...local});this.lastSend=now;return true;}}
+        if(this.status==='playing'){this.game.pendingTime=Math.min(StarfallCore.STEP,(this.game.pendingTime||0)+dt);if(now-this.lastSend>=50){this.sendControls(local);return true;}}
         else if(this.status==='lobby'&&now-(this.lastPing||0)>=1000){this.send('host','ping');this.lastPing=now;}
       }
       return false;

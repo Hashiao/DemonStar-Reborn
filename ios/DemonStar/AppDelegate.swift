@@ -111,15 +111,28 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
             window.smokeProgress={probePhase:phase,gamePhase:g.phase,frame:g.frame||0,hidden:document.hidden,stable:stable,size:nextSize,ships:!!renderer.ships.naturalWidth,pickups:!!renderer.pickups.naturalWidth,carriers:!!renderer.carriers.naturalWidth,effects:!!renderer.effects.naturalWidth,musicBackend:ms.backend,musicReady:ms.ready,musicTime:ms.currentTime,musicPaused:ms.paused,musicError:StarfallApp.music.error,musicNetworkState:StarfallApp.music.audio.networkState,musicSrc:StarfallApp.music.audio.currentSrc,musicRequestedSrc:StarfallApp.music.audio.src,musicTrack:StarfallApp.music.track,musicEnabled:StarfallApp.music.enabled,musicUnlocked:StarfallApp.music.unlocked,musicPausedByApp:StarfallApp.music.paused,musicLoadRetries:StarfallApp.music.loadRetries,musicPlayFailure:StarfallApp.music.playFailure,audioState:StarfallApp.audio.ctx?StarfallApp.audio.ctx.state:null};
             if(g.phase==='launch')sawLaunch=true;
             if(document.hidden||stable<10||l.w<100||l.h<100||!renderer.ships.naturalWidth||!renderer.pickups.naturalWidth||!renderer.carriers.naturalWidth||!renderer.effects.naturalWidth||!renderer.attacks.naturalWidth||!renderer.enemyArtReady()||!renderer.presentationReady())return;
-            if(ms.error)throw new Error('Native music: '+ms.error);if(phase===0){if(ms.backend!=='ios-native'||!ms.ready||ms.paused||ms.currentTime<=0)return;startupMusic=ms;StarfallApp.start(1);phase=1;return;}
-            if(phase===1){if(g.phase!=='playing'||g.frame<6)return;g.player.invincible=999;pointer('fire','pointerdown',.5);pointer('joystick','pointerdown',.8);startFrame=g.frame;phase=2;return;}
+            if(ms.error)throw new Error('Native music: '+ms.error);if(phase===0){if(ms.backend!=='ios-native'||!ms.ready||ms.paused||ms.currentTime<=0)return;startupMusic=ms;document.getElementById('start').click();document.getElementById('setup-start').click();phase=1;return;}
+            if(phase===1){if(g.phase!=='playing'||g.frame<6)return;g.player.invincible=999;pointer('fire','pointerdown',.5);pointer('joystick','pointerdown',.5);pointer('joystick','pointermove',.95);startFrame=g.frame;phase=2;return;}
             if(phase===2){if(g.frame-startFrame<20)return;pointer('fire','pointerup',.5);pointer('joystick','pointerup',.5);document.getElementById('bomb').click();releasedX=g.player.x;releasedShots=g.shotsFired;startFrame=g.frame;phase=3;return;}
+            if(phase===3){
+              if(g.frame-startFrame<10)return;
+              if(!StarfallApp.input.firing(0)||g.shotsFired<=releasedShots)throw new Error('Toggle did not keep firing after release');
+              document.getElementById('pause').click();document.getElementById('pause-settings').click();document.getElementById('control-settings').click();
+              var fireMode=document.getElementById('fire-mode');fireMode.value='hold';fireMode.dispatchEvent(new Event('change',{bubbles:true}));
+              if(StarfallApp.input.firing(0))throw new Error('Switching to hold retained old fire');
+              StarfallApp.back();StarfallApp.back();Array.from(document.querySelectorAll('#dialog-buttons button')).find(function(b){return b.textContent===DemonStarI18n.t('resume');}).click();
+              releasedX=g.player.x;releasedShots=g.shotsFired;startFrame=g.frame;phase=4;return;
+            }
             if(g.frame-startFrame<10||ms.backend!=='ios-native'||!ms.ready||ms.paused||ms.currentTime<=0)return;
             var result={launchSeen:sawLaunch,presentationReady:renderer.presentationReady(),weaponArtReady:renderer.playerWeapons.naturalWidth>0,weaponSizes:{homing:[DemonStarWeaponArt.shots[39].width,DemonStarWeaponArt.shots[39].height],red:[29,30,31,48,49,50].map(function(t){return DemonStarWeaponArt.shots[t].width;}),blue:[26,27,28].map(function(t){return DemonStarWeaponArt.shots[t].height;})},phase:g.phase,score:g.score,stage:g.stage.id,elapsed:g.totalTime,bullets:g.bullets.length,shotsFired:g.shotsFired,playerX:g.player.x,lives:g.player.lives,energy:g.player.energy,bombs:g.player.bombs,releaseStops:g.player.x===releasedX&&g.shotsFired===releasedShots,assetsReady:!!renderer.pickups.naturalWidth,motionReady:!!renderer.playerMotion.naturalWidth,carriersReady:!!renderer.carriers.naturalWidth,soundbankReady:!!DemonStarSounds.missionStart,effectsReady:!!renderer.effects.naturalWidth,attacksReady:!!renderer.attacks.naturalWidth,enemyArtReady:renderer.enemyArtReady(),musicBackend:ms.backend,startupMusic:startupMusic,musicReady:ms.ready,musicTrack:StarfallApp.music.track,musicTime:ms.currentTime,musicError:StarfallApp.music.error,bankAfterRelease:g.player.bank,viewport:[innerWidth,innerHeight],frozenAfterProbe:true};
             // 通过真实设置控件切换三语，并确认暂停中的战斗状态不变。
             // Switch through the real settings control and verify paused combat is unchanged.
             var before=JSON.stringify({player:g.player,score:g.score,stage:g.stage.id,frame:g.frame});
-            document.getElementById('pause').click();document.getElementById('pause-settings').click();document.getElementById('settings-display').click();var languageChecks=[];
+            document.getElementById('pause').click();document.getElementById('pause-settings').click();document.getElementById('control-settings').click();
+            var fireMode=document.getElementById('fire-mode');fireMode.value='toggle';fireMode.dispatchEvent(new Event('change',{bubbles:true}));
+            if(StarfallApp.input.firing(0))throw new Error('Switching back to toggle revived old fire');
+            result.fireModeChecks={toggleSurvivesRelease:true,pausedSwitchToHoldStops:true,switchBackToToggleStaysOff:true,floatingDefault:StarfallApp.input.config.players[0].touch==='floating'};
+            StarfallApp.back();document.getElementById('settings-display').click();var languageChecks=[];
             // 两项血条独立，默认仅 Boss；开关不能改变战斗状态。
             // Health-bar switches are independent and default to Boss only, without changing combat.
             var regular=document.getElementById('health-toggle'),bossBar=document.getElementById('boss-health-toggle');
@@ -182,7 +195,7 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
           ['touchend','touchcancel'].forEach(function(type){document.addEventListener(type,function(e){Array.from(e.changedTouches).forEach(function(t){var h=held[t.identifier];if(h){holds[h.id]=Math.max(holds[h.id]||0,(performance.now()-h.at)/1000);if(type==='touchcancel')cancels++;delete held[t.identifier];}});},{passive:true});});
           setInterval(function(){var a=window.StarfallApp;if(!a)return;var g=a.game;if(g.phase==='playing'){g.recordEvents=[];g.enemies=[];g.bullets=[];g.players.forEach(function(p){p.invincible=999;});if(String(getSelection()))selected=true;}
             var rects={};['fire','bomb','joystick','fire-2','bomb-2','joystick-2'].forEach(function(id){var e=document.getElementById(id),r=e.getBoundingClientRect();rects[id]={x:r.x,y:r.y,w:r.width,h:r.height};});
-            window.touchProbeResult={phase:g.phase,players:(g.players||[]).map(function(p){return {x:p.x,shots:p.shotsFired,bombs:p.bombs};}),holds:holds,selected:selected,cancels:cancels,rects:rects,guard:getComputedStyle(document.querySelector('#fire b')).webkitUserSelect};
+            window.touchProbeResult={phase:g.phase,players:(g.players||[]).map(function(p){return {x:p.x,shots:p.shotsFired,bombs:p.bombs,fireMode:a.input.config.players[p.id-1].fireMode,latched:a.input.firing(p.id-1),touch:a.input.config.players[p.id-1].touch};}),holds:holds,selected:selected,cancels:cancels,rects:rects,guard:getComputedStyle(document.querySelector('#fire b')).webkitUserSelect};
           },100);
         })();
         """

@@ -5,6 +5,7 @@
 .stick-knob{position:absolute;left:27%;top:27%;width:46%;height:46%;border-radius:50%;border:1px solid #9ba9b766;background:radial-gradient(circle at 35% 25%,#7b8894,#343e4a 50%,#19232e 85%)}
 .touch-actions{position:absolute;z-index:2}.touch-actions .touch-badge{display:none}.cooperative .touch-badge{display:block;position:absolute;left:0;right:0;top:-22px;text-align:center;font:bold 14px monospace;color:#ff8888}.touch-actions[data-player='2'] .touch-badge{color:#80c8ff}
 .controls .touch-actions .fire-button{border-color:#bc5746;background:radial-gradient(circle at 35% 20%,#a74e40,#462021 72%);color:#fff0de}
+.controls .touch-actions .fire-button.held{background:radial-gradient(circle at 50% 65%,#e58245,#9c3a25 72%);border-color:#ffe2a2;box-shadow:inset 0 0 0 4px #53170b,inset 0 5px 12px #210904;filter:brightness(1.2)}
 .cooperative .weapon-status{display:none}.cooperative .stick-caption{top:100%;font-size:8px}.cooperative .action-buttons button b{font-size:20px}.cooperative .action-buttons button span{font-size:8px}
 .direction-pad{position:absolute;left:0;right:0;top:0;bottom:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr)}
 .controls .direction-pad button{width:100%;height:100%;border-radius:3px;font-size:18px;border:1px solid #6f82935c;background:#1f2b39e0;touch-action:none}.touch-stick[data-mode='dpad']{border:0;background:none;border-radius:0}.touch-stick[data-mode='dpad'] .stick-cross{display:none}
@@ -18,3 +19,15 @@
 .coop-player[data-player='2'] .hud-sprite.ship-icon,.coop-player[data-player='4'] .hud-sprite.ship-icon{background-image:url('assets/player2-motion-hd.png');background-size:1015.9420289855% 831.1111111111%;background-position:50% 91.4893617021%}
 .multiplayer #pause{left:50%;right:auto;transform:translateX(-50%);top:5px;width:30px;height:30px}.multiplayer #stage-label{left:50%;right:auto;transform:translateX(-50%);top:40px;white-space:nowrap}.multiplayer #boss-hud{top:calc(103 * var(--u));left:calc(105 * var(--u));right:calc(105 * var(--u))}
 .config-grid{display:grid;grid-template-columns:1fr 1fr;grid-gap:7px}.dialog .config-grid button{min-width:0;margin:0;padding:10px 5px;white-space:normal}.mapping-row{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #33404e;margin:4px 0;padding:4px 0}.mapping-row button{max-width:70%;font-size:10px!important;margin:0!important}.dialog-setting select{max-width:58%}.dialog-setting input[type='range']{max-width:50%}.save-row{border:1px solid #445161;padding:8px;margin:10px 0}.save-row p{font-size:11px}.input-note{min-height:20px;color:#ffdb8c!important}
+/* 三色条位于战场外的预留状态区，不改变原作生命/炸弹 HUD。 / Color banks use the reserved outside-field status area, preserving the classic life/bomb HUD. */
+#retained-power{position:absolute;left:8px;right:8px;bottom:calc(var(--control-height) + 24px);display:flex;justify-content:center;pointer-events:none;font:10px/1 monospace;color:#dde7ef}
+.color-bank{width:116px;max-width:46%;text-align:left}.color-bank+.color-bank{margin-left:auto}
+.bank-player{display:block;font-size:9px;color:#ed7569;height:11px}.color-bank[data-player='2'] .bank-player{color:#72bcf3}
+.bank-row{height:12px;display:flex;align-items:center;color:#d3b94e}.bank-color-1{color:#65b6f1}.bank-color-2{color:#ed6d62}
+.bank-row .gear-icon{width:12px;height:12px;margin:0 3px 0 0}.bank-color-0 .gear-icon{background-position:66.666667% 0}.bank-color-1 .gear-icon{background-position:100% 0}.bank-color-2 .gear-icon{background-position:0 25%}
+.bank-current{width:8px;color:transparent}.bank-row.equipped .bank-current{color:currentColor}.bank-row>b{margin-left:4px;font-size:9px}
+.bank-segments{display:flex}.bank-segments i{height:7px;width:7px;border:1px solid currentColor;margin-right:2px;opacity:.35}.bank-segments i.filled{background:currentColor;opacity:1}
+.retained-mode .weapon-status .weapon-row,.retained-mode .weapon-status #shield-label,.retained-mode .weapon-status #pickup-status{display:none}
+.retained-mode .weapon-status #aux-equipment{position:absolute;bottom:0;left:0;right:0}
+.screen[data-wide='true'] #retained-power{bottom:6px;justify-content:flex-start}.screen[data-wide='true'] .color-bank{width:calc(var(--field-x) - 16px);max-width:150px}
+.retained-mode[data-wide='true'] .weapon-status #aux-equipment{position:static}

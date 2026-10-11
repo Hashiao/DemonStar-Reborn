@@ -24,7 +24,7 @@
     if(config.role==='host'){
       if(step===1&&room.status==='lobby'){
         report('lobby',{code:room.code,startupBGM:true,startupMusic:startupMusic});if(room.members.length!==2)return;
-        clickLabel('lanStart');document.getElementById('new-run').click();document.getElementById('retain-levels').click();document.getElementById('setup-start').click();step=2;return;
+        clickLabel('lanStart');document.getElementById('retain-levels').click();document.getElementById('setup-start').click();step=2;return;
       }
       if(step===2&&g.phase==='playing'){
         g.recordEvents=[];g.enemies=[];g.players.forEach(function(p){p.invincible=999;});startX=p.x;step=3;return;
@@ -45,7 +45,7 @@
       // Wait until launch-event input cleanup finishes, matching the standard native probe.
       if(step===1&&g.phase==='playing'&&g.frame>=6){
         if(g.players.length!==2||room.localSlot!==2)throw new Error('Wrong client ownership');
-        startX=p.x;app.input.move(0,.5,0);app.input.touchFire(0,41,true);app.input.pulse(0,'bomb');step=2;return;
+        startX=p.x;app.input.move(0,.5,0);app.input.setFireMode(0,'hold');app.input.touchFire(0,41,true);app.input.pulse(0,'bomb');step=2;return;
       }
       if(step===2&&g.phase==='paused'&&p.rear===4&&g.difficulty===3){
         if(!g.retainWeaponLevels||p.weaponLevels.join(',')!=='6,1,0')throw new Error('Retained color state not synchronized');

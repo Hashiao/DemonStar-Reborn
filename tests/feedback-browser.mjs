@@ -9,7 +9,7 @@ page.on('pageerror',e=>errors.push(String(e)));
 try{
   await page.goto(process.env.GAME_URL||'http://127.0.0.1:4174');await page.waitForFunction(()=>StarfallApp.renderer.effects.naturalWidth);
   await page.evaluate(()=>{globalThis.played=[];const sample=StarfallAudio.prototype.sample;StarfallAudio.prototype.sample=function(...args){const s=sample.apply(this,args);if(s)played.push(args[0]);return s;};});
-  await page.locator('#start').tap();await page.locator('#new-run').click();await page.evaluate(()=>{played=[];});await page.locator('#setup-start').click();
+  await page.locator('#start').tap();await page.evaluate(()=>{played=[];StarfallApp.input.setFireMode(0,'hold');});await page.locator('#setup-start').click();
   await page.evaluate(()=>{const g=StarfallApp.game;g.recordEvents=[];g.enemies=[];g.player.invincible=999;});
   await page.waitForFunction(()=>StarfallApp.music.audio.currentTime>.2&&!StarfallApp.music.audio.paused);
   assert.equal(await page.evaluate(()=>StarfallApp.music.track),'MDS_PHASER');

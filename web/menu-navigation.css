@@ -11,6 +11,20 @@
 #dialog-content .dialog-setting{gap:12px}
 #dialog-content .dialog-setting select{max-width:62%}
 #dialog-content p{overflow-wrap:break-word}
+/* 一页选择关卡、难度和读档，避免逐级进入开局菜单。 / Stage, difficulty and load controls share one setup page. */
+.quick-setup .dialog-card{padding:20px;max-width:560px;margin:auto}
+.quick-setup #dialog-tag{display:none}.quick-setup h2{font-size:24px;margin:0 0 14px}
+.quick-setup .dialog-setting{margin:0;padding:9px 0;border-bottom:1px solid #354448;font-size:13px;min-height:44px}
+.quick-setup .dialog-setting select{min-height:36px;font-size:12px}
+.quick-setup .dialog-setting button{padding:8px 12px;margin:0;min-height:36px}
+.quick-setup .setup-hint{font-size:11px;margin:8px 0;line-height:1.4}
+.quick-setup #setup-start{margin:10px 0 8px}
+.setup-load-row{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-gap:5px 8px;margin-top:6px}
+.setup-load-row label{grid-column:1 / -1;font-size:12px}.setup-load-row select{min-width:0;width:100%;font-size:11px}
+.setup-load-row button{margin:0!important;min-height:36px;padding:7px 10px!important;font-size:12px!important}
+.quick-setup #dialog-buttons{margin-top:6px}.quick-setup #dialog-buttons button{margin:0;padding:8px;min-height:36px}
+#setup-note:empty{display:none}#setup-note{font-size:11px;color:#ffd66b}
+@media(orientation:landscape) and (max-height:560px){.quick-setup .dialog-card{max-width:740px;padding:12px 18px}.quick-setup .setup-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-gap:0 18px;align-items:center}.quick-setup h2{font-size:20px;margin-bottom:4px}.quick-setup .setup-hint{grid-column:1 / -1}.quick-setup .setup-load-row{grid-row:4;grid-column:2}.quick-setup #setup-start{grid-row:4;grid-column:1;margin:0}.quick-setup #setup-note{grid-column:1 / -1}}
 @media(orientation:landscape) and (max-height:560px){
   .menu .menu-bottom{position:absolute;top:50%;left:52%;right:15px;transform:translateY(-50%);margin:0}
   .menu .menu-primary .primary{min-height:40px;font-size:19px;padding:6px 0}

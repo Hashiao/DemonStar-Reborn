@@ -26,7 +26,7 @@ async function bounds(page){
 async function resetArena(page){await page.waitForFunction(()=>StarfallApp.game.phase==='playing');await page.evaluate(()=>{const g=StarfallApp.game;g.recordEvents=[];g.enemies=[];g.bullets=[];g.player.invincible=100;});}
 try{
   const desktop=await browser.newContext({locale:'zh-CN',viewport:{width:1280,height:900}}),page=await open(desktop);
-  await page.locator('#start').click();await finishSetup(page);await resetArena(page);await page.waitForTimeout(200);
+  await page.locator('#start').click();await finishSetup(page,{fixed:true});await resetArena(page);await page.waitForTimeout(200);
   await page.waitForFunction(()=>audioEvents.includes('missionStart'));assert.equal(await page.evaluate(()=>audioEvents.filter(x=>x==='missionStart').length),1);
   assert.equal(await page.evaluate(()=>StarfallApp.game.shotsFired),0);
   await page.keyboard.down('z');await page.keyboard.down('ArrowRight');await page.waitForTimeout(250);await page.keyboard.up('z');await page.keyboard.up('ArrowRight');
@@ -41,7 +41,7 @@ try{
   await page.evaluate(()=>{StarfallApp.game.addBullet(200,210,0,-400,true,5000);});await page.waitForFunction(()=>audioEvents.includes('explosion'));
   report.push({surface:'desktop',keyboardFire:true,movement:true,pause:true,bomb:true,missionVoiceOnce:true,enemyHitSound:true,explosionSound:true});
   const mobile=await browser.newContext({locale:'zh-CN',viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true}),phone=await open(mobile);
-  await phone.screenshot({path:'artifacts/mobile-menu.png'});await phone.locator('.title h2').tap();assert.equal(await phone.evaluate(()=>StarfallApp.game.phase),'menu');await phone.locator('#start').tap();await finishSetup(phone);await resetArena(phone);
+  await phone.screenshot({path:'artifacts/mobile-menu.png'});await phone.locator('.title h2').tap();assert.equal(await phone.evaluate(()=>StarfallApp.game.phase),'menu');await phone.locator('#start').tap();await finishSetup(phone,{fixed:true});await resetArena(phone);
   assert.equal(await phone.locator('#lives .ship-icon').count(),3);assert.equal(await phone.locator('#energy .filled').count(),16);assert.equal(await phone.locator('#bomb-stock i').count(),3);
   // Real simultaneous touch contacts: joystick movement and A held together.
   const session=await mobile.newCDPSession(phone),stick=await phone.locator('#joystick').boundingBox(),fire=await phone.locator('#fire').boundingBox();
@@ -76,7 +76,7 @@ try{
     // Deleting Chromium's constructor alone does not stop its native pointer stream.
     // Old WebKit emits only touch events, so suppress trusted native pointer events here.
     for(const name of ['pointerdown','pointermove','pointerup','pointercancel'])document.addEventListener(name,e=>{if(e.isTrusted)e.stopImmediatePropagation();},true);
-  });const old=await open(legacy);await old.locator('#start').tap();await finishSetup(old);await resetArena(old);
+  });const old=await open(legacy);await old.locator('#start').tap();await finishSetup(old,{fixed:true});await resetArena(old);
   const touch=(name,end=false)=>old.evaluate(({name,end})=>{
     const ids=['joystick','fire'];for(let i=0;i<ids.length;i++){const el=document.getElementById(ids[i]),r=el.getBoundingClientRect(),ev=new Event(name,{bubbles:true,cancelable:true});Object.defineProperty(ev,'changedTouches',{value:[{identifier:i+8,target:el,clientX:r.x+r.width*(i?.5:.8),clientY:r.y+r.height*.5}]});el.dispatchEvent(ev);}
   },{name,end});

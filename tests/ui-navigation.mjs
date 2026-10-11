@@ -11,7 +11,8 @@ export async function setting(page,id){
  }
  throw new Error('Setting not reachable: '+id);
 }
-export async function finishSetup(page){await page.locator('#new-run').click();await page.locator('#setup-start').click();}
+// 既有按住/固定摇杆用例显式选择兼容模式；新默认由独立回归覆盖。 / Legacy hold/fixed regressions opt in; separate tests cover the new defaults.
+export async function finishSetup(page,{fixed=false}={}){await page.evaluate(fixed=>{for(let i=0;i<2;i++){StarfallApp.input.setFireMode(i,'hold');if(fixed)StarfallApp.input.config.players[i].touch='fixed';}},fixed);await page.locator('#setup-start').click();}
 export async function routedButton(page,name){
  const button=page.getByRole('button',{name,exact:true});
  for(let i=0;i<5&&!await button.count();i++)await page.keyboard.press('Escape');

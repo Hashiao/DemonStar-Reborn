@@ -5,6 +5,10 @@
   // 繁体文案独立编写，不自动转字；数组顺序固定为简中、繁中、英文。
   // Traditional Chinese is authored separately; column order is Hans, Hant, English.
   const copy={
+    stageChoice:['关卡','關卡','Stage'],chooseStage:['选择关卡','選擇關卡','Choose stage'],retainShortHint:['三色分别升级，死亡清空。','三色各自升級，死亡清空。','Each color levels separately; death resets all three.'],
+    fireMode:['开火方式','射擊方式','Fire mode'],fireModetoggle:['切换开火','切換射擊','Toggle fire'],fireModehold:['按住开火','按住射擊','Hold to fire'],
+    fireModeHint:['切换：按一下持续开火，再按一下停止。暂停后保留；死亡、换关或切换方式后需重新激活。适用于触屏、键盘、鼠标和手柄。','切換：按一下持續射擊，再按一下停止。暫停後保留；死亡、換關或切換方式後須重新啟動。適用於觸控、鍵盤、滑鼠及控制器。','Toggle: press once to keep firing, again to stop. Pause preserves it; death, a new stage or changing mode resets it. Applies to touch, keyboard, mouse and controller.'],
+    fireModeAria:['玩家 {n} 开火，{mode}，{state}','玩家 {n} 射擊，{mode}，{state}','Player {n} fire, {mode}, {state}'],colorLevel:['{name} {n}/6 级','{name} {n}/6 級','{name} level {n}/6'],equippedWeapon:['当前武器','目前武器','Equipped'],
     back:['返回','返回','Back'],apply:['应用','套用','Apply'],difficultyLabel:['难度','難度','Difficulty'],audioSettings:['声音与震动','聲音與震動','Sound and vibration'],displaySettings:['画面与界面','畫面與介面','Display and interface'],rulesSettings:['游戏规则','遊戲規則','Game rules'],
     prepareRun:['出击准备','出擊準備','Prepare to launch'],startBeginning:['从头开始','從頭開始','Start from stage 1'],launchRun:['开始游戏','開始遊戲','Launch'],loadGame:['读取存档','讀取存檔','Load game'],saveGame:['保存关卡','儲存關卡','Save stage'],adjustDifficulty:['调整难度','調整難度','Change difficulty'],
     difficultyLiveHint:['应用后继续当前战斗，保留生命、装备与分数。敌弹伤害和后续开火等规则使用新难度。','套用後繼續目前戰鬥，保留生命、裝備與分數。敵彈傷害及後續射擊等規則會採用新難度。','Apply to the current battle without resetting lives, equipment or score. Enemy hit damage and subsequent firing use the new difficulty.'],
@@ -45,7 +49,7 @@
     introNoteHtml:['原版地图编排 · AI 高清重绘<br>非官方恶魔之星高清重制','原作關卡配置・AI 高畫質重繪<br>非官方惡魔之星重製版','Original stage layouts · AI-redrawn art<br>Unofficial DemonStar HD remake'],
     howTo:['操作指南','操作說明','How to play'],
     gameAria:['恶魔之星重生游戏','惡魔之星重生遊戲','DemonStar Reborn game'],
-    fieldAria:['飞行战场，左摇杆移动，按住 A 开火，B 释放炸弹','飛行戰場：左側搖桿移動，按住 A 射擊，按 B 使用炸彈','Battlefield. Move with the left stick, hold A to fire, press B for a bomb.'],
+    fieldAria:['飞行战场，左摇杆移动，A 切换开火，B 释放炸弹','飛行戰場：左側搖桿移動，A 切換射擊，按 B 使用炸彈','Battlefield. Move with the left stick, press A to toggle fire, press B for a bomb.'],
     score:['得分 {n}','分數 {n}','Score {n}'],
     lives:['剩余 {n} 条生命，备用战机 {spares} 架','剩餘生命 {n}，備用戰機 {spares} 架','Lives: {n}. Spare ships: {spares}.'],
     stage:['关卡 {n}','第 {n} 關','Stage {n}'],
@@ -79,7 +83,7 @@
     launch:['母舰出击中','正從母艦起飛','Launching from carrier'],
     move:['移动','移動','Move'],fire:['开火','射擊','Fire'],bombLabel:['炸弹','炸彈','Bomb'],
     joystickAria:['移动摇杆','移動搖桿','Movement stick'],
-    fireAria:['A 按住开火','A 按住射擊','A: hold to fire'],
+    fireAria:['A 切换开火','A 切換射擊','A: toggle fire'],
     bombAria:['B 释放炸弹，剩余 {n} 枚','B 使用炸彈，剩餘 {n} 枚','B: use a bomb. Remaining: {n}.'],
     gearMissile:['导弹 {n}','飛彈 {n}','Missiles {n}'],gearHoming:['追踪 {n}','追蹤彈 {n}','Homing {n}'],
     gearSide:['侧射 {n}','側向砲 {n}','Side guns {n}'],gearRear:['后射 {n}','後方砲 {n}','Rear guns {n}'],gearShield:['护盾','護盾','Shield'],
@@ -94,9 +98,9 @@
     quitBody:['最高分与已解锁关卡会保留，本次战斗进度将结束。','最高分數和已解鎖關卡會保留，但這次出擊的進度將會結束。','Your best score and unlocked stages are saved. This flight will end.'],
     quit:['结束并返回','結束並返回','End flight'],helpTag:['游戏说明','遊戲說明','How to play'],helpTitle:['飞行指南','飛行指南','Flight guide'],ready:['准备起飞','準備出擊','Ready to fly'],
     guideHtml:[
-      '<li><b>移动</b>　左侧虚拟摇杆移动；<span class="keyboard-help">电脑使用 WASD 或方向键。</span>按住右侧 A 开火，松开停止；<span class="keyboard-help">电脑按住 Z / J。</span></li><li><b>炸弹</b>　点击右侧 B <span class="keyboard-help">或按空格。</span>清除弹幕并对 Boss 造成伤害。</li><li><b>补给</b>　默认规则下，彩色球同色升档、换色回最低档；三色 S 直接满火力，满级再吃 S 或同色球触发清屏弹。E 补满能量，晶体恢复 2 格，M 导弹，B 炸弹。部分补给循环换色，接触拾取。</li><li><b>躲避</b>　避开敌机与弹幕，装甲耗尽会损失生命并重置火力。</li><li><b>暂停</b>　点击 Ⅱ <span class="keyboard-help">或按 Esc / P。</span>切到后台会自动暂停。</li>',
-      '<li><b>移動</b>　用左側搖桿操控戰機，按住右側 A 射擊，放開就停止。<span class="keyboard-help">電腦可用 WASD 或方向鍵移動，按住 Z / J 射擊。</span></li><li><b>炸彈</b>　按右側 B <span class="keyboard-help">或空白鍵，</span>消除彈幕並重創首領。</li><li><b>補給</b>　預設規則下，連吃同色能量球可強化火力，換色則從最低等級開始。三色 S 可直接升滿；滿級後再吃同色球或 S，就能發動清場攻擊。E 補滿能量，晶體回復 2 格，M 補充飛彈，B 補充炸彈。部分道具會輪流換色，碰到就能取得。</li><li><b>閃避</b>　避開敵機和彈幕。裝甲耗盡會損失一條命，火力也會重置。</li><li><b>暫停</b>　按 Ⅱ <span class="keyboard-help">或 Esc / P。</span>切換到其他 App 時，遊戲會自動暫停。</li>',
-      '<li><b>Move</b>　Use the left stick. Hold A to fire; release to stop. <span class="keyboard-help">On a keyboard, move with WASD or the arrow keys and hold Z / J to fire.</span></li><li><b>Bombs</b>　Press B <span class="keyboard-help">or Space</span> to clear bullets and damage enemies.</li><li><b>Pickups</b>　Matching colored orbs increase power; classic rules reset power when changing color. A colored S gives full power. At maximum power, another matching orb or S unleashes a screen attack. E restores all energy, crystals restore 2 bars, M adds missiles, and B adds a bomb. Some pickups cycle colors. Touch them to collect.</li><li><b>Dodge</b>　Avoid enemies and bullets. Losing all armor costs a life and resets your weapons.</li><li><b>Pause</b>　Press Ⅱ <span class="keyboard-help">or Esc / P.</span> Switching to another app pauses the game automatically.</li>'
+      '<li><b>移动</b>　左侧虚拟摇杆移动；<span class="keyboard-help">电脑使用 WASD 或方向键。</span>点按右侧 A 切换持续开火；<span class="keyboard-help">电脑按 Z / J。</span>设置可改为按住开火。暂停后保留开火状态，死亡或换关后需重新激活。</li><li><b>炸弹</b>　点击右侧 B <span class="keyboard-help">或按空格。</span>清除弹幕并对 Boss 造成伤害。</li><li><b>补给</b>　默认规则下，彩色球同色升档、换色回最低档；三色 S 直接满火力，满级再吃 S 或同色球触发清屏弹。E 补满能量，晶体恢复 2 格，M 导弹，B 炸弹。部分补给循环换色，接触拾取。</li><li><b>躲避</b>　避开敌机与弹幕，装甲耗尽会损失生命并重置火力。</li><li><b>暂停</b>　点击 Ⅱ <span class="keyboard-help">或按 Esc / P。</span>切到后台会自动暂停。</li>',
+      '<li><b>移動</b>　用左側搖桿操控戰機，按右側 A 切換持續射擊。<span class="keyboard-help">電腦可用 WASD 或方向鍵移動，按 Z / J 射擊。</span>設定可改為按住射擊。暫停後保留射擊狀態，死亡或換關後須重新啟動。</li><li><b>炸彈</b>　按右側 B <span class="keyboard-help">或空白鍵，</span>消除彈幕並重創首領。</li><li><b>補給</b>　預設規則下，連吃同色能量球可強化火力，換色則從最低等級開始。三色 S 可直接升滿；滿級後再吃同色球或 S，就能發動清場攻擊。E 補滿能量，晶體回復 2 格，M 補充飛彈，B 補充炸彈。部分道具會輪流換色，碰到就能取得。</li><li><b>閃避</b>　避開敵機和彈幕。裝甲耗盡會損失一條命，火力也會重置。</li><li><b>暫停</b>　按 Ⅱ <span class="keyboard-help">或 Esc / P。</span>切換到其他 App 時，遊戲會自動暫停。</li>',
+      '<li><b>Move</b>　Use the left stick. Press A to toggle continuous fire. Settings also offer hold-to-fire. Pause preserves firing; death or a new stage resets it. <span class="keyboard-help">On a keyboard, move with WASD or the arrow keys and press Z / J to fire.</span></li><li><b>Bombs</b>　Press B <span class="keyboard-help">or Space</span> to clear bullets and damage enemies.</li><li><b>Pickups</b>　Matching colored orbs increase power; classic rules reset power when changing color. A colored S gives full power. At maximum power, another matching orb or S unleashes a screen attack. E restores all energy, crystals restore 2 bars, M adds missiles, and B adds a bomb. Some pickups cycle colors. Touch them to collect.</li><li><b>Dodge</b>　Avoid enemies and bullets. Losing all armor costs a life and resets your weapons.</li><li><b>Pause</b>　Press Ⅱ <span class="keyboard-help">or Esc / P.</span> Switching to another app pauses the game automatically.</li>'
     ],
     guideFooterHtml:['原作 18 关地图 · 4 档难度 · 离线存档<br>非官方 DemonStar 同人重制 · v{version}','原作 18 關・4 種難度・離線儲存<br>非官方 DemonStar 同人重製 · v{version}','18 original stages · 4 difficulties · Offline saves<br>Unofficial DemonStar fan remake · v{version}'],
     campaign:['原版战役','原作戰役','Original campaign'],missionTitle:['选择出击点','選擇出擊關卡','Choose a stage'],

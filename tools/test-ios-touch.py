@@ -19,6 +19,7 @@ for tested in standard['devices']:
    suffix='-2' if index else ''
    assert all(data['holds'].get(key+suffix,0)>=1.3 for key in ['fire','bomb','joystick']),data
    assert data['players'][index]['shots']>8 and data['players'][index]['bombs']==2,data
+   assert data['players'][index]['fireMode']=='toggle' and data['players'][index]['touch']=='floating' and data['players'][index]['latched'] is False,data
   reports.append({'family':family,'runtime':tested['runtime'],'players':count,'probe':data})
-result={'status':'passed','input':'XCTest system press(forDuration: 1.6), not DOM event injection','devices':reports,'physical_device_tested':False}
+result={'status':'passed','input':'XCTest system 1.6-second presses, floating-stick drag and fire re-tap; not DOM event injection','devices':reports,'physical_device_tested':False}
 (out/'ios-touch-verification.json').write_text(json.dumps(result,indent=2));print(json.dumps(result))

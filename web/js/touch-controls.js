@@ -25,20 +25,20 @@
           if(this.input.config.players[i].touch==='floating'){const screen=$('screen').getBoundingClientRect();stick.style.left=e.clientX-screen.left-rect.width/2+'px';stick.style.top=e.clientY-screen.top-rect.height/2+'px';}
           this.capture(e.currentTarget,e.pointerId);this.move(group,e);
         };stick.addEventListener('pointerdown',down);zone.addEventListener('pointerdown',down);
-        group.fire.addEventListener('pointerdown',e=>{if(!this.active())return;e.preventDefault();this.unlock();this.input.touchFire(i,e.pointerId,true);group.fire.classList.add('held');this.capture(group.fire,e.pointerId);});
+        group.fire.addEventListener('pointerdown',e=>{if(!this.active())return;e.preventDefault();this.unlock();this.input.touchFire(i,e.pointerId,true);group.fire.classList.toggle('held',this.input.firing(i));this.capture(group.fire,e.pointerId);});
         group.fire.addEventListener('click',e=>{if(e.detail===0&&this.active())this.input.pulse(i,'fire');});
         group.bomb.addEventListener('pointerdown',e=>{if(!this.active())return;e.preventDefault();this.unlock();this.input.pulse(i,'bomb');});
         group.bomb.addEventListener('click',e=>{if(e.detail===0&&this.active())this.input.pulse(i,'bomb');});
       }
       window.addEventListener('pointermove',e=>{if(!this.active())return;for(const g of this.groups)if(g.pointer===e.pointerId){this.move(g,e);e.preventDefault();}},{passive:false});
-      for(const type of ['pointerup','pointercancel','lostpointercapture'])window.addEventListener(type,e=>{for(const g of this.groups){const owned=g.pointer===e.pointerId||this.input.states[g.index].fire.has(e.pointerId);if(g.pointer===e.pointerId){g.pointer=null;this.input.move(g.index,0,0);g.knob.style.transform='translate(0,0)';g.stick.style.left=g.home.x+'px';g.stick.style.top=g.home.y+'px';}this.input.touchFire(g.index,e.pointerId,false);g.fire.classList.toggle('held',this.input.states[g.index].fire.size>0);if(type==='pointercancel'&&owned)this.input.states[g.index].firePulse=false;}});
+      for(const type of ['pointerup','pointercancel','lostpointercapture'])window.addEventListener(type,e=>{for(const g of this.groups){const owned=g.pointer===e.pointerId||this.input.states[g.index].fire.has(e.pointerId);if(g.pointer===e.pointerId){g.pointer=null;this.input.move(g.index,0,0);g.knob.style.transform='translate(0,0)';g.stick.style.left=g.home.x+'px';g.stick.style.top=g.home.y+'px';}this.input.touchFire(g.index,e.pointerId,false);g.fire.classList.toggle('held',this.input.firing(g.index));if(type==='pointercancel'&&owned)this.input.states[g.index].firePulse=false;}});
     }
     capture(el,id){try{el.setPointerCapture(id);}catch{/* 旧 WebKit 合成事件 / Legacy WebKit synthetic events. */}}
     move(g,e){const radius=g.stick.getBoundingClientRect().width*.36;let x=(e.clientX-g.center.x)/radius,y=(e.clientY-g.center.y)/radius,length=Math.hypot(x,y);
       if(length<.12)x=y=0;else if(this.input.config.players[g.index].touch==='dpad'){const angle=Math.round(Math.atan2(y,x)/(Math.PI/4))*Math.PI/4;x=Math.cos(angle);y=Math.sin(angle);}else if(length>1){x/=length;y/=length;}
       this.input.move(g.index,x,y);g.knob.style.transform=`translate(${x*radius*.65}px,${y*radius*.65}px)`;
     }
-    clear(){for(const g of this.groups){g.pointer=null;g.knob.style.transform='translate(0,0)';g.fire.classList.remove('held');}if(this.lastLayout)this.layout(this.lastLayout);}
+    clear(){for(const g of this.groups){g.pointer=null;g.knob.style.transform='translate(0,0)';g.fire.classList.toggle('held',this.input.firing(g.index));}if(this.lastLayout)this.layout(this.lastLayout);}
     layout(layout){
       this.lastLayout=layout;const {w,h,wide,x:fieldX}=layout,cooperative=this.input.count>1,controls=$('controls');controls.classList.toggle('cooperative',cooperative);$('screen').classList.toggle('multiplayer',(this.partyCount||this.input.count)>1);
       const height=Math.min(180,Math.max(124,h*.19));
@@ -49,6 +49,7 @@
         else if(cooperative){const half=w/2;zone={x:i*half+4,y:h-height+15,w:half*.58,h:height-28};buttonSize=Math.min(48,Math.max(36,half*.24));actionX=(i+1)*half-buttonSize-8;actionY=h-height+20;vertical=true;}
         else if(wide){zone={x:4,y:h*.46,w:Math.max(104,fieldX-8),h:h*.49-12};buttonSize=Math.min(68,Math.max(48,w*.145));actionX=w-Math.max(10,(fieldX-buttonSize)/2)-buttonSize;actionY=h*.43-buttonSize/2;vertical=true;}
         else{zone={x:8,y:h-height+8,w:w*.49-12,h:height-20};buttonSize=Math.min(68,Math.max(48,w*.145));actionX=w-Math.max(18,w*.055)-buttonSize*2-24;actionY=h-height+29;}
+        if(wide&&this.showBanks)zone.h=Math.max(72,zone.h-56);
         const size=Math.min(zone.w-8,zone.h-8,(cooperative?86:120)*c.size),sx=zone.x+4+(zone.w-size-8)*c.stickX,sy=zone.y+4+(zone.h-size-8)*c.stickY;g.home={x:sx,y:sy};
         Object.assign(g.stick.style,{left:sx+'px',top:sy+'px',width:size+'px',height:size+'px'});Object.assign(g.zone.style,{left:zone.x+'px',top:zone.y+'px',width:zone.w+'px',height:zone.h+'px'});
         Object.assign(g.actions.style,{left:actionX+'px',right:'auto',top:actionY+'px',flexDirection:vertical?'column-reverse':'row'});
@@ -58,7 +59,7 @@
       this.localize();
     }
     localize(){const t=DemonStarI18n.t;for(const g of this.groups){const id=(this.localSlot||1)+g.index;g.stick.setAttribute('aria-label',t('playerControls',{n:id}));g.zone.setAttribute('aria-label',t('floatingArea',{n:id}));g.actions.querySelector('.touch-badge').textContent=String(id);for(const b of g.pad.querySelectorAll('button'))b.setAttribute('aria-label',t('direction'+b.dataset.direction));}}
-    update(game){for(const g of this.groups){const id=(this.localSlot||1)+g.index,p=game.playerById(id),multi=(this.partyCount||this.input.count)>1;g.fire.disabled=!p||game.phase!=='playing'||p.lives<=0||p.respawn>0;g.bomb.disabled=g.fire.disabled||!p.bombs||p.bombCooldown>1e-9;g.fire.setAttribute('aria-label',DemonStarI18n.t(multi?'playerFire':'fireAria',{n:id}));g.bomb.setAttribute('aria-label',DemonStarI18n.t(multi?'playerBomb':'bombAria',{n:multi?id:p?.bombs||0,b:p?.bombs||0}));if(g.index)$('bomb-count-2').textContent=String(p?.bombs||0);}}
+    update(game){for(const g of this.groups){const id=(this.localSlot||1)+g.index,p=game.playerById(id),multi=(this.partyCount||this.input.count)>1;g.fire.disabled=!p||game.phase!=='playing'||p.lives<=0||p.respawn>0;g.bomb.disabled=g.fire.disabled||!p.bombs||p.bombCooldown>1e-9;const firing=this.input.firing(g.index),mode=this.input.config.players[g.index].fireMode;g.fire.classList.toggle('held',firing);g.fire.setAttribute('aria-pressed',String(firing));g.fire.setAttribute('aria-label',DemonStarI18n.t('fireModeAria',{n:id,mode:DemonStarI18n.t('fireMode'+mode),state:DemonStarI18n.t(firing?'on':'off')}));g.bomb.setAttribute('aria-label',DemonStarI18n.t(multi?'playerBomb':'bombAria',{n:multi?id:p?.bombs||0,b:p?.bombs||0}));if(g.index)$('bomb-count-2').textContent=String(p?.bombs||0);}}
   }
   globalThis.DemonStarTouchControls=TouchControls;
 })();

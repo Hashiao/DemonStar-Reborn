@@ -26,7 +26,7 @@ final class TouchTests: XCTestCase {
             app.launch(); XCTAssertTrue(app.staticTexts["touch-probe"].waitForExistence(timeout: 25))
             wait { state()["phase"] as? String == "menu" }
             if count == 2 { tap("Multiplayer"); tap("Two players · same device") } else { tap("Single player") }
-            tap("Start from stage 1"); tap("Launch")
+            tap("Launch")
             wait { state()["phase"] as? String == "playing" }
             XCTAssertEqual((state()["players"] as? [[String: Any]])?.count, count)
             for index in 0..<count {
@@ -34,7 +34,17 @@ final class TouchTests: XCTestCase {
                 let before = (state()["players"] as! [[String: Any]])[index]["x"] as! Double
                 for key in ["fire", "bomb", "joystick"] {
                     let id = key + suffix, rect = (state()["rects"] as! [String: [String: Double]])[id]!
-                    app.webViews.firstMatch.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: rect["x"]! + rect["w"]! * (key == "joystick" ? 0.8 : 0.5), dy: rect["y"]! + rect["h"]! * 0.5)).press(forDuration: 1.6)
+                    let point = app.webViews.firstMatch.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: rect["x"]! + rect["w"]! * 0.5, dy: rect["y"]! + rect["h"]! * 0.5))
+                    if key == "joystick" {
+                        point.press(forDuration: 1.6, thenDragTo: point.withOffset(CGVector(dx: 38, dy: 0)))
+                    } else { point.press(forDuration: 1.6) }
+                    if key == "fire" {
+                        wait { ((state()["players"] as? [[String: Any]])?[index]["latched"] as? Bool) == true }
+                        let shots = (state()["players"] as! [[String: Any]])[index]["shots"] as! Int
+                        wait { ((state()["players"] as? [[String: Any]])?[index]["shots"] as? Int ?? 0) > shots }
+                        point.tap()
+                        wait { ((state()["players"] as? [[String: Any]])?[index]["latched"] as? Bool) == false }
+                    }
                     wait { ((state()["holds"] as? [String: Double])?[id] ?? 0) >= 1.3 }
                     XCTAssertEqual(state()["selected"] as? Bool, false)
                     XCTAssertFalse(app.menuItems["Copy"].exists)
@@ -43,6 +53,8 @@ final class TouchTests: XCTestCase {
                 XCTAssertGreaterThan(player["x"] as! Double, before)
                 XCTAssertGreaterThan(player["shots"] as! Int, 8)
                 XCTAssertEqual(player["bombs"] as! Int, 2)
+                XCTAssertEqual(player["fireMode"] as? String, "toggle")
+                XCTAssertEqual(player["touch"] as? String, "floating")
             }
             XCTAssertEqual(state()["guard"] as? String, "none")
             let screenshot = XCTAttachment(screenshot: app.screenshot()); screenshot.lifetime = .keepAlways; add(screenshot)
