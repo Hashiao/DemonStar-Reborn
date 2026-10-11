@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- 2026-10-11 波次取证：当前遗漏地图 `record[7]` 的人数/难度出场条件。补给载机不是一律留左，也不是随机左右，更不能把所有对称敌机砍半；按固定记录的 0x04/0x08 条件处理。已核对金标第 1/3 分集和原程序，见 `docs/WAVE_SPAWN_AUDIT_2026_10_11.md`。本轮仅定位，尚未修复；不据此改变 HP/伤害或宣称十八关完整波次已验收。
+  Spawn audit on 2026-10-11: the current implementation omits player/difficulty conditions in map `record[7]`. Supply carriers are not always left-only or randomly sided; never halve every symmetric formation. Follow each fixed placement's 0x04/0x08 conditions. Reference parts 1/3 and native-code evidence are in `docs/WAVE_SPAWN_AUDIT_2026_10_11.md`. This is diagnosis only, not a fix, HP/damage authorization or full eighteen-stage wave certification.
+
 - 关卡编辑器规划（2026-10-11）：面向非程序员，内置 18 关可直接加载并复制为独立自定义作品，原作关卡不可覆盖，副本修改不得影响共用模板或其他作品。当前仅固化方案，不启动开发；完整流程、现有加载/存档/联机约束及验收见 `docs/LEVEL_EDITOR_PLAN.md`。完整编辑设备范围、自定义 HP/速度/炮火数值权限仍待确认；记录文档不代表解除原作参数冻结。当前玩法仍限单人/双人。
   Level editor plan (2026-10-11): serve non-programmers by loading any of the eighteen built-in stages and copying it into an independent custom work. Originals cannot be overwritten, and edits must not mutate shared templates or other works. Record the plan only, without starting implementation; see `docs/LEVEL_EDITOR_PLAN.md` for workflow, loading/save/network constraints and acceptance. Full-editing device coverage and custom HP/speed/firing permissions remain pending; documenting the proposal does not lift original parameter freezes. Public play remains solo/two-player.
 

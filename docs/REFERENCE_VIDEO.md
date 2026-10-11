@@ -70,3 +70,13 @@ This is explicit representative-frame coverage, not a frame-by-frame certificati
 2026-10-10：通过原网页视频播放器定位并实际查看 P3 238、241、243、243.25、243.5、244、244.25、244.75、245.25、245.5、246、246.5、247 秒帧。确认初始多点爆炸后仍有原大小受损机体，侧上漂移后发生最终爆炸；不采用先前泛化的侧翻或默认透视缩小。只读模板匹配支持相同尺度，详见 [M2.10 表现记录](M2_10_PRESENTATION.md)。截图仅位于忽略目录；未下载整段视频，未把采样称作全程逐帧验收。
 
 On 2026-10-10, the original webpage video player was used to seek and inspect the listed P3 frames. Initial multi-point blasts leave a constant-size damaged hull, followed by sideways/upward drift and a final blast. This corrects the earlier generalized roll/default perspective shrink. Read-only template matching supports the unchanged scale, as detailed in the linked record. Screenshots remain ignored; no full video was downloaded and sampling is not called complete frame-by-frame review.
+
+## 2026-10-11 单双人补给波次审计 / Supply-wave audit
+
+本轮通过网页播放器定位截图并实际查看下列时刻：P1 为 40、44、48、49.5、50、50.5、51、52、54、56、72、73.5、74、75、98、99、100、104、106、127、166、170 秒；P3 为 11、13、15、49、51、52、53、54、55、56、57 秒。P1 的 40 秒复用先前缓存，其余列出的画面本轮重新从播放器采集。其他已采集但未逐张审看的帧不计入审看范围。
+
+This audit inspected player screenshots at P1: 40, 44, 48, 49.5, 50, 50.5, 51, 52, 54, 56, 72, 73.5, 74, 75, 98, 99, 100, 104, 106, 127, 166 and 170 seconds; P3: 11, 13, 15, 49, 51, 52, 53, 54, 55, 56 and 57 seconds. P1 40 s reuses a prior capture; the other listed frames were freshly captured from the player. Captured but uninspected frames are excluded.
+
+确认 P1 50.5–51 秒左侧金色载机、74–75 秒左侧橙色载机、104 秒右侧橙色载机，以及 P3 53–56 秒右侧金色载机。结合本地程序 `0x42d731–0x42d7a1` 与地图记录，侧别由固定放置决定，不能一律砍掉右侧或随机保留一侧。仅抽查两个分集，不是十八关全程验收；没有直接审看难度选择菜单。详见 [波次定位报告](WAVE_SPAWN_AUDIT_2026_10_11.md)。
+
+Confirmed a left gold carrier at P1 50.5–51 s, left orange at 74–75 s, right orange at 104 s and right gold at P3 53–56 s. The native branch and map records establish fixed-placement eligibility, not blanket removal of the right side or random side selection. This samples two parts, not all eighteen complete runs; the difficulty-selection menu was not directly reviewed. See the linked audit.
