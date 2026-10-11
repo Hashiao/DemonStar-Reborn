@@ -5,6 +5,25 @@
   // 繁体文案独立编写，不自动转字；数组顺序固定为简中、繁中、英文。
   // Traditional Chinese is authored separately; column order is Hans, Hant, English.
   const copy={
+    touchpoint:["点按目标移动", "點按目標移動", "Tap a destination"],
+    touchtilt:["陀螺仪方向控制", "陀螺儀方向控制", "Tilt direction control"],
+    pointHint:["点按战场设置目标，松手后继续飞行，到达后停止。同屏双人限一人使用。", "點按戰場設定目標，放開後繼續飛行，抵達後停止。同屏雙人限一人使用。", "Tap the battlefield to set a destination. Movement continues after release and stops on arrival. One player per shared device."],
+    pointConflict:["另一位玩家已使用点按移动，请先更改其操作方式。", "另一位玩家已使用點按移動，請先更改其操作方式。", "The other player uses tap movement. Change their mode first."],
+    tiltLocalBlocked:["同屏双人禁用陀螺仪，本次使用浮动摇杆；保留单人偏好。", "同屏雙人停用陀螺儀，本次使用浮動搖桿；保留單人偏好。", "Tilt is disabled on a shared device. Floating stick is used for this session; your solo preference is kept."],
+    pointFallback:["同屏双人限一人点按移动，玩家 2 本次使用浮动摇杆。", "同屏雙人限一人點按移動，玩家 2 本次使用浮動搖桿。", "Only one player can use tap movement. Player 2 uses a floating stick for this session."],
+    tiltAngle:["触发角度：{n}°", "觸發角度：{n}°", "Activation angle: {n}°"],
+    tiltInvertX:["左右反向", "左右反向", "Reverse left/right"],
+    tiltInvertY:["前后反向", "前後反向", "Reverse forward/back"],
+    tiltHint:["中立位附近不移动，超过角度阈值即按方向键全速移动。角度越小越灵敏；同屏双人禁用。", "中立位置附近不移動，超過角度門檻即按方向鍵全速移動。角度越小越靈敏；同屏雙人停用。", "Stay still inside the neutral zone. Crossing the angle threshold acts as a fully pressed direction key. Smaller angles are more sensitive. Disabled for shared-device play."],
+    tiltPrepare:["校准陀螺仪", "校準陀螺儀", "Calibrate tilt"],
+    tiltPrepareBody:["请按舒适姿势拿稳设备。点击“准备好了”时，将当前握姿保存为中立位，然后开始或恢复游戏。", "請以舒適姿勢拿穩裝置。點選「準備好了」時，會將目前握姿儲存為中立位置，再開始或繼續遊戲。", "Hold the device comfortably. Tap Ready to save this pose as neutral, then start or resume play."],
+    tiltReady:["准备好了", "準備好了", "Ready"],
+    tiltWaiting:["正在等待传感器数据…", "正在等候感應器資料…", "Waiting for motion data…"],
+    tiltFallback:["传感器不可用或未获得权限，本次使用浮动摇杆。", "感應器無法使用或未獲授權，本次使用浮動搖桿。", "Motion sensing is unavailable or permission was denied. Using a floating stick for this session."],
+    useFloating:["使用浮动摇杆", "使用浮動搖桿", "Use floating stick"],
+    waitingReady:["等待另一位玩家准备…", "等候另一位玩家準備…", "Waiting for the other player…"],
+    toggleHoldToast:["当前为切换开火：点一下开启，再点一下停止，无需按住。", "目前為切換射擊：點一下開啟，再點一下停止，無須按住。", "Toggle fire: tap once to start, again to stop. No need to hold."],
+
     stageChoice:['关卡','關卡','Stage'],chooseStage:['选择关卡','選擇關卡','Choose stage'],retainShortHint:['三色分别升级，死亡清空。','三色各自升級，死亡清空。','Each color levels separately; death resets all three.'],
     fireMode:['开火方式','射擊方式','Fire mode'],fireModetoggle:['切换开火','切換射擊','Toggle fire'],fireModehold:['按住开火','按住射擊','Hold to fire'],
     fireModeHint:['切换：按一下持续开火，再按一下停止。暂停后保留；死亡、换关或切换方式后需重新激活。适用于触屏、键盘、鼠标和手柄。','切換：按一下持續射擊，再按一下停止。暫停後保留；死亡、換關或切換方式後須重新啟動。適用於觸控、鍵盤、滑鼠及控制器。','Toggle: press once to keep firing, again to stop. Pause preserves it; death, a new stage or changing mode resets it. Applies to touch, keyboard, mouse and controller.'],

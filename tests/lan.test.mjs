@@ -58,3 +58,11 @@ test('overlapping room actions do not revive an obsolete host request',async()=>
   const stops=[],calls=[],native={capabilities:{platform:'android'},on(){},send(){},request(method){calls.push(method);return method==='stop'?new Promise(resolve=>stops.push(resolve)):Promise.resolve({addresses:[]});}},room=new Session(native,new Game(),{identity:'f'.repeat(32)});
   const first=room.host(),second=room.host();stops[1](true);await second;stops[0](true);await first;assert.equal(calls.filter(m=>m==='host').length,1);assert.equal(room.status,'lobby');
 });
+
+// 准备屏门控及目标坐标使用主机移动规则。 / Ready barriers and targets use authoritative movement.
+test('LAN ready barrier waits for both players and point targets arrive on the host',async()=>{
+ const {host,clients}=await room(2,2);host.start();host.game.phase='playing';host.game.launch=null;host.game.recordEvents=[];host.flush();let local,remote,completed=0;host.onPrepare=done=>local=done;clients[0].onPrepare=done=>remote=done;
+ host.beginReady(()=>{completed++;host.game.resume();host.flush();});assert.equal(host.game.phase,'paused');local();assert.equal(completed,0);remote();assert.equal(completed,1);remote();assert.equal(completed,1);
+ clients[0].sendControls({x:0,y:0,fire:false,bomb:0,target:{x:100,y:100}});for(let i=0;i<180;i++)host.game.update(STEP,host.inputs());assert.equal(host.game.players[1].x,100);assert.equal(host.game.players[1].y,100);
+ host.beginReady(()=>completed++);local();host.cancelReady();remote();assert.equal(completed,1);
+});

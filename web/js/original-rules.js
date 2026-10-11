@@ -466,7 +466,13 @@
       const hadShield=p.shield>0;
       for(const k of ['invincible','shield','mega','respawn','bombCooldown'])p[k]=Math.max(0,p[k]-dt);
       if(hadShield&&p.shield===0)this.events.push({type:'shield-lost',playerId:p.id});
-      const dx=clamp(Number.isFinite(input.x)?input.x:0,-1,1),dy=clamp(Number.isFinite(input.y)?input.y:0,-1,1);
+      let dx=clamp(Number.isFinite(input.x)?input.x:0,-1,1),dy=clamp(Number.isFinite(input.y)?input.y:0,-1,1);
+      // 目标也走相同逐步移动；最后一步只缩短剩余距离，网络客户端不能直接改坐标。
+      // Targets use the same movement step, shortening only the final distance; clients never set positions.
+      if(!dx&&!dy&&Number.isFinite(input.target?.x)&&Number.isFinite(input.target?.y)){
+        dx=(clamp(input.target.x,16,W-16)-p.x)/PLAYER_STEP_X;dy=(clamp(input.target.y,64,H-40)-p.y)/PLAYER_STEP_Y;
+        const length=Math.max(1,Math.hypot(dx,dy));dx/=length;dy/=length;
+      }
       if(p.respawn<=0)this.move(dx*PLAYER_STEP_X,dy*PLAYER_STEP_Y,p);
       p.bank+=clamp(8+dx*8-p.bank,-1,1);p.thrust+=clamp(-dy-p.thrust,-.25,.25);
       p.fire=Math.max(0,p.fire-dt);p.baseFire=Math.max(0,p.baseFire-dt);p.missileTimer=Math.max(0,p.missileTimer-dt);

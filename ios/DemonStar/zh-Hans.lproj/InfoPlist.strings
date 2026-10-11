@@ -1,2 +1,4 @@
 "CFBundleDisplayName" = "恶魔之星·重生";
 "NSLocalNetworkUsageDescription" = "与连接同一 Wi-Fi 或个人热点的恶魔之星玩家联机。";
+
+"NSMotionUsageDescription" = "使用设备倾斜控制战机移动。";

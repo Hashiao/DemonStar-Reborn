@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.14：点按目标移动松手后继续、到点停止，沿用现有逐步机动性；同屏双人最多一人使用。陀螺仪同屏双人禁用，临时回退浮动且保留偏好。倾斜按可调角度死区产生满强度方向输入，保留双轴反向；每局开始及每次恢复由玩家确认当前中立位，联机全员准备后恢复。切换开火实际长按 1.2 秒显示 3 秒提示，同一次长按仅一次。炸弹按用户确认保持现状。
+  M2.14: tap targets continue after release and stop on arrival using existing movement steps; at most one shared-device player uses this mode. Tilt is disabled for shared-device play with temporary floating fallback that preserves preferences. An adjustable angular dead zone produces digital full-direction input with independent inversions. Confirm neutral at run start and every resume; LAN waits for all peers. A physical toggle-fire hold of 1.2 s shows a 3 s toast once per hold. Preserve the accepted bomb behavior.
+
 - 用户最新范围：3P/4P 仅保留协议与底层扩展能力，当前实际游玩、人数设置、同机触屏和局域网房间只开放单人/双人。不要把四人协议测试写成当前四人玩法已开放。
   Latest scope: reserve 3P/4P in the protocol/core only. Current gameplay, player-count settings, local touch and LAN rooms expose solo/two-player modes. Four-seat protocol tests must not be described as an available four-player mode.
 

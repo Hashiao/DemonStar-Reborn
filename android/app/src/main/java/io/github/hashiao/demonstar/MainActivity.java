@@ -85,6 +85,7 @@ public final class MainActivity extends Activity {
     @Override public void onBackPressed() { gameBack(); }
     @Override protected void onPause() {
         foreground = false;
+        if (bridge != null) bridge.stopMotion();
         if (web != null) { final WebView current = web; current.evaluateJavascript("window.StarfallApp && StarfallApp.background()", result -> { if (!foreground && web == current) current.onPause(); }); }
         super.onPause();
     }

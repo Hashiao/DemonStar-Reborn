@@ -21,7 +21,7 @@
       if(!([2,3].includes(value?.version))&&i>0)for(const [action,button] of [['fire',0],['bomb',2]])if(bindings[action]?.length&&bindings[action].length<12&&!bindings[action].some(t=>t.startsWith('mouse:')))bindings[action].push('mouse:'+button);
       // 按用户要求统一改为浮动摇杆；本版之后的手动选择仍可保存。
       // Reset every pre-release touch preference to floating; subsequent explicit choices remain persistent.
-      result.players.push({touch:value?.version===3&&['fixed','floating','dpad'].includes(v.touch)?v.touch:'floating',fireMode:v.fireMode==='hold'?'hold':'toggle',size:clamp(Number(v.size)||1,.75,1.3),stickX:clamp(Number.isFinite(v.stickX)?v.stickX:.5,0,1),stickY:clamp(Number.isFinite(v.stickY)?v.stickY:.5,0,1),pad:Number.isInteger(v.pad)?clamp(v.pad,-1,15):i,bindings});
+      result.players.push({touch:value?.version===3&&['fixed','floating','dpad','point','tilt'].includes(v.touch)?v.touch:'floating',tiltAngle:clamp(Number(v.tiltAngle)||10,3,30),tiltInvertX:v.tiltInvertX===true,tiltInvertY:v.tiltInvertY===true,fireMode:v.fireMode==='hold'?'hold':'toggle',size:clamp(Number(v.size)||1,.75,1.3),stickX:clamp(Number.isFinite(v.stickX)?v.stickX:.5,0,1),stickY:clamp(Number.isFinite(v.stickY)?v.stickY:.5,0,1),pad:Number.isInteger(v.pad)?clamp(v.pad,-1,15):i,bindings});
     }return result;
   }
   function keyToken(event){
@@ -45,12 +45,16 @@
     }
     // 暂停只清理实体输入；死亡、换关和模式变更还必须清除持续开火。
     // Pause clears physical input; death, stage changes and mode changes also clear latched fire.
-    clear(preserveFire=false){this.keys.clear();this.mouse.clear();this.mouseTarget=null;this.pausePulse=false;for(const s of this.states){s.x=s.y=0;s.fire.clear();s.firePulse=s.fireActive=false;s.bomb=0;s.previousBomb=s.previousPause=s.previousPadFire=false;if(!preserveFire){s.fireLatched=false;s.lives=null;}}for(let i=0;i<16;i++)this.padBlocked.add(i);}
-    resetFire(index){const s=this.states[index];if(!s)return;s.fireLatched=s.fireActive=s.firePulse=false;s.fire.clear();s.blockPadFire=true;for(const token of this.bindings(index).fire){if(token.startsWith('key:'))this.keys.delete(token);else if(token.startsWith('mouse:')&&this.mouseOwner===index+1)this.mouse.delete(Number(token.slice(6)));}}
+    clear(preserveFire=false){this.keys.clear();this.mouse.clear();this.mouseTarget=null;this.pausePulse=false;for(const s of this.states){s.x=s.y=0;s.target=null;s.holdStart=null;s.holdNotified=false;s.fire.clear();s.firePulse=s.fireActive=false;s.bomb=0;s.previousBomb=s.previousPause=s.previousPadFire=false;if(!preserveFire){s.fireLatched=false;s.lives=null;}}for(let i=0;i<16;i++)this.padBlocked.add(i);}
+    resetFire(index){const s=this.states[index];if(!s)return;s.fireLatched=s.fireActive=s.firePulse=false;s.fire.clear();s.target=null;s.holdStart=null;s.holdNotified=false;s.blockPadFire=true;for(const token of this.bindings(index).fire){if(token.startsWith('key:'))this.keys.delete(token);else if(token.startsWith('mouse:')&&this.mouseOwner===index+1)this.mouse.delete(Number(token.slice(6)));}}
     setFireMode(index,mode){if(!this.config.players[index]||!['toggle','hold'].includes(mode))return false;if(this.config.players[index].fireMode!==mode){this.config.players[index].fireMode=mode;this.resetFire(index);}return true;}
     firing(index){return this.config.players[index].fireMode==='toggle'?this.states[index].fireLatched:(this.states[index].fireActive||this.states[index].fire.size>0||this.states[index].firePulse);}
     mouseButton(button,down){if(down){if(!this.mouse.has(button)&&this.mouseOwner){const i=this.mouseOwner-1;for(const action of ['fire','bomb'])if(this.bindings(i)[action].includes('mouse:'+button)){this.pulse(i,action);if(action==='bomb')this.states[i].previousBomb=true;}}this.mouse.add(button);}else this.mouse.delete(button);}
 
+    // 同屏限制只改变有效方式，不覆盖单人偏好。 / Local restrictions preserve solo preferences.
+    mode(index){const mode=this.config.players[index].touch;if(this.count>1&&!this.localOnly){if(mode==='tilt')return 'floating';if(mode==='point'&&this.config.players.slice(0,index).some(p=>p.touch==='point'))return 'floating';}return this.motionFallback&&mode==='tilt'?'floating':mode;}
+    point(index,x,y){if(this.mode(index)==='point'&&Number.isFinite(x)&&Number.isFinite(y))this.states[index].target={x:clamp(x,16,384),y:clamp(y,64,440)};}
+    holdHints(now){const hints=[];for(let i=0;i<this.count;i++){const s=this.states[i];if(s.physicalFire&&s.fireEnabled&&this.config.players[i].fireMode==='toggle'&&s.fireLatched){if(s.holdStart==null)s.holdStart=now;if(!s.holdNotified&&now-s.holdStart>=1200){s.holdNotified=true;hints.push(i);}}else{s.holdStart=null;s.holdNotified=false;}}return hints;}
     commit(){for(const s of this.states){s.firePulse=false;s.bomb=0;}}
     move(index,x,y){const length=Math.hypot(x,y)||1;this.states[index].x=x/Math.max(1,length);this.states[index].y=y/Math.max(1,length);}
     touchFire(index,id,down){const s=this.states[index];if(down){if(!s.fire.has(id))this.pulse(index,'fire');s.fire.add(id);}else s.fire.delete(id);}
@@ -84,10 +88,14 @@
         const axis=n=>ready&&Number.isFinite(axes[n])&&Math.abs(axes[n])>.18?Math.sign(axes[n])*(Math.abs(axes[n])-.18)/.82:0;
         let x=s.x+Number(held('right'))-Number(held('left'))+axis(0),y=s.y+Number(held('down'))-Number(held('up'))+axis(1);
         if(this.mouseOwner===index+1&&this.mouseTarget&&players[index]&&!x&&!y){x=(this.mouseTarget.x-players[index].x)/18;y=(this.mouseTarget.y-players[index].y)/18;if(Math.hypot(x,y)<.12)x=y=0;}
+        if(this.mode(index)==='tilt'&&this.tiltAxes){x+=this.tiltAxes.x;y+=this.tiltAxes.y;}
+        if(x||y)s.target=null;
+        const target=active&&this.mode(index)==='point'&&s.fireEnabled?s.target:null;
         const length=Math.max(1,Math.hypot(x,y));x/=length;y/=length;
         const bomb=!!held('bomb'),paused=!!held('pause');if(bomb&&!s.previousBomb)this.pulse(index,'bomb');if(paused&&!s.previousPause)pause=true;s.previousBomb=bomb;s.previousPause=paused;
         s.fireActive=s.fireEnabled&&(s.fire.size>0||s.firePulse||map.fire.some(t=>t.startsWith('key:')?this.keys.has(t):t.startsWith('mouse:')?this.mouseOwner===index+1&&this.mouse.has(Number(t.slice(6))):padFire&&!s.blockPadFire));
-        return {x,y,fire:config.fireMode==='toggle'?s.fireLatched:s.fireActive,bomb:s.bomb};
+        s.physicalFire=s.fireActive&&!s.firePulse;
+        return {x,y,fire:config.fireMode==='toggle'?s.fireLatched:s.fireActive,bomb:s.bomb,...(target?{target:{...target}}:{})};
       });return {players:inputs,pause};
     }
     export(){return copy(this.config);}

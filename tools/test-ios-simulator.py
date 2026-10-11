@@ -65,6 +65,7 @@ for family in ('iPhone','iPad'):
         assert probe.get('shotsFired',0)>=2 and probe.get('playerX',0)>200,probe
         assert probe.get('bombs')==2 and probe.get('lives')==4 and probe.get('energy')==16,probe
         assert probe.get('releaseStops'),probe
+        assert all(probe.get('advancedControls',{}).get(k) for k in ['pointArrived','motionRequestCompleted','floatingFallback']),probe
         assert probe.get('fireModeChecks')=={'toggleSurvivesRelease':True,'pausedSwitchToHoldStops':True,'switchBackToToggleStaysOff':True,'floatingDefault':True},probe
         assert probe.get('musicReady') and probe.get('musicTime',0)>0 and probe.get('musicTrack')=='MDS_PHASER' and not probe.get('musicError') and probe.get('effectsReady') and probe.get('attacksReady') and probe.get('enemyArtReady'),probe
         assert probe.get('musicBackend')=='ios-native' and probe['startupMusic']['backend']=='ios-native' and probe['startupMusic']['currentTime']>0 and not probe['startupMusic']['paused'],probe

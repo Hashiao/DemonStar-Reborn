@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id), I=DemonStarI18n, t=I.t;
-  const VERSION='0.2.13', weaponName=n=>t('weapon'+n);
+  const VERSION='0.2.14', weaponName=n=>t('weapon'+n);
   let settingsContext='menu',settingsPage='home',setupBack=null,dialogBack=null,pickupKey=null,storageAvailable=true;
   function hideDialog(){const el=$('dialog');el.hidden=true;el.setAttribute('aria-modal','false');el.setAttribute('aria-hidden','true');}
   const { Game, DIFFICULTIES, STAGES, WEAPONS, W, H, clamp } = StarfallCore;
@@ -24,6 +24,7 @@
   }} catch { /* 隐私模式/损坏存档可恢复。Private browsing/corrupt saves are recoverable. */ }
   I.select(saved.language);I.apply();
   let selectedStage=1,previous=0,accumulator=0,toastTime=0,pickupTime=0,lastPhase='menu',hudTick=0,dialogReturn=null,touch,captureBinding=null,controlPlayer=0,roomOpen=false;
+  const tilt=new DemonStarTilt(DemonStarNative);let calibration=null,calibrationSerial=0;
   const input=new DemonStarInput.Input(saved.input),saves=new DemonStarSaveStore({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
   // 当前开放单/双人；四人只保留底层协议能力。
   // Expose solo/two-player modes; four seats remain a protocol reserve.
@@ -45,11 +46,30 @@
   }
   function saveScore(){if(game.score>saved.best[game.difficulty]){saved.best[game.difficulty]=game.score;persist();}}
   function clearInput(resetFire=false){input.clear(!resetFire);touch?.clear();}
+  function tiltEnabled(){return input.count===1&&input.mode(0)==='tilt';}
+  function cancelCalibration(){calibrationSerial++;calibration=null;tilt.stop();input.tiltAxes=null;}
+  function prepareMotion(done){
+    if(!tiltEnabled()){if(lan.role!=='offline'){calibration={serial:++calibrationSerial,waiting:true};dialog(t('lanRoom'),t('waitingReady'),'',[],()=>{});}done();return;}
+    const serial=++calibrationSerial;calibration={serial,done,waiting:false,started:Date.now()};tilt.neutral=null;
+    dialog(t('inputSettings'),t('tiltPrepare'),`<p>${t('tiltPrepareBody')}</p><p id="tilt-status" role="status">${t('tiltWaiting')}</p><button id="tilt-ready" class="primary" disabled>${t('tiltReady')}</button><button id="tilt-fallback" class="secondary">${t('useFloating')}</button>`,[],()=>{});
+    const finish=()=>{if(calibration?.serial!==serial)return;calibration.waiting=true;input.tiltAxes=null;clearInput();if(lan.role!=='offline'){dialog(t('lanRoom'),t('waitingReady'),'',[],()=>{});}done();if(lan.role==='offline'||game.phase!=='paused')calibration=null;};
+    $('tilt-ready').onclick=()=>{if(tilt.calibrate())finish();};
+    const fallback=()=>{if(calibration?.serial!==serial)return;input.motionFallback=true;tilt.stop();touch.layout(renderer.layout);toast(t('tiltFallback'),3);finish();};
+    $('tilt-fallback').onclick=fallback;calibration.fallback=fallback;
+    tilt.start().catch(fallback);
+  }
+  function prepareRun(){
+    if(lan.role==='client')return;
+    if(lan.role==='host'){lan.beginReady(resumeNow);return;}
+    if(tiltEnabled()){game.pause();audio.suspend();music.suspend();prepareMotion(resumeNow);}
+  }
+  function resumeNow(){game.resume();calibration=null;hideDialog();$('pause').focus({preventScroll:true});previous=0;accumulator=0;clearInput();audio.unlock();music.resume();if(lan.role==='host')lan.flush();}
+  lan.onPrepare=prepareMotion;
   function toast(text,seconds=2){$('toast').textContent=text;$('toast').hidden=false;toastTime=seconds;}
-  function enterRun(){roomOpen=false;audio.stopAll();audio.unlock();music.unlock();music.resume();music.stage(game.stage.id);hideDialog();$('menu').hidden=true;$('controls').hidden=false;$('hud').hidden=false;input.localOnly=lan.role!=='offline';input.setCount(lan.role==='offline'?game.players.length:1);touch.localSlot=lan.role==='client'?lan.localSlot:1;touch.partyCount=game.players.length;clearInput();touch.layout(renderer.layout);pickupTime=0;pickupKey=null;$('pickup-status').textContent='';$('weapon-icon').classList.remove('collected');lastPhase=game.phase;$('toast').hidden=true;previous=0;accumulator=0;updateHud();if(game.phase==='paused'){audio.suspend();music.suspend();showPauseDialog();}}
+  function enterRun(){cancelCalibration();input.motionFallback=false;roomOpen=false;audio.stopAll();audio.unlock();music.unlock();music.resume();music.stage(game.stage.id);hideDialog();$('menu').hidden=true;$('controls').hidden=false;$('hud').hidden=false;input.localOnly=lan.role!=='offline';input.setCount(lan.role==='offline'?game.players.length:1);touch.localSlot=lan.role==='client'?lan.localSlot:1;touch.partyCount=game.players.length;clearInput();touch.layout(renderer.layout);pickupTime=0;pickupKey=null;$('pickup-status').textContent='';$('weapon-icon').classList.remove('collected');lastPhase=game.phase;$('toast').hidden=true;previous=0;accumulator=0;updateHud();if(input.count>1){if(input.config.players.slice(0,input.count).some(p=>p.touch==='tilt'))toast(t('tiltLocalBlocked'),3);else if(input.config.players.slice(0,input.count).filter(p=>p.touch==='point').length>1)toast(t('pointFallback'),3);}if(game.phase==='paused'){audio.suspend();music.suspend();showPauseDialog();}}
   function applyConnections(){if(lan.role==='host')for(const p of game.players)p.connected=lan.members.find(m=>m.slot===p.id)?.connected!==false;}
-  function start(stage=selectedStage){if(lan.role==='client'){toast(t('lanHostOnly'));return;}game.start(saved.difficulty,stage,true,{playerCount:Math.min(2,lan.role==='host'?lan.members.length:input.config.count),mode:lan.role==='host'?'lan':'local',retainWeaponLevels:game.phase==='paused'?game.retainWeaponLevels:saved.retainWeaponLevels});applyConnections();enterRun();if(lan.role==='host')lan.flush();}
-  function showMenu(){roomOpen=false;if(lan.role!=='offline')lan.leave();input.localOnly=false;input.setCount(input.config.count);touch.localSlot=1;touch.partyCount=input.count;audio.stopAll();audio.setScene('menu');saveScore();game.phase='menu';music.resume();music.menu();$('menu').hidden=false;hideDialog();$('controls').hidden=true;$('hud').hidden=true;$('toast').hidden=true;clearInput();menuInfo();$('start').focus({preventScroll:true});}
+  function start(stage=selectedStage){if(lan.role==='client'){toast(t('lanHostOnly'));return;}game.start(saved.difficulty,stage,true,{playerCount:Math.min(2,lan.role==='host'?lan.members.length:input.config.count),mode:lan.role==='host'?'lan':'local',retainWeaponLevels:game.phase==='paused'?game.retainWeaponLevels:saved.retainWeaponLevels});applyConnections();enterRun();prepareRun();if(lan.role==='host')lan.flush();}
+  function showMenu(){cancelCalibration();input.motionFallback=false;roomOpen=false;if(lan.role!=='offline')lan.leave();input.localOnly=false;input.setCount(input.config.count);touch.localSlot=1;touch.partyCount=input.count;audio.stopAll();audio.setScene('menu');saveScore();game.phase='menu';music.resume();music.menu();$('menu').hidden=false;hideDialog();$('controls').hidden=true;$('hud').hidden=true;$('toast').hidden=true;clearInput();menuInfo();$('start').focus({preventScroll:true});}
   function dialog(tag,title,content,buttons,onBack=hideDialog){
     dialogBack=onBack;
     roomOpen=false;captureBinding=null;
@@ -58,7 +78,7 @@
     for(const [label,action,secondary] of buttons){const b=document.createElement('button');b.textContent=label;b.className=secondary?'secondary':'primary';b.addEventListener('click',()=>{audio.unlock();action();});$('dialog-buttons').append(b);}
     $('dialog').hidden=false;$('dialog').setAttribute('aria-modal','true');$('dialog').setAttribute('aria-hidden','false');$('dialog').scrollTop=0;requestAnimationFrame(()=>($('dialog-content').querySelector('select,input,button')||$('dialog-buttons').querySelector('button'))?.focus({preventScroll:true}));
   }
-  function resume(){if(lan.role==='client'){toast(t('lanHostOnly'));return;}game.resume();hideDialog();$('pause').focus({preventScroll:true});previous=0;accumulator=0;clearInput();audio.unlock();music.resume();if(lan.role==='host')lan.flush();}
+  function resume(){if(calibration)return;if(lan.role==='client'){toast(t('lanHostOnly'));return;}if(lan.role==='host')lan.beginReady(resumeNow);else if(tiltEnabled())prepareMotion(resumeNow);else resumeNow();}
   const optionButton=(id,key,disabled=false)=>`<button id="${id}" class="secondary" ${disabled?'disabled':''}>${t(key)}</button>`;
   const toggleRow=(id,key,on,disabled=false)=>`<div class="dialog-setting">${t(key)}<button id="${id}" class="secondary" aria-label="${t(key)} ${t(on?'on':'off')}" aria-pressed="${on}" ${disabled?'disabled':''}>${t(on?'on':'off')}</button></div>`;
   const difficultySelect=(id,value)=>`<label class="dialog-setting">${t('difficultyLabel')}<select id="${id}">${DIFFICULTIES.map((_,i)=>`<option value="${i}" ${i===value?'selected':''}>${t('difficulty'+i)}</option>`).join('')}</select></label>`;
@@ -103,7 +123,7 @@
     $('setup-start').onclick=()=>{
       if(lan.role==='client'){toast(t('lanHostOnly'));return;}
       saved.difficulty=Number($('launch-difficulty').value);selectedStage=$('start-kind').value==='select'?Number($('launch-stage').value):1;persist();
-      if(lan.role==='host'&&!lan.started){if(lan.start(saved.difficulty,selectedStage,{retainWeaponLevels:saved.retainWeaponLevels}))enterRun();else toast(t('lanNeedPlayers'));}
+      if(lan.role==='host'&&!lan.started){if(lan.start(saved.difficulty,selectedStage,{retainWeaponLevels:saved.retainWeaponLevels})){enterRun();prepareRun();}else toast(t('lanNeedPlayers'));}
       else{saveScore();start(selectedStage);}
     };
   }
@@ -118,7 +138,7 @@
     if($('lan-room'))$('lan-room').onclick=showRoom;
     $('pause-difficulty').onclick=()=>{if(guest)return;dialog(t('pausedTag'),t('adjustDifficulty'),difficultySelect('paused-difficulty',game.difficulty)+`<p>${t('difficultyLiveHint')}</p><button id="apply-difficulty" class="primary">${t('apply')}</button>`,[[t('back'),showPauseDialog]],showPauseDialog);$('apply-difficulty').onclick=()=>{const value=Number($('paused-difficulty').value);if(game.setDifficulty(value)){saved.difficulty=value;persist();if(lan.role==='host')lan.flush();showPauseDialog();}};};
   }
-  function pause(){if(lan.role==='client'){clearInput();lan.requestPause();return;}if(!game.pause())return;audio.suspend();music.suspend();saveScore();showPauseDialog();if(lan.role==='host')lan.flush();}
+  function pause(){lan.cancelReady();cancelCalibration();if(lan.role==='client'){clearInput();lan.requestPause();return;}if(!game.pause())return;audio.suspend();music.suspend();saveScore();showPauseDialog();if(lan.role==='host')lan.flush();}
   function showHelp(){
     dialogReturn=['playing','launch','aftermath'].includes(game.phase)?'active':game.phase;if(dialogReturn==='active'){game.pause();audio.suspend();music.suspend();}
     dialog(t('helpTag'),t('helpTitle'),`<ul class="guide">${t('guideHtml')}</ul><p class="dialog-footer">${t('guideFooterHtml',{version:VERSION})}</p>`,[[t('ready'),()=>{if(dialogReturn==='active')resume();else hideDialog();}]]);
@@ -131,7 +151,7 @@
   }
   const backSettings=()=>showSettings();
   function lanChanged(){if(lan.role==='offline')return;if(['disconnected','rejected','error'].includes(lan.status)){clearInput(true);audio.suspend();music.suspend();}if(roomOpen||['disconnected','rejected','error'].includes(lan.status))showRoom();}
-  function receivedFrame(info){if(info.first||info.nextEpoch)enterRun();if($('pause-difficulty-label'))$('pause-difficulty-label').textContent=t('difficulty',{name:t('difficulty'+game.difficulty)});}
+  function receivedFrame(info){if(info.first||info.nextEpoch)enterRun();if(calibration?.waiting&&game.phase!=='paused'){calibration=null;hideDialog();clearInput();music.resume();}if($('pause-difficulty-label'))$('pause-difficulty-label').textContent=t('difficulty',{name:t('difficulty'+game.difficulty)});}
   function showRoom(){
     const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const errorKeys={'protocol-version':'lanVersionMismatch','room-code':'lanBadCode','room-full':'lanFull','player-limit':'playerLimit','game-started':'lanStarted','local-network-permission':'lanPermission','timeout':'lanTimeout','disconnected':'lanDisconnected'};
@@ -155,12 +175,17 @@
   function showControls(note=''){
     if(lan.role!=='offline')controlPlayer=0;
     captureBinding=null;const p=input.config.players[controlPlayer],select=(id,options,value)=>`<select id="${id}">${options.map(([v,label])=>`<option value="${v}" ${String(v)===String(value)?'selected':''}>${label}</option>`).join('')}</select>`;
-    const body=`<p>${t(lan.role==='offline'?'localPlayersHint':'lanInputHint')}</p><label class="dialog-setting">${t('configurePlayer')}${select('control-player',[1,2].map(n=>[n-1,t('playerNumber',{n})]),controlPlayer)}</label><label class="dialog-setting">${t('fireMode')}${select('fire-mode',['toggle','hold'].map(m=>[m,t('fireMode'+m)]),p.fireMode)}</label><p class="language-hint">${t('fireModeHint')}</p><label class="dialog-setting">${t('touchMode')}${select('touch-mode',['fixed','floating','dpad'].map(m=>[m,t('touch'+m)]),p.touch)}</label><label class="dialog-setting">${t('stickSize')}<input id="stick-size-setting" type="range" min="75" max="130" value="${Math.round(p.size*100)}"></label><label class="dialog-setting">${t('stickHorizontal')}<input id="stick-x-setting" type="range" min="0" max="100" value="${Math.round(p.stickX*100)}"></label><label class="dialog-setting">${t('stickVertical')}<input id="stick-y-setting" type="range" min="0" max="100" value="${Math.round(p.stickY*100)}"></label><label class="dialog-setting">${t('mouseControl')}${select('mouse-player',[[0,t('off')],...(lan.role==='offline'?[1,2].map(n=>[n,t('playerNumber',{n})]):[[1,t('lanLocalPlayer',{n:lan.localSlot})]])],input.mouseOwner)}</label><label class="dialog-setting">${t('controller')}${select('gamepad-index',[[-1,t('off')],...[0,1,2,3].map(n=>[n,t('controllerNumber',{n:n+1})])],p.pad)}</label><p>${t('bindingHint')}</p><p class="input-note" id="binding-status" role="status">${note}</p>${DemonStarInput.actions.map(action=>`<div class="mapping-row"><span>${t('action'+action)}</span><button class="secondary" data-binding="${action}">${input.bindings(controlPlayer)[action].map(bindingName).join(' / ')||t('unbound')}</button></div>`).join('')}`;
+    const body=`<p>${t(lan.role==='offline'?'localPlayersHint':'lanInputHint')}</p><label class="dialog-setting">${t('configurePlayer')}${select('control-player',[1,2].map(n=>[n-1,t('playerNumber',{n})]),controlPlayer)}</label><label class="dialog-setting">${t('fireMode')}${select('fire-mode',['toggle','hold'].map(m=>[m,t('fireMode'+m)]),p.fireMode)}</label><p class="language-hint">${t('fireModeHint')}</p><label class="dialog-setting">${t('touchMode')}${select('touch-mode',['fixed','floating','dpad','point','tilt'].map(m=>[m,t('touch'+m)]),p.touch)}</label><div id="stick-options"><label class="dialog-setting">${t('stickSize')}<input id="stick-size-setting" type="range" min="75" max="130" value="${Math.round(p.size*100)}"></label><label class="dialog-setting">${t('stickHorizontal')}<input id="stick-x-setting" type="range" min="0" max="100" value="${Math.round(p.stickX*100)}"></label><label class="dialog-setting">${t('stickVertical')}<input id="stick-y-setting" type="range" min="0" max="100" value="${Math.round(p.stickY*100)}"></label></div><div id="motion-options">${p.touch==='point'?`<p>${t('pointHint')}</p>`:p.touch==='tilt'?`<p>${t('tiltHint')}</p><label class="dialog-setting"><span id="tilt-angle-label">${t('tiltAngle',{n:p.tiltAngle})}</span><input id="tilt-angle" type="range" min="3" max="30" value="${p.tiltAngle}"></label>${toggleRow('tilt-invert-x','tiltInvertX',p.tiltInvertX)}${toggleRow('tilt-invert-y','tiltInvertY',p.tiltInvertY)}`:''}</div><label class="dialog-setting">${t('mouseControl')}${select('mouse-player',[[0,t('off')],...(lan.role==='offline'?[1,2].map(n=>[n,t('playerNumber',{n})]):[[1,t('lanLocalPlayer',{n:lan.localSlot})]])],input.mouseOwner)}</label><label class="dialog-setting">${t('controller')}${select('gamepad-index',[[-1,t('off')],...[0,1,2,3].map(n=>[n,t('controllerNumber',{n:n+1})])],p.pad)}</label><p>${t('bindingHint')}</p><p class="input-note" id="binding-status" role="status">${note}</p>${DemonStarInput.actions.map(action=>`<div class="mapping-row"><span>${t('action'+action)}</span><button class="secondary" data-binding="${action}">${input.bindings(controlPlayer)[action].map(bindingName).join(' / ')||t('unbound')}</button></div>`).join('')}`;
     dialog(t('inputSettings'),t('inputSettings'),body,[[t('backSettings'),backSettings],[t('resetControls'),()=>{input.resetFire(controlPlayer);input.config.players[controlPlayer]=DemonStarInput.preferences().players[controlPlayer];persistInput();showControls();},true]],backSettings);
     $('control-player').disabled=lan.role!=='offline';if(lan.role!=='offline')$('control-player').selectedOptions[0].textContent=t('lanLocalPlayer',{n:lan.localSlot});
     $('control-player').onchange=()=>{controlPlayer=Number($('control-player').value);showControls();};
     $('fire-mode').onchange=()=>{input.setFireMode(controlPlayer,$('fire-mode').value);persistInput();touch.update(game);if(lan.role==='client')lan.sendControls(input.sample(gamepads(),[game.playerById(lan.localSlot)],false).players[0]);};
-    $('touch-mode').onchange=()=>{p.touch=$('touch-mode').value;clearInput();persistInput();};
+    $('stick-options').hidden=['point','tilt'].includes(p.touch);
+    for(const option of $('touch-mode').options)option.disabled=lan.role==='offline'&&input.count>1&&(option.value==='tilt'||option.value==='point'&&input.config.players.some((q,i)=>i!==controlPlayer&&i<input.count&&q.touch==='point'));
+    if(p.touch==='tilt'&&input.count>1)$('binding-status').textContent=t('tiltLocalBlocked');
+    $('touch-mode').onchange=()=>{const next=$('touch-mode').value;if(input.count>1&&next==='tilt'){showControls(t('tiltLocalBlocked'));return;}if(input.count>1&&next==='point'&&input.config.players.some((q,i)=>i!==controlPlayer&&i<input.count&&q.touch==='point')){showControls(t('pointConflict'));return;}p.touch=next;input.motionFallback=false;cancelCalibration();clearInput();persistInput();showControls();};
+    if($('tilt-angle'))$('tilt-angle').oninput=()=>{p.tiltAngle=Number($('tilt-angle').value);$('tilt-angle-label').textContent=t('tiltAngle',{n:p.tiltAngle});persistInput();};
+    for(const [id,key] of [['tilt-invert-x','tiltInvertX'],['tilt-invert-y','tiltInvertY']])if($(id))$(id).onclick=()=>{p[key]=!p[key];persistInput();showControls();};
     for(const [id,key,factor] of [['stick-size-setting','size',100],['stick-x-setting','stickX',100],['stick-y-setting','stickY',100]])$(id).oninput=()=>{p[key]=Number($(id).value)/factor;persistInput();};
     $('mouse-player').onchange=()=>{input.config.mousePlayer=Number($('mouse-player').value);clearInput();persistInput();};
     $('gamepad-index').onchange=()=>{const next=Number($('gamepad-index').value);if(next>=0&&input.config.players.some((other,i)=>i!==controlPlayer&&i<input.count&&other.pad===next)){showControls(t('controllerConflict'));return;}p.pad=next;clearInput();persistInput();};
@@ -181,7 +206,7 @@
     if(cp?.players.length>2){report(t('playerLimit'));return;}
     if(lan.role==='host'&&cp?.players.length!==lan.members.length){report(t('lanSaveCount'));return;}
     if(!(lan.role==='host'?lan.load(cp):game.loadCheckpoint(cp,true))){report(t('saveFailed'));return;}
-    applyConnections();saved.difficulty=game.difficulty;if(lan.role==='offline')input.config.count=game.players.length;persistInput();enterRun();if(lan.role==='host')lan.flush();
+    applyConnections();saved.difficulty=game.difficulty;if(lan.role==='offline')input.config.count=game.players.length;persistInput();enterRun();prepareRun();if(lan.role==='host')lan.flush();
   }
   function results(){
     clearInput(true);music.results();saveScore();const won=game.phase==='cleared'||game.phase==='victory';
@@ -239,7 +264,12 @@
     let dt=previous?Math.min(.1,(timestamp-previous)/1000):0;previous=timestamp;
     const pads=gamepads();
     if(captureBinding){for(const pad of pads){if(!pad||pad.index!==input.config.players[captureBinding.player].pad)continue;const hit=pad.buttons.findIndex(b=>b.pressed);if(hit>=0){acceptBinding('pad:'+hit);break;}}}
+    if(calibration&&!calibration.waiting){const ready=tilt.fresh();if($('tilt-ready'))$('tilt-ready').disabled=!ready;if($('tilt-status'))$('tilt-status').textContent=ready?'':t('tiltWaiting');if(!ready&&Date.now()-calibration.started>4000)calibration.fallback();}
+    if(tiltEnabled()&&tilt.neutral&&['playing','launch'].includes(game.phase)&&!calibration&&(!tilt.fresh()||tilt.latest.orientation!==tilt.neutral.orientation)){pause();}
+    input.tiltAxes=tiltEnabled()&&game.phase==='playing'&&$('dialog').hidden?tilt.sample(input.config.players[0]):null;
     const commands=input.sample(pads,lan.role==='client'?[game.playerById(lan.localSlot)]:game.players||[],game.phase==='playing'&&$('dialog').hidden);
+    for(const index of input.holdHints(timestamp))showFireHint(index,timestamp);
+    for(const hint of fireHints)if(!activeInput()||timestamp>=Number(hint.dataset.until||0))hint.hidden=true;
     if(commands.pause&&!captureBinding){if(['playing','launch','aftermath'].includes(game.phase))pause();else if(game.phase==='paused')resume();}
     if(lan.role!=='client'&&['playing','launch','aftermath'].includes(game.phase)){
       accumulator+=dt;
@@ -260,7 +290,7 @@
       }
     }
     if(lan.update(dt,commands.players[0],lan.role==='host'?events:[])&&lan.role==='client')input.commit();
-    if(game.phase!==lastPhase){if(['cleared','victory','gameover'].includes(game.phase))results();else if(lan.role==='client'&&lan.status==='playing'){if(game.phase==='paused'){audio.suspend();music.suspend();showPauseDialog();}else if(lastPhase==='paused'){roomOpen=false;hideDialog();clearInput();music.resume();}}lastPhase=game.phase;}
+    if(game.phase!==lastPhase){if(['cleared','victory','gameover'].includes(game.phase))results();else if(lan.role==='client'&&lan.status==='playing'){if(game.phase==='paused'){audio.suspend();music.suspend();if(!calibration)showPauseDialog();}else if(lastPhase==='paused'){calibration=null;roomOpen=false;hideDialog();clearInput();music.resume();}}lastPhase=game.phase;}
     if(toastTime>0&&game.phase!=='paused'){toastTime-=dt;if(toastTime<=0)$('toast').hidden=true;}
     if(pickupTime>0&&game.phase!=='paused'){pickupTime-=dt;if(pickupTime<=0){$('pickup-status').textContent='';$('weapon-icon').classList.remove('collected');}}
     music.update(!!audio.missionSource&&audio.enabled&&audio.volume>0);renderer.draw(game,dt);hudTick+=dt;if(hudTick>.06){updateHud();hudTick=0;}requestAnimationFrame(frame);
@@ -269,10 +299,14 @@
   $('settings').onclick=()=>showSettings();$('start').onclick=()=>startLocal(1);$('multiplayer').onclick=showMultiplayer;$('pause').onclick=pause;$('help').onclick=showHelp;$('desktop-help').onclick=showHelp;
   $('sound').onclick=()=>{saved.sound=!saved.sound;audio.enabled=saved.sound;if(saved.sound)audio.unlock();else audio.suspend();persist();menuInfo();};
   const activeInput=()=>game.phase==='playing'&&$('dialog').hidden;
+  const fireHints=Array.from({length:2},(_,i)=>{const el=document.createElement('div');el.className='fire-hint';el.dataset.player=String(i+1);el.hidden=true;el.setAttribute('role','status');$('screen').append(el);return el;});
+  function showFireHint(index,now){const el=fireHints[index],l=renderer.layout;el.textContent=t('toggleHoldToast');el.dataset.until=String(now+3000);el.hidden=false;const width=Math.min(input.count>1?l.w/2-12:300,l.w-16);Object.assign(el.style,{width:width+'px',left:(input.count>1?index*l.w/2+6:(l.w-width)/2)+'px',top:Math.max(6,l.y+H*l.scale-112)+'px'});}
   touch=new DemonStarTouchControls(input,activeInput,()=>{audio.unlock();music.unlock();});touch.layout(renderer.layout);
   window.addEventListener('pointerdown',e=>{if(captureBinding&&e.pointerType==='mouse'){e.preventDefault();e.stopPropagation();acceptBinding('mouse:'+e.button);}},true);
-  $('game').addEventListener('pointermove',e=>{if(!activeInput()||e.pointerType!=='mouse'||!input.mouseOwner)return;const l=renderer.layout;input.mouseTarget={x:clamp((e.clientX-l.x)/l.scale,16,W-16),y:clamp((e.clientY-l.y)/l.scale,64,H-40)};});
-  $('game').addEventListener('pointerdown',e=>{if(!activeInput()||e.pointerType!=='mouse'||!input.mouseOwner)return;e.preventDefault();input.mouseButton(e.button,true);});
+  $('game').addEventListener('pointerdown',e=>{if(!activeInput()||e.pointerType==='mouse'&&e.button!==0)return;const index=Array.from({length:input.count},(_,i)=>i).find(i=>input.mode(i)==='point');if(index===undefined)return;const l=renderer.layout,x=(e.clientX-l.x)/l.scale,y=(e.clientY-l.y)/l.scale;if(x<0||x>W||y<0||y>H)return;e.preventDefault();input.point(index,x,y);audio.unlock();});
+  for(const kind of ['touchstart','touchmove','touchend','contextmenu','selectstart'])$('game').addEventListener(kind,e=>{if(activeInput()&&input.config.players.some((_,i)=>i<input.count&&input.mode(i)==='point')&&e.cancelable)e.preventDefault();},{passive:false});
+  $('game').addEventListener('pointermove',e=>{if(!activeInput()||e.pointerType!=='mouse'||!input.mouseOwner||input.mode(input.mouseOwner-1)==='point')return;const l=renderer.layout;input.mouseTarget={x:clamp((e.clientX-l.x)/l.scale,16,W-16),y:clamp((e.clientY-l.y)/l.scale,64,H-40)};});
+  $('game').addEventListener('pointerdown',e=>{if(!activeInput()||e.pointerType!=='mouse'||!input.mouseOwner||input.mode(input.mouseOwner-1)==='point')return;e.preventDefault();input.mouseButton(e.button,true);});
   window.addEventListener('pointerup',e=>{if(e.pointerType==='mouse')input.mouseButton(e.button,false);});$('game').addEventListener('contextmenu',e=>{if(activeInput()&&input.mouseOwner)e.preventDefault();});
   window.addEventListener('keydown',e=>{
     const key=e.key.length===1?e.key.toLowerCase():e.key;
@@ -291,7 +325,7 @@
   document.addEventListener('visibilitychange',()=>{if(document.hidden)background();else foreground();});window.addEventListener('blur',background);window.addEventListener('focus',foreground);
   window.addEventListener('pagehide',()=>{saveScore();background();});
   window.addEventListener('resize',()=>{clearInput();renderer.resize();touch.layout(renderer.layout);});
-  globalThis.StarfallApp={game,i18n:I,input,touch,saves,lan,native:DemonStarNative,background,foreground,back,start,startLocal,showMenu,showSettings,showPauseDialog,showMultiplayer,showControls,showSaves,showMissions,showRoom,renderer,music,audio};
+  globalThis.StarfallApp={game,i18n:I,input,touch,tilt,saves,lan,native:DemonStarNative,background,foreground,back,start,startLocal,showMenu,showSettings,showPauseDialog,showMultiplayer,showControls,showSaves,showMissions,showRoom,renderer,music,audio};
   document.addEventListener('click',e=>{if(e.target.closest('button')){music.unlock();if(saved.sound){audio.unlock();if(!['fire','bomb','start','setup-start'].includes(e.target.closest('button').id))audio.effect('menu');}}});
   // 原生容器允许首屏播放；浏览器若拒绝，后续交互仍会再次尝试。
   // Native hosts allow startup playback; browser gesture handlers retry if autoplay is rejected.

@@ -158,7 +158,25 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
               // file URL 画布允许绘制但禁止像素回读；在原生端核对解码尺寸，像素覆盖由浏览器测试负责。
               // File-URL canvases permit drawing but reject pixel readback; verify decoded sizes here and pixels in browser tests.
               var image=new Image();image.onload=function(){try{var expected=(DemonStarCampaignArt.assets[paths[index]]||DemonStarEnemyShots.assets[paths[index]]||DemonStarBossDeathArt.assets[paths[index]]).size;if(!image.complete||image.naturalWidth!==expected[0]||image.naturalHeight!==expected[1])throw new Error('Wrong atlas dimensions: '+paths[index]);var canvas=document.createElement('canvas');canvas.width=canvas.height=64;canvas.getContext('2d').drawImage(image,0,0,64,64);checked.push(paths[index]);checkAtlas(index+1);}catch(e){window.smokeResult=JSON.stringify({error:'Atlas probe: '+String(e)});}};image.onerror=function(){window.smokeResult=JSON.stringify({error:'Atlas failed: '+paths[index]});};image.src=paths[index];
-            }verifyMusic().then(function(checks){result.nativeMusicChecks=checks;checkAtlas(0);}).catch(function(error){window.smokeResult=JSON.stringify({error:String(error)});});
+            }
+            // 打包 WebKit 中验证目标移动及传感器不可用回退，不宣称模拟器有真实倾斜。
+            // Verify target travel and unavailable-sensor fallback in packaged WebKit, not physical tilt.
+            async function verifyAdvancedControls(){
+              function waitFor(check){return new Promise(function(resolve,reject){var limit=Date.now()+8000;var poll=setInterval(function(){if(check()){clearInterval(poll);resolve();}else if(Date.now()>limit){clearInterval(poll);reject(new Error('Advanced controls timeout'));}},40);});}
+              function mode(value){StarfallApp.showControls();var select=document.getElementById('touch-mode');select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}));StarfallApp.back();StarfallApp.back();StarfallApp.back();}
+              g.recordEvents=[];g.enemies=[];g.bullets=[];g.player.invincible=999;
+              mode('point');var layout=renderer.layout;document.getElementById('game').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerId:812,pointerType:'touch',clientX:layout.x+100*layout.scale,clientY:layout.y+200*layout.scale}));
+              await waitFor(function(){return Math.abs(g.player.x-100)<0.01&&Math.abs(g.player.y-200)<0.01;});
+              document.getElementById('pause').click();mode('tilt');
+              await waitFor(function(){return StarfallApp.input.motionFallback===true||!!document.getElementById('tilt-ready')&&!document.getElementById('tilt-ready').disabled;});
+              var fallback=StarfallApp.input.motionFallback===true;
+              if(!fallback)document.getElementById('tilt-fallback').click();
+              await waitFor(function(){return g.phase==='playing';});
+              document.getElementById('pause').click();StarfallApp.showControls();var select=document.getElementById('touch-mode');select.value='floating';select.dispatchEvent(new Event('change',{bubbles:true}));
+              result.advancedControls={pointArrived:true,motionRequestCompleted:true,floatingFallback:StarfallApp.input.mode(0)==='floating',simulatorMotionUnavailable:fallback};
+              StarfallApp.music.suspend();
+            }
+            verifyMusic().then(function(checks){result.nativeMusicChecks=checks;return verifyAdvancedControls();}).then(function(){checkAtlas(0);}).catch(function(error){window.smokeResult=JSON.stringify({error:String(error)});});
           }catch(error){window.smokeResult=JSON.stringify({error:String(error)});clearInterval(timer);}},50);
         })();
         """

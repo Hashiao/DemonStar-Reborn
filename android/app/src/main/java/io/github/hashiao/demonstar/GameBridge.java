@@ -1,6 +1,10 @@
 package io.github.hashiao.demonstar;
 
 import android.app.Activity;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.SystemClock;
@@ -39,11 +43,36 @@ final class GameBridge {
     private volatile int generation;
     private long lastHaptic;
     private final Vibrator vibrator;
+    private final SensorManager sensors;
+    private final Sensor gravity;
+    private SensorEventListener motionListener;
+    // 传感器轴固定于设备；每次发送前映射到当前屏幕方向。
+    // Sensor axes are device-fixed; remap into the current screen orientation.
+    void stopMotion() { if (motionListener != null) sensors.unregisterListener(motionListener); motionListener = null; }
+    private void motion(JSONObject request) {
+        stopMotion();
+        if (!request.optBoolean("enabled")) { reply(request, true, null); return; }
+        if (gravity == null) { reply(request, null, "motion-unavailable"); return; }
+        motionListener = new SensorEventListener() {
+            public void onAccuracyChanged(Sensor sensor, int accuracy) { }
+            public void onSensorChanged(SensorEvent event) {
+                if (!activity.hasWindowFocus()) return;
+                int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+                double angle = rotation * Math.PI / 2, x = -event.values[0], y = -event.values[1], z = -event.values[2];
+                emit(object("type", "motion", "x", x * Math.cos(angle) + y * Math.sin(angle), "y", -x * Math.sin(angle) + y * Math.cos(angle), "z", z, "orientation", rotation * 90));
+            }
+        };
+        boolean registered = sensors.registerListener(motionListener, gravity, 33333);
+        if (!registered) stopMotion();
+        reply(request, registered, registered ? null : "motion-unavailable");
+    }
     interface Permission { void request(JSONObject command); }
     private final Permission permission;
 
     GameBridge(Activity activity, Consumer<JSONObject> output, Permission permission) {
         this.activity = activity; this.output = output; this.permission = permission;
+        sensors = (SensorManager) activity.getSystemService(Context.SENSOR_SERVICE);
+        gravity = sensors == null ? null : sensors.getDefaultSensor(Sensor.TYPE_GRAVITY);
         vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
     }
     static JSONObject object(Object... fields) {
@@ -63,7 +92,8 @@ final class GameBridge {
         String method = request.optString("method");
         if ((method.equals("host") || method.equals("join")) && Build.VERSION.SDK_INT >= 37 && activity.checkSelfPermission("android.permission.ACCESS_LOCAL_NETWORK") != android.content.pm.PackageManager.PERMISSION_GRANTED) { permission.request(request); return; }
         switch (method) {
-            case "capabilities": reply(request, object("lan", true, "haptics", vibrator != null && vibrator.hasVibrator(), "platform", "android", "port", PORT), null); break;
+            case "capabilities": reply(request, object("lan", true, "motion", gravity != null, "haptics", vibrator != null && vibrator.hasVibrator(), "platform", "android", "port", PORT), null); break;
+            case "motion": motion(request); break;
             case "haptic":
                 if (activity.hasWindowFocus() && vibrator != null && vibrator.hasVibrator() && SystemClock.elapsedRealtime() - lastHaptic >= 70) {
                     lastHaptic = SystemClock.elapsedRealtime();
@@ -125,7 +155,7 @@ final class GameBridge {
         generation++; ServerSocket current = listener; listener = null; try { if (current != null) current.close(); } catch (Exception ignored) { }
         for (Peer peer : peers.values()) peer.close(); peers.clear(); if (vibrator != null) vibrator.cancel();
     }
-    void destroy() { stop(); workers.shutdownNow(); }
+    void destroy() { stopMotion(); stop(); workers.shutdownNow(); }
     private final class Peer {
         private final String id;
         private final Socket socket;

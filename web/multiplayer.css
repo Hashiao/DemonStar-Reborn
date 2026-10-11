@@ -31,3 +31,6 @@
 .retained-mode .weapon-status #aux-equipment{position:absolute;bottom:0;left:0;right:0}
 .screen[data-wide='true'] #retained-power{bottom:6px;justify-content:flex-start}.screen[data-wide='true'] .color-bank{width:calc(var(--field-x) - 16px);max-width:150px}
 .retained-mode[data-wide='true'] .weapon-status #aux-equipment{position:static}
+
+/* 状态栏上方的非交互提示 / Non-interactive hint above the status strip. */
+.fire-hint{position:absolute;z-index:12;pointer-events:none;padding:7px 9px;background:rgba(8,14,20,.94);border:1px solid #74899b;color:#e8edf2;font-size:12px;line-height:1.45;box-sizing:border-box;text-align:center;user-select:none;-webkit-user-select:none}

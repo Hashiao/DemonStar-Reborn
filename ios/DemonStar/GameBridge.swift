@@ -1,6 +1,7 @@
 import UIKit
 import WebKit
 import Network
+import CoreMotion
 import CoreHaptics
 import AVFoundation
 import Darwin
@@ -16,6 +17,7 @@ final class GameBridge: NSObject, WKScriptMessageHandler {
     private var peers: [String: Peer] = [:]
     private var generation = 0
     private var serial = 0
+    private let motion = CMMotionManager()
     private var lastHaptic: TimeInterval = 0
     private var music: AVAudioPlayer?
     private var musicTrack = ""
@@ -39,8 +41,9 @@ final class GameBridge: NSObject, WKScriptMessageHandler {
         if method == "capabilities" {
             var haptics: Any = "unknown"
             if #available(iOS 13.0, *) { haptics = CHHapticEngine.capabilitiesForHardware().supportsHaptics }
-            reply(request, ["lan": true, "haptics": haptics, "music": true, "platform": "ios", "port": Self.port]); return
+            reply(request, ["lan": true, "motion": motion.isDeviceMotionAvailable, "haptics": haptics, "music": true, "platform": "ios", "port": Self.port]); return
         }
+        if method == "motion" { handleMotion(request); return }
         if method == "music" { handleMusic(request); return }
         if method == "haptic" {
             if UIApplication.shared.applicationState == .active && Date.timeIntervalSinceReferenceDate - lastHaptic >= 0.07 {
@@ -51,6 +54,24 @@ final class GameBridge: NSObject, WKScriptMessageHandler {
             reply(request, true); return
         }
         queue.async { [weak self] in self?.handle(request, method) }
+    }
+    // 重力只用于方向控制，不记录或上传传感器历史。
+    // Gravity drives direction input only; sensor history is neither recorded nor uploaded.
+    private func handleMotion(_ request: [String: Any]) {
+        motion.stopDeviceMotionUpdates()
+        guard request["enabled"] as? Bool == true else { reply(request, true); return }
+        guard motion.isDeviceMotionAvailable else { reply(request, error: "motion-unavailable"); return }
+        motion.deviceMotionUpdateInterval = 1.0 / 30.0
+        motion.startDeviceMotionUpdates(to: .main) { [weak self] data, error in
+            guard let self = self else { return }
+            guard let data = data, error == nil else { self.emit(["type": "motion-error"]); return }
+            guard UIApplication.shared.applicationState == .active else { return }
+            let orientation = UIApplication.shared.statusBarOrientation
+            let degrees: Double = orientation == .landscapeLeft ? 90 : orientation == .landscapeRight ? 270 : orientation == .portraitUpsideDown ? 180 : 0
+            let angle = degrees * .pi / 180, g = data.gravity
+            self.emit(["type": "motion", "x": g.x * cos(angle) + g.y * sin(angle), "y": -g.x * sin(angle) + g.y * cos(angle), "z": g.z, "orientation": degrees])
+        }
+        reply(request, true)
     }
     // 本地 BGM 用原生文件播放器，避免 WKWebView file URL 媒体偶发永久等待。
     // Play bundled BGM natively, avoiding occasional indefinite WKWebView file-URL media loads.
@@ -92,7 +113,7 @@ final class GameBridge: NSObject, WKScriptMessageHandler {
     }
     // 原生生命周期直接停音；退出房间的 stop() 只管理网络，不中断主菜单音乐。
     // Native lifecycle pauses audio directly; room stop() manages networking without silencing menu music.
-    func suspendMusic() { music?.pause() }
+    func suspendMusic() { motion.stopDeviceMotionUpdates(); music?.pause() }
     private func handle(_ request: [String: Any], _ method: String) {
         switch method {
         case "stop": stopOnQueue(); reply(request, true)

@@ -2,7 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>NSLocalNetworkUsageDescription</key>
+    <key>NSMotionUsageDescription</key><string>Tilt the device to control your ship.</string>
+<key>NSLocalNetworkUsageDescription</key>
     <string>Connect with nearby DemonStar players on the same Wi-Fi or personal hotspot.</string>
 	<key>CFBundleDisplayName</key>
 	<string>DemonStar Reborn</string>
@@ -15,9 +16,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.2.13</string>
+	<string>0.2.14</string>
 	<key>CFBundleVersion</key>
-	<string>15</string>
+	<string>16</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>

@@ -21,8 +21,8 @@
         for(const [symbol,name] of [['↖','upLeft'],['↑','up'],['↗','upRight'],['←','left'],['',''],['→','right'],['↙','downLeft'],['↓','down'],['↘','downRight']]){const b=document.createElement(name?'button':'span');b.textContent=symbol;if(name)b.dataset.direction=name;pad.appendChild(b);}stick.appendChild(pad);
         const group={index:i,stick,knob,actions,zone,pad,fire:$('fire'+suffix),bomb:$('bomb'+suffix),pointer:null,center:null};this.groups.push(group);group.fire.classList.add('fire-button');
         const down=e=>{if(!this.active()||i>=this.input.count||group.pointer!==null)return;e.preventDefault();this.unlock();group.pointer=e.pointerId;
-          const rect=stick.getBoundingClientRect();group.center=this.input.config.players[i].touch==='floating'?{x:e.clientX,y:e.clientY}:{x:rect.left+rect.width/2,y:rect.top+rect.height/2};
-          if(this.input.config.players[i].touch==='floating'){const screen=$('screen').getBoundingClientRect();stick.style.left=e.clientX-screen.left-rect.width/2+'px';stick.style.top=e.clientY-screen.top-rect.height/2+'px';}
+          const rect=stick.getBoundingClientRect();group.center=this.input.mode(i)==='floating'?{x:e.clientX,y:e.clientY}:{x:rect.left+rect.width/2,y:rect.top+rect.height/2};
+          if(this.input.mode(i)==='floating'){const screen=$('screen').getBoundingClientRect();stick.style.left=e.clientX-screen.left-rect.width/2+'px';stick.style.top=e.clientY-screen.top-rect.height/2+'px';}
           this.capture(e.currentTarget,e.pointerId);this.move(group,e);
         };stick.addEventListener('pointerdown',down);zone.addEventListener('pointerdown',down);
         group.fire.addEventListener('pointerdown',e=>{if(!this.active())return;e.preventDefault();this.unlock();this.input.touchFire(i,e.pointerId,true);group.fire.classList.toggle('held',this.input.firing(i));this.capture(group.fire,e.pointerId);});
@@ -35,7 +35,7 @@
     }
     capture(el,id){try{el.setPointerCapture(id);}catch{/* 旧 WebKit 合成事件 / Legacy WebKit synthetic events. */}}
     move(g,e){const radius=g.stick.getBoundingClientRect().width*.36;let x=(e.clientX-g.center.x)/radius,y=(e.clientY-g.center.y)/radius,length=Math.hypot(x,y);
-      if(length<.12)x=y=0;else if(this.input.config.players[g.index].touch==='dpad'){const angle=Math.round(Math.atan2(y,x)/(Math.PI/4))*Math.PI/4;x=Math.cos(angle);y=Math.sin(angle);}else if(length>1){x/=length;y/=length;}
+      if(length<.12)x=y=0;else if(this.input.mode(g.index)==='dpad'){const angle=Math.round(Math.atan2(y,x)/(Math.PI/4))*Math.PI/4;x=Math.cos(angle);y=Math.sin(angle);}else if(length>1){x/=length;y/=length;}
       this.input.move(g.index,x,y);g.knob.style.transform=`translate(${x*radius*.65}px,${y*radius*.65}px)`;
     }
     clear(){for(const g of this.groups){g.pointer=null;g.knob.style.transform='translate(0,0)';g.fire.classList.toggle('held',this.input.firing(g.index));}if(this.lastLayout)this.layout(this.lastLayout);}
@@ -43,7 +43,7 @@
       this.lastLayout=layout;const {w,h,wide,x:fieldX}=layout,cooperative=this.input.count>1,controls=$('controls');controls.classList.toggle('cooperative',cooperative);$('screen').classList.toggle('multiplayer',(this.partyCount||this.input.count)>1);
       const height=Math.min(180,Math.max(124,h*.19));
       for(const g of this.groups){
-        const i=g.index,c=this.input.config.players[i],visible=i===0||cooperative;g.stick.hidden=g.actions.hidden=!visible;g.zone.hidden=!visible||c.touch!=='floating';g.stick.dataset.mode=c.touch;g.pad.hidden=c.touch!=='dpad';g.knob.hidden=c.touch==='dpad';
+        const i=g.index,c=this.input.config.players[i],visible=i===0||cooperative,mode=this.input.mode(i);g.actions.hidden=!visible;g.stick.hidden=!visible||['point','tilt'].includes(mode);g.zone.hidden=!visible||mode!=='floating';g.stick.dataset.mode=mode;g.pad.hidden=mode!=='dpad';g.knob.hidden=mode==='dpad';
         let zone,buttonSize,actionX,actionY,vertical=false;
         if(cooperative&&wide){const side=Math.max(100,fieldX);zone={x:i?w-side:0,y:h*.48,w:side,h:h*.5-15};buttonSize=Math.min(46,(side-20)/2);actionX=zone.x+side/2-buttonSize-4;actionY=h*.25;}
         else if(cooperative){const half=w/2;zone={x:i*half+4,y:h-height+15,w:half*.58,h:height-28};buttonSize=Math.min(48,Math.max(36,half*.24));actionX=(i+1)*half-buttonSize-8;actionY=h-height+20;vertical=true;}
