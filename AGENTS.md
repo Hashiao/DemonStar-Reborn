@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- 关卡编辑器规划（2026-10-11）：面向非程序员，内置 18 关可直接加载并复制为独立自定义作品，原作关卡不可覆盖，副本修改不得影响共用模板或其他作品。当前仅固化方案，不启动开发；完整流程、现有加载/存档/联机约束及验收见 `docs/LEVEL_EDITOR_PLAN.md`。完整编辑设备范围、自定义 HP/速度/炮火数值权限仍待确认；记录文档不代表解除原作参数冻结。当前玩法仍限单人/双人。
+  Level editor plan (2026-10-11): serve non-programmers by loading any of the eighteen built-in stages and copying it into an independent custom work. Originals cannot be overwritten, and edits must not mutate shared templates or other works. Record the plan only, without starting implementation; see `docs/LEVEL_EDITOR_PLAN.md` for workflow, loading/save/network constraints and acceptance. Full-editing device coverage and custom HP/speed/firing permissions remain pending; documenting the proposal does not lift original parameter freezes. Public play remains solo/two-player.
+
 - 最后阶段规划：用户于 2026-10-11 同意各系统分别提供安装包，将 Windows/macOS/Linux 桌面免开发环境交付与五平台双人局域网互通放在项目最后阶段。当前只固化需求，不启动实现；具体缺口、签名/分发条件、25 个房主/客户端平台组合及待决策项见 `docs/FINAL_PLATFORM_DELIVERY.md`。Electron 是评估候选，尚未选定；普通浏览器独立联机不作安装包方案的必要前提，3P/4P 仍仅协议预留。不得将规划或模拟器证据写成桌面包/跨平台真机已通过。
   Final-phase plan: on 2026-10-11 the user accepted separate OS packages and deferred turnkey Windows/macOS/Linux delivery and five-platform two-player LAN to the project's final phase. Record requirements now without implementing them; see `docs/FINAL_PLATFORM_DELIVERY.md` for gaps, signing/distribution conditions, 25 host/guest platform categories and deferred decisions. Electron is a candidate, not selected; browser-only LAN is not a prerequisite for packaged delivery, and P3/P4 remain protocol reserves. Do not report plans or simulator evidence as delivered desktop packages or verified cross-platform hardware.
 

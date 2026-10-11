@@ -12,6 +12,8 @@ The game supports Simplified Chinese, Traditional Chinese and English. First lau
 
 **Final-phase plan, not implemented:** ship separate Windows/macOS/Linux packages without user development setup, targeting LAN between any two of those platforms and Android/iOS. Public play remains solo/two-player. Desktop releases do not yet exist; physical interoperability and signing/distribution gaps remain unverified. See [platform delivery plan and gaps](docs/FINAL_PLATFORM_DELIVERY.md). Complete existing game work before starting this phase.
 
+**Level editor plan, not implemented:** let non-programmers copy any of the eighteen built-in stages, edit visually, playtest and save/share. Originals remain read-only and custom works are independent. Full-editing device coverage and custom numeric permissions remain pending; see [editor design and acceptance](docs/LEVEL_EDITOR_PLAN.md).
+
 
 ![Menu](docs/screenshots/menu-en.png)
 
