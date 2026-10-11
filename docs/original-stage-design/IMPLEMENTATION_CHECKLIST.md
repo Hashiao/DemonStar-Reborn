@@ -2,16 +2,16 @@
 
 [总说明 / Guide](README.md) · [原作证据 / Native evidence](RULES.md)
 
-**状态：全部是研究后的待实施项，本轮没有修改游戏。** 不按关卡总数粗调，不按对称性删一半，不随机改左右。每次引用 `Sxx-Rnnnn` 和源文件哈希，修改后对照对应记录的准入、批次、出生点、路径与掉落。
+**M2.17 更新：出场准入、编队调度、出生位置与首路径目标已实施；完整动态轨迹和下列其他规则仍待后续。** 不按关卡总数粗调，不按对称性删一半，不随机改左右。每次引用 `Sxx-Rnnnn` 和源文件哈希，修改后对照对应记录的准入、批次、出生点、路径与掉落。
 
-**Status: research-backed future work only; gameplay is unchanged.** Do not adjust aggregate counts, halve symmetric formations or randomize sides. Reference row IDs/source hashes and compare eligibility, batch, spawn point, paths and drops after each later change.
+**M2.17 update: admission, formation dispatch, spawn positions and first path targets are implemented; full dynamic motion and the other rules below remain future work.** Do not adjust aggregate counts, halve symmetric formations or randomize sides. Reference row IDs/source hashes and compare eligibility, batch, spawn point, paths and drops after each later change.
 
-| 顺序 / Order | 待实施项 / Pending task | 验收要求 / Acceptance |
+| 顺序 / Order | 项目 / Task | 验收要求 / Acceptance |
 |---|---|---|
-| 1 | R01 出场准入 / Spawn admission | 0/4/8/12 与四难度、单/双有效人数逐项一致；跳过对象不阻塞后续；0x20 注册版特例独立。 / Match every flag/difficulty/player case, advance skipped rows and retain the separate edition gate. |
-| 2 | R02 波次分组 / Formation scheduling | 按原始相邻组生成，验证 483 条分组记录和 415 条偏移；不以稳定 Y 排序代替原顺序。 / Verify grouped records/offsets without substituting a global Y sort. |
-| 3 | R03 出生位置 / Spawn positions | 全部 8,368 条按模式核对，重点检查 mode 3/6、地物入口、分组偏移；先不改全局速度。 / Compare every constructor case, especially modes 3/6, scenery and offsets, without global speed changes. |
-| 4 | R03 首节点与完整路径 / First targets and motion | 复查 944 条首节点差异；首节点与后续节点分别处理。取得原机动态小样本后再扩展整套运动。 / Address first/subsequent nodes separately and obtain native motion samples before broad changes. |
+| 1 | R01 出场准入（M2.17 已实现） / Spawn admission (implemented) | 0/4/8/12 与四难度、单/双有效人数逐项一致；跳过对象不阻塞后续；0x20 注册版特例独立。 / Match every flag/difficulty/player case, advance skipped rows and retain the separate edition gate. |
+| 2 | R02 波次分组（M2.17 已实现） / Formation scheduling (implemented) | 按原始相邻组生成，验证 483 条分组记录和 415 条偏移；不以稳定 Y 排序代替原顺序。 / Verify grouped records/offsets without substituting a global Y sort. |
+| 3 | R03 出生位置（M2.17 已实现） / Spawn positions (implemented) | 全部 8,368 条按模式核对，重点检查 mode 3/6、地物入口、分组偏移；先不改全局速度。 / Compare every constructor case, especially modes 3/6, scenery and offsets, without global speed changes. |
+| 4 | R03 首节点已修，完整路径待核 / First targets fixed; full motion pending | 复查 944 条首节点差异；首节点与后续节点分别处理。取得原机动态小样本后再扩展整套运动。 / Address first/subsequent nodes separately and obtain native motion samples before broad changes. |
 | 5 | R05 补给归属与序列 / Supply ownership/sequences | 固定掉落和自动补给独立；两名玩家火力序列各自推进、炸弹序列共享；核对击毁归属和失效回退。 / Preserve independent explicit/auto drops, per-player weapon cycles, shared bomb cycle and owner fallback. |
 | 6 | R06 跨关补充 / Stage replenishment | 四难度补充、P1/P2 类型、首关跳过准确；换关/跳关/读档不能反复领取。 / Match difficulty/player rules and prevent repeated grants across stage/load paths. |
 | 7 | 动态时序验收 / Runtime timing | 对代表波次记录原机触发/首可见/首发射帧；声明录像零点和时钟，停止把名义秒当实测秒。 / Trace representative spawn/visibility/fire frames with explicit time origins. |
@@ -24,29 +24,29 @@ For each item, record stages/rows, difficulty/player state, method and untested 
 
 ## 按关验收表 / Per-stage acceptance
 
-下表仍全部待实施与运行验收。静态清单已完成不等于修复已完成。
-Every implementation/runtime acceptance cell remains pending; completed static records are not completed fixes.
+以下标注 M2.17 的实际自动回归范围，不冒充原机逐帧验收。
+The table records actual M2.17 automated coverage, not native frame-by-frame certification.
 
 | 关卡 / Stage | 四难度×单/双 / Eight cases | 出场时机与位置 / Trigger/position | 路径与首可见 / Path/visibility | 固定与自动补给 / Drops/supply |
 |---|---|---|---|---|
-| 01 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 02 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 03 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 04 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 05 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 06 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 07 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 08 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 09 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 10 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 11 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 12 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 13 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 14 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 15 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 16 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 17 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
-| 18 | 待 / Pending | 待 / Pending | 待 / Pending | 待 / Pending |
+| 01 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 02 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 03 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 04 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 05 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 06 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 07 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 08 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 09 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 10 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 11 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 12 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 13 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 14 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 15 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 16 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 17 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
+| 18 | 清单通过 / Ledger passed | 逻辑通过 / Logic passed | 首目标通过；完整动态待验 / First targets passed; full motion pending | 字段保留；归属序列待修 / Fields preserved; ownership pending |
 
 ## 实施时不可遗漏 / Requirements for later implementation
 

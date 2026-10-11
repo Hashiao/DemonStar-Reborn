@@ -8,18 +8,33 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
 
-**Current milestone M2.16 (v0.2.16) targets iOS audio transitions and recovery while retaining Android playback implementations. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
+**Current milestone M2.17 (v0.2.17) restores difficulty-aware waves, formation timing and spawn positions. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
 
 **Final-phase plan, not implemented:** ship separate Windows/macOS/Linux packages without user development setup, targeting LAN between any two of those platforms and Android/iOS. Public play remains solo/two-player. Desktop releases do not yet exist; physical interoperability and signing/distribution gaps remain unverified. See [platform delivery plan and gaps](docs/FINAL_PLATFORM_DELIVERY.md). Complete existing game work before starting this phase.
 
 **Level editor plan, not implemented:** let non-programmers copy any of the eighteen built-in stages, edit visually, playtest and save/share. Originals remain read-only and custom works are independent. Full-editing device coverage and custom numeric permissions remain pending; see [editor design and acceptance](docs/LEVEL_EDITOR_PLAN.md).
 
-**Original-stage research, with no resulting gameplay changes yet:** the [eighteen-stage design ledger](docs/original-stage-design/README.md) records difficulty/player conditions, dispatch scroll, spawn positions, formations, paths and guns for all 8,368 placements, with a later implementation checklist. Static verification is distinguished from actual visible-entry timing; complete native frame-by-frame certification is not claimed.
+**Original-stage research:** the [eighteen-stage design ledger](docs/original-stage-design/README.md) records difficulty/player conditions, dispatch scroll, spawn positions, formations, paths and guns for all 8,368 placements, with an implementation checklist. M2.17 implements spawn-related fixes; the remaining items stay tracked. Static verification is distinguished from actual visible-entry timing; complete native frame-by-frame certification is not claimed.
 
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.16
+## Current milestone M2.17
+
+- Restore original difficulty/player gates for enemies and supplies with fixed placement sides, without halving symmetric formations.
+- Dispatch original formations together at distinct birth heights; fix side/scenery entry, first path targets and trailing post-boss map records.
+- **Difficulty remains changeable while paused; the next batch uses the new setting.** Existing entities remain, skipped past waves are not replayed, and the LAN host controls the shared setting.
+- Legacy checkpoints remain readable; stage/load operations rebuild dispatch. Room revision 4 requires both LAN peers to update. Public play remains solo/two-player.
+
+356 engine/unit tests and 25 browser suites passed, including 144 stage/difficulty/player ledger cases, all twelve directed difficulty transitions and subsequent LAN spawning. Android Release/Debug, Lint (0 errors and 12 warnings each), API 37 native controls/settings/localization/two-app LAN passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38135345464) passed iPhoneOS compilation, iPhone/iPad simulator functionality/localization/audio, native-pair LAN and system long presses.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.17/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.17/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.17/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.17/verification.json)
+
+Target broadly faithful behavior without claiming exact frame timing or complete 1:1 fidelity. Supply ownership/sequences and stage replenishment remain later work. HP/damage, approved control/rule extensions and platform audio implementations are unchanged. Physical hotspots, Android–iOS hardware pairs, minimum-OS hardware and the user's iPhone listening quality remain untested. The unsigned IPA requires user signing.
+
+[Evidence and verification limits](docs/M2_17_SPAWNS.md) · [Per-stage design and remaining work](docs/original-stage-design/README.md)
+
+## M2.16 completed work
 
 - Enable a dedicated audio adapter only on iOS, with short effect attacks/releases to reduce stealing and stop discontinuities.
 - Prevent paused iOS dialogs from resuming battle effects and coalesce menu transitions so the old stage BGM is not resumed first.

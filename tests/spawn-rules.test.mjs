@@ -60,6 +60,20 @@ test('paused difficulty changes affect future batches without replaying skipped 
   assert.equal(g.enemies.length,1);assert.equal(g.enemies[0].originX,280);assert.equal(g.cursor,2);
 });
 
+test('all twelve difficulty transitions preserve existing enemies and evaluate the next wave live',()=>{
+  for(const players of [1,2])for(const flags of [0,4,8,12])for(let from=0;from<4;from++)for(let to=0;to<4;to++){
+    if(from===to)continue;
+    const reference=ledger.find(r=>r.stage===1&&r.event_flags===flags),mask=reference[players===1?'solo_ENHI':'two_active_ENHI'];
+    const g=new Game(1);g.start(from,1,false,{playerCount:players});
+    g.recordEvents=[8,16].map(y=>[reference.x,y,reference.definition_id,0,1,reference.explicit_drop_id,0,flags]);
+    g.scroll=8;g.dispatchRecords();const before=g.enemies.slice();assert.equal(before.length,Number(mask[from]));
+    g.pause();assert.ok(g.setDifficulty(to));assert.equal(g.cursor,1);assert.equal(g.scroll,8);assert.equal(g.checkpoint().difficulty,from);g.resume();
+    for(let n=0;n<8;n++)g.update(STEP);
+    assert.equal(g.enemies.length,before.length+Number(mask[to]),`${players}p flags ${flags}: ${from}->${to}`);
+    for(const e of before)assert.ok(g.enemies.includes(e));assert.equal(g.cursor,2);
+  }
+});
+
 test('side-entry modes reach the battlefield and ground carriers continue scrolling',()=>{
   for(const mode of [3,6])for(const x of [80,320]){
     const d=C.definitions.find(d=>d.mode===mode&&!((d.flags&16)||(d.flags&1))),g=new Game(1);g.start();g.recordEvents=[];
