@@ -1,5 +1,11 @@
 # DemonStar Reborn 工作约定
 
+- 2026-10-12 长期合并授权：用户明确允许以后通过本地整套适用测试的修改直接推送并合并 main，无需逐个 PR 再次确认；同时已授权合并当前 PR #4 并先发布此前修复，再处理两条新明确的第 2 关反馈。合并授权不替代发布验收，不得把远端 iOS 失败或未测项目记为通过。
+  Standing merge authorization (2026-10-12): after the full applicable local test suite passes, the user authorizes pushing and merging changes into main without per-PR confirmation. PR #4 is also explicitly authorized, with its existing fixes to be released before addressing the two newly clarified stage-two reports. Merge permission does not waive release verification or permit reporting remote iOS failures/untested cases as passes.
+
+- M2.20 开发中：按原程序补齐 0x20000 地物的基础 HP / 宽+1 范围延迟连锁，以及 S_ENEMY35/36/37 蛇形部件的损毁帧与坠毁。编队组号仅表示入场批次，不得冒称原作存在打头无条件全组死亡。第 2 关“斜向导弹”和“补给固定”尚待具体对象确认，不能标为已修复。规则版本 6；原始定义、M2.19 机动及 M2.18 音频不变。见 docs/M2_20_STRUCTURES.md。
+  M2.20 in progress: restore native 0x20000 delayed ground chains (base HP, width+1 radius) and damaged/falling S_ENEMY35/36/37 parts. Formation IDs are dispatch batches, not evidence of unconditional head-linked destruction. The stage-two diagonal-missile and stationary-supply reports still need identification; do not mark them fixed. Room revision 6 preserves source definitions, M2.19 mobility and M2.18 audio. See docs/M2_20_STRUCTURES.md.
+
 - M2.19：用户要求所有难度/操作方式对齐原作鼠标与模拟摇杆满速，横向 48 步/1.68 秒，纵向理论约 1.73 秒、离散 50 步/1.75 秒。玩家每轴以原作 6 校准，斜向两轴满速；圆形摇杆保留轻推幅度，鼠标/跟手不越过目标。联机输入版本 5；只调玩家机动，不改世界时钟、敌机/弹速/射速/伤害及 M2.18 音频。见 `docs/M2_19_MOBILITY.md`。
   M2.19: all difficulties/input methods use the original mouse/analog full-speed basis: horizontal 48 ticks/1.68 s, vertical ideal ~1.73 s or discrete 50 ticks/1.75 s. Calibrate each axis from 6; diagonals retain both caps. Circular sticks preserve partial magnitude and mouse/follow targets never overshoot. Room input revision 5; change player mobility only, preserving world timing, enemies/projectile speed/firing cadence/damage and M2.18 audio. See `docs/M2_19_MOBILITY.md`.
 

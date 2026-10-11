@@ -34,7 +34,11 @@ options=[(runtime,d) for runtime,devices in available.items() if 'iOS' in runtim
 for family in ('iPhone','iPad'):
     choices=[p for p in options if family in p[1]['name']]
     if not choices: raise RuntimeError('No existing '+family+' simulator')
-    runtime,device=max(choices,key=lambda p:tuple(map(int,re.findall(r'\d+',p[0]))))
+    newest=max(tuple(map(int,re.findall(r'\d+',p[0]))) for p in choices)
+    choices=[p for p in choices if tuple(map(int,re.findall(r'\d+',p[0])))==newest]
+    # 使用既有较小 iPad 降低 CI 图形资源占用，功能断言与运行时版本不变。
+    # Prefer an existing smaller iPad to reduce CI graphics load without changing assertions/runtime.
+    runtime,device=min(choices,key=lambda p:(0 if 'mini' in p[1]['name'].lower() else 1 if '11-inch' in p[1]['name'] else 2)) if family=='iPad' else choices[0]
     uid=device['udid']
     if device.get('state')!='Booted':run(['xcrun','simctl','boot',uid])
     run(['xcrun','simctl','bootstatus',uid,'-b'])
@@ -59,7 +63,8 @@ for family in ('iPhone','iPad'):
         assert probe.get('healthBarDefaults')=={'regular':False,'boss':True} and probe.get('independentHealthBarSwitches'),probe
         assert probe.get('languagePreservesCombat') and all(c['passed'] for c in probe['languageChecks']) and len(probe['languageChecks'])==3,probe
         assert probe.get('launchSeen') and probe.get('presentationReady'),probe
-        assert len(probe.get('campaignArt',{}).get('decoded',[]))==20 and probe['campaignArt']['prototypeRoutes']==251 and probe['campaignArt']['enemyTypes']==15 and probe['campaignArt']['bossDeathRoutes']==9,probe
+        assert len(probe.get('campaignArt',{}).get('decoded',[]))==21 and probe['campaignArt']['prototypeRoutes']==251 and probe['campaignArt']['enemyTypes']==15 and probe['campaignArt']['bossDeathRoutes']==9,probe
+        assert 'assets/snake-deaths-hd.png' in probe['campaignArt']['decoded'],probe
         assert probe.get('weaponArtReady') and probe.get('weaponSizes')=={'homing':[4,8],'red':[1,3,5,9,11,13],'blue':[8,12,16]},probe
         assert probe.get('phase')=='playing',probe;assert probe.get('assetsReady'),probe;assert probe.get('score',0)>=0,probe
         assert probe.get('shotsFired',0)>=2 and probe.get('playerX',0)>200,probe
@@ -77,8 +82,9 @@ for family in ('iPhone','iPad'):
         run(['xcrun','simctl','io',uid,'screenshot',str(out/(family+'.png'))])
         locale_cases.append({'preferred':language,'expected':expected,'probe':probe,'status':'passed'})
     report['devices'].append({'family':family,'name':device['name'],'runtime':runtime,'wkwebview_probe':probe,'locale_cases':locale_cases,'status':'passed'})
-    # 保留已经就绪的模拟器供下一步联机验收，先退出 App 释放 WebKit/音频资源。
-    # Keep the ready simulator for the following LAN check, terminating the app to release WebKit/audio resources.
+    # 单设备验收不同时保留两台开机；LAN 步骤按需启动已安装的设备。
+    # Keep only one simulator booted for single-device checks; LAN boots the installed pair when needed.
     run(['xcrun','simctl','terminate',uid,'io.github.hashiao.demonstar'])
+    run(['xcrun','simctl','shutdown',uid])
 (out/'ios-verification.json').write_text(json.dumps(report,indent=2))
 print(json.dumps(report,indent=2))

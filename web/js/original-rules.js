@@ -13,6 +13,7 @@
   // 按原作鼠标/模拟摇杆每轴 6 的上限校准穿屏时间；难度及世界计时不变。
   // Calibrate traversal to the original mouse/analog cap of 6 per axis; difficulty and world timing stay unchanged.
   const PLAYER_STEP_X=6*(W-32)/(320-32),PLAYER_STEP_Y=6*(H-104)/(400-104);
+  const SNAKE_SEGMENTS=new Set(['S_ENEMY37A','S_ENEMY36A','S_ENEMY35A']);
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   // 0x414940 的定点透视投影，深度输入先截为整数。
   // Fixed-point perspective from 0x414940, with integer depth input.
@@ -317,17 +318,37 @@
       for(let i=0;i<85&&this.particles.length<350;i++){const angle=i/85*Math.PI*2+(random()-.5)*.1,speed=95+random()*105,life=.7+random()*.6;this.particles.push({x:at.x,y:at.y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life,maxLife:life,color:'#b8c2c9',size:.7+random()*.8});}
     }
     killEnemy(e,p=this.player,deathMode=4){
-      if(e.dead||e.dying||e.scenery)return;e.killerId=p.id;if(e.boss)e.hp=0;
+      if(e.dead||e.dying||e.scenery)return;e.killerId=p.id;if(e.boss||SNAKE_SEGMENTS.has(e.def.sprite))e.hp=0;
       // 0x40fdb0 只让带 0x80 且非地面的对象进入坠毁；其余 Boss 原地爆炸。
       // 0x40fdb0 gates falling on 0x80 without ground 0x40; other Bosses explode in place.
-      if(e.boss&&(e.def.flags&0xc0)===0x80){e.dying=true;e.burning=false;e.deathMode=deathMode===3?3:4;e.deathTicks=0;e.fall=e.fallFixed=0;e.fallSpeed=.25;e.fallDirection=e.x<64?-1:e.x>336?1:this.random()<.5?-1:1;this.bossBurst(e,'start');this.events.push({type:'boss-dying',playerId:p.id},{type:'explosion',heavy:true,ground:false});return;}
+      // 蛇形编队部件同样走 0x40fdb0；组号不是共享生命或强制连锁死亡标志。
+      // Snake segments also use 0x40fdb0; formation IDs are not shared health/death links.
+      if((e.boss||SNAKE_SEGMENTS.has(e.def.sprite))&&(e.def.flags&0xc0)===0x80){
+        e.dying=true;e.burning=false;e.deathMode=deathMode===3?3:4;e.deathTicks=0;e.fall=e.fallFixed=0;e.fallSpeed=.25;e.fallDirection=e.x<64?-1:e.x>336?1:this.random()<.5?-1:1;
+        if(e.boss){this.bossBurst(e,'start');this.events.push({type:'boss-dying',playerId:p.id});}
+        else this.addEffect(2,e.x,e.y,48,24);
+        this.events.push({type:'explosion',heavy:!!e.boss,ground:false});return;
+      }
       this.finishEnemy(e);
+    }
+    chainBlast(e){
+      // 0x4116a0：仅连锁标志目标，切比雪夫半径为宽+1；覆盖旧延迟，不叠加。
+      // Only chain-flagged neighbors within width+1 in Chebyshev distance; overwrite, never stack.
+      for(const next of this.enemies){
+        if(next===e||next.dead||next.dying||!(next.def.flags&0x20000)||next.y+next.def.height/2<=0)continue;
+        if(Math.max(Math.abs(next.x-e.x),Math.abs(next.y-e.y))>e.def.width+1)continue;
+        next.chainTicks=9;next.chainDamage=e.def.hp;
+        // 联机沿用引爆者归属，避免二号玩家引爆却给一号玩家计分。
+        // Carry the detonator's ownership so P2's chain does not credit P1 by fallback.
+        next.chainKillerId=e.killerId;
+      }
     }
     finishEnemy(e){
       if(e.dead)return;e.dead=true;this.kills++;this.score+=e.def.score;const killer=this.playerById(e.killerId)||this.player;killer.kills++;killer.score+=e.def.score;
+      if(e.def.flags&0x20000)this.chainBlast(e);
       const ground=!!(e.def.flags&0x40),large=e.def.width>=32,size=e.boss?112:large?Math.max(48,Math.min(96,e.def.width)):28;
       if(e.boss){this.bossBurst(e,'finish');if(!(e.def.flags&0x80))this.bossBurst(e,'finish-extra');}
-      else{this.addEffect(ground?3:2,e.x,e.y,size,large?24:18,ground);this.explode(e.x,e.y,'#ffb05c',16);}
+      else{const at=deathTransform(e);this.addEffect(ground?3:2,at.x,at.y,size,large?24:18,ground);this.explode(at.x,at.y,'#ffb05c',16);}
       // 必须同时有 0x40/0x80 才留残骸；残骸不再战斗、掉落或计分。
       // 0x4113d2: both 0x40 and 0x80 are required. Remnants cannot fire,
       // collide, receive damage, score or drop equipment a second time.
@@ -338,9 +359,24 @@
       this.events.push({type:'explosion',heavy:!!e.boss,ground});this.spawnPickup(e.record[5],e.x,e.y);if(e.def.flags&0x200)this.automaticDrops(e);if(e.boss)this.defeatBoss();
     }
     updateEnemyState(e){
+      if(e.dead)return;
+      if(e.x>=0&&e.x<W&&e.y>=0&&e.y<H)e.entered=true;
+      // 0x40f280：连锁地物低于基础 HP 的四分之一后，每十步自行损失 1 HP。
+      // Below one quarter of base HP, chain structures lose one HP every ten active ticks.
+      if(!e.dying&&e.entered&&(e.def.flags&0x20000)&&e.hp>0&&e.hp<Math.floor(e.def.hp/4)){
+        e.criticalDecayTicks=(e.criticalDecayTicks||0)+1;
+        if(e.criticalDecayTicks>9){e.hp--;e.criticalDecayTicks=0;}
+      }
+      // 0x4101cf：9 递减至 1 时扣血；管道虽不可直接射击，仍可被连锁摧毁。
+      // Apply delayed damage when 9 counts down to 1; unshootable pipes still participate.
+      if(!e.dead&&!e.dying&&e.chainTicks>0&&--e.chainTicks===1){
+        e.hp-=e.chainDamage;e.killerId=e.chainKillerId;
+      }
+      // 出生中心尚未入场时只记录伤害，入场后才执行死亡，保留原作状态 1 门槛。
+      // Damage may reach a partly visible entrant; death waits for its active center/state-1 gate.
+      if(!e.dying&&e.entered&&(e.def.flags&0x20000)&&e.hp<=0){if(e.scenery)this.finishEnemy(e);else this.killEnemy(e,this.playerById(e.killerId)||this.player);return;}
       if(e.def.sprite==='S_ENEMY28A'&&!e.dying)e.animationFrame=((e.animationFrame||0)+1)%6;
       if(e.animation&&!e.dying)this.updateEnemyAnimation(e);
-      if(e.x>=0&&e.x<W&&e.y>=0&&e.y<H)e.entered=true;
       // 濒死阈值按基础 HP 计算，包括出生时翻倍的 Boss。
       // Original warnings compare against base HP, including for doubled Boss HP.
       e.critical=e.hp>0&&e.hp<Math.floor(e.def.hp/4);e.burning=e.boss&&!e.dying&&e.hp>0&&e.hp<Math.floor(e.def.hp/16);
@@ -395,7 +431,7 @@
     collideEnemy(e,p=this.player){
       if(e.dead||e.dying||e.scenery||e.ground||p.connected===false||p.lives<=0||p.respawn>0||p.invincible>0||this.phase!=='playing')return false;
       this.hitPlayer(collisionDamage(e.def.width),'collision',p);
-      e.hp-=305;e.hit=.06;if(e.hp<=0)this.killEnemy(e,p);
+      e.hp-=305;e.hit=.06;e.killerId=p.id;if(e.hp<=0)this.killEnemy(e,p);
       return true;
     }
     hitPlayer(damage=1,source='projectile',p=this.player){
@@ -438,7 +474,7 @@
         for(const e of this.enemies){if(!this.targetable(e)||s.hits.includes(e.uid)||Math.hypot(e.x-s.x,e.y-s.y)>s.radius+e.r)continue;
           // 保留旧版单敌伤害上限，散射子弹共享上限。
           // Frozen v0.2.1 per-enemy damage budgets; scatter siblings share the cap.
-          s.hits.push(e.uid);e.hp-=s.type===0?4500:2400;e.hit=.06;if(e.hp<=0)this.killEnemy(e,this.playerById(s.playerId)||this.player);
+          s.hits.push(e.uid);e.hp-=s.type===0?4500:2400;e.hit=.06;e.killerId=s.playerId;if(e.hp<=0)this.killEnemy(e,this.playerById(s.playerId)||this.player);
         }
         this.events.push({type:'explosion',heavy:s.type===0});
       }
@@ -456,7 +492,7 @@
         const edge=Math.min(b.y,e.y+e.r);if(edge>nearest){nearest=edge;target=e;}
       }
       if(target){b.endY=Math.max(0,nearest);if(!b.damageApplied){
-        b.damageApplied=true;target.hp-=b.damage;target.hit=.06;this.shotsHit++;p.shotsHit++;
+        b.damageApplied=true;target.hp-=b.damage;target.hit=.06;target.killerId=p.id;this.shotsHit++;p.shotsHit++;
         this.addEffect(1,b.x,b.endY,40,16);
         if(target.hp<=0)this.killEnemy(target,p);else this.events.push({type:'enemy-hit'});
       }}
@@ -549,7 +585,7 @@
         if(b.carryTicks>0){const p=this.playerById(b.playerId)||this.player;b.x+=p.x-p.px;b.y+=p.y-p.py;b.carryTicks--;}
         if(b.friendly&&b.missile&&this.particles.length<350){const a=(b.flightAngle||0)*Math.PI/1024;this.particles.push({x:b.x-Math.sin(a)*4,y:b.y+Math.cos(a)*4,vx:0,vy:0,life:.28,maxLife:.28,size:1.6,smoke:true,color:'#aab0b8'});}
         if(b.nova!==undefined)for(const hostile of this.bullets){if(!hostile.friendly&&!hostile.dead&&intersects(b.px,b.py,b.x,b.y,hostile.x,hostile.y,b.r+hostile.r+4))hostile.dead=true;}
-        if(b.friendly){for(const e of this.enemies){if(!this.targetable(e)||b.hitEnemies?.includes(e.uid))continue;if(intersects(b.px,b.py,b.x,b.y,e.x,e.y,e.r+b.r)){const p=this.playerById(b.playerId)||this.player;e.hp-=b.damage;e.hit=.06;if(b.hitEnemies)b.hitEnemies.push(e.uid);else b.dead=true;this.shotsHit++;p.shotsHit++;this.impact(b,e);if(e.hp<=0)this.killEnemy(e,p);else this.events.push({type:'enemy-hit'});if(b.dead)break;}}}
+        if(b.friendly){for(const e of this.enemies){if(!this.targetable(e)||b.hitEnemies?.includes(e.uid))continue;if(intersects(b.px,b.py,b.x,b.y,e.x,e.y,e.r+b.r)){const p=this.playerById(b.playerId)||this.player;e.hp-=b.damage;e.hit=.06;e.killerId=p.id;if(b.hitEnemies)b.hitEnemies.push(e.uid);else b.dead=true;this.shotsHit++;p.shotsHit++;this.impact(b,e);if(e.hp<=0)this.killEnemy(e,p);else this.events.push({type:'enemy-hit'});if(b.dead)break;}}}
         else for(const p of this.livePlayers())if(!b.dead&&intersects(b.px,b.py,b.x,b.y,p.x,p.y,p.r+b.r)){if(this.hitPlayer(b.damage,'projectile',p))b.dead=true;}
         if(this.phase!=='playing')break;
       }

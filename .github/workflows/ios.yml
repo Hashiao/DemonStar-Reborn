@@ -42,10 +42,10 @@ jobs:
           cd artifacts && zip -qr DemonStar.ipa Payload
       - name: Build and launch on an existing iPhone simulator
         run: python3 tools/test-ios-simulator.py
-      - name: Verify two-player native LAN on existing iPhone and iPad simulators
-        run: python3 tools/test-ios-lan.py
       - name: Verify system long presses and game-mode entries on existing iPhone and iPad
         run: python3 tools/test-ios-touch.py
+      - name: Verify two-player native LAN on existing iPhone and iPad simulators
+        run: python3 tools/test-ios-lan.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

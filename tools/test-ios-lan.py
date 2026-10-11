@@ -28,7 +28,8 @@ def main():
     available = json.loads(run('list', 'devices', 'available', '-j'))['devices']
     devices = [next(d for d in available[entry['runtime']] if d['name'] == entry['name']) for entry in smoke['devices']]
     assert len(devices) == 2
-    containers, probes = [], []
+    containers, probes, cleanup = [], [], []
+    report = None
     script = (ROOT / 'tools/ios-lan-probe.js').read_text()
     try:
         for device in devices:
@@ -73,12 +74,22 @@ def main():
         report = {'status': 'passed', 'devices': [{'name': d['name'], 'udid': d['udid']} for d in devices], 'probes': results,
                   'scope': 'Two native iOS simulator apps using Network.framework TCP over loopback. Physical hotspot, LAN permission prompts and Android-iOS hardware interoperability are not certified.'}
         (OUT / 'ios-lan-verification.json').write_text(json.dumps(report, indent=2))
-        print(json.dumps(report))
     finally:
         for index, device in enumerate(devices):
             if index < len(probes) and probes[index].exists():
                 (OUT / ('ios-lan-' + str(index + 1) + '.json')).write_text(probes[index].read_text())
-            subprocess.run(['xcrun', 'simctl', 'shutdown', device['udid']], timeout=60, check=False)
+            # 清理状态单列；关闭模拟器超时不能遮盖真实联机断言的成功或失败。
+            # Record cleanup separately; shutdown timeouts must not mask functional successes or failures.
+            try:
+                stopped = subprocess.run(['xcrun', 'simctl', 'shutdown', device['udid']], timeout=60, check=False)
+                cleanup.append({'device': device['name'], 'status': 'passed' if stopped.returncode == 0 else 'error', 'returncode': stopped.returncode})
+            except subprocess.TimeoutExpired:
+                cleanup.append({'device': device['name'], 'status': 'timeout', 'seconds': 60})
+                print('Simulator cleanup timed out; preserving the functional test result: ' + device['name'], flush=True)
+        if report is not None:
+            report['cleanup'] = cleanup
+            (OUT / 'ios-lan-verification.json').write_text(json.dumps(report, indent=2))
+    print(json.dumps(report))
 
 
 if __name__ == '__main__':
