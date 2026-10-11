@@ -37,6 +37,6 @@ tap('pause-settings');tap('control-settings');tap('fire-mode');tap(text='按住�
 # 存档按钮由 data 属性生成，通过可见文本选择首个手动槽位。
 # Save buttons have data attributes; choose the first manual slot by its visible label.
 tap(text='保存关卡');back();tap('pause-load');tap(text='读取',index=1);time.sleep(3);tap('pause');assert '一般' in label(node('pause-difficulty-label'))
-(out/'m213-android-settings.png').write_bytes(subprocess.check_output(adb+['exec-out','screencap','-p'],timeout=20))
+(out/'m214-android-settings.png').write_bytes(subprocess.check_output(adb+['exec-out','screencap','-p'],timeout=20))
 report={'status':'passed','checks':['five-native-settings-categories','native-settings-independent-health-toggles','native-default-boss-only','native-settings-BGM-toggle','independent-volume-controls','native-rule-selected-and-locked','native-paused-difficulty-change','native-pause-save-load-restores-entry-difficulty','native-nested-back-keeps-pause','native-floating-toggle-defaults','native-paused-fire-mode-selector'],'api':run('shell','getprop','ro.build.version.sdk'),'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'apk_sha256':hashlib.sha256((out/'DemonStar-Reborn-release.apk').read_bytes()).hexdigest()}
-(out/'m213-android-settings.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8');print(json.dumps(report))
+(out/'m214-android-settings.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8');print(json.dumps(report))

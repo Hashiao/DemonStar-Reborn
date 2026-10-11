@@ -1,0 +1,35 @@
+// 同一既有模拟器中的 Release 主机与 Debug 原生客户端；不代替两台手机的热点测试。
+// Native release host/debug client on one existing emulator; this does not replace two-phone hotspot tests.
+import {execFileSync} from 'node:child_process';import {writeFile} from 'node:fs/promises';import assert from 'node:assert/strict';
+const adb=process.env.ADB||'K:/android/sdk/platform-tools/adb.exe',serial=process.env.ANDROID_SERIAL||'emulator-5554',host='io.github.hashiao.demonstar',guest=host+'.debug';
+const run=(...args)=>execFileSync(adb,['-s',serial,...args],{encoding:'utf8',timeout:30000}).trim(),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const until=async(f,ms=30000)=>{const end=Date.now()+ms;while(Date.now()<end){if(await f())return;await sleep(100);}throw new Error('Native Android pair timed out');};
+function nodes(){try{run('shell','uiautomator','dump','/sdcard/demonstar-native-pair.xml');}catch(error){if(error.status!==137)throw error;if(!String(error.stdout).includes('dumped to:'))return [];}const xml=run('shell','cat','/sdcard/demonstar-native-pair.xml');return [...xml.matchAll(/<node\s+([^>]+)>/g)].map(m=>Object.fromEntries([...m[1].matchAll(/([\w-]+)="([^"]*)"/g)].map(v=>[v[1],v[2]])));}
+async function tap(id,texts=[]){let last=[];for(let i=0;i<8;i++){last=nodes();const item=last.find(n=>id?n['resource-id']===id:texts.includes(n.text));if(item){const [x,y,r,b]=item.bounds.match(/\d+/g).map(Number);if(r>x&&b>y){run('shell','input','tap',String(Math.floor((x+r)/2)),String(Math.floor((y+b)/2)));await sleep(400);return;}}if(id==='lan-settings'&&last.some(n=>n['resource-id']==='dialog-title'))run('shell','input','swipe','800','1750','800','650','350');await sleep(500);}throw new Error('Missing native control: '+(id||texts.join('/'))+'; visible='+last.map(n=>n.text).filter(Boolean).join('|'));}
+let ws,port,evaluate,timer,busy=false;
+try{
+  run('shell','am','force-stop',host);run('shell','am','start','-n',host+'/.MainActivity');
+  let pid;await until(()=>{try{pid=run('shell','pidof',host);return !!pid;}catch{return false;}});port=run('forward','tcp:0','localabstract:webview_devtools_remote_'+pid);
+  let target;await until(async()=>{try{target=(await(await fetch('http://127.0.0.1:'+port+'/json')).json()).find(t=>t.url.startsWith('file:///android_asset/index.html'));return !!target;}catch{return false;}});
+  ws=new WebSocket(target.webSocketDebuggerUrl);await new Promise((resolve,reject)=>{ws.addEventListener('open',resolve,{once:true});ws.addEventListener('error',reject,{once:true});});let sequence=0;const pending=new Map();
+  ws.addEventListener('message',event=>{const m=JSON.parse(event.data),p=pending.get(m.id);if(p){pending.delete(m.id);clearTimeout(p.timer);m.error?p.reject(new Error(JSON.stringify(m.error))):p.resolve(m.result);}});
+  const command=(method,params={})=>new Promise((resolve,reject)=>{const id=++sequence,timeout=setTimeout(()=>{pending.delete(id);reject(new Error('CDP request timed out: '+method));},15000);pending.set(id,{resolve,reject,timer:timeout});ws.send(JSON.stringify({id,method,params}));});
+  evaluate=async expression=>{const r=await command('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw new Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
+
+  await until(()=>evaluate('!!window.StarfallApp'));
+  await evaluate('StarfallApp.showMenu();StarfallApp.input.config.count=1;StarfallApp.input.config.players[0].touch="point";StarfallApp.start();true');
+  await until(()=>evaluate('StarfallApp.game.phase==="playing"'));
+  await evaluate('StarfallApp.game.recordEvents=[];StarfallApp.game.enemies=[];StarfallApp.game.bullets=[];StarfallApp.game.player.invincible=999;true');
+  const l=await evaluate('StarfallApp.renderer.layout');
+  await command('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:72,x:l.x+90*l.scale,y:l.y+180*l.scale}]});await command('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  await until(()=>evaluate('Math.abs(StarfallApp.game.player.x-90)<.01&&Math.abs(StarfallApp.game.player.y-180)<.01'));
+  await evaluate('StarfallApp.input.setFireMode(0,"toggle");StarfallApp.input.resetFire(0);true');
+  const r=await evaluate('(()=>{const r=document.getElementById("fire").getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};})()');
+  await command('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:73,...r}]});await sleep(1500);assert.equal(await evaluate('!document.querySelector(".fire-hint").hidden'),true);await sleep(3100);assert.equal(await evaluate('document.querySelector(".fire-hint").hidden'),true);await command('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});assert.equal(await evaluate('String(getSelection())'),'');
+  await evaluate('document.getElementById("pause").click();StarfallApp.showControls();let m=document.getElementById("touch-mode");m.value="tilt";m.dispatchEvent(new Event("change"));StarfallApp.back();StarfallApp.back();StarfallApp.back();true');
+  await until(()=>evaluate('StarfallApp.input.motionFallback||document.getElementById("tilt-ready")&&!document.getElementById("tilt-ready").disabled'));
+  const supported=await evaluate('!StarfallApp.input.motionFallback'),sample=await evaluate('StarfallApp.tilt.latest');
+  if(supported){assert.ok(sample);assert.equal(await evaluate('StarfallApp.game.phase'),'paused');await evaluate('document.getElementById("tilt-ready").click();true');await until(()=>evaluate('StarfallApp.game.phase==="playing"'));await evaluate('document.getElementById("pause").click();StarfallApp.back();true');await until(()=>evaluate('document.getElementById("tilt-ready")&&!document.getElementById("tilt-ready").disabled'));await evaluate('document.getElementById("tilt-ready").click();true');}
+  await evaluate('StarfallApp.showMenu();true');
+  const report={status:'passed',source_commit:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),nativeMotionAvailable:supported,sample,checks:['packaged-point-touch-arrival-after-release','physical-hold-toast-threshold-duration','no-selection','native-motion-request-and-ready-or-fallback'],scope:'Existing Android emulator; real native sensor bridge with emulator-generated gravity when available, not physical device tilt feel.'};await writeFile('artifacts/m214-android-controls.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
+}finally{if(ws)ws.close();if(port)try{run('forward','--remove','tcp:'+port);}catch{}}

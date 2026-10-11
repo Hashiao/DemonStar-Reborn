@@ -151,7 +151,14 @@
   }
   const backSettings=()=>showSettings();
   function lanChanged(){if(lan.role==='offline')return;if(['disconnected','rejected','error'].includes(lan.status)){clearInput(true);audio.suspend();music.suspend();}if(roomOpen||['disconnected','rejected','error'].includes(lan.status))showRoom();}
-  function receivedFrame(info){if(info.first||info.nextEpoch)enterRun();if(calibration?.waiting&&game.phase!=='paused'){calibration=null;hideDialog();clearInput();music.resume();}if($('pause-difficulty-label'))$('pause-difficulty-label').textContent=t('difficulty',{name:t('difficulty'+game.difficulty)});}
+  function receivedFrame(info){
+    if(info.first||info.nextEpoch)enterRun();
+    // 快照在同一绘制帧内也可能连续暂停/恢复，菜单必须跟随每份权威状态。
+    // Pause/resume snapshots can share one render frame; route dialogs on each authoritative state.
+    if(game.phase==='paused'&&lastPhase!=='paused'){audio.suspend();music.suspend();if(!calibration&&!roomOpen)showPauseDialog();lastPhase='paused';}
+    else if(['playing','launch','aftermath'].includes(game.phase)&&(lastPhase==='paused'||calibration?.waiting)){calibration=null;roomOpen=false;hideDialog();clearInput();music.resume();lastPhase=game.phase;}
+    if($('pause-difficulty-label'))$('pause-difficulty-label').textContent=t('difficulty',{name:t('difficulty'+game.difficulty)});
+  }
   function showRoom(){
     const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const errorKeys={'protocol-version':'lanVersionMismatch','room-code':'lanBadCode','room-full':'lanFull','player-limit':'playerLimit','game-started':'lanStarted','local-network-permission':'lanPermission','timeout':'lanTimeout','disconnected':'lanDisconnected'};
