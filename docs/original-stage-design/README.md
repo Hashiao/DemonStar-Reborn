@@ -2,6 +2,10 @@
 
 记录日期 / Recorded: 2026-10-11。实现核查基线 / Runtime baseline: `ec1b52b` / v0.2.16。
 
+后续实施更新：用户已授权 [M2.17](../M2_17_SPAWNS.md) 修复准入、批次、出生位置与首目标。下面的数据与“本轮研究”说明保留为实施前的证据快照；`runtime_current_*` 字段不代表更新后的运行时。真实可见/开火帧仍未全面标定。
+
+Later implementation: the user authorized M2.17 admission, batch, spawn-position and first-target fixes. Data and research-only statements below remain the pre-implementation evidence snapshot; `runtime_current_*` fields do not describe the updated runtime. Full visible-entry/firing-frame calibration remains incomplete.
+
 **本轮为本地研究记录，不修改游戏、地图导入文件、测试或构建代码。** 用户要求先逐关明确不同难度下的数量、位置、时机和原作规则，随后依据清单分步修改。这里恢复的是本地 DemonStar 4.04 程序与地图中的可核实设计数据，不是取得了原作者的源码或设计文稿，也不是十八关四难度全部实机通关验收。
 
 **This is local research documentation, without changing game, imported maps, tests or build code.** The user requests per-stage counts, positions, timing and difficulty rules before later incremental fixes. This recovers verifiable design data from the local DemonStar 4.04 program/maps, not an original author's source/design document or hardware playthrough certification of every stage and difficulty.

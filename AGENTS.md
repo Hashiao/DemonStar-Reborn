@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.17：用户已解除前轮“仅取证”限制，授权按逐关清单修复四难度的数量/时机/位置，接受非逐帧精度。恢复每条记录准入、原始相邻编队及出生偏移、侧面/地物入场、mode 10 首目标、Boss 后调度；房间版本 4，当前玩法仍限单/双人。见 `docs/M2_17_SPAWNS.md`。自动补给归属序列、跨关补给、HP/伤害及循环战役仍待后续，不能随本次修复擅改；原作清单的“当前实现”字段固定指其取证基线，不重写历史数据。
+  M2.17 supersedes the earlier research-only restriction: the user authorizes ledger-based difficulty/count/timing/position fixes without exact frame timing. Restore per-record gates, adjacent formations/offsets, side/scenery entry, mode-10 first targets and post-boss dispatch; room revision 4 still exposes solo/two-player play. See `docs/M2_17_SPAWNS.md`. Supply ownership/sequences, stage replenishment, HP/damage and campaign looping remain separate future work. Ledger current-runtime fields stay tied to their historical baseline.
+
 - 2026-10-11 原作逐关设计恢复：用户明确要求先逐关核对四难度、人数、每个对象的出现时机和位置并本地固化，暂不修改代码。入口为 `docs/original-stage-design/README.md`：18 份逐关完整表、8,368 条放置、144 种静态组合、387 个定义，以及 `RULES.md` / `IMPLEMENTATION_CHECKLIST.md`。按原始分组区分地图 Y、触发刻度、出生中心和首次可见；名义 35 ms 换算不等于原机实测。所有后续修改项仍待实施，原始数值冻结及既有用户扩展不因研究解除；不要只拿总数或对称关系修复波次。
   Original per-stage recovery (2026-10-11): the user requires local evidence for all four difficulties, player counts and each object's timing/position before any code changes. Start at `docs/original-stage-design/README.md` for eighteen full ledgers, 8,368 placements, 144 static cases, 387 definitions, rules and the implementation checklist. Distinguish map Y, dispatch scroll, spawn center and first visibility using original groups; nominal 35 ms conversion is not native measurement. All fixes remain pending, and research does not lift numeric freezes or undo approved extensions. Never repair waves using totals or symmetry alone.
 

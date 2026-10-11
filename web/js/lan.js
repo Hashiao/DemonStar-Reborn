@@ -1,9 +1,9 @@
 /* SPDX-License-Identifier: MIT. 四人主机权威局域网会话 / Four-seat authoritative LAN session. */
 (() => {
   'use strict';
-  // 旧端只接受六枚且保留点按目标；必须在入房前拒绝混用。
-  // Older peers accept six bombs and persistent tap targets; reject mixed versions before admission.
-  const INPUT_VERSION=3,PROTOCOL='demonstar-lan-1',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  // 本版恢复原作人数/难度波次，入房时拒绝仍使用旧出场规则的端。
+  // Reject older room revisions that still use the previous player/difficulty spawning rules.
+  const INPUT_VERSION=4,PROTOCOL='demonstar-lan-1',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
   const idle=()=>({x:0,y:0,fire:false,bomb:0});
   const validRoster=list=>Array.isArray(list)&&list.length>=1&&list.length<=4&&list.every((m,i)=>m.slot===i+1&&typeof m.connected==='boolean'&&['android','ios','browser'].includes(m.platform));
   function token(){const bytes=new Uint8Array(16);if(globalThis.crypto?.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<16;i++)bytes[i]=Math.floor(Math.random()*256);return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');}

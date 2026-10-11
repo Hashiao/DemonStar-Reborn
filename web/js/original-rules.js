@@ -88,7 +88,7 @@
       this.player=this.players[0];this.mode=options.mode==='lan'?'lan':this.players.length>1?'local':'solo';
       this.loadStage(clamp(Math.floor(stage),1,18));
     }
-    loadStage(id){this.stage=STAGES[clamp(Math.floor(id),1,18)-1];this.elapsed=0;this.scroll=0;this.previousScroll=0;this.cursor=0;this.frame=0;this.pendingTime=0;this.dropSequence=0;this.enemySerial=0;this.homingCursor=0;this.recordEvents=[...this.stage.map.events].sort((a,b)=>a[1]-b[1]);this.enemies=[];this.bullets=[];this.specials=[];this.enemyFireLock=0;this.bossRadioTicks=0;this.pickups=[];this.particles=[];this.boss=null;this.bossSpawned=false;this.flash=0;this.shake=0;this.bombRing=0;this.phase='playing';for(const p of this.players){p.x=p.px=this.spawnX(p);p.y=p.py=H-70;p.invincible=2.5;p.respawn=0;p.bank=8;p.thrust=0;delete p.lastBombAction;}this.beginPresentation();this.stageEntry=this.captureStageEntry();this.events.push({type:'stage',stage:this.stage.id,deferredLaunch:this.presentation});}
+    loadStage(id){this.stage=STAGES[clamp(Math.floor(id),1,18)-1];this.elapsed=0;this.scroll=0;this.previousScroll=0;this.cursor=0;this.frame=0;this.pendingTime=0;this.dropSequence=0;this.enemySerial=0;this.homingCursor=0;this.recordEvents=[...this.stage.map.events];this.enemies=[];this.bullets=[];this.specials=[];this.enemyFireLock=0;this.bossRadioTicks=0;this.pickups=[];this.particles=[];this.boss=null;this.bossSpawned=false;this.flash=0;this.shake=0;this.bombRing=0;this.phase='playing';for(const p of this.players){p.x=p.px=this.spawnX(p);p.y=p.py=H-70;p.invincible=2.5;p.respawn=0;p.bank=8;p.thrust=0;delete p.lastBombAction;}this.beginPresentation();this.stageEntry=this.captureStageEntry();this.events.push({type:'stage',stage:this.stage.id,deferredLaunch:this.presentation});}
     // 关卡档固定在入关时，读档重新开始该关，避免奖励与当前战斗状态混用。
     // Stage saves capture entry state; loading restarts the stage without mixing awarded bonuses into it.
     captureStageEntry(){
@@ -114,8 +114,8 @@
       if(this.presentation){this.phase='launch';this.launch={ticks:0,carrierY:-64,previousY:-64};}
     }
     pause(){if(['playing','launch','aftermath'].includes(this.phase)){this.resumePhase=this.phase;this.phase='paused';return true;}return false;}
-    // 暂停换难度只影响后续伤害/炮位规则，不重建实体、计时或入关档。
-    // Paused difficulty changes affect subsequent damage/gun rules, preserving entities, timers and entry saves.
+    // 暂停换难度只影响后续出场/伤害/炮位规则，不重建实体、计时或入关档。
+    // Paused difficulty changes affect future spawning/damage/guns, preserving entities, timers and entry saves.
     setDifficulty(value){if(this.phase!=='paused'||!Number.isInteger(value)||value<0||value>3)return false;this.difficulty=value;this.rules=DIFFICULTIES[value];return true;}
     resume(){if(this.phase==='paused'){this.pendingTime=0;if(this.players.every(p=>p.lives<=0||p.connected===false)){this.phase='gameover';this.events.push({type:'gameover'});}else this.phase=this.resumePhase||'playing';return true;}return false;}
     drainEvents(){return this.events.splice(0);}
@@ -192,19 +192,42 @@
       if(same&&p.power===6)this.triggerNova(p);
       p.power=full?6:same?Math.min(6,p.power+1):1;p.weapon=type;p.defaultWeapon=false;
     }
-    spawnRecord(record){
+    recordAllowed(record){
+      // 0x42d731：原图条件按出场时的难度和有效人数判断；复活等待仍算有效。
+      // Evaluate original placement gates at spawn time; respawn waiting still counts as active.
+      const flags=record[7]||0,active=this.players.filter(p=>p.connected!==false&&p.lives>0).length;
+      if(flags&0x20)return C.levels.length>6; // 完整战役的注册版分支 / Full-campaign registered branch.
+      return !(flags&0x0c)||this.difficulty===3||!!(flags&4)&&this.difficulty===2||!!(flags&8)&&active>1;
+    }
+    dispatchRecords(){
+      // 0x42d650：保留原始相邻组顺序，同批次生成并把纵向间隔转换成出生偏移。
+      // Preserve adjacent source groups: dispatch one batch with per-member spawn-Y offsets.
+      while(this.cursor<this.recordEvents.length&&this.recordEvents[this.cursor][1]<=this.scroll){
+        let group=-1,anchor=0;
+        do{
+          const record=this.recordEvents[this.cursor++];
+          if(group!==record[6]){group=record[6];anchor=record[1];}
+          if(this.recordAllowed(record))this.spawnRecord(record,anchor-record[1]);
+          const next=this.recordEvents[this.cursor];
+          if(!next||next[1]!==anchor&&(!next[6]||next[6]!==group))break;
+        }while(this.cursor<this.recordEvents.length);
+      }
+    }
+    spawnRecord(record,yOffset=0){
       const d=C.definitions[C.byId[record[2]]],boss=!!(d.flags&1),scenery=!!(d.flags&16),ground=!!(d.flags&32);
-      const e={uid:++this.enemySerial,def:d,record,x:record[0],y:-Math.max(192,d.height+64),r:Math.max(6,Math.min(d.width,d.height)*.38),hp:d.hp*(boss?2:1),maxHp:d.hp*(boss?2:1),boss,scenery,ground,dead:false,hit:0,time:0,speed:Math.max(1,d.speed),pathIndex:0,pathX:record[0],pathY:0,originX:record[0],guns:d.guns.map(g=>new Gun(g)),type:d.sprite};
-      if(d.mode===9||d.mode===10){this.setPath(e,true);}else if(d.mode===3){e.x=record[0]<200?-d.width:W+d.width;e.y=100;}
+      const e={uid:++this.enemySerial,def:d,record,x:record[0],y:-Math.max(192,d.height+64)+yOffset,r:Math.max(6,Math.min(d.width,d.height)*.38),hp:d.hp*(boss?2:1),maxHp:d.hp*(boss?2:1),boss,scenery,ground,dead:false,hit:0,time:0,speed:Math.max(1,d.speed),pathIndex:0,pathX:record[0],pathY:0,originX:record[0],guns:d.guns.map(g=>new Gun(g)),type:d.sprite};
+      if(d.mode===9||d.mode===10){this.setPath(e,true);}else if(d.mode===3){e.x=record[0]<200?-d.width-16:W+d.width+15;}
+      else if(d.mode===6){e.x=record[0]<200?-d.width:W+d.width-1;e.y=d.height;}
       else if(d.mode===5){e.y=H+d.height;e.vy=-e.speed;}
-      if(scenery)e.y=-d.height/2;
       const animation=A.animations[d.id];
       if(animation)e.animation={frame:animation.start,wait:animation.interval,pause:animation.pause,cycles:animation.cycles,direction:1};
       this.enemies.push(e);if(boss){this.boss=e;this.bossSpawned=true;this.bossRadioTicks=60;this.events.push({type:'boss',name:this.stage.boss});}
     }
     setPath(e,first=false){
       const d=e.def,point=d.path[e.pathIndex];if(!point){e.pathFinished=true;return;}
-      const mirror=d.mode===10&&e.originX<200?-1:1;
+      // mode 10 的首目标与后续相对节点使用相反的镜像方向。
+      // Mode 10 uses opposite mirroring for the first target and later relative nodes.
+      const mirror=d.mode===10?(e.originX<200?(first?1:-1):(first?-1:1)):1;
       if(first){e.pathX=e.originX+point[0]*mirror;e.pathY=point[1]-(d.pathFlags&16?48:16);}
       else{e.pathX+=point[0]*mirror;e.pathY+=point[1];}
       if(e.pathIndex===d.speedNode){e.loopX=e.pathX;e.loopY=e.pathY;}
@@ -222,10 +245,15 @@
         if(e.pathIndex-1>=d.speedNode&&d.speedNode>=0)e.speed+=Math.sign(Math.max(1,d.exitSpeed)-e.speed);
         if(dist<=speed*dt+1){e.x=e.pathX;e.y=e.pathY;if(e.pathIndex>=d.path.length){if((d.pathFlags&4)&&d.speedNode>=0){e.pathIndex=d.speedNode+1;e.pathX=e.loopX??e.originX;e.pathY=e.loopY??120;}else this.finishPath(e);}else this.setPath(e);}
         else{e.x+=dx/dist*speed*dt;e.y+=dy/dist*speed*dt;}
-      }else if(d.mode===3){e.x+=(e.originX<200?1:-1)*speed*dt;}
+      }else if(d.mode===3){
+        // 0x4106d4：先随背景下移，达到机高+8后才横向进入。
+        // Drift with scrolling first; horizontal entry starts below sprite height + 8.
+        if(e.y>d.height+8)e.x+=(e.originX<200?1:-1)*speed*dt;
+        e.y+=TICK*dt;
+      }else if(d.mode===6){e.x+=(e.originX<200?1:-1)*speed*dt/Math.SQRT2;e.y+=speed*dt/Math.SQRT2;}
       else if(d.mode===5)e.y-=speed*dt;
-      else if(d.mode===8){e.y=Math.min(d.height/2+42,e.y+speed*dt);}
       else{e.y+=speed*dt;}
+      if(e.entered&&[3,4,5,6].includes(d.mode))e.speed+=Math.sign(Math.max(1,d.exitSpeed)-e.speed);
     }
     finishPath(e){
       e.pathFinished=true;
@@ -495,8 +523,10 @@
       this.flash=Math.max(0,this.flash-dt);this.bombRing=Math.max(0,this.bombRing-dt);this.shake=Math.max(0,this.shake-dt*25);this.enemyFireLock=Math.max(0,this.enemyFireLock-1);
       if(this.bossRadioTicks>0&&--this.bossRadioTicks===0&&this.boss&&!this.boss.dying)this.events.push({type:'boss-radio'});
       for(const p of this.players)this.stepPlayer(p,input.players?input.players[p.id-1]||{}:p.id===1?input:{});
-      if(!this.bossSpawned)this.scroll+=dt*TICK;
-      while(this.cursor<this.recordEvents.length&&this.recordEvents[this.cursor][1]<=this.scroll){this.spawnRecord(this.recordEvents[this.cursor++]);}
+      // 0x42d840 不因 Boss 已生成而停滚；保留其后的地面目标和场景批次。
+      // Native scrolling does not stop merely on boss spawn; retain later ground/scenery batches.
+      this.scroll+=dt*TICK;
+      this.dispatchRecords();
       for(const e of this.enemies){if(e.dead)continue;e.time+=dt;e.hit=Math.max(0,e.hit-dt);if(!e.dying)this.moveEnemy(e,dt);this.updateEnemyState(e);if(e.dead||e.dying)continue;for(const gun of e.guns)gun.tick(e,this);for(const p of this.livePlayers())if(!e.scenery&&!e.ground&&e.y>0&&Math.hypot(e.x-p.x,e.y-p.y)<e.r+p.r)this.collideEnemy(e,p);}
       this.updateSpecials();
       for(const b of this.bullets){
