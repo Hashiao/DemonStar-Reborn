@@ -54,6 +54,14 @@
       // Use original visible bounds; types 43/44 already encode diagonal poses, so do not rotate them again.
       this.cropped(im,s.crop,at.x+s.offset[0],at.y+s.offset[1],...s.size);
     }
+    // 提示只借用激光美术，不进入弹体或碰撞系统；100% 不透明留给真正的攻击。
+    // Warnings reuse beam art without entering projectile/collision systems; full opacity belongs to the real attack.
+    laserWarning(w,at,fraction){
+      const progress=Math.max(0,Math.min(1,1-(w.ticks-fraction)*STEP));if(progress<=0)return;
+      const phase=(progress/STEP)%w.period,last=w.pulses.filter(t=>t<=phase).pop();if(last===undefined)return;
+      const age=1+Math.floor(phase-last);if(age>=w.frames)return;
+      this.c.save();this.c.globalAlpha*=Math.min(.999999,progress);this.enemyShot({shotType:w.shotType,age},at);this.c.restore();
+    }
     superCell(frame,x,y,w,h){return this.cropped(this.superWeapon,DemonStarSuperweaponArt.frames[frame],x,y,w,h);}
     showsEnemyHealth(e){return this.enemyHealthBars&&!e.scenery&&!e.boss&&!e.dead&&e.maxHp>=HEALTH_BAR_MIN_HP&&e.entered;}
     cropped(image,b,x,y,w,h,angle=0){if(!image.naturalWidth)return false;const c=this.c;c.save();c.translate(x,y);if(angle)c.rotate(angle);c.drawImage(image,...b,-w/2,-h/2,w,h);c.restore();return true;}
@@ -165,6 +173,10 @@
         for(const e of game.enemies.filter(e=>e.scenery||e.ground))object(e);
         for(const e of game.enemies.filter(e=>!e.scenery&&!e.ground))object(e);
         for(const item of game.pickups){const at=position(item);this.cell(this.pickups,item.id??DROPS.indexOf(item.type),4,5,at.x,at.y,32,32);}
+        if(game.difficulty===0)for(const w of game.laserWarnings||[]){
+          const e=game.enemies.find(e=>e.uid===w.owner&&!e.dead&&!e.dying);if(!e)continue;
+          const at=position(e);this.laserWarning(w,{x:at.x+w.offsetX,y:at.y+w.offsetY},Math.max(0,Math.min(1,(game.pendingTime||0)/STEP)));
+        }
         for(const b of game.bullets){
           if(b.playerBeam){const p=game.playerById?.(b.playerId)||game.player;if(p.mega>0&&p.lives>0){const at=position(p),frame=Math.max(0,Math.min(3,b.age)),height=Math.max(0,at.y-20-b.endY);this.superCell(4+frame,at.x,b.endY+height/2,[12,10,8,5][frame],height);}continue;}
           if(!b.friendly){this.enemyShot(b,position(b));continue;}

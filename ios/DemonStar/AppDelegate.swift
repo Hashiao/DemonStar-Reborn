@@ -181,6 +181,17 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
                 if(hitX!==48||hitY!==50)throw new Error('Wrong mobility traversal');
               }
               result.mobility={difficulties:4,horizontalTicks:48,verticalTicks:50,diagonalAxesRetainSpeed:true};
+              // 简单难度预警原生运行验证，仅在显式 smoke-test 中执行。
+              // Verify Easy warnings only in the explicit native smoke test.
+              result.laserWarning=(() => {
+               const {Game,STEP}=StarfallCore,g=new Game(222);g.start(0,1,false,{playerCount:2});g.recordEvents=[];g.spawnRecord([200,0,40,0,1,-1,0,0]);
+               const e=g.enemies[0];Object.assign(e,{x:200,y:80,px:200,py:80,entered:true,pathFinished:true,exitX:0,exitY:0});e.guns=e.guns.filter(gun=>gun.raw[2]===9);e.guns[0].delay=20;g.player.x=199;g.player.invincible=0;
+               g.update(STEP);if(g.laserWarnings.length!==1||g.player.energy!==16||g.bullets.length)throw new Error('Laser warning missing or harmful');
+               const client=new Game(223);if(!DemonStarNetworkState.apply(client,DemonStarNetworkState.encode(g),false)||JSON.stringify(client.laserWarnings)!==JSON.stringify(g.laserWarnings))throw new Error('Laser warning snapshot mismatch');
+               g.pause();const frame=g.frame;g.update(.25);if(g.frame!==frame)throw new Error('Paused warning advanced');g.setDifficulty(1);if(g.laserWarnings.length)throw new Error('Warning outside Easy');g.setDifficulty(0);if(g.laserWarnings[0].ticks!==20)throw new Error('Difficulty reset warning timer');g.resume();
+               for(let i=0;i<19;i++){g.update(STEP);if(g.player.energy!==16)throw new Error('Warning damaged player');}g.update(STEP);if(g.player.energy!==14||g.laserWarnings.length||!g.bullets.some(b=>b.beam))throw new Error('Laser warning handoff failed');
+               return {harmless:true,firstHit:true,pauseDifficulty:true,network:true,players:2};
+              })();
               mode('point');var layout=renderer.layout;document.getElementById('game').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerId:812,pointerType:'touch',clientX:layout.x+100*layout.scale,clientY:layout.y+200*layout.scale}));
               var destination=StarfallApp.input.states[0].target;if(!destination||Math.abs(destination.x-100)>2||Math.abs(destination.y-200)>2)throw new Error('Point event not captured');
               await waitFor(function(){return Math.abs(g.player.x-destination.x)<0.01&&Math.abs(g.player.y-destination.y)<0.01;},'point-arrival');
