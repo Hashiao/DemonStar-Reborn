@@ -88,20 +88,26 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
         (function(){
           var phase=0,stable=0,size='',startFrame=0,releasedX=0,releasedShots=0,sawLaunch=false,startupMusic=null;
           var initialLocale=DemonStarI18n.locale,preferredLanguage=DemonStarI18n.preferred();
+          // 探针保留原生音乐请求/回复时序；观察原 Promise，不替换播放器或返回值。
+          // Trace native music requests/replies in the probe; observe original promises without replacing playback/results.
+          var musicTrace=[],musicStep='startup',traceStart=performance.now(),nativeRequest=StarfallApp.native.request;
+          function traceMusic(value){musicTrace.push(Object.assign({ms:performance.now()-traceStart},value));if(musicTrace.length>80)musicTrace.shift();}
+          StarfallApp.native.request=function(method,fields,timeout){var task=nativeRequest.apply(this,arguments);if(method==='music'){var at=performance.now();traceMusic({event:'request',step:musicStep,fields:fields});task.then(function(value){traceMusic({event:'reply',step:musicStep,elapsed:performance.now()-at,value:value});},function(error){traceMusic({event:'error',step:musicStep,elapsed:performance.now()-at,error:String(error)});});}return task;};
+          function musicDiagnostic(){var m=StarfallApp.music;return {step:musicStep,hidden:document.hidden,gamePhase:StarfallApp.game.phase,desired:{enabled:m.enabled,paused:m.paused,volume:m.volume,ducked:m.ducked,track:m.track},nativePending:m.nativePending,syncQueued:!!m.syncQueued,nativeSignature:m.nativeSignature,nextPoll:m.nextPoll,now:m.clock(),bridgePending:StarfallApp.native.pending.size,snapshot:m.snapshot(),trace:musicTrace.slice()};}
           // 验收真实原生时钟、暂停/恢复和音量，不用 HTMLAudio 的代理数值。
           // Check the real native clock, pause/resume and volume, not HTMLAudio stand-ins.
           async function verifyMusic(){
             var m=StarfallApp.music,volume=m.volume;
-            function wait(check){return new Promise(function(resolve,reject){var began=Date.now();var poll=setInterval(function(){var state=m.snapshot();if(state.error){clearInterval(poll);reject(new Error(state.error));}else if(!m.nativePending&&check(state)){clearInterval(poll);resolve(state);}else if(Date.now()-began>8000){clearInterval(poll);reject(new Error('Native music state timeout: '+JSON.stringify(state)));}},50);});}
+            function wait(check,label){musicStep=label;return new Promise(function(resolve,reject){var began=Date.now();var poll=setInterval(function(){var state=m.snapshot();if(state.error){clearInterval(poll);reject(new Error(state.error));}else if(!m.nativePending&&check(state)){clearInterval(poll);resolve(state);}else if(Date.now()-began>8000){clearInterval(poll);reject(new Error('Native music state timeout: '+label+' '+JSON.stringify(state)));}},50);});}
             function delay(){return new Promise(function(resolve){setTimeout(resolve,350);});}
-            m.suspend();var paused=await wait(function(s){return s.ready&&s.paused;});await delay();
+            m.suspend();var paused=await wait(function(s){return s.ready&&s.paused;},'pause-initial');await delay();
             var still=await StarfallApp.native.request('music',{action:'status'});
             if(Math.abs(still.currentTime-paused.currentTime)>.03)throw new Error('Paused native clock advanced');
-            m.resume();await wait(function(s){return !s.paused&&s.currentTime>paused.currentTime+.1;});
-            m.setEnabled(false);await wait(function(s){return s.paused;});m.setEnabled(true);await wait(function(s){return !s.paused;});
-            StarfallApp.audio.stopMission();m.volume=.17;m.update(false);await wait(function(s){return Math.abs(s.volume-.17)<.001;});
-            m.volume=0;m.update(false);await wait(function(s){return s.volume===0;});
-            m.volume=volume;m.suspend();await wait(function(s){return s.paused;});
+            m.resume();await wait(function(s){return !s.paused&&s.currentTime>paused.currentTime+.1;},'resume-clock');
+            m.setEnabled(false);await wait(function(s){return s.paused;},'mute');m.setEnabled(true);await wait(function(s){return !s.paused;},'unmute');
+            StarfallApp.audio.stopMission();m.volume=.17;m.update(false);await wait(function(s){return Math.abs(s.volume-.17)<.001;},'volume-17');
+            m.volume=0;m.update(false);await wait(function(s){return s.volume===0;},'volume-zero');
+            m.volume=volume;m.suspend();await wait(function(s){return s.paused;},'pause-final');
             return {backend:'ios-native',pauseClockStable:true,resumeClockAdvanced:true,muteRespected:true,volumeRespected:true,zeroVolumeRespected:true};
           }
           function pointer(id,type,x){var el=document.getElementById(id),r=el.getBoundingClientRect(),e=new Event(type,{bubbles:true,cancelable:true});e.pointerId=id==='fire'?21:22;e.clientX=r.left+r.width*x;e.clientY=r.top+r.height*.5;el.dispatchEvent(e);}
@@ -219,7 +225,11 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
               result.advancedControls={pointArrived:true,followReleaseStops:true,doubleTapBomb:true,motionRequestCompleted:true,floatingFallback:StarfallApp.input.mode(0)==='floating',simulatorMotionUnavailable:fallback};
               StarfallApp.music.suspend();
             }
-            verifyMusic().then(function(checks){result.nativeMusicChecks=checks;return verifyAdvancedControls();}).then(function(){checkAtlas(0);}).catch(function(error){window.smokeResult=JSON.stringify({error:String(error)});});
+            verifyMusic().then(function(checks){result.nativeMusicChecks=checks;return verifyAdvancedControls();}).then(function(){checkAtlas(0);}).catch(function(error){var failure=musicDiagnostic();
+              // 失败仍算失败；额外观察 8 秒，以区分晚回复与真正丢失/卡住的原生请求。
+              // Keep the failure; observe eight more seconds to distinguish late replies from lost/stalled native requests.
+              setTimeout(function(){window.smokeResult=JSON.stringify({error:String(error),musicAtFailure:failure,musicAfterFailure:musicDiagnostic()});},8000);
+            });
           }catch(error){window.smokeResult=JSON.stringify({error:String(error)});clearInterval(timer);}},50);
         })();
         """
