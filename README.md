@@ -1,5 +1,7 @@
 # DemonStar Reborn / 恶魔之星·重生
 
+**M2.24 修复候选，尚待发布验收：** 三色满级同色球/S 弹幕不再抵消敌弹；第 2/4 关相关三种地面炮台补齐原作开合盖与轮换炮门。数值表和炮火参数不变，房间规则 10。见 [证据与验收范围](docs/M2_24_OVERFLOW_SHUTTERS.md)。
+
 **[简体中文](README.md) · [English](README.en.md)**
 
 **[下载 Android APK](https://github.com/Hashiao/DemonStar-Reborn/releases/latest/download/DemonStar-Reborn-release.apk)** · **[下载 iPhone / iPad IPA（未签名）](https://github.com/Hashiao/DemonStar-Reborn/releases/latest/download/DemonStar.ipa)** · [全部里程碑](https://github.com/Hashiao/DemonStar-Reborn/releases)

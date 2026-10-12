@@ -1738,7 +1738,7 @@
       "route": {
         "kind": "campaign"
       },
-      "asset": "assets/campaign-objects-01-hd.png",
+      "asset": "assets/ground-covers-hd.png",
       "kind": "atlas"
     },
     "G_BTANK1A": {
@@ -1771,7 +1771,7 @@
       "route": {
         "kind": "campaign"
       },
-      "asset": "assets/campaign-objects-02-hd.png",
+      "asset": "assets/ground-shutters-hd.png",
       "kind": "atlas"
     },
     "G_ANGTNKR": {
@@ -1868,7 +1868,7 @@
       "route": {
         "kind": "campaign"
       },
-      "asset": "assets/campaign-objects-02-hd.png",
+      "asset": "assets/ground-covers-hd.png",
       "kind": "atlas"
     },
     "G_TNKSHT1A": {
@@ -8132,6 +8132,20 @@
       "size": [
         1983,
         793
+      ]
+    },
+    "assets/ground-covers-hd.png": {
+      "sha256": "10332eebc755f4f7afa38a5afdc0e040e40d7419b7ce0ae09330d991eef5eefc",
+      "size": [
+        2172,
+        724
+      ]
+    },
+    "assets/ground-shutters-hd.png": {
+      "sha256": "23c9112dbda3ff6e48f6be9850ce4fdabea35d57add877827fc5f8622e9dcc7d",
+      "size": [
+        1866,
+        843
       ]
     }
   }

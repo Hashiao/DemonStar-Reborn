@@ -1,9 +1,9 @@
 /* SPDX-License-Identifier: MIT. 四人主机权威局域网会话 / Four-seat authoritative LAN session. */
 (() => {
   'use strict';
-  // 玩家独立速度和预警快照需要双方采用同一规则。
-  // Independent player speeds and warning snapshots require matching rules on both peers.
-  const INPUT_VERSION=9,PROTOCOL='demonstar-lan-1',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  // 三色溢出弹与炮门动画需要双方采用同一规则和帧表。
+  // Color overflow and shutter animation require matching rules and frame tables on both peers.
+  const INPUT_VERSION=10,PROTOCOL='demonstar-lan-1',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
   const idle=()=>({x:0,y:0,fire:false,bomb:0});
   const validRoster=list=>Array.isArray(list)&&list.length>=1&&list.length<=4&&list.every((m,i)=>m.slot===i+1&&typeof m.connected==='boolean'&&['android','ios','browser'].includes(m.platform));
   function token(){const bytes=new Uint8Array(16);if(globalThis.crypto?.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<16;i++)bytes[i]=Math.floor(Math.random()*256);return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');}

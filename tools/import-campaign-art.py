@@ -66,6 +66,11 @@ def generate(directory):
             defs=[d for d in campaign['definitions'] if d['sprite']==name]
             sprites[name]={**geometry(name),'asset':asset,'crop':crops[i],'directional':any(d['flags']&0x500 for d in defs)}
             routes[name]={'kind':'campaign'}
+    # 同名 B 项是连续炮门帧；按原始几何显示新重绘，不复制参考像素。
+    # Repeated B entries are consecutive shutter poses; map redraws to source geometry without copying pixels.
+    ground,ground_assets=runpy.run_path(str(ROOT/'tools/import-ground-animations.py'))['ground_art'](directory)
+    for name,spec in ground.items():sprites[name].update(spec)
+    assets.update(ground_assets)
     # 保留已核验的多帧和关卡一素材；其他所有对象必须有显式新映射。
     # Retain verified frame atlases and stage-one art; every other object needs an explicit mapping.
     mission=['S_ENEMY14','S_ENEMY20','S_ENEMY21','S_ENEMY34A','S_ASTER1A','S_ASTER2A','S_ASTER3A','S_ENBON1','S_ENBON3','S_SPTNKRA','S_ENEMY22','S_ENEMY28A','S_PIPE1','S_PIPE2','S_PIPE3','S_BHOLE1A']

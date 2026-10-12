@@ -39,7 +39,10 @@
       // 底座固定，炮管绕原作轴心转动；其他方向对象的首帧朝向为 0。
       // Bases stay fixed and barrels pivot at original hubs; other directional art starts at heading zero.
       if(s.directional&&!s.head)c.rotate((e.facing??0)*Math.PI/16);
-      c.drawImage(image,...s.crop,s.offset[0]-s.visible[0]/2,s.offset[1]-s.visible[1]/2,...s.visible);
+      // 炮门沿用原作逐帧边界与固定中心；房主动画状态也用于客户端。
+      // Shutters retain source frame bounds and a fixed center; clients draw the host's animation state.
+      const frame=s.frames?.[e.animation?.frame||0]||s;
+      c.drawImage(image,...frame.crop,frame.offset[0]-frame.visible[0]/2,frame.offset[1]-frame.visible[1]/2,...frame.visible);
       if(s.head){const h=s.head;c.translate(...h.offset);c.rotate((e.facing??0)*Math.PI/16);c.drawImage(image,...h.crop,-h.pivot[0]*h.size[0],-h.pivot[1]*h.size[1],...h.size);}
       c.restore();
     }

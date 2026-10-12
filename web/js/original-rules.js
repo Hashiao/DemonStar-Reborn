@@ -437,7 +437,9 @@
       if(state.cycles<=0||rule.loopFrames<2)return;
       if(state.pause>0){state.pause--;return;}
       if(state.wait>0){state.wait--;return;}
-      const last=A.sprites[e.def.sprite].frames.length-1;
+      // 炮门帧按关加载，计时仍来自同一原作动画表。
+      // Shutter frames load per stage; their timing still comes from the same source animation table.
+      const last=(rule.frameCount||A.sprites[e.def.sprite].frames.length)-1;
       state.frame+=state.direction;
       if(rule.pingPong&&state.frame<0){state.frame=0;state.direction=1;state.pause=rule.pauseStart;}
       if(state.frame>last){
@@ -624,7 +626,9 @@
         if(b.carryTicks>0){const p=this.playerById(b.playerId)||this.player;b.x+=p.x-p.px;b.y+=p.y-p.py;b.carryTicks--;}
         if(b.friendly&&b.missile&&this.particles.length<350){const a=(b.flightAngle||0)*Math.PI/1024;this.particles.push({x:b.x-Math.sin(a)*4,y:b.y+Math.cos(a)*4,vx:0,vy:0,life:.28,maxLife:.28,size:1.6,smoke:true,color:'#aab0b8'});}
         if(!b.friendly&&ENEMY_MISSILES[b.shotType])this.enemyMissileTrail(b);
-        if(b.nova!==undefined)for(const hostile of this.bullets){if(!hostile.friendly&&!hostile.dead&&intersects(b.px,b.py,b.x,b.y,hostile.x,hostile.y,b.r+hostile.r+4))hostile.dead=true;}
+        // 原作 45/46/47 号三色溢出弹只攻击敌机，不抵消敌弹；磁力旧行为本轮不变。
+        // Source color-overflow types 45/46/47 damage enemies without cancelling shots; retain legacy magnetic behavior here.
+        if(b.nova===3)for(const hostile of this.bullets){if(!hostile.friendly&&!hostile.dead&&intersects(b.px,b.py,b.x,b.y,hostile.x,hostile.y,b.r+hostile.r+4))hostile.dead=true;}
         if(b.friendly){for(const e of this.enemies){if(!this.targetable(e)||b.hitEnemies?.includes(e.uid))continue;if(intersects(b.px,b.py,b.x,b.y,e.x,e.y,e.r+b.r)){const p=this.playerById(b.playerId)||this.player;e.hp-=b.damage;e.hit=.06;e.killerId=p.id;if(b.hitEnemies)b.hitEnemies.push(e.uid);else b.dead=true;this.shotsHit++;p.shotsHit++;this.impact(b,e);if(e.hp<=0)this.killEnemy(e,p);else this.events.push({type:'enemy-hit'});if(b.dead)break;}}}
         else for(const p of this.livePlayers())if(!b.dead&&intersects(b.px,b.py,b.x,b.y,p.x,p.y,p.r+b.r)){if(this.hitPlayer(b.damage,'projectile',p))b.dead=true;}
         if(this.phase!=='playing')break;

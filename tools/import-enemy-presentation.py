@@ -44,11 +44,15 @@ def extract(directory):
     a,b,c,d=atlas.getchannel('A').crop((x,y,x2,y2)).point(lambda a:255 if a>128 else 0).getbbox()
     sprites['S_SPTNKRA']={'asset':'assets/mission1-hd.png','directional':False,'frames':[[x+a,y+b,c-a,d-b,(left+right-original.width)/2,(top+bottom-original.height)/2,right-left,bottom-top]]}
     data=next(e['data'] for e in entries if e['name']=='SHIPDEFS_DAT');animations={}
+    # 地面炮门使用按关加载的战役图集，仅在此导入原始计时。
+    # Ground shutters use stage-scoped campaign atlases; import only their source timing here.
+    ground_frames={'G_TNK2A':6,'G_TNK3A':6,'G_BTANK1A':20}
     for i in range(struct.unpack_from('<I',data)[0]):
         rec=data[4+i*2688:4+(i+1)*2688];name=rec[:16].split(b'\0')[0].decode()
-        if name not in sprites or name=='S_SPTNKRA':continue
+        if name not in sprites and name not in ground_frames or name=='S_SPTNKRA':continue
         s16=lambda off:struct.unpack_from('<h',rec,off)[0]
         animations[struct.unpack_from('<I',rec,16)[0]]={'interval':s16(64),'pause':s16(66),'loopFrames':s16(68),'cycles':s16(70),'start':s16(72),'pauseEnd':s16(82),'pauseStart':s16(84),'pingPong':bool(struct.unpack_from('<I',rec,40)[0]&0x10000)}
+        if name in ground_frames:animations[struct.unpack_from('<I',rec,16)[0]]['frameCount']=ground_frames[name]
     return {'sprites':sprites,'animations':animations}
 
 if __name__=='__main__':

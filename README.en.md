@@ -1,5 +1,7 @@
 # DemonStar Reborn
 
+**M2.24 candidate, release verification pending:** full-tier same-color/S volleys no longer cancel hostile shots; three ground-turret families used in stages 2/4 gain source-timed covers and rotary shutters. Numeric tables and gun parameters remain unchanged; room revision 10. See [evidence and verification scope](docs/M2_24_OVERFLOW_SHUTTERS.md).
+
 **[简体中文](README.md) · [English](README.en.md)**
 
 **[Download Android APK](https://github.com/Hashiao/DemonStar-Reborn/releases/latest/download/DemonStar-Reborn-release.apk)** · **[Download iPhone/iPad IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/latest/download/DemonStar.ipa)** · [All milestones](https://github.com/Hashiao/DemonStar-Reborn/releases)

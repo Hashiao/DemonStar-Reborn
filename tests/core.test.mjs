@@ -164,10 +164,14 @@ test('max-tier same color and full S each launch distinct gold, blue and red nov
   }
 });
 
-test('nova clears hostile projectiles along its path instead of deleting the whole field',()=>{
-  const g=new Game(1);g.start();g.recordEvents=[];g.player.x=200;g.player.y=300;g.player.defaultWeapon=false;g.player.power=6;
-  g.addBullet(200,282,0,0,false);g.addBullet(20,20,0,0,false);g.triggerNova();g.update(STEP);g.update(STEP);
-  const hostile=g.bullets.filter(b=>!b.friendly);assert.equal(hostile.length,1);assert.equal(hostile[0].x,20);
+test('three color overflow volleys leave crossing and distant hostile projectiles intact',()=>{
+  // 修正旧测试把重制版消弹误当成原作规则；保留路径相交的实际回归。
+  // Correct the old test's assumed cancellation rule while retaining actual crossing-path coverage.
+  for(const weapon of [0,1,2]){
+    const g=new Game(1);g.start();g.recordEvents=[];Object.assign(g.player,{x:200,y:300,defaultWeapon:false,power:6,weapon});
+    g.addBullet(200,282,0,0,false);g.addBullet(20,20,0,0,false);g.triggerNova();g.update(STEP);g.update(STEP);
+    const hostile=g.bullets.filter(b=>!b.friendly);assert.equal(hostile.length,2);assert.deepEqual(hostile.map(b=>b.x),[200,20]);
+  }
 });
 
 test('all original fixed drop records retain their content; non-target scenery stays non-target',()=>{

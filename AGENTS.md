@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.24 候选：用户授权按原作修复三色满级同色球/S 溢出弹误消敌弹，以及第 2/4 关 G_TNK2A、G_TNK3A、G_BTANK1A 炮门动画。原始数值/炮火/炸弹/音频不变，房间规则 10。原作帧只作参考，发布重绘；本轮按影响范围验收，跳过项不可写成通过。完整发布尚待验收，见 docs/M2_24_OVERFLOW_SHUTTERS.md。
+  M2.24 candidate: evidence-backed color-overflow cancellation and three stage-2/4 turret shutter fixes are authorized. Preserve numeric tables, guns, bombs and audio; room revision 10. Publish redraws only. Use impact-based verification and never count skipped checks as passes. Release verification is pending; see the linked document.
+
 - M2.23 验收完成：407 项引擎、31 组浏览器、288 组合机动、96 组快档战斗对照、Android 全套及同轮 iOS 构建/功能/触控/LAN 通过；0.2.23/build 25，房间规则 9。IPA 未签名，未认证真机热点。
   M2.23 verified: 407 engine tests, 31 browser suites, 288 mobility combinations, 96 Fast combat comparisons, full Android and same-run iOS build/functional/touch/LAN passed; 0.2.23/build 25, room revision 9. IPA unsigned; physical hotspots unverified.
 
