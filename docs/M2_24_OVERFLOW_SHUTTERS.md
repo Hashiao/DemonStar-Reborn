@@ -55,3 +55,13 @@ Focused checks cover 96 difficulty/rule/player/color/pickup combinations, hostil
 Native loading copies definitions and each 36-byte gun record, initializes runtime counters, then reloads cooldown directly from definition offset +12. References to the difficulty globals do not introduce a multiplier in this loading/gun chain. The two opening-cover families use 84-tick periods; the rotary family uses 40. This correction is limited to IDs 88/89/185 and does not certify every enemy's firing fidelity.
 
 旧候选 iOS 38319059462 在此新增问题确认后主动停止，不作为发布验收。新的本地与原生探针增加十二种炮台/难度组合的原表周期及闭盖不发射断言。 / Candidate workflow 38319059462 was deliberately cancelled when this additional issue was confirmed and is not release evidence. New local/native probes add twelve prototype/difficulty cases for source periods and no closed-cover firing.
+
+## iOS 房主启动恢复 / iOS host-startup recovery
+
+运行 38320498041 完成设备构建、iPhone/iPad 功能与新探针；功能阶段两次未生成探针的启动超时经既有恢复后继续通过。随后 LAN 房主的 `simctl launch --lan-probe` 等待 180 秒超时，未生成 LAN 探针，尚未进入联机断言；整轮失败，触控未执行。失败日志保留，不拼接成完整通过。
+
+Run 38320498041 passed device compilation, iPhone/iPad functionality and new probes. Two startup timeouts without probe results recovered under the existing policy. LAN host launch then timed out after 180 seconds without a LAN probe, before gameplay assertions; the workflow failed and touch did not run. Preserve the failed evidence without merging partial results into a pass.
+
+为这一个明确的启动缺口复用现有 CoreSimulatorService 恢复：仅房主尚无探针时允许一次服务恢复及同设备冷启动，保留应用、数据和探针脚本；已有结果交由原有断言判定，非超时错误、再次超时、恢复期间出现的迟到结果均不重试。客机及联机断言不重跑；同一 workflow 最多三次服务恢复的上限不变。十四项独立边界测试覆盖旧路径与新增分支，游戏实现不因此改变。
+
+Reuse bounded CoreSimulatorService recovery only for this observed startup gap: one service recovery and cold boot on the same device are allowed before any host probe exists, preserving app/data/script. Existing results go through normal assertions; non-timeout errors, a second timeout and late results during recovery stop without relaunch. Guests and gameplay assertions are not retried; the existing three-service-recovery workflow limit remains. Fourteen boundary tests cover old and new paths without modifying gameplay.

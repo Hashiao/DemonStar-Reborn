@@ -16,10 +16,63 @@ import ios_simulator_health as health
 class HealthTests(unittest.TestCase):
     def launch_namespace(self, folder, runner):
         source = pathlib.Path(__file__).resolve().parents[1] / 'tools/test-ios-simulator.py'
-        function = next(n for n in ast.parse(source.read_text()).body if isinstance(n, ast.FunctionDef) and n.name == 'launch_probe')
+        function = next(n for n in ast.parse(source.read_text(encoding='utf-8')).body if isinstance(n, ast.FunctionDef) and n.name == 'launch_probe')
         namespace = {'pathlib': pathlib, 'subprocess': subprocess, 'json': json, 'root': pathlib.Path(folder), 'startup_recoveries': [], 'run': runner, 'install_clean': unittest.mock.Mock(), 'recover_service': unittest.mock.Mock(), 'available_devices': lambda _: {'runtime': [{'udid': 'device', 'state': 'Shutdown'}]}}
         exec(compile(ast.Module(body=[function], type_ignores=[]), str(source), 'exec'), namespace)
         return namespace
+
+    def lan_namespace(self, folder, runner):
+        source = pathlib.Path(__file__).resolve().parents[1] / 'tools/test-ios-lan.py'
+        function = next(n for n in ast.parse(source.read_text(encoding='utf-8')).body if isinstance(n, ast.FunctionDef) and n.name == 'launch_unstarted_host')
+        namespace = {'subprocess':subprocess,'ROOT':pathlib.Path(folder),'PACKAGE':'test.app','run':runner,'recover_service':unittest.mock.Mock(),'available_devices':lambda _: {'runtime':[{'udid':'device','state':'Booted'}]}}
+        exec(compile(ast.Module(body=[function],type_ignores=[]),str(source),'exec'),namespace)
+        return namespace
+
+    def test_lan_host_missing_probe_timeout_recovers_once_before_gameplay(self):
+        with tempfile.TemporaryDirectory() as folder:
+            calls=[]
+            def run(*args):
+                calls.append(args)
+                if args[0]=='launch' and sum(c[0]=='launch' for c in calls)==1:
+                    raise subprocess.TimeoutExpired(args,180)
+            ns=self.lan_namespace(folder,run);probe=pathlib.Path(folder)/'lan-probe.json'
+            ns['launch_unstarted_host']('device',probe)
+            self.assertEqual([c[0] for c in calls],['launch','shutdown','boot','bootstatus','launch'])
+            ns['recover_service'].assert_called_once()
+
+    def test_lan_host_existing_error_probe_is_preserved_without_relaunch(self):
+        with tempfile.TemporaryDirectory() as folder:
+            probe=pathlib.Path(folder)/'lan-probe.json';probe.write_text('{"status":"error"}')
+            runner=unittest.mock.Mock(side_effect=subprocess.TimeoutExpired('launch',180));ns=self.lan_namespace(folder,runner)
+            ns['launch_unstarted_host']('device',probe)
+            runner.assert_called_once();ns['recover_service'].assert_not_called()
+            self.assertEqual(json.loads(probe.read_text())['status'],'error')
+
+    def test_lan_host_non_timeout_errors_are_not_retried(self):
+        with tempfile.TemporaryDirectory() as folder:
+            runner=unittest.mock.Mock(side_effect=subprocess.CalledProcessError(1,'launch'));ns=self.lan_namespace(folder,runner)
+            with self.assertRaises(subprocess.CalledProcessError):ns['launch_unstarted_host']('device',pathlib.Path(folder)/'missing')
+            runner.assert_called_once();ns['recover_service'].assert_not_called()
+
+    def test_lan_host_second_startup_timeout_fails(self):
+        with tempfile.TemporaryDirectory() as folder:
+            calls=[]
+            def run(*args):
+                calls.append(args)
+                if args[0]=='launch':raise subprocess.TimeoutExpired(args,180)
+            ns=self.lan_namespace(folder,run)
+            with self.assertRaises(subprocess.TimeoutExpired):ns['launch_unstarted_host']('device',pathlib.Path(folder)/'missing')
+            self.assertEqual(sum(c[0]=='launch' for c in calls),2);ns['recover_service'].assert_called_once()
+
+    def test_lan_host_late_probe_during_recovery_stops_without_overwriting(self):
+        with tempfile.TemporaryDirectory() as folder:
+            calls=[];probe=pathlib.Path(folder)/'lan-probe.json'
+            def run(*args):
+                calls.append(args)
+                if args[0]=='launch':raise subprocess.TimeoutExpired(args,180)
+            ns=self.lan_namespace(folder,run);ns['recover_service'].side_effect=lambda *_:probe.write_text('{"status":"error"}')
+            with self.assertRaisesRegex(RuntimeError,'late LAN host probe'):ns['launch_unstarted_host']('device',probe)
+            self.assertEqual(sum(c[0]=='launch' for c in calls),1);self.assertEqual(json.loads(probe.read_text())['status'],'error')
 
     def test_missing_probe_launch_timeout_reinstalls_once(self):
         with tempfile.TemporaryDirectory() as folder:

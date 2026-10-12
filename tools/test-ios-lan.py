@@ -1,5 +1,6 @@
 """两台既有 iOS 模拟器的原生联机 / Native LAN on two existing iOS simulators."""
 import json, pathlib, subprocess, time
+from ios_simulator_health import available_devices, recover_service
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 OUT = ROOT / 'artifacts'
@@ -8,6 +9,31 @@ PACKAGE = 'io.github.hashiao.demonstar'
 
 def run(*args):
     return subprocess.check_output(['xcrun', 'simctl', *args], text=True, timeout=180).strip()
+
+
+def launch_unstarted_host(uid, probe):
+    # 仅房主尚无任何探针时恢复启动；客机/对局/应用断言不重试。
+    # Recover startup only before any host probe; never retry guests, gameplay or app assertions.
+    for attempt in range(2):
+        try:
+            run('launch', uid, PACKAGE, '--lan-probe')
+            return
+        except subprocess.TimeoutExpired:
+            if probe.exists():
+                print('Host launch response timed out with a fresh probe; observe its actual result.', flush=True)
+                return
+            if attempt:
+                raise
+            recover_service(ROOT, 'LAN host launch timed out without a probe result')
+            current=next(d for rows in available_devices(ROOT).values() for d in rows if d['udid']==uid)
+            # 保留同一设备、安装包及探针脚本；冷启动不清空数据，不循环重试。
+            # Keep the same device, installed app and probe script; cold boot preserves data and has no retry loop.
+            if current['state']!='Shutdown':
+                run('shutdown', uid)
+            run('boot', uid)
+            run('bootstatus', uid, '-b')
+            if probe.exists():
+                raise RuntimeError('A late LAN host probe appeared during recovery; preserve it without relaunching.')
 
 
 def wait_report(path, statuses, timeout=150):
@@ -47,6 +73,9 @@ def main():
             probes.append(result)
         def launch(index, config):
             (containers[index] / 'lan-probe.js').write_text('window.lanProbeConfig=' + json.dumps(config) + ';\n' + script)
+            if index==0:
+                launch_unstarted_host(devices[index]['udid'], probes[index])
+                return
             # 常规验收已退出 App；避免把启动与终止合在一个容易卡住的冷启动命令中。
             # The standard probe already terminated the app; avoid a combined cold terminate/launch command.
             try:
