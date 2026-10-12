@@ -57,8 +57,9 @@ final class TouchTests: XCTestCase {
                 XCTAssertEqual(player["touch"] as? String, "floating")
             }
             XCTAssertEqual(state()["guard"] as? String, "none")
-            let screenshot = XCTAttachment(screenshot: app.screenshot()); screenshot.lifetime = .keepAlways; add(screenshot)
-            app.terminate()
+            // 截图由 Python 在断言完成后使用 simctl 采集，避免 XCTest 截图服务超时中断后续操作用例。
+            // Python captures via simctl after assertions, avoiding XCTest screenshot-service timeouts that abort later cases.
+            if count == 2 { app.terminate() }
         }
     }
 }

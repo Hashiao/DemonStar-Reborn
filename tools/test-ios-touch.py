@@ -28,6 +28,9 @@ for tested in standard['devices']:
    assert data['players'][index]['shots']>8 and data['players'][index]['bombs']==2,data
    assert data['players'][index]['fireMode']=='toggle' and data['players'][index]['touch']=='floating' and data['players'][index]['latched'] is False,data
   reports.append({'family':family,'runtime':tested['runtime'],'players':count,'probe':data})
+ # 保留截图验收，用模拟器帧缓冲采集代替导致超时的 XCTest app.screenshot()。
+ # Retain screenshot capture through the simulator framebuffer instead of the timing-out XCTest app.screenshot().
+ run(['xcrun','simctl','io',uid,'screenshot',str(out/f'ios-touch-{family}.png')])
  # LAN 在所有单设备检查完成后才启动双机，避免后台 Runner 累积。
  # Start the LAN pair only after single-device checks, avoiding accumulated background runners.
  run(['xcrun','simctl','shutdown',uid])

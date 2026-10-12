@@ -31,3 +31,9 @@ Persistent screen-stationary objects in solo play were not reproduced, so correc
 为排查 M2.20 iOS 验收超时，模拟器测试优先使用已安装的小尺寸 iPhone SE 3；显式触控测试只在状态变化时刷新无障碍观察标签，JSON 键顺序固定。保留全部系统长按及双机联机断言；这些调整是否解决 CI 失败仍以新运行结果为准。
 
 To investigate M2.20 iOS verification timeouts, prefer an already installed smaller iPhone SE 3 and update the explicit touch-test accessibility observation label only when its sorted JSON changes. Preserve all system-touch and paired-LAN assertions. Whether these adjustments resolve CI failures depends on the new run.
+
+### iOS 失败记录 / iOS failure history
+
+main 运行 [38187573607](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38187573607) 的设备构建、iPhone/iPad 功能与原生双端 LAN 通过，但 iPhone XCTest 在双人长按/拖动/开火断言完成后，于 `TouchTests.swift` 的诊断 `app.screenshot()` 超时，退出 65；单人及 iPad 后续用例未完成，整轮未通过。将截图移到 Python 的 `simctl io screenshot`，保留截图步骤及全部操作断言，最后一场单人保持打开以供截图，再重新跑完整 workflow。不能把旧轮次补写为通过。
+
+Main run [38187573607](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38187573607) passed device compilation, iPhone/iPad functional probes and native paired LAN. Its iPhone XCTest completed two-player hold/drag/fire assertions, then timed out in the diagnostic `app.screenshot()` call and exited 65. Subsequent solo/iPad cases did not complete; the overall run failed. Move capture to Python's `simctl io screenshot`, retain the capture step and every input assertion, leave the final solo game open for capture, and run a complete new workflow. The earlier run remains failed.
