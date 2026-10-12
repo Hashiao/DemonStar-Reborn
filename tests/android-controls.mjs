@@ -23,7 +23,7 @@ try{
   const sharedAudio=await evaluate((await readFile('tests/audio-voice-probe.js','utf8'))+'(StarfallAudio)');assert.equal(sharedAudio.shotStarts,40);assert.equal(sharedAudio.shotRejects,0);assert.equal(sharedAudio.sharedScheduler,true);
   const mobility=await evaluate(await readFile('tests/mobility-probe.js','utf8'));assert.equal(mobility.cases,288);assert.equal(mobility.horizontalTicks,48);assert.equal(mobility.verticalTicks,50);
   const laserWarning=await evaluate(await readFile('tests/laser-warning-probe.js','utf8'));assert.deepEqual(laserWarning,{harmless:true,firstHit:true,pauseDifficulty:true,network:true,players:2});
-  const speedSettings=await evaluate(await readFile('tests/speed-settings-probe.js','utf8'));assert.equal(speedSettings.defaultSpeed,'medium');assert.ok(speedSettings.independentSpeeds&&speedSettings.faintAcceleratingWarning);
+  const speedSettings=await evaluate(await readFile('tests/speed-settings-probe.js','utf8'));assert.equal(speedSettings.defaultSpeed,'medium');assert.ok(speedSettings.independentSpeeds&&speedSettings.faintAcceleratingWarning);assert.equal(speedSettings.finalDarkenSeconds,.2);
   await evaluate('StarfallApp.game.recordEvents=[];StarfallApp.game.enemies=[];StarfallApp.game.bullets=[];StarfallApp.game.player.invincible=999;true');
   const l=await evaluate('StarfallApp.renderer.layout');
   await command('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:72,x:l.x+90*l.scale,y:l.y+180*l.scale}]});

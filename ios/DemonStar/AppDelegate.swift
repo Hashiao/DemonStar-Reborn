@@ -199,9 +199,9 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
                if(input.config.players.some(p=>p.moveSpeed!=='medium')||g.players.some(p=>p.moveSpeed!=='medium'))throw new Error('Default speed is not medium');
                input.config.players[0].moveSpeed='slow';input.config.players[1].moveSpeed='fast';input.move(0,1,0);input.move(1,1,0);const x=g.players.map(p=>p.x);g.update(STEP,input.sample([],g.players));const deltas=g.players.map((p,i)=>p.x-x[i]);if(Math.abs(deltas[0]-PLAYER_STEP_X*2/3)>1e-8||Math.abs(deltas[1]-PLAYER_STEP_X)>1e-8)throw new Error('Independent speed mismatch');
                const r=StarfallApp.renderer,oldContext=r.c,oldShot=r.enemyShot,canvas=document.createElement('canvas'),alphas=[];canvas.width=10;canvas.height=10;r.c=canvas.getContext('2d');
-               try{r.enemyShot=()=>alphas.push(r.c.globalAlpha);for(const ticks of [23,15,7,1])r.laserWarning({ticks,shotType:9,frames:4,pulses:[0,1,2,3],period:8},{x:0,y:0},0);}finally{r.c=oldContext;r.enemyShot=oldShot;}
-               if(alphas.length!==4||alphas[0]>=.04||alphas[1]>=.15||alphas[2]<=.4||alphas[3]<=.85||alphas.some(a=>a>=1))throw new Error('Warning is not faint and accelerating');
-               return {defaultSpeed:'medium',independentSpeeds:true,faintAcceleratingWarning:true,alphas};
+               try{r.enemyShot=()=>alphas.push(r.c.globalAlpha);for(const [ticks,fraction] of [[23,0],[15,0],[7,0],[4,0],[1,.8]])r.laserWarning({ticks,shotType:9,frames:4,pulses:[0,1,2,3],period:8},{x:0,y:0},fraction);}finally{r.c=oldContext;r.enemyShot=oldShot;}
+               if(alphas.length!==5||alphas.slice(0,3).some(a=>Math.abs(a-.02)>1e-6)||alphas[3]<=.02||alphas[4]<=.85||alphas.some(a=>a>=1))throw new Error('Warning is not faint and accelerating');
+               return {defaultSpeed:'medium',independentSpeeds:true,faintAcceleratingWarning:true,finalDarkenSeconds:.2,alphas};
               })();
               mode('point');var layout=renderer.layout;document.getElementById('game').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerId:812,pointerType:'touch',clientX:layout.x+100*layout.scale,clientY:layout.y+200*layout.scale}));
               var destination=StarfallApp.input.states[0].target;if(!destination||Math.abs(destination.x-100)>2||Math.abs(destination.y-200)>2)throw new Error('Point event not captured');

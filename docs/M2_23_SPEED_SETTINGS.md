@@ -18,9 +18,9 @@ Evidence: [M2.19 source-branch research](M2_19_MOBILITY.md), with keyboard cap 4
 
 Display settings add a default-on, persistent Easy laser warning checkbox. It controls only local warning rendering; a shared-device pair shares the display, while another LAN device has its own preference. Real beams always render and attacks remain unchanged. Host warning time continues while hidden, so reenabling uses actual remaining time.
 
-用户反馈上一版预警太像持续发射。本版保留脉冲及一秒窗口，将透明度改为 `0.02 + 0.98 × progress³`（正式发射前小于 1）。示意峰值：开始约 2%，过半秒约 14%，四分之三秒约 43%，临近发射才明显变亮；脉冲暗段仍然全透明，正式发射才全强度并伤害。游戏内只放简短设置项，不增加难度区别或数学说明。所有新增文案支持简体、繁体、英语。
+用户最新明确：只有发射前最后 0.2 秒才变深。保留脉冲及一秒窗口：前 0.8 秒脉冲峰值固定 2%，最后 0.2 秒采用 `0.02 + 0.98 × ((progress - 0.8) / 0.2)³` 加速渐深；正式发射前小于 1。脉冲暗段仍然全透明，正式发射才全强度并伤害。游戏内只放简短设置项，不增加难度区别或数学说明。新增文案支持简体、繁体、英语。
 
-The user found the previous warning too similar to sustained firing. Retain the pulse sequence and one-second window, changing opacity to `0.02 + 0.98 × progress³`, below one before actual emission. Illustrative pulse peaks are about 2% initially, 14% halfway and 43% at three quarters; strong brightness comes near firing. Dark pulse gaps remain transparent; real emission reaches full intensity and deals damage. Product UI contains only short settings, without difficulty or mathematical explanations. New copy supports Simplified/Traditional Chinese and English.
+The user's latest instruction reserves darkening for the final 0.2 seconds before firing. Retain pulses and the one-second window: pulse peaks stay at 2% for the first 0.8 seconds, then use `0.02 + 0.98 × ((progress - 0.8) / 0.2)³` during the last 0.2 seconds, below one until actual emission. Dark pulse gaps remain transparent; real emission reaches full intensity and deals damage. Product UI contains only short settings without difficulty or mathematical explanations. New copy supports Simplified/Traditional Chinese and English.
 
 版本 0.2.23 / build 25。开发验收中：新增 288 个档位/难度/操作/方向组合、旧偏好兼容、独立速度、暂停/读档、联机档位校验、淡预警曲线、开关持久化及三语小屏检查。正式发布须完成完整引擎/浏览器、Android 构建/Lint/现成模拟器及同轮 iOS 构建/功能/系统触控/原生 LAN。未签名 IPA 需要自行签名；模拟器不替代手机、热点或 Android–iOS 真机混联。
 

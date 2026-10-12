@@ -60,9 +60,10 @@
       const progress=Math.max(0,Math.min(1,1-(w.ticks-fraction)*STEP));if(progress<=0)return;
       const phase=(progress/STEP)%w.period,last=w.pulses.filter(t=>t<=phase).pop();if(last===undefined)return;
       const age=1+Math.floor(phase-last);if(age>=w.frames)return;
-      // 前段约 2% 起步，立方渐入把明显亮度留到临近发射，保持原脉冲而不伪装持续攻击。
-      // Start near 2% opacity; cubic easing reserves strong brightness for imminent fire while retaining real pulses.
-      this.c.save();this.c.globalAlpha*=Math.min(.999999,.02+.98*progress*progress*progress);this.enemyShot({shotType:w.shotType,age},at);this.c.restore();
+      // 前 0.8 秒保持 2%，仅最后 0.2 秒立方渐深；正式发射才全不透明。
+      // Hold 2% for the first 0.8 seconds; cubic darkening begins only in the final 0.2 seconds, reaching full opacity at emission.
+      const fade=Math.max(0,(progress-.8)/.2);
+      this.c.save();this.c.globalAlpha*=Math.min(.999999,.02+.98*fade*fade*fade);this.enemyShot({shotType:w.shotType,age},at);this.c.restore();
     }
     superCell(frame,x,y,w,h){return this.cropped(this.superWeapon,DemonStarSuperweaponArt.frames[frame],x,y,w,h);}
     showsEnemyHealth(e){return this.enemyHealthBars&&!e.scenery&&!e.boss&&!e.dead&&e.maxHp>=HEALTH_BAR_MIN_HP&&e.entered;}
