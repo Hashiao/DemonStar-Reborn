@@ -90,3 +90,10 @@ Both local candidates identify as 0.2.20 / build 22 and contain matching web res
 房间规则版本 6，玩法仅单/双人；四席仅底层预留。原作录像为抽样，脚本交火不是四难度全关通关；未认证最低系统硬件、用户真机听感、真实热点或跨平台双真机。
 
 Room revision 6 exposes solo/two-player play, with four core-only seats. Reference review is sampled; scripted combat is not full campaign-clear verification. Minimum-OS hardware, user-device audio, physical hotspots and cross-platform hardware pairs remain unverified.
+
+
+## 随 M2.21 交付 / Included in M2.21
+
+本里程碑未单独正式发布；原修复随 v0.2.21 完成新一轮完整验收后交付。以上失败和候选哈希保留为历史，不能作为 v0.2.21 包的哈希。见 [新版本记录](M2_21_GROUND_MISSILES.md)。
+
+This milestone had no separate official release. Its fixes ship in v0.2.21 after a new complete verification run. Earlier failures/candidate hashes remain historical and are not v0.2.21 package hashes. See the new version record.

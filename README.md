@@ -8,11 +8,11 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前已发布里程碑 M2.19（v0.2.19）统一所有难度与操作方式的玩家机动上限，斜向两轴满速；仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
+**当前已发布里程碑 M2.21（v0.2.21）修复地面斜向导弹和联机贴地卷动，并包含地物连锁与蛇形部件坠毁；仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
 
-M2.20 源码已通过 PR #4 合并 main：地物连锁和蛇形部件坠毁已实现。本地 387 项引擎测试、28 组浏览器检查、16 组脚本交火及 Android 构建/模拟器验收通过；完整 iOS CI 仍未通过，0.2.20 / build 22 仅为本机候选，未正式发布。失败记录、包哈希及后续两项反馈见 [开发记录](docs/M2_20_STRUCTURES.md)。
+M2.20 源码通过 PR #4 合并，因 iOS 验收未完成没有独立正式发布；既有修复已纳入 M2.21。历史候选、失败与边界记录仍保留在 [M2.20 文档](docs/M2_20_STRUCTURES.md)。
 
-M2.21 修复已通过 PR #5 合并 main（0.2.21 / build 23）：恢复斜向导弹方向/炮口/航迹，修复联机客户端贴地插值；包含 M2.20 修复。395 项引擎测试、29 组浏览器检查、48 组脚本交火及 Android 全套验收通过。iOS 设备编译通过，但完整验收仍有音频探针超时；APK/未签名 IPA 仅为本机候选，未正式发布。见 [记录与候选哈希](docs/M2_21_GROUND_MISSILES.md)。
+M2.21 已通过 PR #5 合并并完成本版本验收，见 [开发与边界](docs/M2_21_GROUND_MISSILES.md)。
 
 **最后阶段规划，尚未实施：** 分别提供 Windows/macOS/Linux 安装包，用户无需配置开发环境；目标与 Android/iOS 任意两端局域网互通，玩法仍限单人/双人。当前没有桌面发行包，真机互通与签名/分发缺口尚待验收；详见 [各平台交付规划与不足](docs/FINAL_PLATFORM_DELIVERY.md)。先完成既定游戏工作，再启动本阶段。
 
@@ -23,7 +23,20 @@ M2.21 修复已通过 PR #5 合并 main（0.2.21 / build 23）：恢复斜向导
 
 ![菜单](docs/screenshots/menu.png)
 
-## 当前已发布里程碑 M2.19
+## 当前已发布里程碑 M2.21
+
+- 修复左右斜置导弹台：按原作固定角度向斜下方发射，恢复炮口偏移和细烟航迹；保留原始速度、射速与伤害。
+- 修复局域网客户端装置/补给箱相对地面的滑动，统一快照插值；单机贴地速度不变。
+- 包含此前 M2.20 的地物延迟连锁、低耐久燃烧，以及蛇形部件损毁帧与坠毁。没有加入“打头无条件全组死亡”。
+- 版本统一为 0.2.21 / build 23；房间规则 7，联机双方须更新。原始参数表、M2.18 音频和 M2.19 机动保持不变。
+
+395 项引擎/单元测试、29 组浏览器检查、48 组脚本交火、Android Release/Debug/Lint（0 错误）及 API 37 五组模拟器验收通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38193942095) 完成 ARM64 iPhoneOS 构建、iPhone/iPad 功能与三语/音频、系统长按和双模拟器原生 LAN。APK 安装回读哈希一致，两端 Web 资源与验收构建一致。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.21/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.21/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.21/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.21/verification.json)
+
+IPA 未签名，需自行签名后侧载。未验收手机真机、真实热点或 Android–iOS 真机混联；脚本交火不等于逐关人工通关。单机持续固定不下移的现象未复现；G_TNK2A 开盖动画仍待后续。细烟沿用重制表现，不是逐像素原作粒子。
+
+## M2.19 已完成内容
 
 - 四档难度、所有操作方式及单双人共用以原作鼠标/模拟摇杆每轴 6 为基准的机动上限，直线速度比 M2.18 提高 50%。
 - 水平完整跨度 48 步/1.68 秒；垂直理论约 1.73 秒，按 35 毫秒步长取整为 50 步/1.75 秒。斜向两轴分别满速，不再归一降速。

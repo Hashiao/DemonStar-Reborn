@@ -2,7 +2,7 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-Current milestone: **M2.19, unified player mobility**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+Current milestone: **M2.21 ground missiles and LAN scrolling**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
 
 | Area | Current status |
 |---|---|
@@ -93,3 +93,15 @@ This authorized modern mixing extension does not reproduce the original three-vo
 Traversal seconds are fixed-step conversions, excluding input/display/network latency, not measured native-game or phone wall time. Physical feel, minimum-OS hardware, real hotspots and Android–iOS hardware pairs remain unverified. Public play stays solo/two-player with four core-only seats. The unsigned IPA requires user signing.
 
 [Evidence and verification](M2_19_MOBILITY.md). Earlier keyboard-cap/normalized-diagonal descriptions are historical; this user-authorized change unifies the faster input baseline.
+
+
+## M2.21 ground missiles and LAN scrolling
+
+- Restore native down-left/down-right launcher angles, muzzle offsets and fine smoke trails, preserving source speed, cadence and damage.
+- Align LAN client fixtures/supply boxes with terrain throughout snapshot interpolation; solo terrain-bound speed stays unchanged.
+- Include M2.20 delayed ground chains, critical burn-down and damaged/falling snake parts. No unconditional head-linked group death is added.
+- Align version 0.2.21 / build 23 across targets. Room rule revision 7 requires both peers to update. Preserve source tables, M2.18 audio and M2.19 mobility.
+
+The IPA is unsigned and requires user signing before sideloading. Physical phones, real hotspots and Android–iOS hardware pairs are unverified; scripted combat is not human campaign-clear certification. Persistent stationary fixtures in solo play remain unreproduced; G_TNK2A cover animation remains pending. Fine smoke uses remake presentation, not pixel-exact native particles.
+
+[M2.21](M2_21_GROUND_MISSILES.md) · [M2.20](M2_20_STRUCTURES.md)

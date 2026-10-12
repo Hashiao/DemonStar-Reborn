@@ -1,8 +1,8 @@
 # M2.21 地面导弹与联机卷动 / Ground missiles and LAN scrolling
 
-用户确认原作 G_ANGTNKR/L（ID 117/118）是反馈目标，并于定位后授权修复发射与移动。它们在原表第 4、6、12、16 关；此前第二关的口述不覆盖原始放置。证据见 [后续定位](STAGE2_GROUND_FOLLOWUP.md)。版本 0.2.21 / build 23，保留 M2.20 地物连锁与蛇形坠毁；完整发布验收尚在进行。
+用户确认原作 G_ANGTNKR/L（ID 117/118）是反馈目标，并于定位后授权修复发射与移动。它们在原表第 4、6、12、16 关；此前第二关的口述不覆盖原始放置。证据见 [后续定位](STAGE2_GROUND_FOLLOWUP.md)。版本 0.2.21 / build 23，保留 M2.20 地物连锁与蛇形坠毁；完整验收已通过，详见下节。
 
-The user confirmed G_ANGTNKR/L (IDs 117/118) and authorized firing/movement fixes after diagnosis. Source placements are in stages 4, 6, 12 and 16; the earlier stage-two description does not override map records. See the linked evidence. Version 0.2.21 / build 23 retains M2.20 ground chains and snake falling. Full release verification is in progress.
+The user confirmed G_ANGTNKR/L (IDs 117/118) and authorized firing/movement fixes after diagnosis. Source placements are in stages 4, 6, 12 and 16; the earlier stage-two description does not override map records. See the linked evidence. Version 0.2.21 / build 23 retains M2.20 ground chains and snake falling. Full verification passed; see the results below.
 
 ## 改动 / Changes
 
@@ -46,7 +46,7 @@ Branch run [38187185632](https://github.com/Hashiao/DemonStar-Reborn/actions/run
 
 The touch job in [38189641418](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38189641418) timed out awaiting `audio-shot-clock` in the Traditional Chinese iPhone functional case, before system-touch checks. Its old error contained only game state and cannot distinguish context interruption/replacement from a stalled clock. Add real context state, current/target times, iteration and shot-clock diagnostics; preserve audio behavior and the eight-second assertion deadline, then perform another complete verification. This is not a claimed user-device defect or fix.
 
-## 当前交付状态 / Current delivery status
+## 首次候选状态（完整验收前）/ Initial candidate status (before complete verification)
 
 修复已在 main（PR #5）。本地通过 395 项引擎/单元测试、29 组完整浏览器检查、48 组无敌脚本交火，以及 Android Release/Debug/Lint（均 0 错误）和 API 37 操作/设置/三语/双 App LAN/控制五组验收。初次浏览器运行因 dist 刷新而有两组启动失败，原退出码保留；之后新的完整运行 29 组全部通过，没有手工覆盖失败。
 
@@ -74,3 +74,18 @@ The user explicitly requests complete verification, not a prerelease. Successful
 恢复该执行器、既有设备选择和“基础检查 → 使用已启动模拟器进行 LAN → 系统触控”的单 job 顺序。保留全部新断言、原生时钟诊断、独立截图和收尾预算；不回退游戏修复或降低功能判定标准。由新一轮完整运行判断结果。
 
 Restore that runner, existing-device selection and the single-job order: functional checks → LAN on warmed simulators → system touch. Preserve all new assertions, native-clock diagnostics, independent screenshot capture and teardown budget. Do not revert gameplay fixes or weaken functional acceptance. Assess the result from a new complete run.
+
+
+## 完成验收 / Completed verification
+
+395 项引擎/单元测试、29 组浏览器检查、48 组脚本交火、Android Release/Debug/Lint（0 错误）及 API 37 五组模拟器验收通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38193942095) 完成 ARM64 iPhoneOS 构建、iPhone/iPad 功能与三语/音频、系统长按和双模拟器原生 LAN。APK 安装回读哈希一致，两端 Web 资源与验收构建一致。
+
+Passed 395 engine/unit tests, 29 browser suites, 48 scripted combat cases, Android Release/Debug/Lint (zero errors) and five API 37 emulator suites. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38193942095) completed ARM64 iPhoneOS compilation, iPhone/iPad functional/localization/audio checks, system long presses and native paired-simulator LAN. Installed APK bytes match; both packages match the tested Web bundle.
+
+本次完整运行的基础检查为 8 分 42 秒，原生 LAN 为 32 秒，系统触控为 9 分 36 秒。未改音频实现，也未放宽任何功能断言。原生设置页面截图已审看；XCTest 结束后的额外截图为模拟器桌面，只作清理诊断，不冒充游戏画面验收。原生操作证据来自 XCTest 断言及持有时长/玩家状态记录，游戏画面像素回归仍由浏览器套件负责。
+
+This complete run took 8:42 for functional checks, 0:32 for native LAN and 9:36 for system touch. Audio implementation and functional assertions were unchanged. Native settings-page captures were inspected; extra post-XCTest captures show the simulator home screen and serve only as cleanup diagnostics, not in-game visual certification. Native input evidence comes from XCTest assertions and recorded hold/player states; browser suites cover game-rendering pixels.
+
+`DemonStar-Reborn-release.apk` SHA-256: `c91cd7189a39193c18ed56183a23e3d28a0d5aa13ae3e5cfc395661ebb1b0cd2`
+
+`DemonStar.ipa` SHA-256: `8d25c4d427ce1c90c56f4e3682329218a4868daec6970ee3f8dc6b2309b623b4`

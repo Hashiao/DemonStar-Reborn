@@ -8,11 +8,11 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
 
-**Current published milestone M2.19 (v0.2.19) unifies player mobility across difficulties and controls, with full-speed diagonal axes. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 are undeveloped. See [fidelity status](docs/FIDELITY.en.md).
+**Current published milestone M2.21 (v0.2.21) fixes ground missiles and LAN terrain scrolling, including ground chains and falling snake parts. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 remain undeveloped. See [fidelity status](docs/FIDELITY.en.md).
 
-M2.20 source is merged into main through PR #4, implementing ground chains and falling snake parts. Local 387 engine tests, 28 browser suites, 16 scripted combat cases and Android builds/emulator checks passed. Complete iOS CI remains unsuccessful; 0.2.20 / build 22 is a local candidate, not an official release. Failure history, package hashes and the two follow-up reports are in the [work record](docs/M2_20_STRUCTURES.md).
+M2.20 source merged through PR #4 but had no separate official release because iOS verification remained incomplete. Its fixes are included in M2.21; candidate/failure history remains in the [M2.20 record](docs/M2_20_STRUCTURES.md).
 
-M2.21 fixes merged into main through PR #5 (0.2.21 / build 23): restore missile directions/muzzles/trails and client terrain interpolation, including M2.20 fixes. Passed 395 engine tests, 29 browser suites, 48 scripted combat cases and the full Android suite. iPhoneOS compilation passed, but complete iOS verification still encounters audio-probe timeouts. APK/unsigned IPA are local candidates, not an official release. See [evidence and candidate hashes](docs/M2_21_GROUND_MISSILES.md).
+M2.21 merged through PR #5 and completed this version’s verification. See [implementation and limits](docs/M2_21_GROUND_MISSILES.md).
 
 **Final-phase plan, not implemented:** ship separate Windows/macOS/Linux packages without user development setup, targeting LAN between any two of those platforms and Android/iOS. Public play remains solo/two-player. Desktop releases do not yet exist; physical interoperability and signing/distribution gaps remain unverified. See [platform delivery plan and gaps](docs/FINAL_PLATFORM_DELIVERY.md). Complete existing game work before starting this phase.
 
@@ -23,7 +23,20 @@ M2.21 fixes merged into main through PR #5 (0.2.21 / build 23): restore missile 
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current published milestone M2.19
+## Current published milestone M2.21
+
+- Restore native down-left/down-right launcher angles, muzzle offsets and fine smoke trails, preserving source speed, cadence and damage.
+- Align LAN client fixtures/supply boxes with terrain throughout snapshot interpolation; solo terrain-bound speed stays unchanged.
+- Include M2.20 delayed ground chains, critical burn-down and damaged/falling snake parts. No unconditional head-linked group death is added.
+- Align version 0.2.21 / build 23 across targets. Room rule revision 7 requires both peers to update. Preserve source tables, M2.18 audio and M2.19 mobility.
+
+Passed 395 engine/unit tests, 29 browser suites, 48 scripted combat cases, Android Release/Debug/Lint (zero errors) and five API 37 emulator suites. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38193942095) completed ARM64 iPhoneOS compilation, iPhone/iPad functional/localization/audio checks, system long presses and native paired-simulator LAN. Installed APK bytes match; both packages match the tested Web bundle.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.21/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.21/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.21/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.21/verification.json)
+
+The IPA is unsigned and requires user signing before sideloading. Physical phones, real hotspots and Android–iOS hardware pairs are unverified; scripted combat is not human campaign-clear certification. Persistent stationary fixtures in solo play remain unreproduced; G_TNK2A cover animation remains pending. Fine smoke uses remake presentation, not pixel-exact native particles.
+
+## M2.19 completed work
 
 - All four difficulties, input methods and solo/two-player modes share the original mouse/analog cap of six per axis as their calibration basis; straight-line caps are 50% higher than M2.18.
 - Full horizontal traversal takes 48 ticks/1.68 s. Ideal vertical traversal is about 1.73 s, rounding to 50 ticks/1.75 s at 35 ms. Diagonals retain both full axis speeds.
