@@ -93,3 +93,7 @@ This review actually inspected P2 at 25, 30, 40, 44, 50, 58, 60, 61, 70, 80, 90,
 新增审看 P2 85、91、96 秒单帧，以及 136、140、144、148、152、156、160、164 秒的播放器截图拼图；复看 100、110、120、130 秒已有帧。画面用于对象外形与场景对应。G_TNK2A 六帧开盖和时序字段的证据来自本地 Game.glb / SHIPDEFS_DAT，不冒充已逐帧测量视频开盖时长。未审看的 86、87、88、89、92、94 秒等其他抓帧不计入。详见 [后续定位](STAGE2_GROUND_FOLLOWUP.md)。
 
 Inspected new P2 frames at 85, 91 and 96 seconds, plus a contact sheet at 136, 140, 144, 148, 152, 156, 160 and 164 seconds; rechecked existing 100/110/120/130-second captures. These support object/scene identification. G_TNK2A's six poses and animation counters come from local Game.glb / SHIPDEFS_DAT, not frame-by-frame video timing. Other uninspected captures, including 86/87/88/89/92/94 seconds, are excluded.
+
+用户补充约 45° 连发后，另实际审看 P4 的 68、70、72、74、76、78、80、82、84、86、88、90、92、94、96、98、118、120、122、124、126、128 秒截图拼图，并复看已有 100 秒单帧。仅用于定位候选场景；这些抽样没有形成可连续跟踪的目标导弹轨迹，不能用来声称已从视频测出其速度/角度。斜弹固定方向及装置移动规则的确证来自本地原程序，见 [后续定位](STAGE2_GROUND_FOLLOWUP.md)。
+
+Following the user's approximate-45-degree burst clarification, inspected P4 contact-sheet captures at 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 118, 120, 122, 124, 126 and 128 seconds, and rechecked the existing 100-second frame. These identify candidate scenes but do not provide a continuously tracked target missile trajectory or video-measured speed/angle. Fixed missile directions and launcher movement rules are established from the local native program, as recorded in the linked follow-up.

@@ -34,11 +34,18 @@
   function apply(game,state,interpolate=true){
     if(!valid(state))return false;
     const smooth=interpolate&&game.stage?.id===state.stage&&game.phase==='playing'&&state.world.phase==='playing';
+    // 地面与实体必须从同一份快照插值，不能混用房主的上一逻辑步。
+    // Terrain and entities must interpolate from the same snapshot, not the host's preceding simulation tick.
+    const previousScroll=smooth?game.scroll:state.world.scroll;
     const oldPlayers=new Map((game.players||[]).map(p=>[p.id,p])),oldEnemies=new Map((game.enemies||[]).map(e=>[e.uid,e])),oldBullets=new Map((game.bullets||[]).map(b=>[b.wireId,b]));
     const at=(next,old)=>{if(smooth&&old){next.px=old.x;next.py=old.y;}else{next.px=next.x;next.py=next.y;}return next;};
     const players=state.players.map(s=>{const p=createPlayer(s.id);Object.assign(p,pick(s,player));p.bombInventory=s.bombInventory.slice();p.weaponLevels=s.weaponLevels.slice();return at(p,oldPlayers.get(p.id));});
     const enemies=state.enemies.map(s=>at({...pick(s,enemy),def:C.definitions[C.byId[s.definition]],animation:s.animation?copy(s.animation):undefined,guns:[]},oldEnemies.get(s.uid)));
+    // 新出现的贴地装置也对齐背景；独立行驶的炮台和掉落拾取物保持各自运动。
+    // Align newly received terrain fixtures too; independently moving turrets and floating drops keep their own motion.
+    if(smooth)for(const e of enemies)if(!e.dying&&(e.scenery||e.ground&&e.def.mode===8&&e.def.speed===1))e.py=e.y-(state.world.scroll-previousScroll);
     Object.assign(game,pick(state.world,world));game.stage=STAGES[state.stage-1];game.difficulty=state.difficulty;game.rules=DIFFICULTIES[state.difficulty];game.players=players;game.player=players[0];game.enemies=enemies;game.boss=enemies.find(e=>e.uid===state.bossId)||null;
+    game.previousScroll=previousScroll;
     game.bullets=state.bullets.map(s=>at(pick(s,bullet),oldBullets.get(s.wireId)));game.pickups=state.pickups.map(s=>pick(s,pickup));game.specials=state.specials.map(s=>pick(s,special));
     for(const key of ['effects','wrecks','particles','launch','stageBonus','stageBonuses'])game[key]=copy(state[key]);game.stageEntry=copy(state.checkpoint);game.pendingTime=0;game.events=game.events||[];game.events.push(...state.events.map(e=>pick(e,eventFields)));return true;
   }

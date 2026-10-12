@@ -40,10 +40,44 @@ SHIPDEFS_DAT 的 ID 88 数值为 interval=1、initial pause=200、loopFrames=6�
 
 ID 88's source fields are interval=1, initial pause=200, loopFrames=6, cycles=999, start=0, pauseEnd=30, pauseStart=30 and pingPong=true. Current enemy-art.js lacks this animation and campaignObject draws only the closed pose. This omission is confirmed and remains queued until M2.20 ships. No gun, firing-rate, projectile-type or damage change is made.
 
-当前不能把“斜向导弹”直接对应为弹型 43/44：它们是独立固定斜向构造器，不在上述第二关炮位里。已发出中央白孔/下端白尖的识别问题；在对应前不擅自旋转球弹或替换武器类型。
+初次核对不能仅凭“斜向导弹”就把第二关上述炮位替换为 43/44。用户随后明确补充：约 45° 连发、音效为连续“fufufu”、外观类似第一关 Boss 的灰白飞弹，并要求发射与装置移动都仔细检查。该补充指向下节的另一对地面导弹台；G_TNK2A 开盖遗漏仍是独立问题，不能当作该反馈的根因。
 
-The phrase “diagonal missile” cannot automatically be mapped to types 43/44: they have separate fixed-diagonal constructors and do not occur in these stage-two guns. A central-ring/lower-right-cone identification question is pending. Do not rotate spherical bullets or substitute weapon types before matching the emitter.
+The initial description alone did not justify substituting types 43/44 into the listed stage-two guns. The user subsequently specified roughly 45-degree bursts, repeated “fufufu” sounds and missiles resembling the first Boss's gray-white missiles, and requested careful checks of both firing and launcher movement. This points to the separate launcher pair below. G_TNK2A's cover omission remains a distinct finding, not the established cause of this report.
 
 新增实际审看的金标 P2 时刻为 85、91、96 秒，以及拼图中的 136、140、144、148、152、156、160、164 秒；其余抓取但未审看的帧不计入证据。六帧开盖及其计数依据本地原图/定义，未声称已从录像逐帧测出间隔。原图、诊断截图及 JSON 保留在忽略目录，不发布原作像素。
 
 Newly inspected P2 timestamps are 85, 91 and 96 seconds, plus the contact-sheet frames at 136, 140, 144, 148, 152, 156, 160 and 164 seconds. Other uninspected captures are excluded. The six poses and their counters come from local artwork/definitions, not frame-exact video measurement. Original pixels, diagnostic captures and JSON stay in ignored local storage.
+
+## 斜置导弹台：新增证据 / Angled launchers: additional evidence
+
+原作 G_ANGTNKR（ID 117）/ G_ANGTNKL（ID 118）具备黑色履带底座、斜置棕色盖板及白色尖端；均为 mode 8、speed 1，炮位分别使用弹型 44 / 43。本地原始记录及导出表一致，出现于第 4、6、12、16 关，第二关没有这两个定义。用户在查看参考图与定位结果后回复“对的，修复它们”，确认对象并授权修复；后续以原表关卡为准。实施见 [M2.21](M2_21_GROUND_MISSILES.md)。
+
+Native G_ANGTNKR (ID 117) / G_ANGTNKL (ID 118) have black tracked bases, angled brown covers and white tips. Both use mode 8 and speed 1, firing types 44 / 43 respectively. Local source records agree with the exported data and place these definitions in stages 4, 6, 12 and 16, not stage two. After reviewing the references/findings, the user confirmed the targets and authorized repair. Follow source placements; implementation is recorded in the linked M2.21 document.
+
+已确证的发射差异：
+
+Confirmed firing differences:
+
+- `0x429110` 跳表把 43 / 44 分别交给 `0x42963a` / `0x4296ae`；构造器忽略炮位原始角度 0，固定使用 `0x4ea` / `0x316`，即向左下/右下、偏离正下方约 41.13°。这是用户“约 45°”描述的接近候选，不应擅改为数学上精确 45°。
+- 当前 `Gun.tick` 对二者直接使用炮位角度 0。实际调用两个原始炮位后均得到 `vx=0, vy=-171.428571…`：**斜向弹体竖直向上飞**，不是单纯贴图朝向错误。
+- 原构造器还分别把弹型半高（43/44 为 4，8 为 8）加到炮口 Y；当前通用发射路径未应用此偏移。原敌弹更新有 233 号调色板颜色、每次 2 个航迹粒子；当前烟迹分支只处理友方导弹。这些是另列的炮口/表现差异，未修改伤害、射速或音效调度。
+- 第一关 Boss 的该类飞弹是 8，使用独立的正下方构造器 `0x4295c6`，而非 43/44；原程序三种构造器均调用同一导弹音效句柄 `0x5c98b0`，现版也统一映射到 `enemyMissile`。音色相似不能作为弹型相同的证据。
+
+- The `0x429110` dispatch table routes 43 / 44 to `0x42963a` / `0x4296ae`. Their constructors ignore raw gun angle zero and use fixed `0x4ea` / `0x316`, pointing down-left/down-right approximately 41.13 degrees from downward. This is a close candidate for the user's approximate 45 degrees, not authorization to replace it with exactly 45 degrees.
+- Current `Gun.tick` directly uses raw angle zero. Calling both original gun definitions produces `vx=0, vy=-171.428571…`: **diagonal artwork travelling vertically upward**, beyond an artwork-orientation defect.
+- Native construction also adds projectile half-height to muzzle Y (4 for 43/44, 8 for type 8); the current generic emission omits that offset. Native enemy-projectile updates emit two trail particles using palette color 233; the current trail branch handles friendly missiles only. These are separate muzzle/presentation differences; damage, cadence and audio scheduling remain unchanged.
+- The first Boss uses type 8 and its separate downward constructor `0x4295c6`, not 43/44. All three native constructors use missile sound handle `0x5c98b0`, and the remake maps them to `enemyMissile`. Similar sound does not establish identical projectile type.
+
+## 装置、箱子与地面相对移动 / Terrain-relative movement
+
+扩大核对到 ID 87、152、88、117、118，保持实际炮位运行：四难度 × 单/双人 × 30/60/120 Hz 共 24 个受控场景、120 个对象，检查逻辑位置及渲染插值后的相对地面位置，均保持不变；暂停、切难度及恢复不破坏该关系。另运行第 2 / 4 关 × 四难度 × 单/双人共 16 个无敌、不主动射击的诊断场景，每场 7,200 逻辑步；累计检查 362 个目标实例、322,542 个对象采样，相对地面的 Y 与初始 X 均保持稳定。这不等于通关验收，也不是手机问题复现。
+
+Expanded checks keep actual guns active for IDs 87, 152, 88, 117 and 118. Across four difficulties × one/two players × 30/60/120 Hz, all 24 controlled cases and 120 objects retain terrain-relative position in simulation and render interpolation, including pause/difficulty/resume. Sixteen stage-2/4 × difficulty × player-count diagnostic runs each execute 7,200 ticks with invulnerable players and no player firing: 362 target instances and 322,542 object samples preserve terrain-relative Y and initial X. These are diagnostic runs, not completed-stage acceptance or physical-phone reproduction.
+
+**联机客户端另有可复现的插值错误。** `network-state.js` 对敌机用“上一份收到的快照”作为插值起点，但地面的 `previousScroll` 沿用房主“上一逻辑步”。两份快照相隔 3 步时，逻辑相对差始终为 100，绘制相对差却随插值从 98 → 99 → 100；相隔 6 步则从 95 → 97.5 → 100。浏览器真实 Canvas 绘制变换已复核五个对象：房主保持约 100，客户端确实为上述 98 → 99 → 100，且无缺图。该错误能解释短暂相对滑动/抖动，**不足以证明它就是单机持续固定不下移的原因**。
+
+**A separate LAN-client interpolation defect is reproducible.** `network-state.js` starts enemy interpolation at the preceding received snapshot but retains the host's preceding simulation tick for terrain `previousScroll`. With three ticks between snapshots, authoritative offset stays 100 while rendered offset progresses 98 → 99 → 100; with six ticks it progresses 95 → 97.5 → 100. Actual browser Canvas transforms confirm all five objects: host offset remains approximately 100, client offset follows 98 → 99 → 100, with no missing artwork. This explains brief relative sliding/jitter, **not an established cause of persistent stationary objects in solo play**.
+
+以上为修复前取证基线。补给拾取物、能自主行驶的炮台、贴地装置分开判断；不把所有 ground 标志对象统一强制绑定背景。用户确认后的修复分别覆盖斜弹构造、炮口与航迹、客户端地面插值；单机持续固定不下移的现象仍未复现。诊断脚本和 JSON 在忽略的 `.local/m221-*` 下，原作参数不变。
+
+The above is the pre-fix evidence baseline. Floating drops, independently moving turrets and terrain-bound fixtures remain separate; do not bind every ground-flagged object to the background. The authorized fixes separately cover diagonal construction, muzzle/trail presentation and client terrain interpolation; persistent stationary objects in solo play remain unreproduced. Diagnostic scripts/JSON stay in ignored `.local/m221-*`; source parameters remain unchanged.

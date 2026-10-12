@@ -14,6 +14,9 @@
   // Calibrate traversal to the original mouse/analog cap of 6 per axis; difficulty and world timing stay unchanged.
   const PLAYER_STEP_X=6*(W-32)/(320-32),PLAYER_STEP_Y=6*(H-104)/(400-104);
   const SNAKE_SEGMENTS=new Set(['S_ENEMY37A','S_ENEMY36A','S_ENEMY35A']);
+  // 原作专用导弹构造器忽略炮位角度，并以弹体半高修正炮口 Y。
+  // Native missile constructors override gun angles and add projectile half-height to muzzle Y.
+  const ENEMY_MISSILES={8:{angle:0x400,muzzleY:8},43:{angle:0x4ea,muzzleY:4},44:{angle:0x316,muzzleY:4}};
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   // 0x414940 的定点透视投影，深度输入先截为整数。
   // Fixed-point perspective from 0x414940, with integer depth input.
@@ -65,12 +68,12 @@
       const x=enemy.x-enemy.def.width/2+r[0],y=enemy.y-enemy.def.height/2+r[1];
       if(this.aim){const p=game.targetPlayer(x,y);if(!p)return;this.angle=(Math.atan2(p.x-x,-(p.y-y))*1024/Math.PI+r[8])&2047;this.aim=false;}
       if(enemy.y>=0&&enemy.y<H+enemy.r&&game.enemyFireLock<=0&&!enemy.dying){
-        const a=this.angle*Math.PI/1024,s=Math.max(1,r[12])*TICK;
+        const missile=ENEMY_MISSILES[r[2]],angle=missile?missile.angle:this.angle,a=angle*Math.PI/1024,s=Math.max(1,r[12])*TICK;
         // 9/10 号弹绑定炮口，分别播放四/五帧，伤害取原始模板。
         // Types 9/10 attach to the muzzle for four/five frames (0x429722); keep original damage.
         const beamFrames=r[2]===10?5:4;
         const beam=r[2]===9||r[2]===10?{beam:true,beamFrames,owner:enemy.uid,offsetX:x-enemy.x,offsetY:y-enemy.y,age:0,life:beamFrames*STEP}:{};
-        game.addBullet(x,y,Math.sin(a)*s,-Math.cos(a)*s,false,P.damage[r[2]],r[2]%3,{shotType:r[2],missile:r[2]===8,...beam});game.events?.push({type:'enemy-shot',shotType:r[2]});
+        game.addBullet(x,y+(missile?.muzzleY||0),Math.sin(a)*s,-Math.cos(a)*s,false,P.damage[r[2]],r[2]%3,{shotType:r[2],missile:!!missile,...(missile?{flightAngle:angle}:{}),...beam});game.events?.push({type:'enemy-shot',shotType:r[2]});
       }
       this.angle=(this.angle+r[9])&2047;this.arc--;
     }
@@ -267,6 +270,12 @@
       else e.dead=true; // Original path end removes the object without a kill.
     }
     explode(x,y,color='#ffb05c',amount=16){for(let i=0;i<amount;i++){const a=this.random()*Math.PI*2,s=20+this.random()*110,life=.2+this.random()*.45;if(this.particles.length<350)this.particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life,maxLife:life,color,size:1+this.random()*3});}}
+    enemyMissileTrail(b){
+      // 0x428d01 / 0x409150：每步两粒、向后漂移；视觉抖动不消耗战斗随机序列。
+      // Native 0x428d01 / 0x409150 emit two backward-drifting particles; visual jitter never consumes combat RNG.
+      const a=(b.flightAngle??ENEMY_MISSILES[b.shotType].angle)*Math.PI/1024,random=rng((this.seed^this.frame*997^Math.round(b.x)*37^Math.round(b.y)*101)>>>0);
+      for(let i=0;i<2&&this.particles.length<350;i++){const speed=(3+i)/4*TICK;this.particles.push({x:b.x+random()*4-2-Math.sin(a)*(3+i)/4,y:b.y+random()*4-2+Math.cos(a)*(3+i)/4,vx:-Math.sin(a)*speed,vy:Math.cos(a)*speed,life:.28,maxLife:.28,size:1.6,smoke:true,color:'#aab0b8'});}
+    }
     addEffect(row,x,y,size,ticks,ground=false){
       if(this.effects.length>=160)this.effects.shift();
       this.effects.push({row,x,y,size,ticks,age:0,ground});
@@ -584,6 +593,7 @@
         // Original main shots inherit two player displacements; homing missiles one, ordinary missiles none.
         if(b.carryTicks>0){const p=this.playerById(b.playerId)||this.player;b.x+=p.x-p.px;b.y+=p.y-p.py;b.carryTicks--;}
         if(b.friendly&&b.missile&&this.particles.length<350){const a=(b.flightAngle||0)*Math.PI/1024;this.particles.push({x:b.x-Math.sin(a)*4,y:b.y+Math.cos(a)*4,vx:0,vy:0,life:.28,maxLife:.28,size:1.6,smoke:true,color:'#aab0b8'});}
+        if(!b.friendly&&ENEMY_MISSILES[b.shotType])this.enemyMissileTrail(b);
         if(b.nova!==undefined)for(const hostile of this.bullets){if(!hostile.friendly&&!hostile.dead&&intersects(b.px,b.py,b.x,b.y,hostile.x,hostile.y,b.r+hostile.r+4))hostile.dead=true;}
         if(b.friendly){for(const e of this.enemies){if(!this.targetable(e)||b.hitEnemies?.includes(e.uid))continue;if(intersects(b.px,b.py,b.x,b.y,e.x,e.y,e.r+b.r)){const p=this.playerById(b.playerId)||this.player;e.hp-=b.damage;e.hit=.06;e.killerId=p.id;if(b.hitEnemies)b.hitEnemies.push(e.uid);else b.dead=true;this.shotsHit++;p.shotsHit++;this.impact(b,e);if(e.hp<=0)this.killEnemy(e,p);else this.events.push({type:'enemy-hit'});if(b.dead)break;}}}
         else for(const p of this.livePlayers())if(!b.dead&&intersects(b.px,b.py,b.x,b.y,p.x,p.y,p.r+b.r)){if(this.hitPlayer(b.damage,'projectile',p))b.dead=true;}

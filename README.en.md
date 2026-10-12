@@ -12,6 +12,8 @@ The game supports Simplified Chinese, Traditional Chinese and English. First lau
 
 M2.20 source is merged into main through PR #4, implementing ground chains and falling snake parts. Local 387 engine tests, 28 browser suites, 16 scripted combat cases and Android builds/emulator checks passed. Complete iOS CI remains unsuccessful; 0.2.20 / build 22 is a local candidate, not an official release. Failure history, package hashes and the two follow-up reports are in the [work record](docs/M2_20_STRUCTURES.md).
 
+M2.21 in progress (0.2.21 / build 23): the user confirmed the angled launcher targets. Restore missile direction/muzzles/trails and client terrain interpolation while preserving solo terrain-bound speed. Includes the earlier M2.20 fixes; full verification and packages remain pending. See [implementation and limits](docs/M2_21_GROUND_MISSILES.md).
+
 **Final-phase plan, not implemented:** ship separate Windows/macOS/Linux packages without user development setup, targeting LAN between any two of those platforms and Android/iOS. Public play remains solo/two-player. Desktop releases do not yet exist; physical interoperability and signing/distribution gaps remain unverified. See [platform delivery plan and gaps](docs/FINAL_PLATFORM_DELIVERY.md). Complete existing game work before starting this phase.
 
 **Level editor plan, not implemented:** let non-programmers copy any of the eighteen built-in stages, edit visually, playtest and save/share. Originals remain read-only and custom works are independent. Full-editing device coverage and custom numeric permissions remain pending; see [editor design and acceptance](docs/LEVEL_EDITOR_PLAN.md).
