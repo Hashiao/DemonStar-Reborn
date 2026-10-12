@@ -22,9 +22,29 @@ Display settings add a default-on, persistent Easy laser warning checkbox. It co
 
 The user's latest instruction reserves darkening for the final 0.2 seconds before firing. Retain pulses and the one-second window: pulse peaks stay at 2% for the first 0.8 seconds, then use `0.02 + 0.98 × ((progress - 0.8) / 0.2)³` during the last 0.2 seconds, below one until actual emission. Dark pulse gaps remain transparent; real emission reaches full intensity and deals damage. Product UI contains only short settings without difficulty or mathematical explanations. New copy supports Simplified/Traditional Chinese and English.
 
-版本 0.2.23 / build 25。开发验收中：新增 288 个档位/难度/操作/方向组合、旧偏好兼容、独立速度、暂停/读档、联机档位校验、淡预警曲线、开关持久化及三语小屏检查。正式发布须完成完整引擎/浏览器、Android 构建/Lint/现成模拟器及同轮 iOS 构建/功能/系统触控/原生 LAN。未签名 IPA 需要自行签名；模拟器不替代手机、热点或 Android–iOS 真机混联。
+## 验收 / Verification
 
-Version 0.2.23 / build 25. Verification is in progress: 288 tier/difficulty/control/direction cases, legacy preferences, independent speeds, pause/load behavior, LAN tier validation, faint warning curves, persistent toggles and trilingual compact layouts. Formal publication requires complete engine/browser checks, Android build/Lint/existing-emulator checks and same-run iOS build/functional/system-touch/native-LAN verification. Unsigned IPAs require user signing; simulators do not certify physical phones, hotspots or Android–iOS hardware pairs.
+- 玩家与操作新增每位玩家独立的移动速度：慢为原作键盘基准，中为两者速度平均（默认），快保持上一版速度。所有难度和操作方式通用，保留斜向满速、摇杆轻推与目标截断。
+- 画面与界面新增默认开启、可保存的简单难度激光预警复选框，仅影响本机显示，正式激光始终可见。
+- 预警前 0.8 秒保持很淡，仅在发射前最后 0.2 秒加速变深；脉冲节奏、实际发射时机和伤害保持不变。游戏内只增加简短设置项。
+- 版本 0.2.23 / build 25，房间规则 9，联机双方须更新。
+
+407 项引擎/单元测试、31 组浏览器检查、三档速度的 288 个组合通过。快档与 0.2.22 的 96 组战斗、144,000 个逻辑步对照一致。Android Release/Debug/Lint（0 错误）和 API 37 五组原生验收通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38208214366) 完成 iPhoneOS 构建、iPhone/iPad 三档速度与最后 0.2 秒预警探针、功能/三语/音频、单双人系统触控和原生 LAN。两端版本及全部 142 份 Web 资源一致，APK 安装回读哈希匹配。
+
+IPA 未签名，需自行签名。以上为浏览器和模拟器证据，未认证手机真机、真实热点或 Android–iOS 真机混联。速度秒数为 35 ms 逻辑步换算，网络画面受传输延迟影响。
+
+- Add independent movement speeds under player controls: Slow uses the original keyboard basis, Medium averages the two speeds and is the default, and Fast preserves the previous version. All difficulties and controls retain full diagonal axes, partial sticks and target clamping.
+- Add a persistent, default-on Easy laser warning checkbox under display settings. It affects only local warnings; real beams always remain visible.
+- Warnings stay faint for the first 0.8 seconds and darken only in the final 0.2 seconds before firing. Preserve pulse cadence, actual emission timing and damage. Product UI adds only concise settings.
+- Version 0.2.23 / build 25; room revision 9 requires both peers to update.
+
+Passed 407 engine/unit tests, 31 browser suites and 288 combinations across all three speed tiers. Fast matches 0.2.22 across 96 combat comparisons and 144,000 logic ticks. Android Release/Debug/Lint (zero errors) and five API 37 native suites passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38208214366) completed iPhoneOS compilation, iPhone/iPad three-speed/final-0.2-second warning probes, functional/localization/audio checks, solo/two-player system touch and native LAN. Versions and all 142 Web resources match across packages; installed APK bytes match.
+
+The IPA is unsigned and requires user signing. Browser/simulator evidence does not certify physical phones, real hotspots or Android–iOS hardware pairs. Traversal seconds are 35 ms logic-tick conversions; network display remains subject to transport latency.
+
+`DemonStar-Reborn-release.apk` SHA-256: `9bea8ab7154f9cc3b1c7c666d4bf04ef6213981f452bc4a0aaf7a311d9c8126b`
+
+`DemonStar.ipa` SHA-256: `07cadf8c51e0233150597937358baa9280245ecacf349f0ced723df071dfb1d6`
 
 ## CI 控制服务恢复 / CI control-service recovery
 
@@ -35,3 +55,7 @@ Version 0.2.23 / build 25. Verification is in progress: 288 tier/difficulty/cont
 Run [38204137016](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38204137016) timed out after 600 seconds in iPad `simctl launch`, after all three iPhone locale cases passed. Run [38205633257](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38205633257) passed functional and LAN checks, but both LAN shutdowns timed out and the touch controller's `simctl list` timed out before any touch assertion. Both failures remain recorded.
 
 Recovery is limited to the current user's CoreSimulatorService on GitHub macOS, referencing the [service restart described by an Apple Developer Tools Engineer](https://developer.apple.com/forums/thread/13718). Preserve installed devices, runtimes and all game assertions. Allow at most three service recoveries per workflow and require a successful device listing afterward. A system launch timeout without a probe file permits one reinstall/launch retry on the same device; an existing application result or other error fails immediately. XCTest's 25-second conditions, real 1.6-second presses and every assertion stay unchanged. Dedicated tests protect the no-application-failure-retry boundary.
+
+最终成功轮次未触发自动恢复；恢复逻辑的边界由九项独立测试覆盖。
+
+The final successful workflow did not trigger automatic recovery; nine dedicated tests cover its control-plane boundaries.
