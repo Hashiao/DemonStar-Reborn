@@ -64,3 +64,13 @@ Both local candidates in `artifacts/v0.2.21-candidate/` verify internal version 
 |---|---|
 | DemonStar-Reborn-release.apk | `c91cd7189a39193c18ed56183a23e3d28a0d5aa13ae3e5cfc395661ebb1b0cd2` |
 | DemonStar.ipa | `2ed763e43009b458a3184ede783bdd66a3c24bac4112fa5f438490e27e6c0d97` |
+
+## 恢复验收基线 / Restore the verification baseline
+
+用户明确要求继续完成完整验收，不选择预发布。回查成功运行 [38144102621](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38144102621)：`macos-15`、单 job、iPhone 16 Pro / iPad Pro 11-inch (M4)、iOS 18.5，总耗时约 16 分钟；基础检查 6 分 30 秒、LAN 42 秒、系统触控 6 分 46 秒。随后改为 Intel、拆分重复基础检查并在 LAN 前关闭模拟器，增加了冷启动和重复工作；近期基础检查约 12–15 分钟、一次 LAN 为 6 分 37 秒。耗时退步有记录，但不能直接断言全部音频超时均由执行器造成。
+
+The user explicitly requests complete verification, not a prerelease. Successful run [38144102621](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38144102621) used `macos-15`, one job, iPhone 16 Pro / iPad Pro 11-inch (M4), and iOS 18.5. It took approximately 16 minutes: 6:30 for functional checks, 0:42 for LAN and 6:46 for system touch. Switching to Intel, duplicating functional checks across jobs and shutting simulators down before LAN added cold starts and repeated work; recent functional checks took roughly 12–15 minutes and one LAN run took 6:37. The slowdown is documented, but does not by itself explain every audio timeout.
+
+恢复该执行器、既有设备选择和“基础检查 → 使用已启动模拟器进行 LAN → 系统触控”的单 job 顺序。保留全部新断言、原生时钟诊断、独立截图和收尾预算；不回退游戏修复或降低功能判定标准。由新一轮完整运行判断结果。
+
+Restore that runner, existing-device selection and the single-job order: functional checks → LAN on warmed simulators → system touch. Preserve all new assertions, native-clock diagnostics, independent screenshot capture and teardown budget. Do not revert gameplay fixes or weaken functional acceptance. Assess the result from a new complete run.

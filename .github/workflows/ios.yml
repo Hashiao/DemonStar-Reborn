@@ -10,17 +10,10 @@ permissions:
   contents: read
 jobs:
   ios:
-    # 保留标准 14 GB Intel 执行器；此前仍有启动失败，不能声称内存选择已解决问题。
-    # Retain the standard 14 GB Intel runner; earlier startup failures remain and are not claimed solved by RAM selection.
-    # https://docs.github.com/en/actions/reference/runners/github-hosted-runners
-    runs-on: macos-15-intel
+    # 回到 M2.19 完整通过的执行器和单组流程，保留所有新增断言。
+    # Restore the runner and single-job flow that passed M2.19, retaining every added assertion.
+    runs-on: macos-15
     timeout-minutes: 45
-    # 触控 Runner 与双机联机分开占用模拟器；同提交运行全部断言。
-    # Isolate UI runners from paired LAN simulators while testing every assertion at the same commit.
-    strategy:
-      fail-fast: false
-      matrix:
-        check: [touch, lan]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -51,18 +44,16 @@ jobs:
           cd artifacts && zip -qr DemonStar.ipa Payload
       - name: Build and launch on an existing iPhone simulator
         run: python3 tools/test-ios-simulator.py
-      - name: Verify system long presses and game-mode entries on existing iPhone and iPad
-        if: matrix.check == 'touch'
-        run: python3 tools/test-ios-touch.py
       - name: Verify two-player native LAN on existing iPhone and iPad simulators
-        if: matrix.check == 'lan'
         run: python3 tools/test-ios-lan.py
+      - name: Verify system long presses and game-mode entries on existing iPhone and iPad
+        run: python3 tools/test-ios-touch.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: ${{ matrix.check == 'touch' && 'DemonStar-Reborn-iOS' || 'DemonStar-Reborn-iOS-LAN' }}
+          name: DemonStar-Reborn-iOS
           path: |
-            ${{ matrix.check == 'touch' && 'artifacts/*.ipa' || '' }}
+            artifacts/*.ipa
             artifacts/*.png
             artifacts/*.json
             artifacts/*.xcresult

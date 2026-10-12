@@ -34,11 +34,9 @@ options=[(runtime,d) for runtime,devices in available.items() if 'iOS' in runtim
 for family in ('iPhone','iPad'):
     choices=[p for p in options if family in p[1]['name']]
     if not choices: raise RuntimeError('No existing '+family+' simulator')
-    newest=max(tuple(map(int,re.findall(r'\d+',p[0]))) for p in choices)
-    choices=[p for p in choices if tuple(map(int,re.findall(r'\d+',p[0])))==newest]
-    # 使用既有较小设备降低 CI 图形负担；不下载模拟器，不减少功能断言。
-    # Prefer existing smaller devices to reduce CI graphics load; no runtime downloads or removed assertions.
-    runtime,device=min(choices,key=lambda p:(0 if 'mini' in p[1]['name'].lower() else 1 if '11-inch' in p[1]['name'] else 2)) if family=='iPad' else min(choices,key=lambda p:0 if 'SE (3rd generation)' in p[1]['name'] else 1)
+    # 恢复上次完整通过的既有设备选择，避免比较时同时变更机型。
+    # Restore the last fully passing existing-device selection, avoiding a simultaneous model change.
+    runtime,device=max(choices,key=lambda p:tuple(map(int,re.findall(r'\d+',p[0]))))
     uid=device['udid']
     if device.get('state')!='Booted':run(['xcrun','simctl','boot',uid])
     run(['xcrun','simctl','bootstatus',uid,'-b'])
@@ -82,9 +80,8 @@ for family in ('iPhone','iPad'):
         run(['xcrun','simctl','io',uid,'screenshot',str(out/(family+'.png'))])
         locale_cases.append({'preferred':language,'expected':expected,'probe':probe,'status':'passed'})
     report['devices'].append({'family':family,'name':device['name'],'runtime':runtime,'wkwebview_probe':probe,'locale_cases':locale_cases,'status':'passed'})
-    # 单设备验收不同时保留两台开机；LAN 步骤按需启动已安装的设备。
-    # Keep only one simulator booted for single-device checks; LAN boots the installed pair when needed.
+    # 退出 App 释放音频与 WebKit，保留已就绪的模拟器直接进行下一步 LAN。
+    # Terminate the app to release audio/WebKit, keeping the warmed simulator ready for the following LAN step.
     run(['xcrun','simctl','terminate',uid,'io.github.hashiao.demonstar'])
-    run(['xcrun','simctl','shutdown',uid])
 (out/'ios-verification.json').write_text(json.dumps(report,indent=2))
 print(json.dumps(report,indent=2))
