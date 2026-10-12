@@ -45,3 +45,22 @@ Branch run [38187185632](https://github.com/Hashiao/DemonStar-Reborn/actions/run
 运行 [38189641418](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38189641418) 的 touch job 在繁体 iPhone 功能用例等待 `audio-shot-clock` 时超时，尚未进入系统长按。旧错误只含游戏状态，不能判定音频上下文中断、重建或时钟停止的具体原因。补充真实上下文状态、当前/目标时间、轮次和射击时间诊断；音频实现和 8 秒断言期限不变，再进行一次完整验收。未宣称用户真机有此故障或已修复。
 
 The touch job in [38189641418](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38189641418) timed out awaiting `audio-shot-clock` in the Traditional Chinese iPhone functional case, before system-touch checks. Its old error contained only game state and cannot distinguish context interruption/replacement from a stalled clock. Add real context state, current/target times, iteration and shot-clock diagnostics; preserve audio behavior and the eight-second assertion deadline, then perform another complete verification. This is not a claimed user-device defect or fix.
+
+## 当前交付状态 / Current delivery status
+
+修复已在 main（PR #5）。本地通过 395 项引擎/单元测试、29 组完整浏览器检查、48 组无敌脚本交火，以及 Android Release/Debug/Lint（均 0 错误）和 API 37 操作/设置/三语/双 App LAN/控制五组验收。初次浏览器运行因 dist 刷新而有两组启动失败，原退出码保留；之后新的完整运行 29 组全部通过，没有手工覆盖失败。
+
+Fixes are on main (PR #5). Local verification passed 395 engine/unit tests, 29 full browser suites, 48 invulnerable scripted combat cases, Android Release/Debug/Lint (zero errors), and five API 37 operation/settings/localization/two-app LAN/control suites. Two initial browser loads overlapped dist refresh; their failed exit codes remain. A new complete run passed all 29 without rewriting failures.
+
+最新 [38190762259](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38190762259) 通过 iPhoneOS 编译和简/繁体 iPhone 功能用例，但英语用例等待原生音乐状态变化超时，最后状态为 ready=true、paused=false、volume=0、currentTime=18.508662131519273。失败发生在新增音效时钟诊断之前，不能据此断言原生音乐时钟停止或定位具体切换步骤。该 job 未进入系统长按检查。停止无依据重跑，不修改冻结的音频实现。
+
+Latest run [38190762259](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38190762259) passed the iPhoneOS build and Simplified/Traditional Chinese iPhone functional cases. The English case timed out awaiting native music state; its last snapshot was ready=true, paused=false, volume=0 and currentTime=18.508662131519273. This occurred before the new effects-clock diagnostics and does not prove a stopped music clock or identify the specific transition. That job never entered system-touch checks. Stop unsupported reruns without altering frozen audio behavior.
+
+本机 `artifacts/v0.2.21-candidate/` 的 APK 与未签名 IPA 均验证内部 0.2.21 / build 23，142 份 Web 文件逐字节匹配已测构建。APK 签名沿用项目独立密钥且安装回读哈希一致；IPA 为 ARM64 iPhoneOS、最低 iOS 12.0，须自行签名。`verification.json` 明确为 `incomplete`，附 SHA256SUMS.txt。未创建正式或预发布 GitHub Release；发布方式等待用户决定。
+
+Both local candidates in `artifacts/v0.2.21-candidate/` verify internal version 0.2.21 / build 23 and byte-identical copies of all 142 tested Web files. The APK uses the independent project signature and matches installed/pulled bytes. The unsigned IPA is ARM64 iPhoneOS with minimum iOS 12.0 and requires user signing. `verification.json` explicitly says `incomplete`, with SHA256SUMS.txt alongside. No official or prerelease GitHub Release was created; delivery status awaits the user's decision.
+
+| 安装包 / Package | SHA-256 |
+|---|---|
+| DemonStar-Reborn-release.apk | `c91cd7189a39193c18ed56183a23e3d28a0d5aa13ae3e5cfc395661ebb1b0cd2` |
+| DemonStar.ipa | `2ed763e43009b458a3184ede783bdd66a3c24bac4112fa5f438490e27e6c0d97` |
