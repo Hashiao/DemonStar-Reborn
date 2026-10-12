@@ -76,7 +76,8 @@ for family in ('iPhone','iPad'):
         assert probe.get('iosAudio')=={'nativeAdapters':True,'releaseTail':True,'pausedSettingsSilent':True},probe
         assert probe.get('sharedAudio')=={'sharedScheduler':True,'shotsAccepted':20},probe
         assert probe.get('laserWarning')=={'harmless':True,'firstHit':True,'pauseDifficulty':True,'network':True,'players':2},probe
-        assert probe.get('mobility')=={'difficulties':4,'horizontalTicks':48,'verticalTicks':50,'diagonalAxesRetainSpeed':True},probe
+        assert probe.get('speedSettings',{}).get('defaultSpeed')=='medium' and probe['speedSettings']['independentSpeeds'] and probe['speedSettings']['faintAcceleratingWarning'],probe
+        assert probe.get('mobility')=={'difficulties':4,'speedCases':12,'defaultSpeed':'medium','tiers':{'slow':[72,74],'medium':[58,60],'fast':[48,50]},'horizontalTicks':48,'verticalTicks':50,'diagonalAxesRetainSpeed':True},probe
         assert probe.get('motionReady') and probe.get('carriersReady') and probe.get('soundbankReady') and probe.get('bankAfterRelease')==8,probe
         run(['xcrun','simctl','io',uid,'screenshot',str(out/(family+'.png'))])
         locale_cases.append({'preferred':language,'expected':expected,'probe':probe,'status':'passed'})

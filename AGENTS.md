@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.23：每位玩家独立慢/中/快速度，原作每轴 4/5/6 基准，默认中；三档覆盖所有难度/操作和斜向，保留轻推及目标限速。暂停可改且不清开火，操作偏好不由关卡档覆盖；联机各设备管自己的玩家，房间规则 9。画面设置新增默认开启的本机简单难度预警复选框，正式激光始终显示；预警改为 2% 起步的立方渐入，保留脉冲和原攻击时序。游戏内仅简短设置，详见 docs/M2_23_SPEED_SETTINGS.md。
+  M2.23: independent slow/medium/fast player speeds use source-axis bases 4/5/6, default medium, across difficulties/controls/diagonals with partial-stick and target limits. Paused changes preserve latched fire; checkpoints do not override control preferences. LAN peers configure their own player with room revision 9. Display settings add a default-on local Easy-warning checkbox; real lasers always render. Warnings use cubic easing from 2% opacity, retaining pulses and firing timing. Keep product settings concise; see docs/M2_23_SPEED_SETTINGS.md.
+
 - M2.22 验收完成：401 项引擎、30 组浏览器、96 组战斗对照、Android 全套及同轮 iOS 构建/功能/触控/LAN 通过；0.2.22/build 24，房间规则 8。IPA 未签名，未认证真机热点。
   M2.22 verified: 401 engine tests, 30 browser suites, 96 combat comparisons, full Android checks and same-run iOS build/functional/touch/LAN passed; 0.2.22/build 24, room revision 8. The IPA is unsigned; physical hotspots remain unverified.
 

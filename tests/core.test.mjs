@@ -84,7 +84,7 @@ test('pickup cycles use original first delay and 110-tick subsequent delay',()=>
 test('35 ms simulation is independent of render cadence and caps joystick speed',()=>{
   const simulate=rate=>{const g=new Game(33);g.start();g.recordEvents=[];for(let i=0;i<rate*2;i++)g.update(1/rate,{x:.2,y:-.2,fire:true});return g;};
   const a=simulate(60),b=simulate(120);assert.equal(a.frame,b.frame);assert.equal(a.shotsFired,b.shotsFired);assert.equal(a.scroll,b.scroll);assert.equal(a.player.x,b.player.x);assert.equal(a.player.y,b.player.y);
-  const g=new Game(1);g.start();g.recordEvents=[];const x=g.player.x,y=g.player.y;g.update(STEP,{x:1000,y:-1000});assert.ok(Math.abs(g.player.x-x-PLAYER_STEP_X)<1e-9);assert.ok(Math.abs(y-g.player.y-PLAYER_STEP_Y)<1e-9);
+  const g=new Game(1);g.start();g.recordEvents=[];const x=g.player.x,y=g.player.y;g.update(STEP,{x:1000,y:-1000,moveSpeed:'fast'});assert.ok(Math.abs(g.player.x-x-PLAYER_STEP_X)<1e-9);assert.ok(Math.abs(y-g.player.y-PLAYER_STEP_Y)<1e-9);
   assert.equal(g.scroll,1);assert.equal(g.frame,1);
   const e={x:100,y:0,speed:3,def:{mode:0}};g.moveEnemy(e,STEP);assert.equal(e.y,3);
 });

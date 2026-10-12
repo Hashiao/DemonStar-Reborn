@@ -28,7 +28,7 @@ test('homing fuse, offscreen cleanup, pause and stage restart are deterministic'
 });
 test('main shots inherit only two movement ticks, homing one and ordinary missiles none',()=>{
  for(const [type,ticks] of [[15,2],[17,2],[28,2],[50,2],[39,1],[38,0]]){
-  const g=arena();g.emitPlayerShot(type,100,400);const b=g.bullets[0];for(let i=0;i<3;i++)g.update(STEP,{x:1});near(b.x,100+ticks*PLAYER_STEP_X);
+  const g=arena();g.emitPlayerShot(type,100,400);const b=g.bullets[0];for(let i=0;i<3;i++)g.update(STEP,{x:1,moveSpeed:'fast'});near(b.x,100+ticks*PLAYER_STEP_X);
  }
 });
 test('red auxiliary projectiles decelerate to their own source floors while main beams stay at sixteen',()=>{
