@@ -162,7 +162,9 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
             // 打包 WebKit 中验证目标移动及传感器不可用回退，不宣称模拟器有真实倾斜。
             // Verify target travel and unavailable-sensor fallback in packaged WebKit, not physical tilt.
             async function verifyAdvancedControls(){
-              function waitFor(check,label){return new Promise(function(resolve,reject){var limit=Date.now()+8000;var poll=setInterval(function(){if(check()){clearInterval(poll);resolve();}else if(Date.now()>limit){clearInterval(poll);reject(new Error('Advanced controls timeout: '+label+' '+JSON.stringify({phase:g.phase,x:g.player.x,y:g.player.y,target:StarfallApp.input.states[0].target,mode:StarfallApp.input.mode(0),dialog:!document.getElementById('dialog').hidden})));}},40);});}
+              // 失败时记录真实音频时钟和上下文；不重置时钟、不跳过断言。
+              // Record actual audio clocks/context on failure; never reset clocks or skip assertions.
+              function waitFor(check,label){return new Promise(function(resolve,reject){var limit=Date.now()+8000;var poll=setInterval(function(){if(check()){clearInterval(poll);resolve();}else if(Date.now()>limit){clearInterval(poll);reject(new Error('Advanced controls timeout: '+label+' '+JSON.stringify({phase:g.phase,x:g.player.x,y:g.player.y,target:StarfallApp.input.states[0].target,mode:StarfallApp.input.mode(0),dialog:!document.getElementById('dialog').hidden,audio:sound&&sound.ctx?{state:sound.ctx.state,time:sound.ctx.currentTime,next:nextShot,round:round,sameContext:sound.ctx===probeContext,halted:sound.halted,canSample:sound.canSample(),lastShots:Array.from(sound.lastShots.entries())}:null})));}},40);});}
               function mode(value){StarfallApp.showControls();var select=document.getElementById('touch-mode');select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}));StarfallApp.back();StarfallApp.back();StarfallApp.back();}
               g.recordEvents=[];g.enemies=[];g.bullets=[];g.player.invincible=999;
               // 四难度验证同一机动上限；秒数为逻辑步换算。
@@ -192,7 +194,7 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
               // 菜单恢复异步完成后再测调度，避免未接受的首轮请求把下一次时钟变成 NaN。
               // Await asynchronous menu resume before scheduler assertions; rejected initial shots would produce a NaN clock.
               await waitFor(function(){return sound.canSample();},'audio-ready');
-              sound.stopAll();sound.resetEffectTimers();var accepted=0,nextShot=sound.ctx.currentTime;
+              sound.stopAll();sound.resetEffectTimers();var accepted=0,nextShot=sound.ctx.currentTime,probeContext=sound.ctx;
               for(var round=0;round<10;round++){
                 await waitFor(function(){return sound.ctx.currentTime>=nextShot;},'audio-shot-clock');
                 for(var effect of ['explosion','groundExplosion','heavyExplosion','hit','enemyShot','enemyMissile','enemyLaser','bossEngine1'])sound.sample(effect);
