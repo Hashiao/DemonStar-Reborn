@@ -1,5 +1,5 @@
 // 测试通过实际按钮走分类菜单；不绕过应用路由。 / Tests navigate real category buttons, without bypassing app routing.
-const categories={'language':'language','music-toggle':'audio','music-volume':'audio','sfx-toggle':'audio','sfx-volume':'audio','haptic-toggle':'audio','health-toggle':'display','boss-health-toggle':'display','retain-levels':'rules'};
+const categories={'language':'language','music-toggle':'audio','music-volume':'audio','sfx-toggle':'audio','sfx-volume':'audio','haptic-toggle':'audio','health-toggle':'display','boss-health-toggle':'display','laser-warning':'display','retain-levels':'rules'};
 export async function setting(page,id){
  for(let i=0;i<6;i++){
   if(await page.locator('#'+id).count())return page.locator('#'+id);

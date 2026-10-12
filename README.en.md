@@ -8,7 +8,7 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
 
-**Current milestone M2.22 (v0.2.22) adds Easy Boss pulsed laser warnings.** Preserve existing combat pacing and art direction; see [implementation and verification](docs/M2_22_LASER_WARNING.md). Full 1:1 fidelity remains incomplete.
+**Current milestone M2.23 (v0.2.23) adds independent player speeds and optional faint laser warnings, defaulting to Medium and darkening only in the final 0.2 seconds.** See [implementation and verification](docs/M2_23_SPEED_SETTINGS.md). Full 1:1 fidelity remains incomplete.
 
 M2.20 source merged through PR #4 but had no separate official release because iOS verification remained incomplete. Its fixes are included in M2.21; candidate/failure history remains in the [M2.20 record](docs/M2_20_STRUCTURES.md).
 
@@ -23,7 +23,20 @@ M2.21 merged through PR #5 and completed this version’s verification. See [imp
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current milestone M2.22
+## Current milestone M2.23
+
+- Add independent movement speeds under player controls: Slow uses the original keyboard basis, Medium averages the two speeds and is the default, and Fast preserves the previous version. All difficulties and controls retain full diagonal axes, partial sticks and target clamping.
+- Add a persistent, default-on Easy laser warning checkbox under display settings. It affects only local warnings; real beams always remain visible.
+- Warnings stay faint for the first 0.8 seconds and darken only in the final 0.2 seconds before firing. Preserve pulse cadence, actual emission timing and damage. Product UI adds only concise settings.
+- Version 0.2.23 / build 25; room revision 9 requires both peers to update.
+
+Passed 407 engine/unit tests, 31 browser suites and 288 combinations across all three speed tiers. Fast matches 0.2.22 across 96 combat comparisons and 144,000 logic ticks. Android Release/Debug/Lint (zero errors) and five API 37 native suites passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38208214366) completed iPhoneOS compilation, iPhone/iPad three-speed/final-0.2-second warning probes, functional/localization/audio checks, solo/two-player system touch and native LAN. Versions and all 142 Web resources match across packages; installed APK bytes match.
+
+The IPA is unsigned and requires user signing. Browser/simulator evidence does not certify physical phones, real hotspots or Android–iOS hardware pairs. Traversal seconds are 35 ms logic-tick conversions; network display remains subject to transport latency.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.23/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.23/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.23/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.23/verification.json)
+
+## M2.22 completed work
 
 - On Easy, show matching pulsed Boss laser previews for one second before each volley, gradually increasing opacity. Previews are harmless; full visibility marks actual emission.
 - Pause freezes warnings; difficulty changes preserve remaining time. Previews follow moving muzzles and support multiple mounts and solo/two-player play. Add no in-game difficulty explanations.

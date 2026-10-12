@@ -7,7 +7,7 @@ import '../web/js/projectile-rules.js';
 import '../web/js/weapon-art.js';
 import '../web/js/original-rules.js';
 const {Game,STEP,PLAYER_STEP_X,validCheckpoint}=StarfallCore;
-const arena=(count=4)=>{const g=new Game(44);g.start(1,1,false,{playerCount:count});g.recordEvents=[];return g;};
+const arena=(count=4)=>{const g=new Game(44);g.start(1,1,false,{playerCount:count});g.recordEvents=[];for(const p of g.players)p.moveSpeed='fast';return g;};
 const ticks=(g,n,input={})=>{for(let i=0;i<n;i++)g.update(STEP,input);};
 function enemy(g,x,y,hp=100){const e={uid:++g.enemySerial,x,y,px:x,py:y,r:12,hp,maxHp:hp,def:{width:24,height:24,hp,score:123,flags:0,mode:0,sprite:'S_ENEMY14'},record:[0,0,0,0,0,-1],guns:[],time:0,speed:0};g.enemies.push(e);return e;}
 

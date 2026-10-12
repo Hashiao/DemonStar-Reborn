@@ -2,9 +2,11 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-Current milestone: **M2.22 Easy laser warnings**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+Current milestone: **M2.23 independent speeds and faint warnings**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
 
 Easy Boss pulsed laser previews are a user-approved aid: one harmless fading second before each volley, preserving actual firing timing. See [M2.22](M2_22_LASER_WARNING.md).
+
+M2.23 adds independent Slow/Medium/Fast tiers with Medium default and optional warnings that stay faint for 0.8 seconds before darkening only in the final 0.2 seconds. These are approved modern control/accessibility extensions; see [M2.23](M2_23_SPEED_SETTINGS.md).
 
 | Area | Current status |
 |---|---|

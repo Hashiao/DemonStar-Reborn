@@ -29,7 +29,7 @@
       if(!([2,3].includes(value?.version))&&i>0)for(const [action,button] of [['fire',0],['bomb',2]])if(bindings[action]?.length&&bindings[action].length<12&&!bindings[action].some(t=>t.startsWith('mouse:')))bindings[action].push('mouse:'+button);
       // 按用户要求统一改为浮动摇杆；本版之后的手动选择仍可保存。
       // Reset every pre-release touch preference to floating; subsequent explicit choices remain persistent.
-      result.players.push({touch:value?.version===3&&['fixed','floating','dpad','point','tilt'].includes(v.touch)?v.touch:'floating',tiltAngle:clamp(Number(v.tiltAngle)||6,3,30),tiltInvertX:v.tiltInvertX===true,tiltInvertY:v.tiltInvertY===true,fireMode:v.fireMode==='hold'?'hold':'toggle',size:clamp(Number(v.size)||1,.75,1.3),stickX:clamp(Number.isFinite(v.stickX)?v.stickX:.5,0,1),stickY:clamp(Number.isFinite(v.stickY)?v.stickY:.5,0,1),pad:Number.isInteger(v.pad)?clamp(v.pad,-1,15):i,bindings});
+      result.players.push({moveSpeed:['slow','medium','fast'].includes(v.moveSpeed)?v.moveSpeed:'medium',touch:value?.version===3&&['fixed','floating','dpad','point','tilt'].includes(v.touch)?v.touch:'floating',tiltAngle:clamp(Number(v.tiltAngle)||6,3,30),tiltInvertX:v.tiltInvertX===true,tiltInvertY:v.tiltInvertY===true,fireMode:v.fireMode==='hold'?'hold':'toggle',size:clamp(Number(v.size)||1,.75,1.3),stickX:clamp(Number.isFinite(v.stickX)?v.stickX:.5,0,1),stickY:clamp(Number.isFinite(v.stickY)?v.stickY:.5,0,1),pad:Number.isInteger(v.pad)?clamp(v.pad,-1,15):i,bindings});
     }return result;
   }
   function keyToken(event){
@@ -105,7 +105,7 @@
         const bomb=!!held('bomb'),paused=!!held('pause');if(bomb&&!s.previousBomb)this.pulse(index,'bomb');if(paused&&!s.previousPause)pause=true;s.previousBomb=bomb;s.previousPause=paused;
         s.fireActive=s.fireEnabled&&(s.fire.size>0||s.firePulse||map.fire.some(t=>t.startsWith('key:')?this.keys.has(t):t.startsWith('mouse:')?this.mouseOwner===index+1&&this.mouse.has(Number(t.slice(6))):padFire&&!s.blockPadFire));
         s.physicalFire=s.fireActive&&!s.firePulse;
-        return {x,y,fire:config.fireMode==='toggle'?s.fireLatched:s.fireActive,bomb:s.bomb,...(target?{target:{...target}}:{})};
+        return {x,y,moveSpeed:config.moveSpeed,fire:config.fireMode==='toggle'?s.fireLatched:s.fireActive,bomb:s.bomb,...(target?{target:{...target}}:{})};
       });return {players:inputs,pause};
     }
     export(){return copy(this.config);}

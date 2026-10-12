@@ -8,7 +8,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前里程碑 M2.22（v0.2.22）新增简单难度 Boss 脉冲激光预警。** 保持现有战斗节奏与原作风格，详见 [实现与验收](docs/M2_22_LASER_WARNING.md)；完整 1:1 还原仍未完成。
+**当前里程碑 M2.23（v0.2.23）新增玩家独立速度和可关闭的淡激光预警，默认中速，预警仅最后 0.2 秒变深。** 详见 [实现与验收](docs/M2_23_SPEED_SETTINGS.md)；完整 1:1 还原仍未完成。
 
 M2.20 源码通过 PR #4 合并，因 iOS 验收未完成没有独立正式发布；既有修复已纳入 M2.21。历史候选、失败与边界记录仍保留在 [M2.20 文档](docs/M2_20_STRUCTURES.md)。
 
@@ -23,7 +23,20 @@ M2.21 已通过 PR #5 合并并完成本版本验收，见 [开发与边界](doc
 
 ![菜单](docs/screenshots/menu.png)
 
-## 当前里程碑 M2.22
+## 当前里程碑 M2.23
+
+- 玩家与操作新增每位玩家独立的移动速度：慢为原作键盘基准，中为两者速度平均（默认），快保持上一版速度。所有难度和操作方式通用，保留斜向满速、摇杆轻推与目标截断。
+- 画面与界面新增默认开启、可保存的简单难度激光预警复选框，仅影响本机显示，正式激光始终可见。
+- 预警前 0.8 秒保持很淡，仅在发射前最后 0.2 秒加速变深；脉冲节奏、实际发射时机和伤害保持不变。游戏内只增加简短设置项。
+- 版本 0.2.23 / build 25，房间规则 9，联机双方须更新。
+
+407 项引擎/单元测试、31 组浏览器检查、三档速度的 288 个组合通过。快档与 0.2.22 的 96 组战斗、144,000 个逻辑步对照一致。Android Release/Debug/Lint（0 错误）和 API 37 五组原生验收通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38208214366) 完成 iPhoneOS 构建、iPhone/iPad 三档速度与最后 0.2 秒预警探针、功能/三语/音频、单双人系统触控和原生 LAN。两端版本及全部 142 份 Web 资源一致，APK 安装回读哈希匹配。
+
+IPA 未签名，需自行签名。以上为浏览器和模拟器证据，未认证手机真机、真实热点或 Android–iOS 真机混联。速度秒数为 35 ms 逻辑步换算，网络画面受传输延迟影响。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.23/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.23/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.23/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.23/verification.json)
+
+## M2.22 已完成内容
 
 - 简单难度下，Boss 每轮激光前一秒显示同色脉冲预警，逐渐变亮；预警无伤害，完全显现时正式发射。
 - 暂停冻结预警；中途切换难度沿用实际剩余时间；预警跟随炮口，多炮口和单双人共用。游戏内不新增难度区别说明。

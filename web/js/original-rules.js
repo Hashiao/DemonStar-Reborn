@@ -13,6 +13,10 @@
   // 按原作鼠标/模拟摇杆每轴 6 的上限校准穿屏时间；难度及世界计时不变。
   // Calibrate traversal to the original mouse/analog cap of 6 per axis; difficulty and world timing stay unchanged.
   const PLAYER_STEP_X=6*(W-32)/(320-32),PLAYER_STEP_Y=6*(H-104)/(400-104);
+  // 慢/中/快以原作每轴 4/5/6 标定；中档为速度的算术平均，不改变世界时钟。
+  // Slow/medium/fast use source-axis caps 4/5/6; medium averages speeds without changing the world clock.
+  const MOVE_SPEEDS={slow:4/6,medium:5/6,fast:1};
+  const validMoveSpeed=value=>typeof value==='string'&&Object.prototype.hasOwnProperty.call(MOVE_SPEEDS,value);
   const SNAKE_SEGMENTS=new Set(['S_ENEMY37A','S_ENEMY36A','S_ENEMY35A']);
   // 原作专用导弹构造器忽略炮位角度，并以弹体半高修正炮口 Y。
   // Native missile constructors override gun angles and add projectile half-height to muzzle Y.
@@ -28,7 +32,7 @@
   // Stable IDs 1–4 identify ownership; player remains the first-player compatibility entry.
   function createPlayer(id){
     const p={id,score:0,kills:0,shotsFired:0,shotsHit:0,x:200,y:400,r:10,lives:4,energy:16,maxEnergy:16,bombInventory:[0,0,0],medals:0,defaultWeapon:true,power:0,weapon:0,bank:8,thrust:0,shield:0,invincible:2.5,fire:0,baseFire:0,respawn:0,bombCooldown:0,missileAmmo:0,missileType:8,side:0,rear:0,sideDelay:10,sideBurst:0,sideGap:0,rearDelay:10,rearBurst:0,rearGap:0,shotPhase:0,mega:0,missileTimer:0};
-    p.weaponLevels=[0,0,0];
+    p.weaponLevels=[0,0,0];p.moveSpeed='medium';
     Object.defineProperty(p,'bombs',{enumerable:true,get(){return this.bombInventory.length;}});return p;
   }
   const checkpointFields={score:[0,1e12],kills:[0,1e9],shotsFired:[0,1e12],shotsHit:[0,1e12],lives:[0,99],energy:[0,16],weapon:[0,3],power:[0,6],missileAmmo:[0,1e9],missileType:[8,9],side:[0,4],rear:[0,4],shield:[0,60],fire:[0,60],baseFire:[0,60],missileTimer:[0,60],sideDelay:[0,60],sideBurst:[0,4],sideGap:[0,60],rearDelay:[0,60],rearBurst:[0,4],rearGap:[0,60],shotPhase:[0,1e12],bombCooldown:[0,60]};
@@ -561,6 +565,8 @@
     stepPlayer(p,input={}){
       if(p.connected===false||p.lives<=0)return;
       const dt=STEP;
+      if(validMoveSpeed(input.moveSpeed))p.moveSpeed=input.moveSpeed;
+      const rate=MOVE_SPEEDS[p.moveSpeed]||MOVE_SPEEDS.medium,stepX=PLAYER_STEP_X*rate,stepY=PLAYER_STEP_Y*rate;
       const hadShield=p.shield>0;
       for(const k of ['invincible','shield','mega','respawn','bombCooldown'])p[k]=Math.max(0,p[k]-dt);
       if(hadShield&&p.shield===0)this.events.push({type:'shield-lost',playerId:p.id});
@@ -568,9 +574,9 @@
       // 目标也走相同逐步移动；最后一步只缩短剩余距离，网络客户端不能直接改坐标。
       // Targets use the same movement step, shortening only the final distance; clients never set positions.
       if(!dx&&!dy&&Number.isFinite(input.target?.x)&&Number.isFinite(input.target?.y)){
-        dx=clamp((clamp(input.target.x,16,W-16)-p.x)/PLAYER_STEP_X,-1,1);dy=clamp((clamp(input.target.y,64,H-40)-p.y)/PLAYER_STEP_Y,-1,1);
+        dx=clamp((clamp(input.target.x,16,W-16)-p.x)/stepX,-1,1);dy=clamp((clamp(input.target.y,64,H-40)-p.y)/stepY,-1,1);
       }
-      if(p.respawn<=0)this.move(dx*PLAYER_STEP_X,dy*PLAYER_STEP_Y,p);
+      if(p.respawn<=0)this.move(dx*stepX,dy*stepY,p);
       p.bank+=clamp(8+dx*8-p.bank,-1,1);p.thrust+=clamp(-dy-p.thrust,-.25,.25);
       p.fire=Math.max(0,p.fire-dt);p.baseFire=Math.max(0,p.baseFire-dt);p.missileTimer=Math.max(0,p.missileTimer-dt);
       if(input.fire&&p.respawn<=0){
@@ -631,5 +637,5 @@
       this.updateLaserWarnings();
     }
   }
-  globalThis.StarfallCore={BOMB_CAPACITY,W,H,TICK,STEP,MAX_PLAYERS,createPlayer,validCheckpoint,validWeaponLevels,deathScale,deathTransform,LAUNCH_SPEED,HEALTH_BAR_MIN_HP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};
+  globalThis.StarfallCore={BOMB_CAPACITY,W,H,TICK,STEP,MAX_PLAYERS,createPlayer,validCheckpoint,validWeaponLevels,deathScale,deathTransform,LAUNCH_SPEED,HEALTH_BAR_MIN_HP,PLAYER_STEP_X,PLAYER_STEP_Y,MOVE_SPEEDS,validMoveSpeed,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};
 })();

@@ -1,8 +1,9 @@
 """Build and run using an already installed Apple simulator; never download runtimes."""
 import json, os, pathlib, plistlib, re, subprocess, time
+from ios_simulator_health import available_devices, recover_service
 root=pathlib.Path(__file__).resolve().parents[1]
 out=root/'artifacts';out.mkdir(exist_ok=True)
-def run(args): return subprocess.check_output(args,cwd=root,text=True,timeout=600).strip()
+def run(args,timeout=600): return subprocess.check_output(args,cwd=root,text=True,timeout=timeout).strip()
 
 def install_clean(uid):
     # 冷启动的 CoreSimulator 偶有卸载超时；只对超时重启同一模拟器并重试一次。
@@ -19,16 +20,39 @@ def install_clean(uid):
             if attempt: raise
             print('Simulator install/reset timed out; rebooting the existing device once: '+uid,flush=True)
             run(['xcrun','simctl','shutdown',uid]);run(['xcrun','simctl','boot',uid]);run(['xcrun','simctl','bootstatus',uid,'-b'])
+# 仅恢复无探针结果的系统启动超时；应用断言错误不得通过重试隐藏。
+# Recover only a system launch timeout with no probe result; never retry away application assertion failures.
+startup_recoveries=[]
+def launch_probe(uid,language):
+    for attempt in range(2):
+        install_clean(uid)
+        container=pathlib.Path(run(['xcrun','simctl','get_app_container',uid,'io.github.hashiao.demonstar','data']))
+        result=container/'Documents/smoke.json'
+        if result.exists():result.unlink()
+        try:
+            run(['xcrun','simctl','launch','--terminate-running-process',uid,'io.github.hashiao.demonstar','--smoke-test','-AppleLanguages','('+language+')'],timeout=120)
+            return result
+        except subprocess.TimeoutExpired:
+            if attempt or result.exists():raise
+            event={'device':uid,'language':language,'reason':'simctl launch timed out without a probe result','action':'reboot same simulator and reinstall once'}
+            startup_recoveries.append(event)
+            print(json.dumps(event),flush=True)
+            recover_service(root, 'smoke launch timed out without a probe result')
+            devices=available_devices(root)
+            current=next(d for rows in devices.values() for d in rows if d['udid']==uid)
+            if current['state']!='Booted':run(['xcrun','simctl','boot',uid],timeout=60)
+            run(['xcrun','simctl','bootstatus',uid,'-b'],timeout=180)
+
 device_app=root/'.local/ios-device/Build/Products/Release-iphoneos/DemonStar.app'
 info=plistlib.loads((device_app/'Info.plist').read_bytes())
 assert info['MinimumOSVersion']=='12.0',info['MinimumOSVersion']
 assert info['CFBundleSupportedPlatforms']==['iPhoneOS']
 commands=run(['xcrun','otool','-l',str(device_app/'DemonStar')])
 assert re.search(r'\bminos 12\.0\b',commands) or re.search(r'\bversion 12\.0\b',commands)
-report={'minimum_os':'12.0','device_build':'passed','signed':False,'physical_device_tested':False,'devices':[]}
+report={'minimum_os':'12.0','device_build':'passed','signed':False,'physical_device_tested':False,'devices':[],'startup_recoveries':startup_recoveries}
 base=['xcodebuild','-project','ios/DemonStar.xcodeproj','-scheme','DemonStar','-configuration','Release','-sdk','iphonesimulator','-destination','generic/platform=iOS Simulator','-derivedDataPath','.local/ios-simulator','CODE_SIGNING_ALLOWED=NO','build']
 with (root/'.local/simulator-build.log').open('w') as log: subprocess.run(base,cwd=root,stdout=log,stderr=subprocess.STDOUT,check=True,timeout=900)
-available=json.loads(run(['xcrun','simctl','list','devices','available','-j']))['devices']
+available=available_devices(root)
 sdk=tuple(map(int,run(['xcrun','--sdk','iphonesimulator','--show-sdk-version']).split('.')[:2]))
 options=[(runtime,d) for runtime,devices in available.items() if 'iOS' in runtime and tuple(map(int,re.findall(r'\d+',runtime)))[:2]<=sdk for d in devices if d.get('isAvailable')]
 for family in ('iPhone','iPad'):
@@ -44,12 +68,7 @@ for family in ('iPhone','iPad'):
     cases=[('zh-Hans-CN','zh-Hans'),('zh-Hant-TW','zh-Hant'),('fr-FR','en')] if family=='iPhone' else [('zh-Hant-HK','zh-Hant')]
     for language,expected in cases:
         print(f'{family} {language}: reset/install existing simulator',flush=True)
-        install_clean(uid)
-        container=pathlib.Path(run(['xcrun','simctl','get_app_container',uid,'io.github.hashiao.demonstar','data']))
-        result=container/'Documents/smoke.json'
-        if result.exists():result.unlink()
-        # Launch handles both a stopped app and an existing process in one operation.
-        run(['xcrun','simctl','launch','--terminate-running-process',uid,'io.github.hashiao.demonstar','--smoke-test','-AppleLanguages','('+language+')'])
+        result=launch_probe(uid,language)
         for _ in range(120):
             if result.exists():break
             time.sleep(1)
@@ -76,7 +95,8 @@ for family in ('iPhone','iPad'):
         assert probe.get('iosAudio')=={'nativeAdapters':True,'releaseTail':True,'pausedSettingsSilent':True},probe
         assert probe.get('sharedAudio')=={'sharedScheduler':True,'shotsAccepted':20},probe
         assert probe.get('laserWarning')=={'harmless':True,'firstHit':True,'pauseDifficulty':True,'network':True,'players':2},probe
-        assert probe.get('mobility')=={'difficulties':4,'horizontalTicks':48,'verticalTicks':50,'diagonalAxesRetainSpeed':True},probe
+        assert probe.get('speedSettings',{}).get('defaultSpeed')=='medium' and probe['speedSettings']['independentSpeeds'] and probe['speedSettings']['faintAcceleratingWarning'] and probe['speedSettings']['finalDarkenSeconds']==.2,probe
+        assert probe.get('mobility')=={'difficulties':4,'speedCases':12,'defaultSpeed':'medium','tiers':{'slow':[72,74],'medium':[58,60],'fast':[48,50]},'horizontalTicks':48,'verticalTicks':50,'diagonalAxesRetainSpeed':True},probe
         assert probe.get('motionReady') and probe.get('carriersReady') and probe.get('soundbankReady') and probe.get('bankAfterRelease')==8,probe
         run(['xcrun','simctl','io',uid,'screenshot',str(out/(family+'.png'))])
         locale_cases.append({'preferred':language,'expected':expected,'probe':probe,'status':'passed'})

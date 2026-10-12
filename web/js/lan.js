@@ -1,9 +1,9 @@
 /* SPDX-License-Identifier: MIT. 四人主机权威局域网会话 / Four-seat authoritative LAN session. */
 (() => {
   'use strict';
-  // 固定斜向导弹与客户端地面插值需要双方采用同一规则。
-  // Fixed diagonal missiles and client terrain interpolation require matching rules on both peers.
-  const INPUT_VERSION=8,PROTOCOL='demonstar-lan-1',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  // 玩家独立速度和预警快照需要双方采用同一规则。
+  // Independent player speeds and warning snapshots require matching rules on both peers.
+  const INPUT_VERSION=9,PROTOCOL='demonstar-lan-1',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
   const idle=()=>({x:0,y:0,fire:false,bomb:0});
   const validRoster=list=>Array.isArray(list)&&list.length>=1&&list.length<=4&&list.every((m,i)=>m.slot===i+1&&typeof m.connected==='boolean'&&['android','ios','browser'].includes(m.platform));
   function token(){const bytes=new Uint8Array(16);if(globalThis.crypto?.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<16;i++)bytes[i]=Math.floor(Math.random()*256);return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');}
@@ -67,8 +67,9 @@
       if(p.type==='pause'){if(p.epoch===this.epoch){this.onPause();this.flush();}return;}
       if(p.type!=='input'||p.epoch!==this.epoch||!Number.isSafeInteger(p.sequence)||p.sequence<=member.lastSeq)return;
       if(!Number.isFinite(p.x)||!Number.isFinite(p.y)||typeof p.fire!=='boolean'||!Number.isSafeInteger(p.bomb)||p.bomb<0)return;
+      if(p.moveSpeed!==undefined&&!StarfallCore.validMoveSpeed(p.moveSpeed))return;
       if(p.target!=null&&(!Number.isFinite(p.target.x)||!Number.isFinite(p.target.y)||p.target.x<16||p.target.x>384||p.target.y<64||p.target.y>440))return;
-      member.lastSeq=p.sequence;member.input={x:clamp(p.x,-1,1),y:clamp(p.y,-1,1),fire:p.fire,bomb:p.bomb,...(p.target?{target:{x:p.target.x,y:p.target.y}}:{})};member.inputAt=this.clock();
+      member.lastSeq=p.sequence;member.input={x:clamp(p.x,-1,1),y:clamp(p.y,-1,1),fire:p.fire,bomb:p.bomb,...(p.moveSpeed?{moveSpeed:p.moveSpeed}:{}),...(p.target?{target:{x:p.target.x,y:p.target.y}}:{})};member.inputAt=this.clock();
     }
     clientPacket(peer,p){
       if(peer!=='host')return;this.lastRx=this.clock();

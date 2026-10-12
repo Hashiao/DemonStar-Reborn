@@ -173,14 +173,14 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
               function waitFor(check,label){return new Promise(function(resolve,reject){var limit=Date.now()+8000;var poll=setInterval(function(){if(check()){clearInterval(poll);resolve();}else if(Date.now()>limit){clearInterval(poll);reject(new Error('Advanced controls timeout: '+label+' '+JSON.stringify({phase:g.phase,x:g.player.x,y:g.player.y,target:StarfallApp.input.states[0].target,mode:StarfallApp.input.mode(0),dialog:!document.getElementById('dialog').hidden,audio:sound&&sound.ctx?{state:sound.ctx.state,time:sound.ctx.currentTime,next:nextShot,round:round,sameContext:sound.ctx===probeContext,halted:sound.halted,canSample:sound.canSample(),lastShots:Array.from(sound.lastShots.entries())}:null})));}},40);});}
               function mode(value){StarfallApp.showControls();var select=document.getElementById('touch-mode');select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}));StarfallApp.back();StarfallApp.back();StarfallApp.back();}
               g.recordEvents=[];g.enemies=[];g.bullets=[];g.player.invincible=999;
-              // 四难度验证同一机动上限；秒数为逻辑步换算。
-              // Verify one mobility cap across four difficulties; seconds are simulation-step conversions.
-              for(var difficulty=0;difficulty<4;difficulty++){
+              // 三档速度、四难度分别验证机动上限；秒数为逻辑步换算。
+              // Verify three speed tiers across four difficulties; seconds are simulation-step conversions.
+              for(var speed of ['slow','medium','fast'])for(var difficulty=0;difficulty<4;difficulty++){
                 var mobility=new StarfallCore.Game(19),hitX=0,hitY=0;mobility.start(difficulty);mobility.recordEvents=[];mobility.player.x=16;mobility.player.y=64;mobility.player.invincible=999;
-                for(var tick=1;tick<=50;tick++){mobility.update(0.035,{x:1,y:1});if(!hitX&&mobility.player.x>=384-0.000001)hitX=tick;if(!hitY&&mobility.player.y>=440-0.000001)hitY=tick;}
-                if(hitX!==48||hitY!==50)throw new Error('Wrong mobility traversal');
+                for(var tick=1;tick<=74;tick++){mobility.update(0.035,{x:1,y:1,moveSpeed:speed});if(!hitX&&mobility.player.x>=384-0.000001)hitX=tick;if(!hitY&&mobility.player.y>=440-0.000001)hitY=tick;}
+                var expected={slow:[72,74],medium:[58,60],fast:[48,50]}[speed];if(hitX!==expected[0]||hitY!==expected[1])throw new Error('Wrong mobility traversal '+speed);
               }
-              result.mobility={difficulties:4,horizontalTicks:48,verticalTicks:50,diagonalAxesRetainSpeed:true};
+              result.mobility={difficulties:4,speedCases:12,defaultSpeed:'medium',tiers:{slow:[72,74],medium:[58,60],fast:[48,50]},horizontalTicks:48,verticalTicks:50,diagonalAxesRetainSpeed:true};
               // 简单难度预警原生运行验证，仅在显式 smoke-test 中执行。
               // Verify Easy warnings only in the explicit native smoke test.
               result.laserWarning=(() => {
@@ -191,6 +191,17 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
                g.pause();const frame=g.frame;g.update(.25);if(g.frame!==frame)throw new Error('Paused warning advanced');g.setDifficulty(1);if(g.laserWarnings.length)throw new Error('Warning outside Easy');g.setDifficulty(0);if(g.laserWarnings[0].ticks!==20)throw new Error('Difficulty reset warning timer');g.resume();
                for(let i=0;i<19;i++){g.update(STEP);if(g.player.energy!==16)throw new Error('Warning damaged player');}g.update(STEP);if(g.player.energy!==14||g.laserWarnings.length||!g.bullets.some(b=>b.beam))throw new Error('Laser warning handoff failed');
                return {harmless:true,firstHit:true,pauseDifficulty:true,network:true,players:2};
+              })();
+              // 独立速度与淡预警仅由显式原生测试执行。
+              // Independent-speed and faint-warning checks run only in the explicit native test.
+              result.speedSettings=(function(){
+               const {Game,STEP,PLAYER_STEP_X}=StarfallCore,input=new DemonStarInput.Input({count:2}),g=new Game(223);g.start(0,1,false,{playerCount:2});g.recordEvents=[];
+               if(input.config.players.some(p=>p.moveSpeed!=='medium')||g.players.some(p=>p.moveSpeed!=='medium'))throw new Error('Default speed is not medium');
+               input.config.players[0].moveSpeed='slow';input.config.players[1].moveSpeed='fast';input.move(0,1,0);input.move(1,1,0);const x=g.players.map(p=>p.x);g.update(STEP,input.sample([],g.players));const deltas=g.players.map((p,i)=>p.x-x[i]);if(Math.abs(deltas[0]-PLAYER_STEP_X*2/3)>1e-8||Math.abs(deltas[1]-PLAYER_STEP_X)>1e-8)throw new Error('Independent speed mismatch');
+               const r=StarfallApp.renderer,oldContext=r.c,oldShot=r.enemyShot,canvas=document.createElement('canvas'),alphas=[];canvas.width=10;canvas.height=10;r.c=canvas.getContext('2d');
+               try{r.enemyShot=()=>alphas.push(r.c.globalAlpha);for(const [ticks,fraction] of [[23,0],[15,0],[7,0],[4,0],[1,.8]])r.laserWarning({ticks,shotType:9,frames:4,pulses:[0,1,2,3],period:8},{x:0,y:0},fraction);}finally{r.c=oldContext;r.enemyShot=oldShot;}
+               if(alphas.length!==5||alphas.slice(0,3).some(a=>Math.abs(a-.02)>1e-6)||alphas[3]<=.02||alphas[4]<=.85||alphas.some(a=>a>=1))throw new Error('Warning is not faint and accelerating');
+               return {defaultSpeed:'medium',independentSpeeds:true,faintAcceleratingWarning:true,finalDarkenSeconds:.2,alphas};
               })();
               mode('point');var layout=renderer.layout;document.getElementById('game').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerId:812,pointerType:'touch',clientX:layout.x+100*layout.scale,clientY:layout.y+200*layout.scale}));
               var destination=StarfallApp.input.states[0].target;if(!destination||Math.abs(destination.x-100)>2||Math.abs(destination.y-200)>2)throw new Error('Point event not captured');

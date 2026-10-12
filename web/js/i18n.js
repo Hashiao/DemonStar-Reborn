@@ -5,6 +5,11 @@
   // 繁体文案独立编写，不自动转字；数组顺序固定为简中、繁中、英文。
   // Traditional Chinese is authored separately; column order is Hans, Hant, English.
   const copy={
+    easyLaserWarning:["简单难度激光预警", "簡單難度雷射預警", "Easy laser warning"],
+    moveSpeed:["移动速度", "移動速度", "Movement speed"],
+    speedslow:["慢", "慢", "Slow"],
+    speedmedium:["中", "中", "Medium"],
+    speedfast:["快", "快", "Fast"],
     scrollSettings:["滚动设置", "捲動設定", "Scroll settings"],
     nextStageTap:["轻触屏幕进入下一关", "輕觸螢幕進入下一關", "Tap anywhere for the next stage"],
     doubleTapBombHint:["双击战场即可投弹，同屏双人禁用。", "連點戰場兩下即可投彈，同屏雙人停用。", "Double-tap the battlefield to release a bomb. Disabled on a shared device."],
