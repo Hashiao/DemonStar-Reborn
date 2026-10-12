@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.21：用户已确认 G_ANGTNKR/L 两种斜置导弹台并授权立即修复发射与移动。原表位于第 4/6/12/16 关；不再把该对象强行称为第二关。恢复 8/43/44 专用方向与半高炮口、导弹航迹，统一客户端地面和贴地装置的快照插值，房间版本 7。单机 mode 8 / speed 1 及原作炮位、伤害、M2.18 音频、M2.19 机动不变。G_TNK2A 开盖动画仍单列后续，未包含本轮；M2.20 未发布的既有修复随新候选保留，发布仍需完整验收。见 docs/M2_21_GROUND_MISSILES.md。
+  M2.21: the user confirmed the G_ANGTNKR/L angled launchers and authorized immediate firing/movement fixes. Source placements are in stages 4/6/12/16, not stage two. Restore type-8/43/44 constructor angles, half-height muzzle offsets and missile trails; align client terrain/fixture snapshot interpolation with room revision 7. Preserve solo mode-8/speed-1 motion, source guns/damage, M2.18 audio and M2.19 mobility. G_TNK2A cover animation remains separate future work. Retain unpublished M2.20 fixes in the new candidate; full release verification remains required. See docs/M2_21_GROUND_MISSILES.md.
+
 - 2026-10-12 长期合并授权：用户明确允许以后通过本地整套适用测试的修改直接推送并合并 main，无需逐个 PR 再次确认；同时已授权合并当前 PR #4 并先发布此前修复，再处理两条新明确的第 2 关反馈。合并授权不替代发布验收，不得把远端 iOS 失败或未测项目记为通过。
   Standing merge authorization (2026-10-12): after the full applicable local test suite passes, the user authorizes pushing and merging changes into main without per-PR confirmation. PR #4 is also explicitly authorized, with its existing fixes to be released before addressing the two newly clarified stage-two reports. Merge permission does not waive release verification or permit reporting remote iOS failures/untested cases as passes.
 

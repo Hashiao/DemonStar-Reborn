@@ -36,9 +36,9 @@ for family in ('iPhone','iPad'):
     if not choices: raise RuntimeError('No existing '+family+' simulator')
     newest=max(tuple(map(int,re.findall(r'\d+',p[0]))) for p in choices)
     choices=[p for p in choices if tuple(map(int,re.findall(r'\d+',p[0])))==newest]
-    # 使用既有较小 iPad 降低 CI 图形资源占用，功能断言与运行时版本不变。
-    # Prefer an existing smaller iPad to reduce CI graphics load without changing assertions/runtime.
-    runtime,device=min(choices,key=lambda p:(0 if 'mini' in p[1]['name'].lower() else 1 if '11-inch' in p[1]['name'] else 2)) if family=='iPad' else choices[0]
+    # 使用既有较小设备降低 CI 图形负担；不下载模拟器，不减少功能断言。
+    # Prefer existing smaller devices to reduce CI graphics load; no runtime downloads or removed assertions.
+    runtime,device=min(choices,key=lambda p:(0 if 'mini' in p[1]['name'].lower() else 1 if '11-inch' in p[1]['name'] else 2)) if family=='iPad' else min(choices,key=lambda p:0 if 'SE (3rd generation)' in p[1]['name'] else 1)
     uid=device['udid']
     if device.get('state')!='Booted':run(['xcrun','simctl','boot',uid])
     run(['xcrun','simctl','bootstatus',uid,'-b'])

@@ -10,8 +10,8 @@ permissions:
   contents: read
 jobs:
   ios:
-    # 标准 Intel 执行器提供 14 GB 内存，减轻双模拟器在 7 GB ARM 执行器上的启动压力。
-    # The standard Intel runner has 14 GB RAM, reducing paired-simulator startup pressure versus 7 GB ARM.
+    # 保留标准 14 GB Intel 执行器；此前仍有启动失败，不能声称内存选择已解决问题。
+    # Retain the standard 14 GB Intel runner; earlier startup failures remain and are not claimed solved by RAM selection.
     # https://docs.github.com/en/actions/reference/runners/github-hosted-runners
     runs-on: macos-15-intel
     timeout-minutes: 45

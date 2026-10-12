@@ -264,7 +264,9 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
             self?.web.evaluateJavaScript("window.touchProbeResult || null") { [weak self] result, _ in
                 guard let self = self else { return }
-                if let value = result as? [String: Any], let data = try? JSONSerialization.data(withJSONObject: value), let text = String(data: data, encoding: .utf8) {
+                // 状态未变时不反复改写无障碍树；此处只用于显式模拟器测试。
+                // Avoid accessibility-tree churn for unchanged observations; explicit simulator tests only.
+                if let value = result as? [String: Any], let data = try? JSONSerialization.data(withJSONObject: value, options: .sortedKeys), let text = String(data: data, encoding: .utf8), self.touchProbeLabel?.accessibilityLabel != text {
                     self.touchProbeLabel?.accessibilityLabel = text
                     if value["phase"] as? String == "playing", let players = value["players"] as? [Any],
                        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
