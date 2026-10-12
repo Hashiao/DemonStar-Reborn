@@ -16,8 +16,10 @@ for tested in standard['devices']:
  run(['xcrun','simctl','boot',uid])
  run(['xcrun','simctl','bootstatus',uid,'-b'])
  print('System long-press UI checks: '+family,flush=True)
+ # iPad 曾完成全部断言后在 Xcode 收尾撞上 600 秒外层期限；操作自身的 25 秒等待不变。
+ # An iPad completed all assertions before Xcode teardown hit the 600-second outer limit; keep each 25-second condition unchanged.
  with (root/f'.local/ios-touch-{family}-build.log').open('w') as log:
-  subprocess.run(['xcodebuild','-project','ios/DemonStar.xcodeproj','-scheme','DemonStarTouchTests','-configuration','Release','-destination','id='+uid,'-derivedDataPath','.local/ios-simulator','-parallel-testing-enabled','NO','-resultBundlePath',str(out/f'ios-touch-{family}.xcresult'),'CODE_SIGNING_ALLOWED=NO','test'],cwd=root,stdout=log,stderr=subprocess.STDOUT,check=True,timeout=600)
+  subprocess.run(['xcodebuild','-project','ios/DemonStar.xcodeproj','-scheme','DemonStarTouchTests','-configuration','Release','-destination','id='+uid,'-derivedDataPath','.local/ios-simulator','-parallel-testing-enabled','NO','-resultBundlePath',str(out/f'ios-touch-{family}.xcresult'),'CODE_SIGNING_ALLOWED=NO','test'],cwd=root,stdout=log,stderr=subprocess.STDOUT,check=True,timeout=900)
  container=pathlib.Path(run(['xcrun','simctl','get_app_container',uid,'io.github.hashiao.demonstar','data']))
  for count in [1,2]:
   data=json.loads((container/f'Documents/touch-probe-{count}.json').read_text())
