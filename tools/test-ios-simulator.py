@@ -3,6 +3,9 @@ import json, os, pathlib, plistlib, re, subprocess, time
 from ios_simulator_health import available_devices, recover_service
 root=pathlib.Path(__file__).resolve().parents[1]
 out=root/'artifacts';out.mkdir(exist_ok=True)
+# 对照当前资源清单逐项验收，新增图集不能沿用旧版固定数量。
+# Verify the exact current manifest, so new atlases cannot inherit an obsolete fixed count.
+expected_art_paths=sorted({asset for name in ['campaign-art','enemy-shots','boss-deaths'] for asset in json.loads((root/'web/js'/f'{name}.js').read_text(encoding='utf-8').split('=',1)[1].strip().rstrip(';'))['assets']})
 def run(args,timeout=600): return subprocess.check_output(args,cwd=root,text=True,timeout=timeout).strip()
 
 def install_clean(uid):
@@ -80,7 +83,7 @@ for family in ('iPhone','iPad'):
         assert probe.get('healthBarDefaults')=={'regular':False,'boss':True} and probe.get('independentHealthBarSwitches'),probe
         assert probe.get('languagePreservesCombat') and all(c['passed'] for c in probe['languageChecks']) and len(probe['languageChecks'])==3,probe
         assert probe.get('launchSeen') and probe.get('presentationReady'),probe
-        assert len(probe.get('campaignArt',{}).get('decoded',[]))==21 and probe['campaignArt']['prototypeRoutes']==251 and probe['campaignArt']['enemyTypes']==15 and probe['campaignArt']['bossDeathRoutes']==9,probe
+        assert sorted(probe.get('campaignArt',{}).get('decoded',[]))==expected_art_paths and probe['campaignArt']['prototypeRoutes']==251 and probe['campaignArt']['enemyTypes']==15 and probe['campaignArt']['bossDeathRoutes']==9,probe
         assert 'assets/snake-deaths-hd.png' in probe['campaignArt']['decoded'],probe
         assert probe.get('weaponArtReady') and probe.get('weaponSizes')=={'homing':[4,8],'red':[1,3,5,9,11,13],'blue':[8,12,16]},probe
         assert probe.get('phase')=='playing',probe;assert probe.get('assetsReady'),probe;assert probe.get('score',0)>=0,probe
