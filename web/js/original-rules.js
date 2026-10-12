@@ -57,25 +57,47 @@
   const DROP_NEXT=[-1,-1,3,4,2,6,5,-1,9,8,-1,-1,13,12,3,6];
   const DROP_WAIT=DROPS.map((_,i)=>i===14?240:i===15?250:180);
   class Gun {
-    constructor(raw){this.raw=raw;this.delay=raw[4];this.wait=raw[5];this.cooldown=0;this.remaining=raw[7];this.angle=raw[8];this.active=false;this.arc=raw[13]||9999;this.gaps=raw[14];this.aim=!!raw[10];this.cycles=raw[16];}
+    constructor(raw){this.raw=raw;this.delay=raw[4];this.wait=raw[5];this.cooldown=0;this.remaining=raw[7];this.angle=raw[8];this.active=false;this.arc=raw[13]||9999;this.gaps=raw[14];this.aim=!!raw[10];this.cycles=raw[16];this.volleyFired=false;}
     tick(enemy,game){
       const r=this.raw;if(this.delay>0){this.delay--;return;}
       if(this.cooldown<=1){if(this.cycles>0){this.cycles--;this.active=true;this.cooldown=Math.max(1,Math.round(r[6]*game.rules.fire));}else this.active=false;}else this.cooldown--;
       if(!this.active)return;if(this.wait>0){this.wait--;return;}this.wait=r[5];
-      if(this.remaining<=0){this.active=false;this.remaining=r[7];this.aim=!!r[10];this.angle=r[8];this.arc=r[13];this.gaps=r[14];if(this.gaps<=1)this.arc=9999;else this.gaps--;return;}
+      if(this.remaining<=0){this.active=false;this.remaining=r[7];this.aim=!!r[10];this.angle=r[8];this.arc=r[13];this.gaps=r[14];this.volleyFired=false;if(this.gaps<=1)this.arc=9999;else this.gaps--;return;}
       this.remaining--;
       if(this.arc<=0){this.angle=(this.angle+r[9])&2047;if(this.gaps<=1)this.arc=9999;else this.gaps--;return;}
       const x=enemy.x-enemy.def.width/2+r[0],y=enemy.y-enemy.def.height/2+r[1];
       if(this.aim){const p=game.targetPlayer(x,y);if(!p)return;this.angle=(Math.atan2(p.x-x,-(p.y-y))*1024/Math.PI+r[8])&2047;this.aim=false;}
+      let firstBeam=false;
       if(enemy.y>=0&&enemy.y<H+enemy.r&&game.enemyFireLock<=0&&!enemy.dying){
         const missile=ENEMY_MISSILES[r[2]],angle=missile?missile.angle:this.angle,a=angle*Math.PI/1024,s=Math.max(1,r[12])*TICK;
         // 9/10 号弹绑定炮口，分别播放四/五帧，伤害取原始模板。
         // Types 9/10 attach to the muzzle for four/five frames (0x429722); keep original damage.
         const beamFrames=r[2]===10?5:4;
+        firstBeam=(r[2]===9||r[2]===10)&&!this.volleyFired;this.volleyFired=true;
         const beam=r[2]===9||r[2]===10?{beam:true,beamFrames,owner:enemy.uid,offsetX:x-enemy.x,offsetY:y-enemy.y,age:0,life:beamFrames*STEP}:{};
         game.addBullet(x,y+(missile?.muzzleY||0),Math.sin(a)*s,-Math.cos(a)*s,false,P.damage[r[2]],r[2]%3,{shotType:r[2],missile:!!missile,...(missile?{flightAngle:angle}:{}),...beam});game.events?.push({type:'enemy-shot',shotType:r[2]});
       }
       this.angle=(this.angle+r[9])&2047;this.arc--;
+      return firstBeam;
+    }
+    // 在炮位副本上前看一秒，沿用同一调度器；不推进真实计时、随机数或音效。
+    // Look ahead one second on a gun copy using the same scheduler; never advance live timers, RNG or audio.
+    laserWarning(enemy,game,index){
+      if(game.difficulty!==0||!enemy.boss||enemy.dead||enemy.dying||game.enemyFireLock>0||![9,10].includes(this.raw[2]))return null;
+      const gun=Object.assign(Object.create(Gun.prototype),this),pulses=[];
+      let offset=-1;
+      const preview={rules:game.rules,enemyFireLock:0,targetPlayer:(x,y)=>game.targetPlayer(x,y),addBullet:()=>{if(offset>=0)pulses.push(offset);}};
+      for(let ticks=1;ticks<=Math.ceil(1/STEP);ticks++){
+        if(!gun.tick(enemy,preview))continue;
+        pulses.push(0);
+        // 重播这一轮真实脉冲间隔和动画，轮末留一个暗帧；短轮在预警窗口内循环。
+        // Replay this volley's real pulse spacing/animation, with one dark tick before repeating short volleys.
+        const limit=Math.min(256,this.raw[7]*(this.raw[5]+1)+2);
+        for(offset=1;offset<=limit;offset++){gun.tick(enemy,preview);if(!gun.volleyFired)break;}
+        const frames=this.raw[2]===10?5:4;
+        return {owner:enemy.uid,gun:index,shotType:this.raw[2],offsetX:-enemy.def.width/2+this.raw[0],offsetY:-enemy.def.height/2+this.raw[1],ticks,frames,pulses,period:pulses[pulses.length-1]+frames};
+      }
+      return null;
     }
   }
   class Game {
@@ -112,14 +134,15 @@
     targetPlayer(x,y){return this.livePlayers().reduce((best,p)=>!best||Math.hypot(p.x-x,p.y-y)<Math.hypot(best.x-x,best.y-y)?p:best,null)||this.players.find(p=>p.connected!==false&&p.lives>0)||this.player;}
     nextStage(){if(this.phase!=='cleared'||this.stage.id>=18)return false;this.loadStage(this.stage.id+1);return true;}
     beginPresentation(){
-      this.effects=[];this.wrecks=[];this.stageBonus=null;this.stageBonuses=[];this.launch=null;
+      this.effects=[];this.wrecks=[];this.stageBonus=null;this.stageBonuses=[];this.launch=null;this.laserWarnings=[];
       for(const p of this.players){p.medals=0;p.mega=0;p.megaTick=0;}
       if(this.presentation){this.phase='launch';this.launch={ticks:0,carrierY:-64,previousY:-64};}
     }
     pause(){if(['playing','launch','aftermath'].includes(this.phase)){this.resumePhase=this.phase;this.phase='paused';return true;}return false;}
     // 暂停换难度只影响后续出场/伤害/炮位规则，不重建实体、计时或入关档。
     // Paused difficulty changes affect future spawning/damage/guns, preserving entities, timers and entry saves.
-    setDifficulty(value){if(this.phase!=='paused'||!Number.isInteger(value)||value<0||value>3)return false;this.difficulty=value;this.rules=DIFFICULTIES[value];return true;}
+    setDifficulty(value){if(this.phase!=='paused'||!Number.isInteger(value)||value<0||value>3)return false;this.difficulty=value;this.rules=DIFFICULTIES[value];this.updateLaserWarnings();return true;}
+    updateLaserWarnings(){this.laserWarnings=[];if(this.difficulty!==0||!['playing','paused'].includes(this.phase))return;for(const e of this.enemies.filter(e=>e.boss&&!e.dead&&!e.dying))for(const [i,gun] of e.guns.entries()){const warning=gun.laserWarning(e,this,i);if(warning)this.laserWarnings.push(warning);}}
     resume(){if(this.phase==='paused'){this.pendingTime=0;if(this.players.every(p=>p.lives<=0||p.connected===false)){this.phase='gameover';this.events.push({type:'gameover'});}else this.phase=this.resumePhase||'playing';return true;}return false;}
     drainEvents(){return this.events.splice(0);}
     move(dx,dy,p=this.player){if(this.phase==='playing'&&p.lives>0){p.x=clamp(p.x+dx,16,W-16);p.y=clamp(p.y+dy,64,H-40);}}
@@ -328,6 +351,7 @@
     }
     killEnemy(e,p=this.player,deathMode=4){
       if(e.dead||e.dying||e.scenery)return;e.killerId=p.id;if(e.boss||SNAKE_SEGMENTS.has(e.def.sprite))e.hp=0;
+      this.laserWarnings=(this.laserWarnings||[]).filter(w=>w.owner!==e.uid);
       // 0x40fdb0 只让带 0x80 且非地面的对象进入坠毁；其余 Boss 原地爆炸。
       // 0x40fdb0 gates falling on 0x80 without ground 0x40; other Bosses explode in place.
       // 蛇形编队部件同样走 0x40fdb0；组号不是共享生命或强制连锁死亡标志。
@@ -604,6 +628,7 @@
       this.enemies=this.enemies.filter(e=>!e.dead&&(e.boss||e.time<2100*STEP)&&(e.y<H+220)&&e.x>-350&&e.x<W+350);
       this.bullets=this.bullets.filter(b=>!b.dead&&b.life>0&&b.x>-40&&b.x<W+40&&b.y>-220&&b.y<H+40);
       this.pickups=this.pickups.filter(i=>!i.dead&&i.y<H+30);this.particles=this.particles.filter(v=>v.life>0);
+      this.updateLaserWarnings();
     }
   }
   globalThis.StarfallCore={BOMB_CAPACITY,W,H,TICK,STEP,MAX_PLAYERS,createPlayer,validCheckpoint,validWeaponLevels,deathScale,deathTransform,LAUNCH_SPEED,HEALTH_BAR_MIN_HP,PLAYER_STEP_X,PLAYER_STEP_Y,DROPS,DROP_NEXT,DROP_WAIT,Game,Gun,STAGES,BIOMES,WEAPONS,DIFFICULTIES,rng,clamp,intersects,projectileDamage,collisionDamage};

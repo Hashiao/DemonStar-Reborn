@@ -8,7 +8,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前已发布里程碑 M2.21（v0.2.21）修复地面斜向导弹和联机贴地卷动，并包含地物连锁与蛇形部件坠毁；仍不是完整 1:1 移植。** 原作 1–18 关优先，19–25 关尚未开发；见 [还原状态](docs/FIDELITY.md)。
+**当前里程碑 M2.22（v0.2.22）新增简单难度 Boss 脉冲激光预警。** 保持现有战斗节奏与原作风格，详见 [实现与验收](docs/M2_22_LASER_WARNING.md)；完整 1:1 还原仍未完成。
 
 M2.20 源码通过 PR #4 合并，因 iOS 验收未完成没有独立正式发布；既有修复已纳入 M2.21。历史候选、失败与边界记录仍保留在 [M2.20 文档](docs/M2_20_STRUCTURES.md)。
 
@@ -23,7 +23,19 @@ M2.21 已通过 PR #5 合并并完成本版本验收，见 [开发与边界](doc
 
 ![菜单](docs/screenshots/menu.png)
 
-## 当前已发布里程碑 M2.21
+## 当前里程碑 M2.22
+
+- 简单难度下，Boss 每轮激光前一秒显示同色脉冲预警，逐渐变亮；预警无伤害，完全显现时正式发射。
+- 暂停冻结预警；中途切换难度沿用实际剩余时间；预警跟随炮口，多炮口和单双人共用。游戏内不新增难度区别说明。
+- 保持原有发射时序、伤害、音频和机动。房间规则 8，联机双方须更新；0.2.22 / build 24。
+
+401 项引擎/单元测试、30 组浏览器检查通过；12 个 Boss 的 132 组炮位/难度组合，以及与 0.2.21 对照的 96 组战斗、144,000 个逻辑步通过。Android Release/Debug/Lint（0 错误）、API 37 五组原生验收通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38198666309) 完成 ARM64 iPhoneOS 构建、iPhone/iPad 功能/三语/音频/新预警探针、原生 LAN 与单双人系统触控。两端包内部版本与全部 142 份 Web 资源匹配，APK 安装回读哈希一致。
+
+这是用户确认的辅助扩展，不宣称原作自带预警。IPA 未签名，需自行签名；模拟器验收不代表真实手机、热点或 Android–iOS 双真机已通过。逻辑步为 35 ms，网络显示仍受传输延迟影响。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.22/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.22/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.22/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.22/verification.json)
+
+## M2.21 已完成内容
 
 - 修复左右斜置导弹台：按原作固定角度向斜下方发射，恢复炮口偏移和细烟航迹；保留原始速度、射速与伤害。
 - 修复局域网客户端装置/补给箱相对地面的滑动，统一快照插值；单机贴地速度不变。

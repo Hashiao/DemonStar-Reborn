@@ -16,7 +16,7 @@
   function encode(game,events=[]){
     let serial=game.networkSerial||0;const object=(o,fields)=>{if(!o.wireId)o.wireId=++serial;return pick(o,fields);};
     const state={version:2,stage:game.stage.id,difficulty:game.difficulty,world:pick(game,world),checkpoint:game.checkpoint(),players:game.players.map(p=>({...pick(p,player),bombInventory:p.bombInventory.slice(),weaponLevels:p.weaponLevels.slice()})),enemies:game.enemies.map(e=>({...pick(e,enemy),definition:e.def.id,...(e.animation?{animation:copy(e.animation)}:{})})),bullets:game.bullets.map(b=>object(b,bullet)),specials:game.specials.map(s=>object(s,special)),pickups:game.pickups.map(p=>object(p,pickup)),effects:copy(game.effects),wrecks:copy(game.wrecks),particles:copy(game.particles),launch:game.launch?copy(game.launch):null,stageBonus:game.stageBonus?copy(game.stageBonus):null,stageBonuses:copy(game.stageBonuses),bossId:game.boss?.uid||null,events:events.filter(e=>allowedEvents.has(e.type)).slice(-96).map(e=>pick(e,eventFields))};
-    game.networkSerial=serial;return state;
+    state.laserWarnings=copy(game.laserWarnings||[]);game.networkSerial=serial;return state;
   }
   function valid(s){
     if(!s||s.version!==2||!Number.isInteger(s.stage)||s.stage<1||s.stage>18||!Number.isInteger(s.difficulty)||s.difficulty<0||s.difficulty>3||!finite(s)||!validCheckpoint(s.checkpoint))return false;
@@ -27,6 +27,7 @@
     for(const key of ['score','kills','shotsFired','shotsHit','totalTime','elapsed','scroll'])if(!Number.isFinite(s.world[key])||s.world[key]<0)return false;
     const bonusValid=b=>b&&['bombs','medals','bombScore','medalScore','total'].every(k=>Number.isFinite(b[k])&&b[k]>=0);
     if(s.stageBonus!==null&&!bonusValid(s.stageBonus)||!s.stageBonuses.every(bonusValid))return false;
+    if(!Array.isArray(s.laserWarnings)||s.laserWarnings.length>128||!s.laserWarnings.every(w=>w&&[9,10].includes(w.shotType)&&w.frames===(w.shotType===9?4:5)&&Number.isInteger(w.ticks)&&w.ticks>=1&&w.ticks<=Math.ceil(1/StarfallCore.STEP)&&Number.isInteger(w.gun)&&w.gun>=0&&Number.isFinite(w.offsetX)&&Number.isFinite(w.offsetY)&&Array.isArray(w.pulses)&&w.pulses.length>0&&w.pulses.length<=64&&w.pulses[0]===0&&w.pulses.every((t,i)=>Number.isInteger(t)&&t>=0&&t<=256&&(!i||t>w.pulses[i-1]))&&w.period===w.pulses[w.pulses.length-1]+w.frames&&s.enemies.some(e=>e.uid===w.owner&&e.boss&&!e.dead&&!e.dying)))return false;
     if(!s.enemies.every(e=>Number.isInteger(e.definition)&&C.byId[e.definition]!==undefined&&Number.isFinite(e.x)&&Number.isFinite(e.y)))return false;
     if(!s.events.every(e=>allowedEvents.has(e.type)))return false;
     return true;
@@ -45,7 +46,7 @@
     // Align newly received terrain fixtures too; independently moving turrets and floating drops keep their own motion.
     if(smooth)for(const e of enemies)if(!e.dying&&(e.scenery||e.ground&&e.def.mode===8&&e.def.speed===1))e.py=e.y-(state.world.scroll-previousScroll);
     Object.assign(game,pick(state.world,world));game.stage=STAGES[state.stage-1];game.difficulty=state.difficulty;game.rules=DIFFICULTIES[state.difficulty];game.players=players;game.player=players[0];game.enemies=enemies;game.boss=enemies.find(e=>e.uid===state.bossId)||null;
-    game.previousScroll=previousScroll;
+    game.previousScroll=previousScroll;game.laserWarnings=copy(state.laserWarnings);
     game.bullets=state.bullets.map(s=>at(pick(s,bullet),oldBullets.get(s.wireId)));game.pickups=state.pickups.map(s=>pick(s,pickup));game.specials=state.specials.map(s=>pick(s,special));
     for(const key of ['effects','wrecks','particles','launch','stageBonus','stageBonuses'])game[key]=copy(state[key]);game.stageEntry=copy(state.checkpoint);game.pendingTime=0;game.events=game.events||[];game.events.push(...state.events.map(e=>pick(e,eventFields)));return true;
   }

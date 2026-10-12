@@ -3,7 +3,7 @@
   'use strict';
   // 固定斜向导弹与客户端地面插值需要双方采用同一规则。
   // Fixed diagonal missiles and client terrain interpolation require matching rules on both peers.
-  const INPUT_VERSION=7,PROTOCOL='demonstar-lan-1',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  const INPUT_VERSION=8,PROTOCOL='demonstar-lan-1',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
   const idle=()=>({x:0,y:0,fire:false,bomb:0});
   const validRoster=list=>Array.isArray(list)&&list.length>=1&&list.length<=4&&list.every((m,i)=>m.slot===i+1&&typeof m.connected==='boolean'&&['android','ios','browser'].includes(m.platform));
   function token(){const bytes=new Uint8Array(16);if(globalThis.crypto?.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<16;i++)bytes[i]=Math.floor(Math.random()*256);return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');}

@@ -1,5 +1,11 @@
 # DemonStar Reborn 工作约定
 
+- M2.22 验收完成：401 项引擎、30 组浏览器、96 组战斗对照、Android 全套及同轮 iOS 构建/功能/触控/LAN 通过；0.2.22/build 24，房间规则 8。IPA 未签名，未认证真机热点。
+  M2.22 verified: 401 engine tests, 30 browser suites, 96 combat comparisons, full Android checks and same-run iOS build/functional/touch/LAN passed; 0.2.22/build 24, room revision 8. The IPA is unsigned; physical hotspots remain unverified.
+
+- M2.22：用户授权简单难度 Boss 每轮激光前一秒预警，沿用正式激光脉冲节奏并由透明渐强；预警无伤害，正式发射才全不透明。暂停改难度沿用剩余时间，房主同步，房间规则 8。游戏内不添加难度区别说明，只在代码和 Git 文档记录。见 docs/M2_22_LASER_WARNING.md。
+  M2.22: the user authorizes Easy Boss laser warnings for one second before each volley, pulsing like real beams while fading in. Previews are harmless; only actual emission reaches full opacity. Paused difficulty changes use remaining time; hosts synchronize warnings with room revision 8. Add no in-game difficulty explanations; document behavior in code and Git only. See docs/M2_22_LASER_WARNING.md.
+
 - M2.21 交付状态：PR #5 已合并 main；395 项引擎、29 组浏览器、48 组脚本交火、Android 全套及同一轮 iOS 构建/功能/系统触控/原生 LAN 完整验收通过。0.2.21/build 23 两端包内部版本及 142 份 Web 资源已核验，正式报告为 passed；IPA 未签名，真机热点未认证。保留早期失败及候选哈希，正式包使用最终校验和。见 docs/M2_21_GROUND_MISSILES.md。
   M2.21 delivery status: PR #5 merged into main; 395 engine tests, 29 browser suites, 48 scripted combat cases, full Android checks and same-run iOS build/functional/system-touch/native-LAN verification passed. Both 0.2.21/build 23 packages have verified versions and 142 matching Web resources; the final report is passed. IPA remains unsigned and physical hotspots are not certified. Preserve earlier failures/candidate hashes; use final checksums for official packages. See docs/M2_21_GROUND_MISSILES.md.
 
