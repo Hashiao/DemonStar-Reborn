@@ -2,7 +2,9 @@
 
 [简体中文](FIDELITY.md) · [English](FIDELITY.en.md)
 
-Current milestone: **M2.21 ground missiles and LAN scrolling**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+Current milestone: **M2.22 Easy laser warnings**. This is not a verified complete 1:1 port. Restore the original 18 stages before developing stages 19–25.
+
+Easy Boss pulsed laser previews are a user-approved aid: one harmless fading second before each volley, preserving actual firing timing. See [M2.22](M2_22_LASER_WARNING.md).
 
 | Area | Current status |
 |---|---|

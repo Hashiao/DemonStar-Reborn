@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.22 验收完成：401 项引擎、30 组浏览器、96 组战斗对照、Android 全套及同轮 iOS 构建/功能/触控/LAN 通过；0.2.22/build 24，房间规则 8。IPA 未签名，未认证真机热点。
+  M2.22 verified: 401 engine tests, 30 browser suites, 96 combat comparisons, full Android checks and same-run iOS build/functional/touch/LAN passed; 0.2.22/build 24, room revision 8. The IPA is unsigned; physical hotspots remain unverified.
+
 - M2.22：用户授权简单难度 Boss 每轮激光前一秒预警，沿用正式激光脉冲节奏并由透明渐强；预警无伤害，正式发射才全不透明。暂停改难度沿用剩余时间，房主同步，房间规则 8。游戏内不添加难度区别说明，只在代码和 Git 文档记录。见 docs/M2_22_LASER_WARNING.md。
   M2.22: the user authorizes Easy Boss laser warnings for one second before each volley, pulsing like real beams while fading in. Previews are harmless; only actual emission reaches full opacity. Paused difficulty changes use remaining time; hosts synchronize warnings with room revision 8. Add no in-game difficulty explanations; document behavior in code and Git only. See docs/M2_22_LASER_WARNING.md.
 

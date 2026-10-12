@@ -26,6 +26,26 @@ Pause freezes the warning. Leaving Easy removes it; entering Easy uses remaining
 
 ## 验收 / Verification
 
-开发验收进行中。新增检查覆盖全部 132 个炮位/难度组合、预警无伤害、原发射时机、组内不重复预警、暂停改难度、死亡/炸弹/读档清理、联机快照，以及真实 Canvas 的红蓝脉冲透明度和炮口位置。Android/iOS 显式原生探针增加预警交接检查；完整引擎、浏览器、Android 构建/Lint/现成模拟器与 iOS 构建/模拟器验收后才能正式发布。
+- 简单难度下，Boss 每轮激光前一秒显示同色脉冲预警，逐渐变亮；预警无伤害，完全显现时正式发射。
+- 暂停冻结预警；中途切换难度沿用实际剩余时间；预警跟随炮口，多炮口和单双人共用。游戏内不新增难度区别说明。
+- 保持原有发射时序、伤害、音频和机动。房间规则 8，联机双方须更新；0.2.22 / build 24。
 
-Verification is in progress. Added checks cover all 132 mount/difficulty combinations, harmless previews, original firing timing, one warning per volley, paused difficulty changes, death/bomb/load cleanup, network snapshots and actual Canvas red/blue pulse opacity/muzzle positions. Explicit Android/iOS native probes check warning handoff. Formal publication requires the full engine/browser suites, Android build/Lint/existing-emulator checks and iOS build/simulator verification.
+401 项引擎/单元测试、30 组浏览器检查通过；12 个 Boss 的 132 组炮位/难度组合，以及与 0.2.21 对照的 96 组战斗、144,000 个逻辑步通过。Android Release/Debug/Lint（0 错误）、API 37 五组原生验收通过。[iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38198666309) 完成 ARM64 iPhoneOS 构建、iPhone/iPad 功能/三语/音频/新预警探针、原生 LAN 与单双人系统触控。两端包内部版本与全部 142 份 Web 资源匹配，APK 安装回读哈希一致。
+
+这是用户确认的辅助扩展，不宣称原作自带预警。IPA 未签名，需自行签名；模拟器验收不代表真实手机、热点或 Android–iOS 双真机已通过。逻辑步为 35 ms，网络显示仍受传输延迟影响。
+
+- On Easy, show matching pulsed Boss laser previews for one second before each volley, gradually increasing opacity. Previews are harmless; full visibility marks actual emission.
+- Pause freezes warnings; difficulty changes preserve remaining time. Previews follow moving muzzles and support multiple mounts and solo/two-player play. Add no in-game difficulty explanations.
+- Preserve firing schedules, damage, audio and mobility. Room revision 8 requires both peers to update; version 0.2.22 / build 24.
+
+Passed 401 engine/unit tests and 30 browser suites, including 132 mount/difficulty combinations across 12 Bosses and 96 combat comparisons against 0.2.21 over 144,000 logic steps. Android Release/Debug/Lint (zero errors) and five API 37 native suites passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38198666309) completed ARM64 iPhoneOS compilation, iPhone/iPad functional/localization/audio/new-warning probes, native LAN and solo/two-player system touch. Both package versions and all 142 Web resources match; installed APK bytes match the release file.
+
+This user-approved aid is not claimed as an original-game feature. The IPA is unsigned and requires user signing; emulator evidence does not certify physical phones, hotspots or Android–iOS hardware pairs. Logic uses 35 ms ticks and network display remains subject to transport latency.
+
+`DemonStar-Reborn-release.apk` SHA-256: `0cdb226c4e33c68f5113474851f62f46a1f4ad8a75c51a8a8e0df248508fe809`
+
+`DemonStar.ipa` SHA-256: `9aaa11d5a2d70877b4f0f5e209c0f2327f10df2b386597cbf6d793075b9c2eb2`
+
+首轮浏览器开火断言早于 HUD 的 60 ms 刷新；已改为等待实际 DOM 状态，保留原断言与持续射击检查。Android 初次模拟器退出、第二次 ADB 5037 无响应的失败记录均保留；通过独立 ADB 5041 重跑同一现有 AVD 的完整五组检查。iOS 一轮完整通过，未调整其运行环境或断言。
+
+The first browser fire assertion raced the 60 ms HUD refresh; it now waits for actual DOM state while retaining the assertion and sustained-fire checks. Preserve the initial emulator exit and subsequent unresponsive ADB 5037 failures. A dedicated ADB 5041 server completed all five suites on the same existing AVD. iOS passed in one complete run without environment or assertion changes.

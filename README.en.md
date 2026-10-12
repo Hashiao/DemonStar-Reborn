@@ -8,7 +8,7 @@ An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
 
-**Current published milestone M2.21 (v0.2.21) fixes ground missiles and LAN terrain scrolling, including ground chains and falling snake parts. This remains an incomplete 1:1 port.** The original eighteen stages take priority; stages 19–25 remain undeveloped. See [fidelity status](docs/FIDELITY.en.md).
+**Current milestone M2.22 (v0.2.22) adds Easy Boss pulsed laser warnings.** Preserve existing combat pacing and art direction; see [implementation and verification](docs/M2_22_LASER_WARNING.md). Full 1:1 fidelity remains incomplete.
 
 M2.20 source merged through PR #4 but had no separate official release because iOS verification remained incomplete. Its fixes are included in M2.21; candidate/failure history remains in the [M2.20 record](docs/M2_20_STRUCTURES.md).
 
@@ -23,7 +23,19 @@ M2.21 merged through PR #5 and completed this version’s verification. See [imp
 
 ![Menu](docs/screenshots/menu-en.png)
 
-## Current published milestone M2.21
+## Current milestone M2.22
+
+- On Easy, show matching pulsed Boss laser previews for one second before each volley, gradually increasing opacity. Previews are harmless; full visibility marks actual emission.
+- Pause freezes warnings; difficulty changes preserve remaining time. Previews follow moving muzzles and support multiple mounts and solo/two-player play. Add no in-game difficulty explanations.
+- Preserve firing schedules, damage, audio and mobility. Room revision 8 requires both peers to update; version 0.2.22 / build 24.
+
+Passed 401 engine/unit tests and 30 browser suites, including 132 mount/difficulty combinations across 12 Bosses and 96 combat comparisons against 0.2.21 over 144,000 logic steps. Android Release/Debug/Lint (zero errors) and five API 37 native suites passed. [iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38198666309) completed ARM64 iPhoneOS compilation, iPhone/iPad functional/localization/audio/new-warning probes, native LAN and solo/two-player system touch. Both package versions and all 142 Web resources match; installed APK bytes match the release file.
+
+This user-approved aid is not claimed as an original-game feature. The IPA is unsigned and requires user signing; emulator evidence does not certify physical phones, hotspots or Android–iOS hardware pairs. Logic uses 35 ms ticks and network display remains subject to transport latency.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.22/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.22/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.22/SHA256SUMS.txt) · [verification.json](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.22/verification.json)
+
+## M2.21 completed work
 
 - Restore native down-left/down-right launcher angles, muzzle offsets and fine smoke trails, preserving source speed, cadence and damage.
 - Align LAN client fixtures/supply boxes with terrain throughout snapshot interpolation; solo terrain-bound speed stays unchanged.
