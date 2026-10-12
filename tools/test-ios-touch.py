@@ -1,15 +1,20 @@
 """现有 iPhone/iPad 上的 XCTest 系统长按。 / XCTest long presses on existing iPhone/iPad simulators."""
 import json, pathlib, subprocess
+from ios_simulator_health import available_devices, recover_service
 root=pathlib.Path(__file__).resolve().parents[1];out=root/'artifacts'
 def run(args):return subprocess.check_output(args,cwd=root,text=True,timeout=90).strip()
-available=json.loads(run(['xcrun','simctl','list','devices','available','-j']))['devices']
+# LAN 清理已超时则先恢复控制服务；触控断言尚未开始。
+# Recover a known LAN cleanup timeout before any touch assertion starts.
+lan=json.loads((out/'ios-lan-verification.json').read_text())
+if any(row.get('status')=='timeout' for row in lan.get('cleanup',[])):recover_service(root,'LAN cleanup timed out before touch setup')
+available=available_devices(root)
 standard=json.loads((out/'ios-verification.json').read_text());reports=[]
 tested_ids=[next(d['udid'] for d in available[t['runtime']] if d['name']==t['name']) for t in standard['devices']]
 for tested in standard['devices']:
  device=next(d for d in available[tested['runtime']] if d['name']==tested['name']);uid=device['udid'];family=tested['family']
  # 逐台隔离模拟器/测试宿主状态以排查 iPad Runner 启动卡住；不重试断言。
  # Isolate each simulator/test-host state when diagnosing iPad Runner stalls; never retry assertions.
- live=json.loads(run(['xcrun','simctl','list','devices','available','-j']))['devices']
+ live=available_devices(root)
  for devices in live.values():
   for other in devices:
    if other['udid'] in tested_ids and other.get('state')!='Shutdown':run(['xcrun','simctl','shutdown',other['udid']])

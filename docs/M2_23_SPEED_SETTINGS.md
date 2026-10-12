@@ -25,3 +25,13 @@ The user's latest instruction reserves darkening for the final 0.2 seconds befor
 版本 0.2.23 / build 25。开发验收中：新增 288 个档位/难度/操作/方向组合、旧偏好兼容、独立速度、暂停/读档、联机档位校验、淡预警曲线、开关持久化及三语小屏检查。正式发布须完成完整引擎/浏览器、Android 构建/Lint/现成模拟器及同轮 iOS 构建/功能/系统触控/原生 LAN。未签名 IPA 需要自行签名；模拟器不替代手机、热点或 Android–iOS 真机混联。
 
 Version 0.2.23 / build 25. Verification is in progress: 288 tier/difficulty/control/direction cases, legacy preferences, independent speeds, pause/load behavior, LAN tier validation, faint warning curves, persistent toggles and trilingual compact layouts. Formal publication requires complete engine/browser checks, Android build/Lint/existing-emulator checks and same-run iOS build/functional/system-touch/native-LAN verification. Unsigned IPAs require user signing; simulators do not certify physical phones, hotspots or Android–iOS hardware pairs.
+
+## CI 控制服务恢复 / CI control-service recovery
+
+首轮 [38204137016](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38204137016) 在 iPad 的 `simctl launch` 等待 600 秒后失败；iPhone 三语功能已通过。第二轮 [38205633257](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38205633257) 完成功能和 LAN，但 LAN 结束时两次关机超时，随后触控脚本的 `simctl list` 也超时，尚未进入触控断言。这两轮均保留失败结果。
+
+因此只为 GitHub macOS 当前用户增加 CoreSimulatorService 恢复，参考 [Apple 开发工具工程师说明的服务重启方式](https://developer.apple.com/forums/thread/13718)。保留已有设备、运行时与全部游戏断言；一次工作流最多恢复三次，恢复后的设备清单必须成功返回。无探针文件的系统启动超时允许重启服务后对同一设备重新安装并启动一次；已有应用结果或其他错误直接失败。XCTest 的 25 秒条件等待、1.6 秒真实按压和所有断言不变。新增独立检查保护“不重试应用断言失败”的边界。
+
+Run [38204137016](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38204137016) timed out after 600 seconds in iPad `simctl launch`, after all three iPhone locale cases passed. Run [38205633257](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38205633257) passed functional and LAN checks, but both LAN shutdowns timed out and the touch controller's `simctl list` timed out before any touch assertion. Both failures remain recorded.
+
+Recovery is limited to the current user's CoreSimulatorService on GitHub macOS, referencing the [service restart described by an Apple Developer Tools Engineer](https://developer.apple.com/forums/thread/13718). Preserve installed devices, runtimes and all game assertions. Allow at most three service recoveries per workflow and require a successful device listing afterward. A system launch timeout without a probe file permits one reinstall/launch retry on the same device; an existing application result or other error fails immediately. XCTest's 25-second conditions, real 1.6-second presses and every assertion stay unchanged. Dedicated tests protect the no-application-failure-retry boundary.
