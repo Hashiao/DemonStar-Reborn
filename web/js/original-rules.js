@@ -60,11 +60,14 @@
   const DROPS=['medal','energy','weapon','ion','plasma','bomb','scatter','shield','missile','homing','full','crystal','side','rear','magnetic','mega'];
   const DROP_NEXT=[-1,-1,3,4,2,6,5,-1,9,8,-1,-1,13,12,3,6];
   const DROP_WAIT=DROPS.map((_,i)=>i===14?240:i===15?250:180);
+  // 0x40f050/0x40f83d：这三类炮门与原表间隔同步，不套用重制版难度倍率。
+  // These shutters track source gun periods (0x40f050/0x40f83d), without the remake's difficulty multiplier.
+  const SOURCE_SHUTTER_GUN_IDS=new Set([88,89,185]);
   class Gun {
     constructor(raw){this.raw=raw;this.delay=raw[4];this.wait=raw[5];this.cooldown=0;this.remaining=raw[7];this.angle=raw[8];this.active=false;this.arc=raw[13]||9999;this.gaps=raw[14];this.aim=!!raw[10];this.cycles=raw[16];this.volleyFired=false;}
     tick(enemy,game){
       const r=this.raw;if(this.delay>0){this.delay--;return;}
-      if(this.cooldown<=1){if(this.cycles>0){this.cycles--;this.active=true;this.cooldown=Math.max(1,Math.round(r[6]*game.rules.fire));}else this.active=false;}else this.cooldown--;
+      if(this.cooldown<=1){if(this.cycles>0){this.cycles--;this.active=true;this.cooldown=Math.max(1,Math.round(r[6]*(SOURCE_SHUTTER_GUN_IDS.has(enemy.def.id)?1:game.rules.fire)));}else this.active=false;}else this.cooldown--;
       if(!this.active)return;if(this.wait>0){this.wait--;return;}this.wait=r[5];
       if(this.remaining<=0){this.active=false;this.remaining=r[7];this.aim=!!r[10];this.angle=r[8];this.arc=r[13];this.gaps=r[14];this.volleyFired=false;if(this.gaps<=1)this.arc=9999;else this.gaps--;return;}
       this.remaining--;

@@ -44,17 +44,26 @@ test('covers open, dwell and close on native ticks; rotary shutters loop after t
   assert.equal(seen.size,20);assert.equal(e.animation.frame,0);
 });
 
-test('shutter cycles and frozen pause state roundtrip over LAN without changing original guns',()=>{
+test('shutter guns follow source periods on every difficulty and freeze/roundtrip over LAN',()=>{
   for(const id of [88,89,185])for(let difficulty=0;difficulty<4;difficulty++){
-    const host=arena(difficulty),control=arena(difficulty),e=spawn(host,id),baseline=spawn(control,id);delete baseline.animation;
+    const host=arena(difficulty),control=arena(1),e=spawn(host,id),baseline=spawn(control,id);delete baseline.animation;
     const peer=new Game(),seen=new Set();
     for(let tick=1;tick<=1000;tick++){
       host.updateEnemyState(e);control.updateEnemyState(baseline);for(const gun of e.guns)gun.tick(e,host);for(const gun of baseline.guns)gun.tick(baseline,control);
-      assert.deepEqual(host.bullets,control.bullets);host.bullets=[];control.bullets=[];seen.add(e.animation.frame);
+      assert.deepEqual(host.bullets,control.bullets);if(host.bullets.length&&id!==185)assert.equal(e.animation.frame,5);host.bullets=[];control.bullets=[];seen.add(e.animation.frame);
       if(tick%17===0){assert.ok(N.apply(peer,N.encode(host),false));assert.deepEqual(peer.enemies[0].animation,e.animation);}
     }
     assert.equal(seen.size,A.animations[id].frameCount);if(id===89)assert.equal(e.animation.cycles,0);
     host.pause();const frozen=structuredClone(e.animation);host.update(1);assert.deepEqual(e.animation,frozen);
     assert.ok(N.apply(peer,N.encode(host),false));assert.deepEqual(peer.enemies[0].animation,frozen);
+  }
+});
+
+test('unrelated guns retain existing difficulty cadence while shutter periods ignore paused difficulty changes',()=>{
+  for(let difficulty=0;difficulty<4;difficulty++){
+    const g=arena(difficulty),raw=C.definitions[C.byId[88]].guns[0].slice();raw[4]=0;
+    const plain={x:200,y:100,r:8,uid:1,def:{id:85,width:56,height:48}},gun=new StarfallCore.Gun(raw);gun.tick(plain,g);assert.equal(gun.cooldown,Math.round(84*g.rules.fire));
+    const e=spawn(g,88);e.guns.forEach(gun=>gun.delay=0);e.guns[0].tick(e,g);assert.equal(e.guns[0].cooldown,84);g.pause();const cooldown=e.guns[0].cooldown;g.setDifficulty((difficulty+1)%4);assert.equal(e.guns[0].cooldown,cooldown);g.resume();
+    for(let tick=0;tick<84;tick++)e.guns[0].tick(e,g);assert.equal(e.guns[0].cooldown,84);
   }
 });

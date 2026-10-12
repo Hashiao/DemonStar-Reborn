@@ -28,9 +28,9 @@ On October 13, 2026, the user authorized evidence-backed fixes for full-tier sam
 
 The source animation fields and ping-pong flag drive the existing state machine. Native counter handling matches its update order. Small shutters first advance on tick 202, reach fully open on tick 210 and start closing on tick 244. These are source logic ticks, not measured phone wall time.
 
-原作炮门动画之后独立调用炮位更新 `0x4103b1 → 0x40f770`；没有添加“只有开到某帧才允许开火”的新门槛，也未调整任何炮位数、延迟、轮数、难度倍率或伤害。两种开合盖与三列轮换炮门均补齐显式帧映射，按每帧原始边界绘制、按关加载/释放。相同原型在其他关卡复用该修复。已有动画快照传输状态，房间规则提升为 10，双方须更新。
+原作炮门动画之后独立调用炮位更新 `0x4103b1 → 0x40f770`；没有添加“只有开到某帧才允许开火”的新门槛。后续四难度核对发现旧版 1.3/1/0.85/0.7 冷却倍率使三档中的后续齐射落到闭盖帧；现仅对这三类使用原表 84/40 步间隔，保留炮位数、初始延迟、轮数与伤害，其他敌机的既有倍率不动。两种开合盖与三列轮换炮门均补齐显式帧映射，按每帧原始边界绘制、按关加载/释放。相同原型在其他关卡复用该修复。已有动画快照传输状态，房间规则提升为 10，双方须更新。
 
-Native gun updates run independently after animation. No new frame-based firing gate is introduced, and gun counts, delays, cycles, difficulty multipliers and damage stay unchanged. All three families use explicit redraw frames at source bounds, loaded/released per stage. Other stages sharing the same prototypes receive the fix. Existing snapshots carry animation state; room revision 10 requires both peers to update.
+Native gun updates run independently after animation. No new frame-based firing gate is introduced. A follow-up four-difficulty check found that legacy 1.3/1/0.85/0.7 cooldown multipliers moved later volleys into closed poses. Only these three families now use their native 84/40-tick periods; muzzle counts, initial delays, cycles and damage remain unchanged, as do other enemies' existing multipliers. All three families use explicit redraw frames at source bounds, loaded/released per stage. Other stages sharing the same prototypes receive the fix. Existing snapshots carry animation state; room revision 10 requires both peers to update.
 
 素材与完整提示词见 [重绘记录 / Art provenance](ART_M2_24_SHUTTERS.md)。原图不发布，高清内纹与门板细节仍属重绘近似。
 
@@ -42,8 +42,16 @@ Native gun updates run independently after animation. No new frame-based firing 
 
 Impact-based selection retains the inexpensive full engine suite and twelve browser suites: startup, equipment/weapons, campaign art, damage art, presentation, boss death, structures, ground missiles, LAN, laser warnings and new shutters. Android retains builds/Lint, installation/startup, native paired LAN, controls and the new packaged probe. Dedicated settings/localization suites are skipped because those implementations are unchanged; their scripts remain. iOS retains the existing complete same-run build/functional/touch/LAN workflow with the new probe. Skipped checks are not counted as current passes.
 
-新增定向检查包括 96 种四难度×规则×玩家×颜色×拾取组合；敌弹穿越后仍伤害玩家；32 帧实绘；18 关资源加载；炮门起停/轮数/暂停与 LAN 状态；四难度三原型各 1000 步炮火与不带动画的同炮位轨迹对照。原作定义与武器/弹体数值表保持字节不变。
+新增定向检查包括 96 种四难度×规则×玩家×颜色×拾取组合；敌弹穿越后仍伤害玩家；32 帧实绘；18 关资源加载；炮门起停/轮数/暂停与 LAN 状态；四难度三原型各 1000 步炮火与普通档原表同炮位轨迹对照，并要求两类开合盖炮台只在完全打开的帧发射。原作定义与武器/弹体数值表保持字节不变。
 
-Focused checks cover 96 difficulty/rule/player/color/pickup combinations, hostile damage after crossing overflow, all 32 rendered frames, stage-scoped resources across eighteen stages, shutter timing/cycles/pause/LAN, and 1000-tick gun traces for three prototypes across four difficulties against identical guns without animation. Original campaign and weapon/projectile numeric tables remain byte-identical.
+Focused checks cover 96 difficulty/rule/player/color/pickup combinations, hostile damage after crossing overflow, all 32 rendered frames, stage-scoped resources across eighteen stages, shutter timing/cycles/pause/LAN, and 1000-tick gun traces for three prototypes across four difficulties against identical source-period guns, also asserting that both opening-cover families fire only when fully open. Original campaign and weapon/projectile numeric tables remain byte-identical.
 
 首次新增浏览器检查在手动加载第 4 关图集时仍让 App 显示第 1 关，渲染循环正确地换回第 1 关，导致等待超时。已修正测试场景同步切关，保留失败日志与所有断言；没有放宽等待或改动产品加载规则。 / The first new browser check loaded stage-4 art while the app still displayed stage 1, whose render loop correctly restored its assets. The fixture now switches the game stage too. Failed logs and all assertions are preserved; product loading and timeout limits are unchanged.
+
+## 炮门与齐射的补充核对 / Shutter-volley follow-up
+
+原作 `0x4028de–0x402901` 复制定义表，`0x40f050–0x40f0d6` 将每炮位 36 字节复制到实例并初始化运行计数，`0x40f83d–0x40f84a` 直接从定义 +12 取下一轮冷却。已核对难度变量 `0x43ca9c / 0x43caa0` 的引用，这条装载/炮位链路没有难度倍乘。对应两种开合盖炮台周期为 84 步，轮换炮门为 40 步。范围只限 ID 88/89/185，不借此宣称全部敌机射击已经 1:1。
+
+Native loading copies definitions and each 36-byte gun record, initializes runtime counters, then reloads cooldown directly from definition offset +12. References to the difficulty globals do not introduce a multiplier in this loading/gun chain. The two opening-cover families use 84-tick periods; the rotary family uses 40. This correction is limited to IDs 88/89/185 and does not certify every enemy's firing fidelity.
+
+旧候选 iOS 38319059462 在此新增问题确认后主动停止，不作为发布验收。新的本地与原生探针增加十二种炮台/难度组合的原表周期及闭盖不发射断言。 / Candidate workflow 38319059462 was deliberately cancelled when this additional issue was confirmed and is not release evidence. New local/native probes add twelve prototype/difficulty cases for source periods and no closed-cover firing.

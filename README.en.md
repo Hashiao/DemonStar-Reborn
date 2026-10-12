@@ -1,6 +1,6 @@
 # DemonStar Reborn
 
-**M2.24 candidate, release verification pending:** full-tier same-color/S volleys no longer cancel hostile shots; three ground-turret families used in stages 2/4 gain source-timed covers and rotary shutters. Numeric tables and gun parameters remain unchanged; room revision 10. See [evidence and verification scope](docs/M2_24_OVERFLOW_SHUTTERS.md).
+**M2.24 candidate, release verification pending:** full-tier same-color/S volleys no longer cancel hostile shots; three ground-turret families used in stages 2/4 gain source-timed covers and rotary shutters. Numeric tables remain unchanged; the three shutter families use source firing periods; room revision 10. See [evidence and verification scope](docs/M2_24_OVERFLOW_SHUTTERS.md).
 
 **[简体中文](README.md) · [English](README.en.md)**
 

@@ -212,11 +212,11 @@ final class GameViewController: UIViewController, WKNavigationDelegate {
                 for(let tick=0;tick<4;tick++)g.update(STEP);if(!g.bullets.includes(hostile)||hostile.dead)throw new Error('Color overflow cancelled a hostile shot');p.y=282;p.invincible=0;g.update(STEP);if(p.energy>=16)throw new Error('Crossing hostile shot lost damage');cases++;
                }
                const frames=[];
-               for(const id of [88,89,185]){
-                const host=new Game(224),peer=new Game(225);host.start(1,4,false,{playerCount:2});host.recordEvents=[];host.spawnRecord([200,0,id,0,1,-1,0,0]);const e=host.enemies[0];Object.assign(e,{x:200,y:100,entered:true});const seen=new Set();
-                for(let tick=0;tick<550;tick++){host.updateEnemyState(e);seen.add(e.animation.frame);}const count=id===185?20:6;if(seen.size!==count)throw new Error('Shutter poses missing');if(!N.apply(peer,N.encode(host),false)||JSON.stringify(peer.enemies[0].animation)!==JSON.stringify(e.animation))throw new Error('Shutter LAN mismatch');frames.push(count);
+               for(const id of [88,89,185])for(let difficulty=0;difficulty<4;difficulty++){
+                const host=new Game(224),peer=new Game(225);host.start(difficulty,4,false,{playerCount:2});host.recordEvents=[];host.spawnRecord([200,0,id,0,1,-1,0,0]);const e=host.enemies[0];Object.assign(e,{x:200,y:100,entered:true});const seen=new Set();
+                for(let tick=0;tick<550;tick++){host.updateEnemyState(e);seen.add(e.animation.frame);for(const gun of e.guns){const restarting=gun.delay<=0&&gun.cooldown<=1&&gun.cycles>0;gun.tick(e,host);if(restarting&&gun.cooldown!==gun.raw[6])throw new Error('Shutter gun period differs from source');}if(id!==185&&host.bullets.length&&e.animation.frame!==5)throw new Error('Closed shutter fired');host.bullets=[];}const count=id===185?20:6;if(seen.size!==count)throw new Error('Shutter poses missing');if(!N.apply(peer,N.encode(host),false)||JSON.stringify(peer.enemies[0].animation)!==JSON.stringify(e.animation))throw new Error('Shutter LAN mismatch');if(difficulty===0)frames.push(count);
                }
-               return {cases,hostileDamagePreserved:true,shutterFrames:frames,network:true};
+               return {cases,hostileDamagePreserved:true,shutterFrames:frames,network:true,cadenceCases:12};
               })();
               mode('point');var layout=renderer.layout;document.getElementById('game').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerId:812,pointerType:'touch',clientX:layout.x+100*layout.scale,clientY:layout.y+200*layout.scale}));
               var destination=StarfallApp.input.states[0].target;if(!destination||Math.abs(destination.x-100)>2||Math.abs(destination.y-200)>2)throw new Error('Point event not captured');

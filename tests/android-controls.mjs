@@ -23,7 +23,7 @@ try{
   const sharedAudio=await evaluate((await readFile('tests/audio-voice-probe.js','utf8'))+'(StarfallAudio)');assert.equal(sharedAudio.shotStarts,40);assert.equal(sharedAudio.shotRejects,0);assert.equal(sharedAudio.sharedScheduler,true);
   const mobility=await evaluate(await readFile('tests/mobility-probe.js','utf8'));assert.equal(mobility.cases,288);assert.equal(mobility.horizontalTicks,48);assert.equal(mobility.verticalTicks,50);
   const laserWarning=await evaluate(await readFile('tests/laser-warning-probe.js','utf8'));assert.deepEqual(laserWarning,{harmless:true,firstHit:true,pauseDifficulty:true,network:true,players:2});
-  const overflowShutters=await evaluate(await readFile('tests/overflow-shutters-probe.js','utf8'));assert.deepEqual(overflowShutters,{cases:96,hostileDamagePreserved:true,shutterFrames:[6,6,20],network:true});
+  const overflowShutters=await evaluate(await readFile('tests/overflow-shutters-probe.js','utf8'));assert.deepEqual(overflowShutters,{cases:96,hostileDamagePreserved:true,shutterFrames:[6,6,20],network:true,cadenceCases:12});
   const speedSettings=await evaluate(await readFile('tests/speed-settings-probe.js','utf8'));assert.equal(speedSettings.defaultSpeed,'medium');assert.ok(speedSettings.independentSpeeds&&speedSettings.faintAcceleratingWarning);assert.equal(speedSettings.finalDarkenSeconds,.2);
   await evaluate('StarfallApp.game.recordEvents=[];StarfallApp.game.enemies=[];StarfallApp.game.bullets=[];StarfallApp.game.player.invincible=999;true');
   const l=await evaluate('StarfallApp.renderer.layout');

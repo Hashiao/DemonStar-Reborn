@@ -6,7 +6,7 @@ const page=await browser.newPage({locale:'zh-CN',viewport:{width:480,height:900}
 try{
  await page.goto(process.env.GAME_URL||'http://127.0.0.1:4174');await page.waitForFunction(()=>window.StarfallApp&&StarfallApp.renderer.presentationReady());
  const probe=await page.evaluate(await readFile(new URL('overflow-shutters-probe.js',import.meta.url),'utf8'));
- assert.equal(probe.cases,96);assert.deepEqual(probe.shutterFrames,[6,6,20]);assert.ok(probe.network&&probe.hostileDamagePreserved);
+ assert.equal(probe.cases,96);assert.equal(probe.cadenceCases,12);assert.deepEqual(probe.shutterFrames,[6,6,20]);assert.ok(probe.network&&probe.hostileDamagePreserved);
  await page.evaluate(()=>{StarfallApp.game.start(1,4);StarfallApp.game.pause();StarfallApp.renderer.prepareStage(4);});await page.waitForFunction(()=>StarfallApp.renderer.campaignReady(4));
  const art=await page.evaluate(()=>{
   const r=StarfallApp.renderer,old=r.c,canvas=document.createElement('canvas');canvas.width=canvas.height=120;const c=canvas.getContext('2d');r.c=c;const result=[];
