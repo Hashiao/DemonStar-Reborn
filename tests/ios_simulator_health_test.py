@@ -28,6 +28,39 @@ class HealthTests(unittest.TestCase):
         exec(compile(ast.Module(body=[function],type_ignores=[]),str(source),'exec'),namespace)
         return namespace
 
+    def install_namespace(self, folder, runner):
+        source=pathlib.Path(__file__).resolve().parents[1]/'tools/test-ios-simulator.py'
+        function=next(n for n in ast.parse(source.read_text(encoding='utf-8')).body if isinstance(n,ast.FunctionDef) and n.name=='install_clean')
+        namespace={'subprocess':subprocess,'root':pathlib.Path(folder),'run':runner,'recover_service':unittest.mock.Mock(),'available_devices':lambda _: {'runtime':[{'udid':'device','state':'Booted'}]}}
+        exec(compile(ast.Module(body=[function],type_ignores=[]),str(source),'exec'),namespace)
+        return namespace
+
+    def test_install_reset_timeout_recovers_service_once_before_locale_launch(self):
+        with tempfile.TemporaryDirectory() as folder:
+            commands=[];runner=unittest.mock.Mock();ns=self.install_namespace(folder,runner)
+            def control(command,**kwargs):
+                commands.append(command[2])
+                if command[2]=='terminate' and commands.count('terminate')==1:raise subprocess.TimeoutExpired(command,60)
+                return types.SimpleNamespace(returncode=0)
+            with patch.object(subprocess,'run',side_effect=control):ns['install_clean']('device')
+            ns['recover_service'].assert_called_once();self.assertEqual(commands.count('terminate'),2)
+            self.assertEqual([c.args[0][2] for c in runner.call_args_list],['shutdown','boot','bootstatus','install'])
+
+    def test_second_install_reset_timeout_is_not_retried(self):
+        with tempfile.TemporaryDirectory() as folder:
+            ns=self.install_namespace(folder,unittest.mock.Mock())
+            def control(command,**kwargs):
+                if command[2]=='terminate':raise subprocess.TimeoutExpired(command,60)
+                return types.SimpleNamespace(returncode=0)
+            with patch.object(subprocess,'run',side_effect=control),self.assertRaises(subprocess.TimeoutExpired):ns['install_clean']('device')
+            ns['recover_service'].assert_called_once()
+
+    def test_install_reset_non_timeout_error_is_not_retried(self):
+        with tempfile.TemporaryDirectory() as folder:
+            ns=self.install_namespace(folder,unittest.mock.Mock())
+            with patch.object(subprocess,'run',side_effect=subprocess.CalledProcessError(1,'uninstall')),self.assertRaises(subprocess.CalledProcessError):ns['install_clean']('device')
+            ns['recover_service'].assert_not_called()
+
     def test_lan_host_missing_probe_timeout_recovers_once_before_gameplay(self):
         with tempfile.TemporaryDirectory() as folder:
             calls=[]

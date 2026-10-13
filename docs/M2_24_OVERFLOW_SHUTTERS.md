@@ -65,3 +65,7 @@ Run 38320498041 passed device compilation, iPhone/iPad functionality and new pro
 为这一个明确的启动缺口复用现有 CoreSimulatorService 恢复：仅房主尚无探针时允许一次服务恢复及同设备冷启动，保留应用、数据和探针脚本；已有结果交由原有断言判定，非超时错误、再次超时、恢复期间出现的迟到结果均不重试。客机及联机断言不重跑；同一 workflow 最多三次服务恢复的上限不变。十四项独立边界测试覆盖旧路径与新增分支，游戏实现不因此改变。
 
 Reuse bounded CoreSimulatorService recovery only for this observed startup gap: one service recovery and cold boot on the same device are allowed before any host probe exists, preserving app/data/script. Existing results go through normal assertions; non-timeout errors, a second timeout and late results during recovery stop without relaunch. Guests and gameplay assertions are not retried; the existing three-service-recovery workflow limit remains. Fourteen boundary tests cover old and new paths without modifying gameplay.
+
+下一轮 38323226032 在 iPhone 三种语言功能后，于 iPad 重装准备中的 `simctl terminate` 60 秒超时；尚未进入该 iPad 用例及 LAN/触控。这是另一条尚未接入服务恢复的准备路径：`install_clean` 原先只冷启动设备，现先调用相同的有界服务恢复，再冷启动原设备。不增加重试次数或全轮恢复上限，不重试应用断言。边界测试扩展至十七项；游戏、Android 与浏览器源码/结果不变。
+
+Run 38323226032 completed the three iPhone locale cases, then timed out for 60 seconds in iPad `simctl terminate` during reinstall preparation, before that iPad case or LAN/touch. `install_clean` previously only rebooted the device; it now invokes the same bounded service recovery before rebooting that device. Retry counts, the workflow-wide recovery cap and application assertions stay unchanged. Seventeen boundary tests cover the preparation/launch paths; gameplay and Android/browser inputs/results are unchanged.

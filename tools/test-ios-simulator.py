@@ -22,7 +22,12 @@ def install_clean(uid):
         except subprocess.TimeoutExpired:
             if attempt: raise
             print('Simulator install/reset timed out; rebooting the existing device once: '+uid,flush=True)
-            run(['xcrun','simctl','shutdown',uid]);run(['xcrun','simctl','boot',uid]);run(['xcrun','simctl','bootstatus',uid,'-b'])
+            # 新语言用例尚未启动；先恢复控制服务，再冷启同一设备，沿用全轮三次上限。
+            # The new locale case has not started; recover the service before rebooting the same device, under the workflow-wide limit.
+            recover_service(root, 'simulator reset/install timed out before probe launch')
+            current=next(d for rows in available_devices(root).values() for d in rows if d['udid']==uid)
+            if current['state']!='Shutdown':run(['xcrun','simctl','shutdown',uid])
+            run(['xcrun','simctl','boot',uid]);run(['xcrun','simctl','bootstatus',uid,'-b'])
 # 仅恢复无探针结果的系统启动超时；应用断言错误不得通过重试隐藏。
 # Recover only a system launch timeout with no probe result; never retry away application assertion failures.
 startup_recoveries=[]
