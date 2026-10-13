@@ -71,6 +71,8 @@
 
 ## 三色满级清屏弹
 
+M2.24 纠正：这里的“清屏弹”指环形对敌弹幕，不会抵消敌方子弹；旧重制版沿途消弹已按原程序移除。炸弹消弹是独立机制。 / M2.24 correction: color overflow attacks enemies without cancelling hostile shots. The remake's crossing cancellation was removed based on native code; bomb clearing remains separate.
+
 由 `0x423a79` 满级溢出分支进入 `0x429980`，不是消耗炸弹，也不是任意切色就触发。
 
 | 当前增强 | 弹型 | 环形数量 | 原始速度（每步） | 单弹伤害 |

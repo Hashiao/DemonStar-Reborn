@@ -1,7 +1,10 @@
 # DemonStar Reborn 工作约定
 
-- M2.24 候选：用户授权按原作修复三色满级同色球/S 溢出弹误消敌弹，以及第 2/4 关 G_TNK2A、G_TNK3A、G_BTANK1A 炮门动画。原始炮位/伤害/炸弹/音频不变，三种炮台冷却恢复原表，房间规则 10。原作帧只作参考，发布重绘；本轮按影响范围验收，跳过项不可写成通过。完整发布尚待验收，见 docs/M2_24_OVERFLOW_SHUTTERS.md。
-  M2.24 candidate: evidence-backed color-overflow cancellation and three stage-2/4 turret shutter fixes are authorized. Preserve numeric tables, muzzles, bombs and audio; restore source periods for the three shutter families; room revision 10. Publish redraws only. Use impact-based verification and never count skipped checks as passes. Release verification is pending; see the linked document.
+- M2.24 验收完成：413 项引擎、12 组适用浏览器、96 种溢出拾取组合、32 帧实绘、Android 构建/Lint及3组适用检查、同轮完整 iOS 构建/功能/触控/LAN通过；0.2.24/build 26，房间规则10。20组未变浏览器专项及Android设置/语言专项本轮跳过，不计通过。IPA未签名，真机/热点未认证。
+  M2.24 verified: 413 engine tests, 12 applicable browser suites, 96 overflow combinations, 32 rendered frames, Android build/Lint/3 applicable suites, and same-run complete iOS build/functional/touch/LAN passed; 0.2.24/build 26, room revision 10. Twenty unchanged browser suites and Android settings/localization are skipped, not passed. IPA unsigned; physical phones/hotspots unverified.
+
+- M2.24：三色满级同色球/S溢出弹不抵消敌弹，保留原弹量/伤害；磁力与炸弹旧行为不变。G_TNK2A/G_TNK3A/G_BTANK1A恢复6/6/20帧原作炮门计时与按关重绘加载，所有复用关卡生效，炮位不改，三类炮台移除旧难度射击倍率。见 docs/M2_24_OVERFLOW_SHUTTERS.md。
+  M2.24: full-tier same-color/S overflow no longer cancels hostile shots; preserve counts/damage and existing magnetic/bomb behavior. Restore source-timed 6/6/20 shutter poses for G_TNK2A/G_TNK3A/G_BTANK1A with stage-scoped redraws across every sharing stage; gun definitions are unchanged, with source cadence restored for these three families. See the linked document.
 
 - M2.23 验收完成：407 项引擎、31 组浏览器、288 组合机动、96 组快档战斗对照、Android 全套及同轮 iOS 构建/功能/触控/LAN 通过；0.2.23/build 25，房间规则 9。IPA 未签名，未认证真机热点。
   M2.23 verified: 407 engine tests, 31 browser suites, 288 mobility combinations, 96 Fast combat comparisons, full Android and same-run iOS build/functional/touch/LAN passed; 0.2.23/build 25, room revision 9. IPA unsigned; physical hotspots unverified.

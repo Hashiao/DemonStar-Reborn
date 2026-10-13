@@ -1,6 +1,6 @@
 # DemonStar Reborn
 
-**M2.24 candidate, release verification pending:** full-tier same-color/S volleys no longer cancel hostile shots; three ground-turret families used in stages 2/4 gain source-timed covers and rotary shutters. Numeric tables remain unchanged; the three shutter families use source firing periods; room revision 10. See [evidence and verification scope](docs/M2_24_OVERFLOW_SHUTTERS.md).
+**Current milestone M2.24 (v0.2.24) fixes color-overflow cancellation and adds three ground-shutter animations.** See [evidence and verification](docs/M2_24_OVERFLOW_SHUTTERS.md); complete 1:1 fidelity is not claimed.
 
 **[简体中文](README.md) · [English](README.en.md)**
 
@@ -9,8 +9,6 @@
 An unofficial mobile HD remake of DemonStar 4.04, targeting **Android 10+ / iOS 12+**. Imagegen redraws reference the local original while preserving its red fighter and industrial science-fiction style. The independently implemented game code is open source.
 
 The game supports Simplified Chinese, Traditional Chinese and English. First launch follows the phone's preferred language; settings allow an immediate, saved override. Traditional Chinese is independently worded with familiar game terminology for Hong Kong, Macao and Taiwan. Android and iOS share an offline Canvas engine hosted by WebView and UIKit/WKWebView. There are no ads, accounts, analytics or purchases. Solo/local two-player play works offline; optional native LAN uses local-network permissions without an internet relay.
-
-**Current milestone M2.23 (v0.2.23) adds independent player speeds and optional faint laser warnings, defaulting to Medium and darkening only in the final 0.2 seconds.** See [implementation and verification](docs/M2_23_SPEED_SETTINGS.md). Full 1:1 fidelity remains incomplete.
 
 M2.20 source merged through PR #4 but had no separate official release because iOS verification remained incomplete. Its fixes are included in M2.21; candidate/failure history remains in the [M2.20 record](docs/M2_20_STRUCTURES.md).
 
@@ -22,8 +20,21 @@ M2.21 merged through PR #5 and completed this version’s verification. See [imp
 
 **Original-stage research:** the [eighteen-stage design ledger](docs/original-stage-design/README.md) records difficulty/player conditions, dispatch scroll, spawn positions, formations, paths and guns for all 8,368 placements, with an implementation checklist. M2.17 implements spawn-related fixes; the remaining items stay tracked. Static verification is distinguished from actual visible-entry timing; complete native frame-by-frame certification is not claimed.
 
-
 ![Menu](docs/screenshots/menu-en.png)
+
+## M2.24: color overflow and ground shutters
+
+- Full-tier same-color/S pickups retain their original volley counts and damage, while color overflow no longer cancels hostile shots. Bomb behavior stays unchanged.
+- G_TNK2A, G_TNK3A and G_BTANK1A used in stages 2/4 gain 6/6/20 cover and rotary-shutter frames with source timing and redrawn art. Muzzles and damage are unchanged; source firing periods are restored for these three families; other stages sharing these prototypes receive the fix.
+- Version 0.2.24 / build 26; room revision 10 requires both peers to update.
+
+Passed 413 engine tests and twelve applicable browser suites, including 96 overflow-pickup combinations, 32 rendered frames, eighteen-stage asset loading, shutter pause/LAN state and 1000-tick source-gun comparisons for three prototypes across four difficulties. Android Release/Debug/Lint (zero errors), API 37 installation/startup, native paired LAN, controls and new probes passed. [Same-run iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38325523355) completed iPhoneOS compilation, iPhone/iPad functionality/localization/audio and new probes, system touch and native LAN. Package versions and complete Web resources match.
+
+Impact-based selection skips twenty unchanged browser suites and dedicated Android settings/localization checks this round. Scripts remain, and skips are not counted as passes. Original numeric tables and audio implementations are unchanged. The IPA is unsigned and needs user signing; physical phones, hotspots and Android–iOS hardware pairs are not certified. Shutters are HD redraws, not pixel-identical artwork or frame-exact video timing.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.24/DemonStar-Reborn-release.apk) · [IPA (unsigned)](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.24/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.24/SHA256SUMS.txt) · [Verification](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.24/verification.json)
+
+[原作依据 / Source evidence](docs/M2_24_OVERFLOW_SHUTTERS.md)
 
 ## Current milestone M2.23
 

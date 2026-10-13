@@ -36,7 +36,7 @@ Native gun updates run independently after animation. No new frame-based firing 
 
 ## 验收范围 / Verification scope
 
-候选为 0.2.24 / build 26。正式发布状态须以最终报告为准，不能使用上一版报告顶替。 / Candidate: 0.2.24 / build 26. Final release status must come from its own report, never the previous version's evidence.
+发布版本为 0.2.24 / build 26，适用验收通过；最终报告及失败历史见下文。 / Release 0.2.24 / build 26 passed applicable verification; see final results and retained failure history below.
 
 本轮按用户认可的影响范围选测：保留廉价全量引擎回归；浏览器覆盖通用启动、装备/武器、全战役美术、受伤美术、战斗表现、Boss 损毁、地物、斜弹、LAN、激光预警和新增炮门，共 12 组。Android 保留构建/Lint、安装启动、双 App LAN、操作及新增打包探针；独立设置与语言专项因实现未变本轮跳过，脚本保留。iOS 仍采用现有完整同轮构建/功能/触控/LAN workflow，附加相同新探针。跳过不计作本轮通过。
 
@@ -69,3 +69,35 @@ Reuse bounded CoreSimulatorService recovery only for this observed startup gap: 
 下一轮 38323226032 在 iPhone 三种语言功能后，于 iPad 重装准备中的 `simctl terminate` 60 秒超时；尚未进入该 iPad 用例及 LAN/触控。这是另一条尚未接入服务恢复的准备路径：`install_clean` 原先只冷启动设备，现先调用相同的有界服务恢复，再冷启动原设备。不增加重试次数或全轮恢复上限，不重试应用断言。边界测试扩展至十七项；游戏、Android 与浏览器源码/结果不变。
 
 Run 38323226032 completed the three iPhone locale cases, then timed out for 60 seconds in iPad `simctl terminate` during reinstall preparation, before that iPad case or LAN/touch. `install_clean` previously only rebooted the device; it now invokes the same bounded service recovery before rebooting that device. Retry counts, the workflow-wide recovery cap and application assertions stay unchanged. Seventeen boundary tests cover the preparation/launch paths; gameplay and Android/browser inputs/results are unchanged.
+
+![三类炮门闭合/开启对照 / Closed/open shutters](screenshots/m224-ground-shutters.png)
+
+## 最终结果 / Final results
+
+- 三色满级后再吃同色球或 S，仍释放原数量/伤害的环形弹幕，但不会抵消敌方子弹；炸弹行为不变。
+- 第 2/4 关相关 G_TNK2A、G_TNK3A、G_BTANK1A 恢复 6/6/20 帧开合盖与轮换炮门；使用重绘素材及原作计时，炮位/伤害不变，三类炮台按原表间隔开火。同原型的其他关卡同步生效。
+- 版本 0.2.24 / build 26，房间规则 10，联机双方须更新。
+
+413 项引擎测试、12 组适用浏览器检查通过；包括 96 种溢出拾取组合、32 帧实绘、18 关资源加载、炮门暂停/联机，以及四难度三种炮台各 1000 步原表炮火对照。Android Release/Debug/Lint（0 错误）、API 37 安装/启动、双 App LAN、操作及新增探针通过。[同轮 iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38325523355) 完成 iPhoneOS 构建、iPhone/iPad 功能/三语/音频与新增探针、系统触控及原生 LAN。两包版本和完整 Web 资源核验一致。
+
+按影响范围选测，未变的 20 组浏览器专项及 Android 独立设置/语言专项本轮跳过，脚本保留，不记为本轮通过。原始数值表与音频实现不变。IPA 未签名，须自行签名；未认证手机真机、真实热点或 Android–iOS 真机混联。高清炮门为重绘，未宣称原像素或金标录像逐帧时长一致。
+
+- Full-tier same-color/S pickups retain their original volley counts and damage, while color overflow no longer cancels hostile shots. Bomb behavior stays unchanged.
+- G_TNK2A, G_TNK3A and G_BTANK1A used in stages 2/4 gain 6/6/20 cover and rotary-shutter frames with source timing and redrawn art. Muzzles and damage are unchanged; source firing periods are restored for these three families; other stages sharing these prototypes receive the fix.
+- Version 0.2.24 / build 26; room revision 10 requires both peers to update.
+
+Passed 413 engine tests and twelve applicable browser suites, including 96 overflow-pickup combinations, 32 rendered frames, eighteen-stage asset loading, shutter pause/LAN state and 1000-tick source-gun comparisons for three prototypes across four difficulties. Android Release/Debug/Lint (zero errors), API 37 installation/startup, native paired LAN, controls and new probes passed. [Same-run iOS CI](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38325523355) completed iPhoneOS compilation, iPhone/iPad functionality/localization/audio and new probes, system touch and native LAN. Package versions and complete Web resources match.
+
+Impact-based selection skips twenty unchanged browser suites and dedicated Android settings/localization checks this round. Scripts remain, and skips are not counted as passes. Original numeric tables and audio implementations are unchanged. The IPA is unsigned and needs user signing; physical phones, hotspots and Android–iOS hardware pairs are not certified. Shutters are HD redraws, not pixel-identical artwork or frame-exact video timing.
+
+`DemonStar-Reborn-release.apk` SHA-256: `b0dad2eedb65cbe4c84caa3a0529349ac1569c78d7bc976b5a1b90c55c5a27d5`
+
+`DemonStar.ipa` SHA-256: `38840a34edfb08f71852c0a66e1b68475460cfdc595daf646e5a4aa45c5ee457`
+
+Android 初次启动后宿主退出，第二次在启动 UI 检查前设备断开；第三次采用同一 AVD、兼容软件渲染并禁用 Vulkan，通过全部选定检查。前两次不计通过，保留日志。 / The emulator exited after the first boot and disconnected before UI assertions on attempt two. The same AVD passed all selected suites using compatibility software rendering with Vulkan disabled on attempt three. Earlier attempts remain failed and logged.
+
+首轮 iOS 38318138123 的设备构建通过；首个 iPhone 探针完成 23 张图集解码及新增 96 组合，但控制脚本仍断言旧数量 21，整轮失败，后续功能/LAN/触控未完成。已改为精确核对当前资源清单，再跑完整同轮验收。保留失败记录，不拼接旧结果。 / First iOS run 38318138123 built the device app and its first iPhone probe decoded 23 atlases and passed the new 96 cases. The controller still required the old count 21, so the workflow failed before the remaining functional/LAN/touch checks. The controller now checks the exact current manifest, followed by a fresh complete workflow. Failed evidence remains separate.
+
+最终成功 workflow 的控制服务恢复次数：0；全部恢复记录随验收报告保留。 / The successful workflow recorded 0 control-service recoveries; the verification report retains every recovery.
+
+最终成功轮未触发服务恢复；恢复分支的限制由十七项边界测试覆盖，未宣称已彻底消除所有模拟器启动问题。 / No service recovery was triggered in the successful run. Seventeen boundary tests cover the recovery policy; this is not proof that all simulator startup issues are eliminated.
