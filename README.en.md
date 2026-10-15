@@ -1,6 +1,6 @@
 # DemonStar Reborn
 
-**Current milestone M2.26 (v0.2.26) adds charging muzzle orbs with stronger, faster pulses, vanishing at emission.** Verification is limited to user-authorized laser checks; see [implementation and limits](docs/M2_26_CHARGE_ORB.md). Complete 1:1 fidelity is not claimed.
+**Current milestone M2.27 (v0.2.27) aligns Boss muzzles and matches warning-orb colors to lasers.** Every Boss received controlled targeted checks; full regression was skipped under user authorization. See [records and limits](docs/M2_27_LASER_MUZZLES.md). Complete 1:1 fidelity is not claimed.
 
 **[简体中文](README.md) · [English](README.en.md)**
 
@@ -21,6 +21,18 @@ M2.21 merged through PR #5 and completed this version’s verification. See [imp
 **Original-stage research:** the [eighteen-stage design ledger](docs/original-stage-design/README.md) records difficulty/player conditions, dispatch scroll, spawn positions, formations, paths and guns for all 8,368 placements, with an implementation checklist. M2.17 implements spawn-related fixes; the remaining items stay tracked. Static verification is distinguished from actual visible-entry timing; complete native frame-by-frame certification is not claimed.
 
 ![Menu](docs/screenshots/menu-en.png)
+
+## M2.27: every Boss muzzle checked, matching warning colors
+
+- Correct stages 5/11 and register all twelve laser Boss redraws to their original emission coordinates. Visible muzzles, orbs and live beams align; image bytes, physical projectile positions and collision bounds are unchanged.
+- Red lasers use red orbs; blue lasers use blue orbs. First-frame beams share the Boss's interpolated position while moving. Preserve charging pulses, removal at emission, Easy-only assistance and the local toggle.
+- Version 0.2.27 / build 29; room revision remains 10.
+
+Under explicit user authorization, only six laser logic tests and one browser suite passed, individually checking **eighteen Bosses and 33 laser mount records**, including six non-laser Bosses. Coverage includes registration, color matching, moving first frames, pause, client snapshots and unchanged physical offsets. [Stage 5 comparison](docs/screenshots/m227-stage-5.png) · [Stage 11 comparison](docs/screenshots/m227-stage-11.png) · [Full record and limits](docs/M2_27_LASER_MUZZLES.md). These are controlled Boss checks, not full eighteen-stage playthroughs.
+
+The independently signed Android Release, [iPhoneOS package build](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38743229166) and matching package versions/complete Web resources were verified. Other engine/browser suites, Android Debug/full Lint/emulator, iOS simulator functional/touch/LAN and physical-device/hotspot checks were skipped, not passed; full workflows remain. The unsigned IPA requires user signing.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.27/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.27/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.27/SHA256SUMS.txt) · [Verification](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.27/verification.json)
 
 ## M2.26: charging laser muzzle orbs
 

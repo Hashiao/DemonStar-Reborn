@@ -8,7 +8,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前里程碑 M2.26（v0.2.26）将激光前预警改为脉动加剧的炮口蓄能光球，发射同时消失。** 本轮仅做用户授权的激光专项；见 [实现与验收边界](docs/M2_26_CHARGE_ORB.md)。完整 1:1 还原仍未完成。
+**当前里程碑 M2.27（v0.2.27）修正 Boss 炮口对齐，并让预警光球与激光同色。** 全部 18 个 Boss 已逐个进行受控专项检查，完整回归按用户授权跳过；见 [记录与边界](docs/M2_27_LASER_MUZZLES.md)。完整 1:1 还原仍未完成。
 
 M2.20 源码通过 PR #4 合并，因 iOS 验收未完成没有独立正式发布；既有修复已纳入 M2.21。历史候选、失败与边界记录仍保留在 [M2.20 文档](docs/M2_20_STRUCTURES.md)。
 
@@ -21,6 +21,18 @@ M2.21 已通过 PR #5 合并并完成本版本验收，见 [开发与边界](doc
 **原作逐关研究记录：** [18 关设计恢复清单](docs/original-stage-design/README.md) 列出全部 8,368 条对象的难度/人数条件、触发刻度、出生位置、编队、路径及炮口配置，M2.17 已实施出场相关修复，其余项目按清单后续处理。静态核对与真实可见入场时刻分开标注，不宣称完整原机逐帧验收。
 
 ![菜单](docs/screenshots/menu.png)
+
+## M2.27：逐个 Boss 炮口对齐与同色光球
+
+- 重点修正第 5/11 关，并将 12 个激光 Boss 的重绘炮口配准至原作发射坐标；光球、正式光束与可见炮口对齐。原图文件、真实弹体坐标和碰撞范围不变。
+- 红激光用红光球，蓝激光用蓝光球；移动时正式激光首帧与 Boss 使用同一个插值位置。保留蓄能脉动、发射时消失、简单难度与本机开关。
+- 0.2.27 / build 29，房间规则仍为 10。
+
+按用户明确授权，仅 6 项激光逻辑和 1 组浏览器专项通过；逐个检查 **18 个 Boss、33 条激光炮位记录**，含 6 个无激光 Boss，覆盖配准、同色、移动首帧、暂停、客户端快照和物理坐标不变。[第 5 关对照](docs/screenshots/m227-stage-5.png) · [第 11 关对照](docs/screenshots/m227-stage-11.png) · [全部记录与边界](docs/M2_27_LASER_MUZZLES.md)。这是受控 Boss 检查，不是十八关完整通关。
+
+Android 独立签名 Release、[iPhoneOS 包构建](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38743229166)及两包版本/完整 Web 资源核对完成。其他引擎/浏览器、Android Debug/完整 Lint/模拟器、iOS 模拟器功能/触控/LAN 与真机/热点跳过，不记通过；完整流程保留。IPA 未签名，需自行签名。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.27/DemonStar-Reborn-release.apk) · [IPA（未签名）](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.27/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.27/SHA256SUMS.txt) · [验收报告](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.27/verification.json)
 
 ## M2.26：激光炮口蓄能光球
 

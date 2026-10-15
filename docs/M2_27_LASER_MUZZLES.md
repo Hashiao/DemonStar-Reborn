@@ -43,5 +43,41 @@ The first color check found a tiny additional local intensity peak in the initia
 
 Other engine/browser suites, Android Debug/full Lint/emulator, iOS simulator functional/touch/LAN and physical-device/hotspot checks are skipped, not passed. Full workflows remain available. The IPA is unsigned and requires user signing.
 
-包构建与完整性核对结果将在发布前补齐。
-Package build and integrity results will be recorded before release.
+## 打包与逐关记录 / Packages and per-stage records
+
+Android Release 构建、独立签名及 [iPhoneOS 构建](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38743229166)通过。两包版本均为 0.2.27/build 29，全部 144 份 Web 文件一致。
+Android Release compilation, independent signing and the iPhoneOS build passed. Both packages are 0.2.27/build 29 with all 144 Web files matching.
+
+| 关卡 / Stage | 激光记录 / Laser records | 原型 / Definition |
+| --- | --- | --- |
+| 1 | 1 | 40 |
+| 2 | 1 | 41 |
+| 3 | 2 | 42 |
+| 4 | 2 | 43 |
+| 5 | 3 | 44 |
+| 6 | 2 | 45 |
+| 7 | 2 | 234 |
+| 8 | 0 | 235 |
+| 9 | 0 | 236 |
+| 10 | 0 | 237 |
+| 11 | 2 | 238 |
+| 12 | 6 | 239 |
+| 13 | 0 | 240 |
+| 14 | 2 | 241 |
+| 15 | 0 | 242 |
+| 16 | 6 | 243 |
+| 17 | 0 | 244 |
+| 18 | 4 | 263 |
+
+| 文件 / File | SHA-256 |
+| --- | --- |
+| DemonStar-Reborn-release.apk | `f31489385fb6cab6ecbb4a0067203e59e2179b145c7a980786c85d2a7c1cd21c` |
+| DemonStar.ipa | `a57c93150d788ce9e8200c2b049322161445b1b304cde80130ba4fc8411730a0` |
+
+![第 5 关：炮口、光球、激光 / Stage 5: mounts, orbs, lasers](screenshots/m227-stage-5.png)
+![第 11 关：炮口、光球、激光 / Stage 11: mounts, orbs, lasers](screenshots/m227-stage-11.png)
+
+[第 1–6 关 / Stages 1–6](screenshots/m227-sheet-1.png) · [第 7–12 关 / Stages 7–12](screenshots/m227-sheet-2.png) · [第 13–18 关 / Stages 13–18](screenshots/m227-sheet-3.png)
+
+公开下载由发布工具核对完整 SHA-256，证据保存于 `.local/m227-public-verification.json`。
+The publisher verifies complete public-download SHA-256 hashes, with evidence in `.local/m227-public-verification.json`.

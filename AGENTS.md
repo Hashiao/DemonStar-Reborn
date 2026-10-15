@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.27 有限验收完成：0.2.27/build 29，房间规则 10。6 项激光逻辑与 1 组浏览器专项通过，逐个覆盖 18 Boss/33 条激光炮位记录，原作物理炮位不变。Android Release/iPhoneOS 构建及签名/版本/144 份 Web 文件核对完成，其他完整回归跳过，不记通过。IPA 未签名，需自行签名。
+  M2.27 limited verification complete: 0.2.27/build 29, room revision 10. Six laser logic tests and one browser suite cover every Boss and all 33 laser mount records, preserving source physical muzzles. Android Release/iPhoneOS builds and signature/version/144-Web-file checks passed; other full regression is skipped, not passed. The IPA is unsigned and requires user signing.
+
 - M2.27 用户明确授权仅检查本次炮口对齐/光球颜色，推送 main 并发 APK/IPA，且要求全部 Boss 逐个核对。18 个 Boss 中 12 个含 33 条激光炮位记录（第 18 关两条红激光共用炮口）。按原始炮位配准重绘美术，光球/实际光束跟随同一插值炮口；蓝激光蓝光球、红激光红光球。原表/发射/碰撞/伤害不变，其余回归跳过，不记通过。见 docs/M2_27_LASER_MUZZLES.md。
   M2.27 explicitly authorizes only this muzzle/color verification before pushing main and publishing APK/IPA, with every Boss checked. Twelve of eighteen Bosses have 33 laser mount records (two stage-18 red schedules share one muzzle). Register redraws to original mounts; orbs and live beams follow the same interpolated muzzle. Blue lasers use blue orbs and red lasers red orbs. Source tables/firing/collisions/damage are unchanged; other regression is skipped, not passed. See docs/M2_27_LASER_MUZZLES.md.
 
