@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.28 完整验收完成：0.2.28/build 30，房间规则 10。413 项引擎、33 组浏览器、Android Debug/Release/Lint 与 7 组模拟器检查、同轮完整 iOS 构建/功能/三语/音频/触控/LAN 通过；三端 84 个伪影场景及两包 144 份 Web 文件核对通过。本轮未跳过现有测试组，早期失败保留。IPA 未签名，真机/热点未认证。
+  M2.28 full verification complete: 0.2.28/build 30, room revision 10. Passed 413 engine tests, 33 browser suites, Android Debug/Release/Lint and seven emulator suites, plus same-run complete iOS build/functionality/localization/audio/touch/LAN. The 84-scene fragment probe passed on all three surfaces and both packages match all 144 Web files. No existing suite was skipped; earlier failures remain. IPA unsigned; physical devices/hotspots unverified.
+
 - M2.28 用户要求清理第 1/8/13 关 Boss 伪影，并完成完整 Android/iOS 测试后发布；本轮不使用前几轮有限验收例外。第 8/13 关明确裁切保持本体布局，单 Boss 纹理隔离防邻格采样，首关旧裁切碎块有阳性对照。保留 M2.27 炮口/同色光球、原始数值与图片，见 docs/M2_28_BOSS_FRAGMENTS.md。
   M2.28 requires stage-1/8/13 Boss artifact cleanup followed by complete Android/iOS verification before release; prior limited-verification exceptions do not apply. Explicit stage-8/13 crops preserve body layout, isolated textures prevent neighboring samples, and the old stage-1 crop supplies a positive control. Preserve M2.27 muzzles/matching orbs, source values and image bytes. See docs/M2_28_BOSS_FRAGMENTS.md.
 

@@ -8,7 +8,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前里程碑 M2.27（v0.2.27）修正 Boss 炮口对齐，并让预警光球与激光同色。** 全部 18 个 Boss 已逐个进行受控专项检查，完整回归按用户授权跳过；见 [记录与边界](docs/M2_27_LASER_MUZZLES.md)。完整 1:1 还原仍未完成。
+**当前里程碑 M2.28（v0.2.28）清理 Boss 图集碎块，并完成完整 Android/iOS 验收。** 详见 [记录与边界](docs/M2_28_BOSS_FRAGMENTS.md)。完整 1:1 还原仍未完成。
 
 M2.20 源码通过 PR #4 合并，因 iOS 验收未完成没有独立正式发布；既有修复已纳入 M2.21。历史候选、失败与边界记录仍保留在 [M2.20 文档](docs/M2_20_STRUCTURES.md)。
 
@@ -21,6 +21,16 @@ M2.21 已通过 PR #5 合并并完成本版本验收，见 [开发与边界](doc
 **原作逐关研究记录：** [18 关设计恢复清单](docs/original-stage-design/README.md) 列出全部 8,368 条对象的难度/人数条件、触发刻度、出生位置、编队、路径及炮口配置，M2.17 已实施出场相关修复，其余项目按清单后续处理。静态核对与真实可见入场时刻分开标注，不宣称完整原机逐帧验收。
 
 ![菜单](docs/screenshots/menu.png)
+
+## M2.28：Boss 伪影清理与完整两端验收
+
+明确裁切第 8/13 关 Boss，去除左侧相邻机体碎块，并保持本体布局。第 1 关嘴下旧裁切残块有复现对照；单 Boss 纹理隔离进一步防止邻格采样，普通/闪红/激光帧及缩放检查均无指定碎块。保留炮口对齐、红蓝同色光球与战斗数值。0.2.28 / build 30，房间规则 10。
+
+**本轮完整验收通过：** 413 项引擎、33 组浏览器、Android Debug/Release/Lint（零错误）及现有 API 37 模拟器 7 组测试；[同一次完整 iOS 流程](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38755918762)通过 iPhoneOS 构建、iPhone/iPad 功能/三语/音频、系统触控与原生 LAN。新增 84 个伪影场景在浏览器和两端 WebView 验证通过，包版本及全部 144 份 Web 文件核对一致。
+
+早期测试入口、文件来源与异步探针问题保留在 [记录与边界](docs/M2_28_BOSS_FRAGMENTS.md)，不计作通过；只补跑受影响项。本轮没有跳过现有测试组。IPA 未签名，需自行签名；完整模拟器验收仍不等于真机、热点或 Android–iOS 双真机认证。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.28/DemonStar-Reborn-release.apk) · [IPA（未签名）](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.28/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.28/SHA256SUMS.txt) · [验收报告](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.28/verification.json)
 
 ## M2.27：逐个 Boss 炮口对齐与同色光球
 

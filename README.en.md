@@ -1,6 +1,6 @@
 # DemonStar Reborn
 
-**Current milestone M2.27 (v0.2.27) aligns Boss muzzles and matches warning-orb colors to lasers.** Every Boss received controlled targeted checks; full regression was skipped under user authorization. See [records and limits](docs/M2_27_LASER_MUZZLES.md). Complete 1:1 fidelity is not claimed.
+**Current milestone M2.28 (v0.2.28) removes Boss atlas fragments and completes full Android/iOS verification.** See [records and limits](docs/M2_28_BOSS_FRAGMENTS.md). Complete 1:1 fidelity is not claimed.
 
 **[简体中文](README.md) · [English](README.en.md)**
 
@@ -21,6 +21,16 @@ M2.21 merged through PR #5 and completed this version’s verification. See [imp
 **Original-stage research:** the [eighteen-stage design ledger](docs/original-stage-design/README.md) records difficulty/player conditions, dispatch scroll, spawn positions, formations, paths and guns for all 8,368 placements, with an implementation checklist. M2.17 implements spawn-related fixes; the remaining items stay tracked. Static verification is distinguished from actual visible-entry timing; complete native frame-by-frame certification is not claimed.
 
 ![Menu](docs/screenshots/menu-en.png)
+
+## M2.28: clean Boss artwork and full Android/iOS verification
+
+Explicit stage-8/13 crops remove neighboring fragments on the left while preserving body layout. The older stage-1 muzzle fragments have a reproduced positive control; isolated Boss textures additionally prevent neighboring samples. Normal/red/laser poses and scaling show no fragments in the checked regions. Muzzle alignment, matching red/blue orbs and combat values are preserved. Version 0.2.28 / build 30; room revision 10.
+
+**Full verification passed:** 413 engine tests, 33 browser suites, Android Debug/Release/Lint (zero errors) and seven suites on the existing API 37 emulator. [One complete iOS run](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38755918762) passed iPhoneOS compilation, iPhone/iPad functionality/localization/audio, system touch and native LAN. The new 84-scene fragment probe passed in the browser and both native WebViews; versions and all 144 packaged Web files match.
+
+Earlier test-entry, file-origin and asynchronous-probe failures remain in the [verification record](docs/M2_28_BOSS_FRAGMENTS.md), not counted as passes; only affected checks were rerun. No existing test suite was skipped this round. The IPA is unsigned and requires user signing. Complete simulator checks do not certify physical devices, hotspots or Android–iOS hardware pairs.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.28/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.28/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.28/SHA256SUMS.txt) · [Verification](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.28/verification.json)
 
 ## M2.27: every Boss muzzle checked, matching warning colors
 
