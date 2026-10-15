@@ -1,6 +1,6 @@
 # DemonStar Reborn
 
-**Current milestone M2.25 (v0.2.25) changes Easy Boss laser warnings to red muzzle blinks, restoring normal muzzles at emission.** Verification is limited to laser checks at the user's request; see [implementation and limits](docs/M2_25_MUZZLE_WARNING.md). Complete 1:1 fidelity is not claimed.
+**Current milestone M2.26 (v0.2.26) adds charging muzzle orbs with stronger, faster pulses, vanishing at emission.** Verification is limited to user-authorized laser checks; see [implementation and limits](docs/M2_26_CHARGE_ORB.md). Complete 1:1 fidelity is not claimed.
 
 **[简体中文](README.md) · [English](README.en.md)**
 
@@ -21,6 +21,14 @@ M2.21 merged through PR #5 and completed this version’s verification. See [imp
 **Original-stage research:** the [eighteen-stage design ledger](docs/original-stage-design/README.md) records difficulty/player conditions, dispatch scroll, spawn positions, formations, paths and guns for all 8,368 placements, with an implementation checklist. M2.17 implements spawn-related fixes; the remaining items stay tracked. Static verification is distinguished from actual visible-entry timing; complete native frame-by-frame certification is not claimed.
 
 ![Menu](docs/screenshots/menu-en.png)
+
+## M2.26: charging laser muzzle orbs
+
+During the second before Easy Boss red/blue lasers, a red muzzle orb pulses with increasing brightness/size amplitude and frequency, then vanishes immediately as the laser fires. This replaces M2.25's local body tint, retaining the warning toggle and live laser colors, timing and damage. Version 0.2.26 / build 28; room revision remains 10.
+
+Under explicit authorization for this release, only **six laser logic checks and one actual Canvas suite** passed. The independently signed Android Release, [iPhoneOS build](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38735359758) and matching package versions/complete Web resources were verified. Other engine/browser suites, Android Debug/full Lint/emulator and iOS simulator functional/touch/LAN checks were skipped, not passed; full workflows remain available. The IPA is unsigned and requires user signing. No physical-device or hotspot verification was performed this round.
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.26/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.26/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.26/SHA256SUMS.txt) · [Verification](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.26/verification.json) · [Implementation and limits](docs/M2_26_CHARGE_ORB.md)
 
 ## M2.25: Boss laser muzzle warnings
 

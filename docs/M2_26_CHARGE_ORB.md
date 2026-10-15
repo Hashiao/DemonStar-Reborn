@@ -21,5 +21,20 @@ The user explicitly authorized testing only this change, pushing main and publis
 
 Targeted checks cover matching red/blue warning orbs, growing brightness/size pulse amplitudes, increasing frequency, muzzle-local bounds, removal at emission, absence of preview beams, real-laser handoff, pause, toggle and snapshots. The first browser attempt failed to connect because the previous local server had stopped. It passed after starting the server; the failed log remains, with no application assertion failure.
 
-包构建及校验结果将在发布前补齐。IPA 未签名，需自行签名；本轮不声称原生运行或真机验收通过。
-Package builds and integrity results will be recorded before release. The IPA is unsigned and requires user signing; native-runtime and physical-device verification are not claimed this round.
+## 结果 / Results
+
+6 项激光逻辑检查与 1 组浏览器实绘通过。按预警进度采样，两种光球的画面总光强峰值均位于 0.315、0.505、0.655、0.780、0.895 秒，峰间距离逐渐缩短；这是渲染采样，不是真机墙钟实测。后段明暗/大小脉动幅度明显大于前段，发射边界无光球像素。
+Six laser logic checks and one rendered browser suite passed. Sampling warning progress gives total rendered pixel-intensity peaks at 0.315, 0.505, 0.655, 0.780 and 0.895 seconds for both colors, with shrinking intervals; these are render samples, not physical-device wall-clock measurements. Late brightness/size pulse amplitudes exceed early amplitudes, and no orb pixels remain at emission.
+
+Android Release 构建、独立签名核对及 [iPhoneOS 包构建](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38735359758)通过。0.2.26/build 28，两包全部 144 份 Web 文件匹配。本轮没有原生运行或真机验收；IPA 未签名，需自行签名。
+Android Release compilation, independent signing checks and the iPhoneOS package build passed. Both are version 0.2.26/build 28 with all 144 Web files matching. Native-runtime and physical-device verification were not performed this round; the unsigned IPA requires user signing.
+
+| 文件 / File | SHA-256 |
+| --- | --- |
+| DemonStar-Reborn-release.apk | `282f8783655f514d74088288dd02d00b0309f7c389afff7ce303990b1a7ea323` |
+| DemonStar.ipa | `8fa3474b26b780ff601fbabc2b9bec13c764065d1e7b530b907b9f9dd6f3411f` |
+
+![临近发射的蓄能光球 / Charging orbs shortly before emission](screenshots/m226-charge-orb.png)
+
+公开下载由发布工具核对完整 SHA-256，记录保存于 `.local/m226-public-verification.json`。
+The publisher checks complete public-download SHA-256 hashes, with evidence in `.local/m226-public-verification.json`.

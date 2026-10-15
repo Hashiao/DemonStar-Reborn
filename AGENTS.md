@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.26 有限验收完成：0.2.26/build 28，房间规则 10。按本轮明确授权，仅 6 项激光逻辑与 1 组浏览器实绘通过，Android Release/iPhoneOS 构建及两包签名、版本、144 份 Web 资源核对完成。其他完整回归跳过，不记通过；IPA 未签名，需自行签名。
+  M2.26 limited verification complete: 0.2.26/build 28, room revision 10. Under this release's explicit authorization, six laser logic checks and one rendered browser suite passed, followed by Android Release/iPhoneOS builds and package signature/version/144-Web-file checks. Other full regression is skipped, not passed. The IPA is unsigned and requires user signing.
+
 - M2.26 用户明确授权只测试炮口光球调整后推送 main、发布 APK/IPA。简单难度 Boss 红蓝激光前一秒改为红色蓄能光球，明暗/大小脉动幅度和频率递增，发射同时光球消失；替代 M2.25 局部染红，保留开关和实际射击规则。其他回归跳过且不记通过，原流程保留。见 docs/M2_26_CHARGE_ORB.md。
   M2.26 explicitly authorizes pushing main and publishing APK/IPA after only charging-orb checks. Easy Boss red/blue lasers gain a red muzzle orb during the preceding second, with growing brightness/size pulse amplitudes and frequency, disappearing at emission. It replaces M2.25 body tint while preserving the toggle and firing rules. Other regression is skipped, not passed; existing workflows remain. See docs/M2_26_CHARGE_ORB.md.
 
