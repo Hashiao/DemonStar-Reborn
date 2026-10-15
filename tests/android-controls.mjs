@@ -26,7 +26,11 @@ try{
   const overflowShutters=await evaluate(await readFile('tests/overflow-shutters-probe.js','utf8'));assert.deepEqual(overflowShutters,{cases:96,hostileDamagePreserved:true,shutterFrames:[6,6,20],network:true,cadenceCases:12});
   const speedSettings=await evaluate(await readFile('tests/speed-settings-probe.js','utf8'));assert.equal(speedSettings.defaultSpeed,'medium');assert.ok(speedSettings.independentSpeeds);
   const muzzleWarning=await evaluate(await readFile('tests/muzzle-warning-probe.js','utf8'));assert.equal(muzzleWarning.types,2);assert.ok(muzzleWarning.colorMatched&&muzzleWarning.muzzleOnly&&muzzleWarning.growingPulse&&muzzleWarning.accelerating&&muzzleWarning.emissionRestored);
-  const bossArtifacts=await evaluate(await readFile('tests/boss-artifact-probe.js','utf8'));assert.equal(bossArtifacts.cases,84);assert.ok(bossArtifacts.rows.every(r=>r.legacyFragmentPixels>0&&r.currentFragmentPixels===0));
+  // 从实际 Release APK 提取同一图片字节，仅用于 file:// 下的 Canvas 像素读回。
+  // Extract identical image bytes from the Release APK only for Canvas readback under file://.
+  const probeImages=JSON.parse(execFileSync(process.env.PYTHON||'python',['-c',"import zipfile,json,base64;z=zipfile.ZipFile('artifacts/DemonStar-Reborn-release.apk');print(json.dumps({k:'data:image/png;base64,'+base64.b64encode(z.read('assets/assets/'+n+'.png')).decode() for k,n in [('ships','ships-hd'),('bosses','bosses-07-18-hd'),('attacks','enemy-attacks-hd')]}))"],{encoding:'utf8',maxBuffer:32*1024*1024}));
+  await evaluate('globalThis.DemonStarBossProbeImages='+JSON.stringify(probeImages)+';true');
+  const bossArtifacts=await evaluate(await readFile('tests/boss-artifact-probe.js','utf8'));assert.equal(bossArtifacts.cases,84);assert.equal(bossArtifacts.dataURLReadback,true);assert.ok(bossArtifacts.rows.every(r=>r.legacyFragmentPixels>0&&r.currentFragmentPixels===0));
   await evaluate('StarfallApp.game.recordEvents=[];StarfallApp.game.enemies=[];StarfallApp.game.bullets=[];StarfallApp.game.player.invincible=999;true');
   const l=await evaluate('StarfallApp.renderer.layout');
   await command('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:72,x:l.x+90*l.scale,y:l.y+180*l.scale}]});
