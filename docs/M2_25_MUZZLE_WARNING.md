@@ -33,5 +33,21 @@ Automatic approval initially blocked the main push. The user then explicitly aut
 - 脚本保留。iOS 工作流新增手动 `laser-package-only` 选项，仅构建包；默认 `full` 保持完整检查。仅本次提交跳过自动 CI，再显式启动所需范围，避免重复构建。
 - Scripts remain. The iOS workflow adds a manual `laser-package-only` package-build option; default `full` retains all checks. Only this commit skips automatic CI, followed by an explicit scoped run to avoid duplicate builds.
 
-包构建与公开下载核对结果将在发布前补齐。IPA 未签名，需自行签名；最低系统目标不等于本轮实机验证。
-Package builds and public-download verification will be recorded before delivery. The IPA is unsigned and requires user signing; minimum deployment targets do not imply physical-device verification.
+## 打包结果 / Package results
+
+- Android Release 构建通过（Gradle 15 秒），独立签名证书与前版一致；仅 assembleRelease 自带必要校验，未运行完整 Lint。
+- Android Release build passed (15 s in Gradle), using the same independent project certificate. Only assembleRelease's built-in checks ran, without full Lint.
+- [iPhoneOS 构建 / iPhoneOS build](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38729195319)通过，ARM64、iOS 12.0 部署目标、0.2.25/build 27。工作流中的完整引擎与模拟器步骤均明确跳过。
+- The iPhoneOS build passed: ARM64, iOS 12.0 deployment target and 0.2.25/build 27. Full engine and simulator steps are explicitly skipped in the workflow.
+- 两包全部 144 份 Web 文件与本地构建匹配；仅 HTML/CSS 允许等价 CRLF/LF。IPA 未签名，需自行签名；最低目标不等于本轮实机验证。
+- All 144 Web files match the local build in both packages, allowing equivalent CRLF/LF only for HTML/CSS. The unsigned IPA requires user signing; deployment targets are not physical-device verification.
+
+| 文件 / File | SHA-256 |
+| --- | --- |
+| DemonStar-Reborn-release.apk | `cd3adbb04002eb5344aa037788f0ce575b021a3cd82cc1f8bfdbcbd1ceb47d46` |
+| DemonStar.ipa | `e2853f0b0e573f9c57f017415176cb9a91993b7bbec322dde63ade0cbf0a1c2f` |
+
+![炮口预警实绘 / Rendered muzzle warning](screenshots/m225-muzzle-warning.png)
+
+公开下载完整性由发布工具按 SHA-256 核对；本地结果保存在 `.local/m225-public-verification.json`。本轮没有宣称完整回归或原生运行验收通过。
+The publisher checks public downloads against SHA-256; local evidence is stored in `.local/m225-public-verification.json`. This release does not claim full regression or native runtime verification.

@@ -1,6 +1,6 @@
 # DemonStar Reborn
 
-**Current milestone M2.24 (v0.2.24) fixes color-overflow cancellation and adds three ground-shutter animations.** See [evidence and verification](docs/M2_24_OVERFLOW_SHUTTERS.md); complete 1:1 fidelity is not claimed.
+**Current milestone M2.25 (v0.2.25) changes Easy Boss laser warnings to red muzzle blinks, restoring normal muzzles at emission.** Verification is limited to laser checks at the user's request; see [implementation and limits](docs/M2_25_MUZZLE_WARNING.md). Complete 1:1 fidelity is not claimed.
 
 **[简体中文](README.md) · [English](README.en.md)**
 
@@ -21,6 +21,18 @@ M2.21 merged through PR #5 and completed this version’s verification. See [imp
 **Original-stage research:** the [eighteen-stage design ledger](docs/original-stage-design/README.md) records difficulty/player conditions, dispatch scroll, spawn positions, formations, paths and guns for all 8,368 placements, with an implementation checklist. M2.17 implements spawn-related fixes; the remaining items stay tracked. Static verification is distinguished from actual visible-entry timing; complete native frame-by-frame certification is not claimed.
 
 ![Menu](docs/screenshots/menu-en.png)
+
+## M2.25: Boss laser muzzle warnings
+
+- On Easy, red and blue lasers blink only their upcoming muzzle region red during the second before firing, accelerating toward emission and restoring normal muzzles at firing.
+- Replaces faint full-path beams, fading and old pulse previews. Retains the local warning toggle and unchanged live laser timing, damage and colors.
+- Version 0.2.25 / build 27; room revision remains 10.
+
+**Explicitly limited to laser checks at the user's request:** six laser logic checks and one actual Canvas browser suite passed. The independently signed Android Release APK and [iPhoneOS IPA build](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38729195319) passed, with matching package versions and complete Web resources. Remaining engine/browser suites, Android Debug/full Lint/emulator, and iOS simulator functional/touch/LAN checks were skipped, not passed. Existing full test workflows remain available.
+
+The IPA is unsigned and requires user signing. No physical-device or hotspot verification was performed this round. See [implementation and limited verification scope](docs/M2_25_MUZZLE_WARNING.md).
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.25/DemonStar-Reborn-release.apk) · [IPA — unsigned](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.25/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.25/SHA256SUMS.txt) · [Verification](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.25/verification.json)
 
 ## M2.24: color overflow and ground shutters
 

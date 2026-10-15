@@ -8,7 +8,7 @@ DemonStar 4.04 的非官方移动端高清复刻，目标 **Android 10+ / iOS 12
 
 游戏现提供简体中文、繁体中文和英语。首次启动按手机首选语言自动选择；设置可随时切换并保存。繁体中文采用港澳台常见游戏用语，独立润色。Android 与 iOS 共用离线 Canvas 游戏内核，分别由系统 WebView 和 UIKit/WKWebView 承载；没有广告、账号、埋点或内购。单人和同机双人可离线游玩；可选原生局域网使用本地网络相关权限，不使用互联网中转。
 
-**当前里程碑 M2.24（v0.2.24）修复三色溢出弹误消敌弹，补齐三类地面炮门动画。** 详见 [证据与验收](docs/M2_24_OVERFLOW_SHUTTERS.md)；完整 1:1 还原仍未完成。
+**当前里程碑 M2.25（v0.2.25）将简单难度 Boss 激光预警改为炮口红闪，发射同时恢复正常。** 本轮仅做用户要求的激光专项检查；见 [实现与验收边界](docs/M2_25_MUZZLE_WARNING.md)。完整 1:1 还原仍未完成。
 
 M2.20 源码通过 PR #4 合并，因 iOS 验收未完成没有独立正式发布；既有修复已纳入 M2.21。历史候选、失败与边界记录仍保留在 [M2.20 文档](docs/M2_20_STRUCTURES.md)。
 
@@ -21,6 +21,18 @@ M2.21 已通过 PR #5 合并并完成本版本验收，见 [开发与边界](doc
 **原作逐关研究记录：** [18 关设计恢复清单](docs/original-stage-design/README.md) 列出全部 8,368 条对象的难度/人数条件、触发刻度、出生位置、编队、路径及炮口配置，M2.17 已实施出场相关修复，其余项目按清单后续处理。静态核对与真实可见入场时刻分开标注，不宣称完整原机逐帧验收。
 
 ![菜单](docs/screenshots/menu.png)
+
+## M2.25：Boss 激光炮口预警
+
+- 简单难度的红、蓝激光，发射前一秒仅对应炮口区域红色闪烁，由慢到快；发射同时恢复正常。
+- 取消沿激光路径的淡光、渐深及旧脉冲预演；现有本机预警开关保留，实际激光时机、伤害和颜色不变。
+- 版本 0.2.25 / build 27，房间规则仍为 10。
+
+**本轮按用户明确要求仅做激光专项：** 6 项激光逻辑检查与 1 组实际 Canvas 浏览器检查通过。Android 独立签名 Release APK 与 [iPhoneOS IPA 构建](https://github.com/Hashiao/DemonStar-Reborn/actions/runs/38729195319)通过，两包内部版本及完整 Web 资源匹配。其余引擎/浏览器、Android Debug/完整 Lint/模拟器、iOS 模拟器功能/触控/LAN 全部跳过，不记为通过；原有完整测试流程保留。
+
+IPA 未签名，须自行签名；未进行本轮真机或热点验收。详见 [实现与有限验收范围](docs/M2_25_MUZZLE_WARNING.md)。
+
+[APK](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.25/DemonStar-Reborn-release.apk) · [IPA（未签名）](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.25/DemonStar.ipa) · [SHA-256](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.25/SHA256SUMS.txt) · [验收报告](https://github.com/Hashiao/DemonStar-Reborn/releases/download/v0.2.25/verification.json)
 
 ## M2.24：三色溢出弹与地面炮门
 
@@ -36,7 +48,7 @@ M2.21 已通过 PR #5 合并并完成本版本验收，见 [开发与边界](doc
 
 [原作依据 / Source evidence](docs/M2_24_OVERFLOW_SHUTTERS.md)
 
-## 当前里程碑 M2.23
+## M2.23
 
 - 玩家与操作新增每位玩家独立的移动速度：慢为原作键盘基准，中为两者速度平均（默认），快保持上一版速度。所有难度和操作方式通用，保留斜向满速、摇杆轻推与目标截断。
 - 画面与界面新增默认开启、可保存的简单难度激光预警复选框，仅影响本机显示，正式激光始终可见。

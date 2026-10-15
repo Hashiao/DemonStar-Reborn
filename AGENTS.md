@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.25 有限验收完成：0.2.25/build 27，房间规则 10。按本轮明确授权，仅 6 项激光逻辑与 1 组浏览器实绘通过，Android Release 与 iPhoneOS 包构建、签名/版本/资源核对完成。其他引擎/浏览器及两端完整原生回归跳过，不记通过。IPA 未签名，需自行签名。
+  M2.25 limited verification complete: 0.2.25/build 27, room revision 10. Under explicit release-specific authorization, only six laser logic tests and one rendered browser suite passed, followed by Android Release/iPhoneOS builds and signature/version/resource checks. Other engine/browser and full native regression were skipped, not passed. The IPA is unsigned and requires user signing.
+
 - 2026-10-15 本轮例外授权：用户明确允许仅凭 Boss 激光专项检查推送 main，继续构建 IPA 并发布 APK/IPA。此授权适用于 M2.25，其他回归跳过且不得记为通过。
   Release-specific authorization (2026-10-15): the user explicitly permits pushing main after only Boss laser checks, then building the IPA and publishing APK/IPA. This exception applies to M2.25; other regression is skipped and must not be reported as passed.
 
