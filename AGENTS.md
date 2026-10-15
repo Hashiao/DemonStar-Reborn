@@ -1,5 +1,11 @@
 # DemonStar Reborn 工作约定
 
+- 2026-10-15 本轮例外授权：用户明确允许仅凭 Boss 激光专项检查推送 main，继续构建 IPA 并发布 APK/IPA。此授权适用于 M2.25，其他回归跳过且不得记为通过。
+  Release-specific authorization (2026-10-15): the user explicitly permits pushing main after only Boss laser checks, then building the IPA and publishing APK/IPA. This exception applies to M2.25; other regression is skipped and must not be reported as passed.
+
+- M2.25 用户要求简单难度 Boss 红/蓝激光改为发射前一秒对应炮口局部红闪，由慢到快，发射同时恢复正常，替代 M2.22/M2.23 光束预演；现有本机开关保留。2026-10-15 用户明确要求本轮只简单检查 Boss 激光后发 APK/IPA，跳过其他功能与完整平台回归，脚本保留，跳过不记通过。见 docs/M2_25_MUZZLE_WARNING.md。
+  M2.25 replaces M2.22/M2.23 beam previews with local red muzzle blinks accelerating during the second before Easy Boss red/blue lasers, restoring normal muzzles at emission and retaining the local toggle. On 2026-10-15 the user explicitly requested only simple Boss laser checks followed by APK/IPA delivery, skipping other features and full platform regression for this release. Retain scripts; skips are not passes. See docs/M2_25_MUZZLE_WARNING.md.
+
 - M2.24 验收完成：413 项引擎、12 组适用浏览器、96 种溢出拾取组合、32 帧实绘、Android 构建/Lint及3组适用检查、同轮完整 iOS 构建/功能/触控/LAN通过；0.2.24/build 26，房间规则10。20组未变浏览器专项及Android设置/语言专项本轮跳过，不计通过。IPA未签名，真机/热点未认证。
   M2.24 verified: 413 engine tests, 12 applicable browser suites, 96 overflow combinations, 32 rendered frames, Android build/Lint/3 applicable suites, and same-run complete iOS build/functional/touch/LAN passed; 0.2.24/build 26, room revision 10. Twenty unchanged browser suites and Android settings/localization are skipped, not passed. IPA unsigned; physical phones/hotspots unverified.
 

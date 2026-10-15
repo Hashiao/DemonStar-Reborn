@@ -57,16 +57,15 @@
       // Use original visible bounds; types 43/44 already encode diagonal poses, so do not rotate them again.
       this.cropped(im,s.crop,at.x+s.offset[0],at.y+s.offset[1],...s.size);
     }
-    // 提示只借用激光美术，不进入弹体或碰撞系统；100% 不透明留给真正的攻击。
-    // Warnings reuse beam art without entering projectile/collision systems; full opacity belongs to the real attack.
-    laserWarning(w,at,fraction){
-      const progress=Math.max(0,Math.min(1,1-(w.ticks-fraction)*STEP));if(progress<=0)return;
-      const phase=(progress/STEP)%w.period,last=w.pulses.filter(t=>t<=phase).pop();if(last===undefined)return;
-      const age=1+Math.floor(phase-last);if(age>=w.frames)return;
-      // 前 0.8 秒保持 2%，仅最后 0.2 秒立方渐深；正式发射才全不透明。
-      // Hold 2% for the first 0.8 seconds; cubic darkening begins only in the final 0.2 seconds, reaching full opacity at emission.
-      const fade=Math.max(0,(progress-.8)/.2);
-      this.c.save();this.c.globalAlpha*=Math.min(.999999,.02+.98*fade*fade*fade);this.enemyShot({shotType:w.shotType,age},at);this.c.restore();
+    // 只染红真实炮口附近的机体；一秒内由慢到快亮灭，不绘制预演光束。
+    // Tint only the body around the real muzzle; blink faster over one second without a preview beam.
+    laserWarning(w,at,fraction,enemy){
+      const progress=1-(w.ticks-fraction)*STEP;
+      // 积分相位令频率从 2 Hz 连续升至 8 Hz；发射边界立即恢复正常。
+      // Integrated phase raises frequency continuously from 2 to 8 Hz; emission immediately restores the normal muzzle.
+      if(progress<0||progress>=1||(2*progress+3*progress*progress)%1>=.5)return;
+      const c=this.c;c.save();c.beginPath();c.arc(at.x,at.y,12,0,Math.PI*2);c.clip();
+      c.translate(at.x-w.offsetX-enemy.x,at.y-w.offsetY-enemy.y);this.objectBody(enemy,true);c.restore();
     }
     superCell(frame,x,y,w,h){return this.cropped(this.superWeapon,DemonStarSuperweaponArt.frames[frame],x,y,w,h);}
     showsEnemyHealth(e){return this.enemyHealthBars&&!e.scenery&&!e.boss&&!e.dead&&e.maxHp>=HEALTH_BAR_MIN_HP&&e.entered;}
@@ -181,7 +180,7 @@
         for(const item of game.pickups){const at=position(item);this.cell(this.pickups,item.id??DROPS.indexOf(item.type),4,5,at.x,at.y,32,32);}
         if(game.difficulty===0&&this.laserWarningsEnabled!==false)for(const w of game.laserWarnings||[]){
           const e=game.enemies.find(e=>e.uid===w.owner&&!e.dead&&!e.dying);if(!e)continue;
-          const at=position(e);this.laserWarning(w,{x:at.x+w.offsetX,y:at.y+w.offsetY},Math.max(0,Math.min(1,(game.pendingTime||0)/STEP)));
+          const at=position(e);this.laserWarning(w,{x:at.x+w.offsetX,y:at.y+w.offsetY},Math.max(0,Math.min(1,(game.pendingTime||0)/STEP)),e);
         }
         for(const b of game.bullets){
           if(b.playerBeam){const p=game.playerById?.(b.playerId)||game.player;if(p.mega>0&&p.lives>0){const at=position(p),frame=Math.max(0,Math.min(3,b.age)),height=Math.max(0,at.y-20-b.endY);this.superCell(4+frame,at.x,b.endY+height/2,[12,10,8,5][frame],height);}continue;}

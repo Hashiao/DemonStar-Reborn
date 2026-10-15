@@ -6,6 +6,12 @@ on:
   pull_request:
     paths: ['web/**', 'ios/**', 'tools/**', 'tests/**', '.github/workflows/ios.yml', 'package.json']
   workflow_dispatch:
+    inputs:
+      verification_scope:
+        description: '验收范围 / Verification scope'
+        type: choice
+        default: full
+        options: [full, laser-package-only]
 permissions:
   contents: read
 jobs:
@@ -35,6 +41,11 @@ jobs:
           mkdir -p .local
           node tools/sync.mjs
           python3 tools/generate-ios-project.py
+      # 用户明确要求本次只测 Boss 激光后发包；默认完整流程保持原样。
+      # The user requests laser-only checks and packages for this release; the default full flow remains intact.
+      - name: Run full engine and simulator recovery checks
+        if: inputs.verification_scope != 'laser-package-only'
+        run: |
           node --test tests/*.test.mjs
           python3 -m unittest discover -s tests -p ios_simulator_health_test.py
       - name: Build ARM64 iPhoneOS app with iOS 12 deployment target
@@ -44,10 +55,13 @@ jobs:
           cp -R .local/ios-device/Build/Products/Release-iphoneos/DemonStar.app artifacts/Payload/
           cd artifacts && zip -qr DemonStar.ipa Payload
       - name: Build and launch on an existing iPhone simulator
+        if: inputs.verification_scope != 'laser-package-only'
         run: python3 tools/test-ios-simulator.py
       - name: Verify two-player native LAN on existing iPhone and iPad simulators
+        if: inputs.verification_scope != 'laser-package-only'
         run: python3 tools/test-ios-lan.py
       - name: Verify system long presses and game-mode entries on existing iPhone and iPad
+        if: inputs.verification_scope != 'laser-package-only'
         run: python3 tools/test-ios-touch.py
       - uses: actions/upload-artifact@v4
         if: always()
