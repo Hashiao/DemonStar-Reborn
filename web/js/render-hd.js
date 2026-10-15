@@ -67,11 +67,11 @@
       const pulse=(1+Math.cos(Math.PI*2*(2*progress+4*progress*progress)))/2;
       const radius=3+1.5*progress+(.75+6.75*progress*progress)*pulse;
       const c=this.c;c.save();c.globalAlpha*=.68-.5*progress+(.12+.7*progress)*pulse;
-      const halo=c.createRadialGradient(at.x,at.y,0,at.x,at.y,radius*2.3);
-      halo.addColorStop(0,'rgba(255,90,55,.65)');halo.addColorStop(.35,'rgba(255,35,20,.4)');halo.addColorStop(1,'rgba(255,15,5,0)');
+      const blue=w.shotType===9,halo=c.createRadialGradient(at.x,at.y,0,at.x,at.y,radius*2.3);
+      halo.addColorStop(0,blue?'rgba(60,150,255,.65)':'rgba(255,90,55,.65)');halo.addColorStop(.35,blue?'rgba(25,100,255,.4)':'rgba(255,35,20,.4)');halo.addColorStop(1,blue?'rgba(5,45,255,0)':'rgba(255,15,5,0)');
       c.fillStyle=halo;c.beginPath();c.arc(at.x,at.y,radius*2.3,0,Math.PI*2);c.fill();
       const core=c.createRadialGradient(at.x-radius*.24,at.y-radius*.24,radius*.05,at.x,at.y,radius);
-      core.addColorStop(0,'#fffbe8');core.addColorStop(.18,'#ffe5af');core.addColorStop(.42,'#ff7660');core.addColorStop(.75,'#ff201c');core.addColorStop(1,'rgba(180,0,0,.05)');
+      core.addColorStop(0,blue?'#ecf7ff':'#fffbe8');core.addColorStop(.18,blue?'#bfe9ff':'#ffe5af');core.addColorStop(.42,blue?'#5ab8ff':'#ff7660');core.addColorStop(.75,blue?'#2478ff':'#ff201c');core.addColorStop(1,blue?'rgba(0,35,180,.05)':'rgba(180,0,0,.05)');
       c.fillStyle=core;c.beginPath();c.arc(at.x,at.y,radius,0,Math.PI*2);c.fill();c.restore();
     }
     superCell(frame,x,y,w,h){return this.cropped(this.superWeapon,DemonStarSuperweaponArt.frames[frame],x,y,w,h);}
@@ -146,6 +146,7 @@
       // 每个原型都有显式路由；未知名称只记录诊断，不再替换成红色飞机。
       // Every prototype has an explicit route; unknown names are diagnosed, never replaced with red fighters.
       if(!route){this.missingSprites.add(d.sprite);return;}
+      if(enemyArt.bosses?.[d.sprite]){this.registeredBoss(e,red);return;}
       switch(route.kind){
         case 'campaign':this.campaignObject(e,red);break;
         case 'framed':this.framedObject(e,red);break;
@@ -155,6 +156,20 @@
         case 'boss1':this.cell(im(this.ships),route.index,4,4,e.x,e.y,w*1.12,h*1.12);break;
         case 'boss2':this.cell(im(this.bosses),route.index,4,3,e.x,e.y,w*1.13,h*1.13);break;
       }
+    }
+    // 按真实炮位配准重绘机体，裁掉邻格；射击和碰撞坐标保持原作数值。
+    // Register the redraw to real mounts and exclude adjacent cells; source firing/collision coordinates remain unchanged.
+    registeredBoss(e,red){
+      const s=enemyArt.bosses[e.def.sprite],source=s.asset==='assets/ships-hd.png'?this.ships:this.bosses;
+      if(!source.complete||!source.naturalWidth)return;const image=red?this.redImage(source):source,c=this.c;
+      c.save();c.translate(e.x,e.y);
+      for(const patch of s.patches){
+        const p=patch.points,cx=(p[0]+p[2]+p[4])/3,cy=(p[1]+p[3]+p[5])/3;
+        c.save();c.beginPath();for(let i=0;i<6;i+=2){const dx=p[i]-cx,dy=p[i+1]-cy,n=Math.hypot(dx,dy)||1;c[i?'lineTo':'moveTo'](p[i]+dx/n*.15,p[i+1]+dy/n*.15);}c.closePath();c.clip();
+        // 微量重叠避免 Canvas 三角形边缘接缝；源裁切仍限制为这一机体。
+        // Slight clip overlap avoids Canvas triangle seams; the source crop still restricts pixels to this body.
+        c.transform(...patch.matrix);c.drawImage(image,...s.crop,...s.crop);c.restore();
+      }c.restore();
     }
     player(x,y,power,time,scale=1,state={bank:8,thrust:0}){
       const c=this.c,bank=Math.max(0,Math.min(16,Math.round(state.bank??8))),thrust=state.thrust||0;
@@ -191,7 +206,7 @@
         }
         for(const b of game.bullets){
           if(b.playerBeam){const p=game.playerById?.(b.playerId)||game.player;if(p.mega>0&&p.lives>0){const at=position(p),frame=Math.max(0,Math.min(3,b.age)),height=Math.max(0,at.y-20-b.endY);this.superCell(4+frame,at.x,b.endY+height/2,[12,10,8,5][frame],height);}continue;}
-          if(!b.friendly){this.enemyShot(b,position(b));continue;}
+          if(!b.friendly){const owner=b.beam&&game.enemies.find(e=>e.uid===b.owner&&!e.dead&&!e.dying);const at=owner?position(owner):position(b);this.enemyShot(b,owner?{x:at.x+b.offsetX,y:at.y+b.offsetY}:at);continue;}
           const visual=DemonStarCombatVisuals.shot(b.shotType);if(b.friendly&&visual){this.playerShot(b,position(b),visual);continue;}
           if(b.nova!==undefined){const at=position(b);this.cell(this.weapons,[6,11,12,7][b.nova],4,4,at.x,at.y,b.nova===3?15:10,b.nova===3?15:10);continue;}
           const sprite=b.missile?(b.homing?9:8):b.friendly?[0,3,4,7][b.style%4]:b.style===1?11:10;

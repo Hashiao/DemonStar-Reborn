@@ -1,0 +1,788 @@
+{
+  "description": {
+    "zh": "人工核对重绘炮口/翼缘出光点；只配准绘制，原作炮位与碰撞坐标不变。",
+    "en": "Reviewed redraw muzzle/wing-edge emission landmarks; register rendering only, preserving original gun and collision coordinates."
+  },
+  "sprites": {
+    "S_BOSS1": {
+      "id": 40,
+      "stage": 1,
+      "asset": "assets/ships-hd.png",
+      "asset_sha256": "0f52e95c85b9b90c0b69ab0820f62dcde83b61e3f9e0e58a914cc5e548b7a91f",
+      "crop": [
+        16,
+        646,
+        283,
+        254
+      ],
+      "source_geometry": {
+        "width": 98,
+        "height": 81,
+        "bounds": [
+          0,
+          0,
+          98,
+          81
+        ],
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "visible": [
+          98,
+          81
+        ]
+      },
+      "mounts": [
+        {
+          "gun": 2,
+          "shotType": 9,
+          "art": [
+            157,
+            898
+          ],
+          "originalOffset": [
+            -1,
+            39.5
+          ]
+        }
+      ]
+    },
+    "S_BOSS2": {
+      "id": 41,
+      "stage": 2,
+      "asset": "assets/ships-hd.png",
+      "asset_sha256": "0f52e95c85b9b90c0b69ab0820f62dcde83b61e3f9e0e58a914cc5e548b7a91f",
+      "crop": [
+        330,
+        636,
+        280,
+        286
+      ],
+      "source_geometry": {
+        "width": 110,
+        "height": 121,
+        "bounds": [
+          0,
+          0,
+          110,
+          121
+        ],
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "visible": [
+          110,
+          121
+        ]
+      },
+      "mounts": [
+        {
+          "gun": 1,
+          "shotType": 9,
+          "art": [
+            471,
+            920
+          ],
+          "originalOffset": [
+            -1,
+            59.5
+          ]
+        }
+      ]
+    },
+    "S_BOSS3A": {
+      "id": 42,
+      "stage": 3,
+      "asset": "assets/ships-hd.png",
+      "asset_sha256": "0f52e95c85b9b90c0b69ab0820f62dcde83b61e3f9e0e58a914cc5e548b7a91f",
+      "crop": [
+        635,
+        645,
+        296,
+        249
+      ],
+      "source_geometry": {
+        "width": 106,
+        "height": 90,
+        "bounds": [
+          0,
+          0,
+          106,
+          90
+        ],
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "visible": [
+          106,
+          90
+        ]
+      },
+      "mounts": [
+        {
+          "gun": 17,
+          "shotType": 9,
+          "art": [
+            765,
+            871
+          ],
+          "originalOffset": [
+            -9,
+            39
+          ]
+        },
+        {
+          "gun": 18,
+          "shotType": 9,
+          "art": [
+            799,
+            871
+          ],
+          "originalOffset": [
+            8,
+            39
+          ]
+        }
+      ]
+    },
+    "S_BOSS4A": {
+      "id": 43,
+      "stage": 4,
+      "asset": "assets/ships-hd.png",
+      "asset_sha256": "0f52e95c85b9b90c0b69ab0820f62dcde83b61e3f9e0e58a914cc5e548b7a91f",
+      "crop": [
+        951,
+        658,
+        286,
+        181
+      ],
+      "source_geometry": {
+        "width": 199,
+        "height": 92,
+        "bounds": [
+          0,
+          0,
+          199,
+          92
+        ],
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "visible": [
+          199,
+          92
+        ]
+      },
+      "mounts": [
+        {
+          "gun": 13,
+          "shotType": 9,
+          "art": [
+            1022,
+            788
+          ],
+          "originalOffset": [
+            -52.5,
+            34
+          ]
+        },
+        {
+          "gun": 14,
+          "shotType": 9,
+          "art": [
+            1167,
+            787
+          ],
+          "originalOffset": [
+            52.5,
+            34
+          ]
+        }
+      ]
+    },
+    "S_BOSS5A": {
+      "id": 44,
+      "stage": 5,
+      "asset": "assets/ships-hd.png",
+      "asset_sha256": "0f52e95c85b9b90c0b69ab0820f62dcde83b61e3f9e0e58a914cc5e548b7a91f",
+      "crop": [
+        25,
+        920,
+        264,
+        317
+      ],
+      "source_geometry": {
+        "width": 151,
+        "height": 188,
+        "bounds": [
+          0,
+          0,
+          151,
+          188
+        ],
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "visible": [
+          151,
+          188
+        ]
+      },
+      "mounts": [
+        {
+          "gun": 1,
+          "shotType": 9,
+          "art": [
+            71,
+            1187
+          ],
+          "originalOffset": [
+            -53.5,
+            69
+          ]
+        },
+        {
+          "gun": 2,
+          "shotType": 10,
+          "art": [
+            157,
+            1235
+          ],
+          "originalOffset": [
+            -0.5,
+            87
+          ]
+        },
+        {
+          "gun": 3,
+          "shotType": 9,
+          "art": [
+            245,
+            1187
+          ],
+          "originalOffset": [
+            53.5,
+            69
+          ]
+        }
+      ]
+    },
+    "S_BOSS6A": {
+      "id": 45,
+      "stage": 6,
+      "asset": "assets/ships-hd.png",
+      "asset_sha256": "0f52e95c85b9b90c0b69ab0820f62dcde83b61e3f9e0e58a914cc5e548b7a91f",
+      "crop": [
+        324,
+        950,
+        292,
+        253
+      ],
+      "source_geometry": {
+        "width": 183,
+        "height": 167,
+        "bounds": [
+          0,
+          0,
+          183,
+          167
+        ],
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "visible": [
+          183,
+          167
+        ]
+      },
+      "mounts": [
+        {
+          "gun": 22,
+          "shotType": 9,
+          "art": [
+            411,
+            1186
+          ],
+          "originalOffset": [
+            -46.5,
+            76.5
+          ]
+        },
+        {
+          "gun": 23,
+          "shotType": 9,
+          "art": [
+            532,
+            1186
+          ],
+          "originalOffset": [
+            47.5,
+            76.5
+          ]
+        }
+      ]
+    },
+    "S2_BOSS1A": {
+      "id": 234,
+      "stage": 7,
+      "asset": "assets/bosses-07-18-hd.png",
+      "asset_sha256": "ee5fbfa7e99390b49d6c1e9a4b715245e27dabf4cdf493ed2ecff41266cec1fe",
+      "crop": [
+        60,
+        43,
+        310,
+        264
+      ],
+      "source_geometry": {
+        "width": 152,
+        "height": 120,
+        "bounds": [
+          2,
+          1,
+          150,
+          120
+        ],
+        "offset": [
+          0.0,
+          0.5
+        ],
+        "visible": [
+          148,
+          119
+        ]
+      },
+      "mounts": [
+        {
+          "gun": 2,
+          "shotType": 9,
+          "art": [
+            93,
+            166
+          ],
+          "originalOffset": [
+            -59,
+            -6
+          ]
+        },
+        {
+          "gun": 8,
+          "shotType": 9,
+          "art": [
+            341,
+            166
+          ],
+          "originalOffset": [
+            62,
+            -6
+          ]
+        }
+      ]
+    },
+    "S2_BOSS5A": {
+      "id": 238,
+      "stage": 11,
+      "asset": "assets/bosses-07-18-hd.png",
+      "asset_sha256": "ee5fbfa7e99390b49d6c1e9a4b715245e27dabf4cdf493ed2ecff41266cec1fe",
+      "crop": [
+        52,
+        374,
+        301,
+        299
+      ],
+      "source_geometry": {
+        "width": 160,
+        "height": 152,
+        "bounds": [
+          3,
+          1,
+          157,
+          151
+        ],
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "visible": [
+          154,
+          150
+        ]
+      },
+      "mounts": [
+        {
+          "gun": 2,
+          "shotType": 10,
+          "art": [
+            94,
+            536
+          ],
+          "originalOffset": [
+            -54,
+            5
+          ]
+        },
+        {
+          "gun": 3,
+          "shotType": 10,
+          "art": [
+            310,
+            536
+          ],
+          "originalOffset": [
+            54,
+            6
+          ]
+        }
+      ]
+    },
+    "S2_BOSS6A": {
+      "id": 239,
+      "stage": 12,
+      "asset": "assets/bosses-07-18-hd.png",
+      "asset_sha256": "ee5fbfa7e99390b49d6c1e9a4b715245e27dabf4cdf493ed2ecff41266cec1fe",
+      "crop": [
+        381,
+        427,
+        400,
+        173
+      ],
+      "source_geometry": {
+        "width": 200,
+        "height": 72,
+        "bounds": [
+          2,
+          1,
+          199,
+          71
+        ],
+        "offset": [
+          0.5,
+          0.0
+        ],
+        "visible": [
+          197,
+          70
+        ]
+      },
+      "mounts": [
+        {
+          "gun": 1,
+          "shotType": 9,
+          "art": [
+            489,
+            547
+          ],
+          "originalOffset": [
+            -45,
+            12
+          ]
+        },
+        {
+          "gun": 2,
+          "shotType": 9,
+          "art": [
+            471,
+            541
+          ],
+          "originalOffset": [
+            -54,
+            10
+          ]
+        },
+        {
+          "gun": 3,
+          "shotType": 9,
+          "art": [
+            452,
+            534
+          ],
+          "originalOffset": [
+            -63,
+            8
+          ]
+        },
+        {
+          "gun": 4,
+          "shotType": 9,
+          "art": [
+            677,
+            545
+          ],
+          "originalOffset": [
+            48,
+            13
+          ]
+        },
+        {
+          "gun": 5,
+          "shotType": 9,
+          "art": [
+            695,
+            538
+          ],
+          "originalOffset": [
+            57,
+            10
+          ]
+        },
+        {
+          "gun": 6,
+          "shotType": 9,
+          "art": [
+            714,
+            532
+          ],
+          "originalOffset": [
+            66,
+            7
+          ]
+        }
+      ]
+    },
+    "S2_BOSS8A": {
+      "id": 241,
+      "stage": 14,
+      "asset": "assets/bosses-07-18-hd.png",
+      "asset_sha256": "ee5fbfa7e99390b49d6c1e9a4b715245e27dabf4cdf493ed2ecff41266cec1fe",
+      "crop": [
+        1176,
+        382,
+        195,
+        268
+      ],
+      "source_geometry": {
+        "width": 88,
+        "height": 128,
+        "bounds": [
+          1,
+          3,
+          87,
+          127
+        ],
+        "offset": [
+          0.0,
+          1.0
+        ],
+        "visible": [
+          86,
+          124
+        ]
+      },
+      "mounts": [
+        {
+          "gun": 6,
+          "shotType": 10,
+          "art": [
+            1258,
+            602
+          ],
+          "originalOffset": [
+            -6,
+            36
+          ]
+        },
+        {
+          "gun": 7,
+          "shotType": 10,
+          "art": [
+            1284,
+            601
+          ],
+          "originalOffset": [
+            6,
+            36
+          ]
+        }
+      ]
+    },
+    "S2_BOSS10A": {
+      "id": 243,
+      "stage": 16,
+      "asset": "assets/bosses-07-18-hd.png",
+      "asset_sha256": "ee5fbfa7e99390b49d6c1e9a4b715245e27dabf4cdf493ed2ecff41266cec1fe",
+      "crop": [
+        443,
+        737,
+        278,
+        239
+      ],
+      "source_geometry": {
+        "width": 144,
+        "height": 104,
+        "bounds": [
+          4,
+          1,
+          141,
+          103
+        ],
+        "offset": [
+          0.5,
+          0.0
+        ],
+        "visible": [
+          137,
+          102
+        ]
+      },
+      "mounts": [
+        {
+          "gun": 3,
+          "shotType": 9,
+          "art": [
+            527,
+            901
+          ],
+          "originalOffset": [
+            -27,
+            15
+          ]
+        },
+        {
+          "gun": 4,
+          "shotType": 9,
+          "art": [
+            506,
+            901
+          ],
+          "originalOffset": [
+            -38,
+            15
+          ]
+        },
+        {
+          "gun": 5,
+          "shotType": 9,
+          "art": [
+            484,
+            901
+          ],
+          "originalOffset": [
+            -48,
+            15
+          ]
+        },
+        {
+          "gun": 6,
+          "shotType": 9,
+          "art": [
+            638,
+            901
+          ],
+          "originalOffset": [
+            28,
+            14
+          ]
+        },
+        {
+          "gun": 7,
+          "shotType": 9,
+          "art": [
+            659,
+            901
+          ],
+          "originalOffset": [
+            39,
+            14
+          ]
+        },
+        {
+          "gun": 8,
+          "shotType": 9,
+          "art": [
+            680,
+            901
+          ],
+          "originalOffset": [
+            50,
+            14
+          ]
+        }
+      ]
+    },
+    "S2_BOSS12A": {
+      "id": 263,
+      "stage": 18,
+      "asset": "assets/bosses-07-18-hd.png",
+      "asset_sha256": "ee5fbfa7e99390b49d6c1e9a4b715245e27dabf4cdf493ed2ecff41266cec1fe",
+      "crop": [
+        1100,
+        693,
+        326,
+        365
+      ],
+      "source_geometry": {
+        "width": 216,
+        "height": 176,
+        "bounds": [
+          36,
+          7,
+          188,
+          176
+        ],
+        "offset": [
+          4.0,
+          3.5
+        ],
+        "visible": [
+          152,
+          169
+        ]
+      },
+      "mounts": [
+        {
+          "gun": 34,
+          "shotType": 9,
+          "art": [
+            1220,
+            1055
+          ],
+          "originalOffset": [
+            -19,
+            86
+          ]
+        },
+        {
+          "gun": 35,
+          "shotType": 9,
+          "art": [
+            1312,
+            1057
+          ],
+          "originalOffset": [
+            27,
+            86
+          ]
+        },
+        {
+          "gun": 36,
+          "shotType": 10,
+          "art": [
+            1264,
+            1057
+          ],
+          "originalOffset": [
+            4,
+            87
+          ]
+        },
+        {
+          "gun": 49,
+          "shotType": 10,
+          "art": [
+            1264,
+            1057
+          ],
+          "originalOffset": [
+            4,
+            87
+          ]
+        }
+      ]
+    }
+  }
+}

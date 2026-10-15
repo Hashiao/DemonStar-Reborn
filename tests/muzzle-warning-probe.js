@@ -6,9 +6,9 @@
   for(const shotType of [9,10]){
    const samples=[];
    for(let sample=0;sample<200;sample++){
-    const time=sample/200;c.clearRect(0,0,96,96);r.laserWarning({shotType,ticks:(1-time)/STEP},at,0);const pixels=c.getImageData(0,0,96,96).data;let energy=0,extent=0,red=0,green=0;
-    for(let i=0;i<pixels.length;i+=4)if(pixels[i+3]){const distance=Math.hypot((i/4)%96+.5-48,Math.floor(i/384)+.5-48);if(distance>28.5)throw new Error('Orb escaped the muzzle region');energy+=(pixels[i]+pixels[i+1]+pixels[i+2])*pixels[i+3]/255;red+=pixels[i]*pixels[i+3];green+=pixels[i+1]*pixels[i+3];if(pixels[i+3]>20)extent=Math.max(extent,distance);}
-    if(!energy||red<=green)throw new Error('Missing red charging orb');samples.push({time,energy,extent});
+    const time=sample/200;c.clearRect(0,0,96,96);r.laserWarning({shotType,ticks:(1-time)/STEP},at,0);const pixels=c.getImageData(0,0,96,96).data;let energy=0,extent=0,red=0,green=0,blue=0;
+    for(let i=0;i<pixels.length;i+=4)if(pixels[i+3]){const distance=Math.hypot((i/4)%96+.5-48,Math.floor(i/384)+.5-48);if(distance>28.5)throw new Error('Orb escaped the muzzle region');energy+=(pixels[i]+pixels[i+1]+pixels[i+2])*pixels[i+3]/255;red+=pixels[i]*pixels[i+3];green+=pixels[i+1]*pixels[i+3];blue+=pixels[i+2]*pixels[i+3];if(pixels[i+3]>20)extent=Math.max(extent,distance);}
+    if(!energy||(shotType===9?blue<=red||blue<=green:red<=blue||red<=green))throw new Error('Orb color differs from the upcoming laser');samples.push({time,energy,extent});
    }
    const peaks=samples.filter((s,i)=>i>0&&i<samples.length-1&&s.energy>samples[i-1].energy&&s.energy>samples[i+1].energy);
    if(peaks.length<5)throw new Error('Missing charging pulses');const intervals=peaks.slice(1).map((s,i)=>s.time-peaks[i].time);if(intervals.some((v,i)=>i&&v>=intervals[i-1]))throw new Error('Orb pulse frequency did not increase');
@@ -18,7 +18,9 @@
    for(const ticks of [0,-1,30]){c.clearRect(0,0,96,96);r.laserWarning({shotType,ticks},at,0);if(c.getImageData(0,0,96,96).data.some(v=>v))throw new Error('Orb remains outside its warning window');}
    rows.push({type:shotType,peakTimes:peaks.map(s=>s.time),early,late});
   }
-  if(JSON.stringify(rows[0].peakTimes)!==JSON.stringify(rows[1].peakTimes)||JSON.stringify(rows[0].late)!==JSON.stringify(rows[1].late))throw new Error('Laser colors use different warning orbs');
+  // 不同色彩量化会在首个未完整脉冲中产生微小局部峰值；比较完整周期。
+  // Color quantization can add a tiny peak in the initial partial pulse; compare complete cycles.
+  if(JSON.stringify(rows[0].peakTimes.filter(t=>t>.1))!==JSON.stringify(rows[1].peakTimes.filter(t=>t>.1))||rows[0].late.size!==rows[1].late.size)throw new Error('Orb colors changed charging timing or size');
  }finally{r.c=oldContext;r.enemyShot=oldShot;}
- return {types:2,muzzleOnly:true,growingPulse:true,accelerating:true,emissionRestored:true,samples:rows};
+ return {types:2,colorMatched:true,muzzleOnly:true,growingPulse:true,accelerating:true,emissionRestored:true,samples:rows};
 })()
