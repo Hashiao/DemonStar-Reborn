@@ -5,7 +5,8 @@ const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAY
 const browser=await chromium.launch({channel:'chrome',headless:true}),errors=[];
 try{
   const page=await browser.newPage({viewport:{width:768,height:1024},locale:'zh-CN'});
-  page.on('pageerror',e=>errors.push(e.message));await page.goto(process.env.TEST_URL||'http://127.0.0.1:4173');
+  // 与其他浏览器检查共用入口，保留旧 TEST_URL 兼容。 / Share the browser-suite URL while retaining legacy TEST_URL.
+  page.on('pageerror',e=>errors.push(e.message));await page.goto(process.env.GAME_URL||process.env.TEST_URL||'http://127.0.0.1:4173');
   await page.waitForFunction(()=>window.StarfallApp&&StarfallApp.renderer.presentationReady());
   // 直接验证四人世界渲染，触控和联机入口另行验收。
   // Probe four-player world rendering directly; touch UI and LAN are separate acceptance gates.
