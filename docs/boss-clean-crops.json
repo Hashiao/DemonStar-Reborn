@@ -1,0 +1,10 @@
+{
+  "description": {
+    "zh": "只隔离 Boss 本体，保持旧绘制的主体位置与尺寸；移除相邻图格碎块。",
+    "en": "Isolate each Boss body while preserving its previous placement and size; exclude neighboring atlas fragments."
+  },
+  "sprites": {
+    "S2_BOSS2A": {"id":235,"stage":8,"asset":"assets/bosses-07-18-hd.png","crop":[480,0,210,340],"grid":[4,3,1],"scale":1.13},
+    "S2_BOSS7A": {"id":240,"stage":13,"asset":"assets/bosses-07-18-hd.png","crop":[810,370,260,295],"grid":[4,3,6],"scale":1.13}
+  }
+}

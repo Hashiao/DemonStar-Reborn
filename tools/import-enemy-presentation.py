@@ -54,8 +54,8 @@ def extract(directory):
         animations[struct.unpack_from('<I',rec,16)[0]]={'interval':s16(64),'pause':s16(66),'loopFrames':s16(68),'cycles':s16(70),'start':s16(72),'pauseEnd':s16(82),'pauseStart':s16(84),'pingPong':bool(struct.unpack_from('<I',rec,40)[0]&0x10000)}
         if name in ground_frames:animations[struct.unpack_from('<I',rec,16)[0]]['frameCount']=ground_frames[name]
     # 炮口配准同样由数值清单生成，避免重导入时丢失。 / Preserve numeric muzzle registration on regeneration.
-    bosses=runpy.run_path(str(ROOT/'tools/import-boss-muzzles.py'))['registrations']()
-    return {'sprites':sprites,'animations':animations,'bosses':bosses}
+    boss_art=runpy.run_path(str(ROOT/'tools/import-boss-muzzles.py'))
+    return {'sprites':sprites,'animations':animations,'bosses':boss_art['registrations'](),'bossCrops':boss_art['clean_crops']()}
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('directory',type=Path);args=p.parse_args()

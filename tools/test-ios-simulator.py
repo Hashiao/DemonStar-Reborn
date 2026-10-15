@@ -104,6 +104,7 @@ for family in ('iPhone','iPad'):
         assert probe.get('sharedAudio')=={'sharedScheduler':True,'shotsAccepted':20},probe
         assert probe.get('laserWarning')=={'harmless':True,'firstHit':True,'pauseDifficulty':True,'network':True,'players':2},probe
         assert probe.get('overflowShutters')=={'cases':96,'hostileDamagePreserved':True,'shutterFrames':[6,6,20],'network':True,'cadenceCases':12},probe
+        fragments=probe.get('bossArtifacts',{});assert fragments.get('cases')==84 and fragments.get('bosses')==3 and fragments.get('stageCacheReleased') and all(row['legacyFragmentPixels']>0 and row['currentFragmentPixels']==0 for row in fragments.get('rows',[])),probe
         assert probe.get('speedSettings')=={'defaultSpeed':'medium','independentSpeeds':True},probe
         muzzle=probe.get('muzzleWarning',{});assert muzzle.get('types')==2 and all(muzzle.get(k) is True for k in ['colorMatched','muzzleOnly','growingPulse','accelerating','emissionRestored']),probe
         assert probe.get('mobility')=={'difficulties':4,'speedCases':12,'defaultSpeed':'medium','tiers':{'slow':[72,74],'medium':[58,60],'fast':[48,50]},'horizontalTicks':48,'verticalTicks':50,'diagonalAxesRetainSpeed':True},probe

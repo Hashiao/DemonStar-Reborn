@@ -3,6 +3,7 @@ Register redrawn muzzles to source mounts without changing images or combat tabl
 """
 from pathlib import Path
 import hashlib,json
+from PIL import Image
 ROOT=Path(__file__).resolve().parents[1]
 
 def registrations():
@@ -32,5 +33,16 @@ def registrations():
         result[name]={'asset':s['asset'],'crop':s['crop'],'mounts':s['mounts'],'patches':patches}
     return result
 
+def clean_crops():
+    # 把明确裁切换算回原绘制矩形，不借清理碎块改变机体布局。
+    # Map explicit crops back to the old drawing rectangle without changing the body layout.
+    manifest=json.loads((ROOT/'docs/boss-clean-crops.json').read_text(encoding='utf8'))['sprites']
+    campaign=json.loads((ROOT/'web/js/campaign.js').read_text(encoding='utf8').split('=',1)[1].strip().rstrip(';'));result={}
+    for name,s in manifest.items():
+        definition=next(d for d in campaign['definitions'] if d['id']==s['id']);im=Image.open(ROOT/'web'/s['asset']);cols,rows,index=s['grid'];cw,ch=im.width/cols,im.height/rows;x,y,w,h=s['crop'];dw,dh=definition['width']*s['scale'],definition['height']*s['scale']
+        assert index%cols*cw<=x<x+w<=(index%cols+1)*cw and index//cols*ch<=y<y+h<=(index//cols+1)*ch
+        result[name]={'asset':s['asset'],'crop':s['crop'],'draw':[(x-index%cols*cw)/cw*dw-dw/2,(y-index//cols*ch)/ch*dh-dh/2,w/cw*dw,h/ch*dh]}
+    return result
+
 if __name__=='__main__':
-    path=ROOT/'web/js/enemy-art.js';text=path.read_text(encoding='utf8');prefix,payload=text.split('=',1);data=json.loads(payload.strip().rstrip(';'));data['bosses']=registrations();path.write_text(prefix+'='+json.dumps(data,separators=(',',':'))+';\n',encoding='utf8');print('Registered',len(data['bosses']),'laser Bosses; images and gun tables unchanged.')
+    path=ROOT/'web/js/enemy-art.js';text=path.read_text(encoding='utf8');prefix,payload=text.split('=',1);data=json.loads(payload.strip().rstrip(';'));data['bosses']=registrations();data['bossCrops']=clean_crops();path.write_text(prefix+'='+json.dumps(data,separators=(',',':'))+';\n',encoding='utf8');print('Registered',len(data['bosses']),'laser Bosses and',len(data['bossCrops']),'clean crops; images and gun tables unchanged.')

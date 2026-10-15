@@ -1,5 +1,8 @@
 # DemonStar Reborn 工作约定
 
+- M2.28 用户要求清理第 1/8/13 关 Boss 伪影，并完成完整 Android/iOS 测试后发布；本轮不使用前几轮有限验收例外。第 8/13 关明确裁切保持本体布局，单 Boss 纹理隔离防邻格采样，首关旧裁切碎块有阳性对照。保留 M2.27 炮口/同色光球、原始数值与图片，见 docs/M2_28_BOSS_FRAGMENTS.md。
+  M2.28 requires stage-1/8/13 Boss artifact cleanup followed by complete Android/iOS verification before release; prior limited-verification exceptions do not apply. Explicit stage-8/13 crops preserve body layout, isolated textures prevent neighboring samples, and the old stage-1 crop supplies a positive control. Preserve M2.27 muzzles/matching orbs, source values and image bytes. See docs/M2_28_BOSS_FRAGMENTS.md.
+
 - M2.27 有限验收完成：0.2.27/build 29，房间规则 10。6 项激光逻辑与 1 组浏览器专项通过，逐个覆盖 18 Boss/33 条激光炮位记录，原作物理炮位不变。Android Release/iPhoneOS 构建及签名/版本/144 份 Web 文件核对完成，其他完整回归跳过，不记通过。IPA 未签名，需自行签名。
   M2.27 limited verification complete: 0.2.27/build 29, room revision 10. Six laser logic tests and one browser suite cover every Boss and all 33 laser mount records, preserving source physical muzzles. Android Release/iPhoneOS builds and signature/version/144-Web-file checks passed; other full regression is skipped, not passed. The IPA is unsigned and requires user signing.
 

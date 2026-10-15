@@ -8,6 +8,7 @@
     prepareStage(id=1){
       if(!this.campaignAtlases){this.campaignAtlases=new Map();this.shotAtlases=new Map(Object.keys(enemyShots.assets).map(path=>[path,load(path)]));this.oreImages=new Map();this.missingSprites=new Set();this.missingShotTypes=new Set();}
       if(this.artStage===id)return;
+      this.bossCropCache?.clear();
       // 只保留当前关的重绘图集，同时释放对应染色缓存，避免手机解码全部 18 关素材。
       // Retain only this stage's redraw atlases and tint caches, avoiding full-campaign decoded memory.
       const needed=new Set(campaignArt.stageAssets[id]);
@@ -147,6 +148,7 @@
       // Every prototype has an explicit route; unknown names are diagnosed, never replaced with red fighters.
       if(!route){this.missingSprites.add(d.sprite);return;}
       if(enemyArt.bosses?.[d.sprite]){this.registeredBoss(e,red);return;}
+      const clean=enemyArt.bossCrops?.[d.sprite];if(clean){const image=this.bossTexture(e,clean,red);if(image)this.c.drawImage(image,e.x+clean.draw[0],e.y+clean.draw[1],clean.draw[2],clean.draw[3]);return;}
       switch(route.kind){
         case 'campaign':this.campaignObject(e,red);break;
         case 'framed':this.framedObject(e,red);break;
@@ -157,18 +159,24 @@
         case 'boss2':this.cell(im(this.bosses),route.index,4,3,e.x,e.y,w*1.13,h*1.13);break;
       }
     }
+    // 先隔离单个机体纹理，防止缩放/分片采样带入邻格；换关释放缓存。
+    // Isolate each body texture before scaling/patch sampling; release the cache on stage changes.
+    bossTexture(e,s,red){
+      const source=s.asset==='assets/ships-hd.png'?this.ships:this.bosses;if(!source.complete||!source.naturalWidth)return null;
+      if(!this.bossCropCache)this.bossCropCache=new Map();const key=e.def.sprite+(red?':red':'');let texture=this.bossCropCache.get(key);
+      if(!texture){texture=document.createElement('canvas');texture.width=s.crop[2];texture.height=s.crop[3];texture.getContext('2d').drawImage(red?this.redImage(source):source,...s.crop,0,0,texture.width,texture.height);this.bossCropCache.set(key,texture);}return texture;
+    }
     // 按真实炮位配准重绘机体，裁掉邻格；射击和碰撞坐标保持原作数值。
     // Register the redraw to real mounts and exclude adjacent cells; source firing/collision coordinates remain unchanged.
     registeredBoss(e,red){
-      const s=enemyArt.bosses[e.def.sprite],source=s.asset==='assets/ships-hd.png'?this.ships:this.bosses;
-      if(!source.complete||!source.naturalWidth)return;const image=red?this.redImage(source):source,c=this.c;
+      const s=enemyArt.bosses[e.def.sprite],image=this.bossTexture(e,s,red);if(!image)return;const c=this.c;
       c.save();c.translate(e.x,e.y);
       for(const patch of s.patches){
         const p=patch.points,cx=(p[0]+p[2]+p[4])/3,cy=(p[1]+p[3]+p[5])/3;
         c.save();c.beginPath();for(let i=0;i<6;i+=2){const dx=p[i]-cx,dy=p[i+1]-cy,n=Math.hypot(dx,dy)||1;c[i?'lineTo':'moveTo'](p[i]+dx/n*.15,p[i+1]+dy/n*.15);}c.closePath();c.clip();
         // 微量重叠避免 Canvas 三角形边缘接缝；源裁切仍限制为这一机体。
         // Slight clip overlap avoids Canvas triangle seams; the source crop still restricts pixels to this body.
-        c.transform(...patch.matrix);c.drawImage(image,...s.crop,...s.crop);c.restore();
+        c.transform(...patch.matrix);c.drawImage(image,...s.crop);c.restore();
       }c.restore();
     }
     player(x,y,power,time,scale=1,state={bank:8,thrust:0}){
