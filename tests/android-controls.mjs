@@ -25,7 +25,7 @@ try{
   const laserWarning=await evaluate(await readFile('tests/laser-warning-probe.js','utf8'));assert.deepEqual(laserWarning,{harmless:true,firstHit:true,pauseDifficulty:true,network:true,players:2});
   const overflowShutters=await evaluate(await readFile('tests/overflow-shutters-probe.js','utf8'));assert.deepEqual(overflowShutters,{cases:96,hostileDamagePreserved:true,shutterFrames:[6,6,20],network:true,cadenceCases:12});
   const speedSettings=await evaluate(await readFile('tests/speed-settings-probe.js','utf8'));assert.equal(speedSettings.defaultSpeed,'medium');assert.ok(speedSettings.independentSpeeds);
-  const muzzleWarning=await evaluate(await readFile('tests/muzzle-warning-probe.js','utf8'));assert.equal(muzzleWarning.types,2);assert.ok(muzzleWarning.muzzleOnly&&muzzleWarning.fixedRedTint&&muzzleWarning.accelerating&&muzzleWarning.emissionRestored);
+  const muzzleWarning=await evaluate(await readFile('tests/muzzle-warning-probe.js','utf8'));assert.equal(muzzleWarning.types,2);assert.ok(muzzleWarning.muzzleOnly&&muzzleWarning.growingPulse&&muzzleWarning.accelerating&&muzzleWarning.emissionRestored);
   await evaluate('StarfallApp.game.recordEvents=[];StarfallApp.game.enemies=[];StarfallApp.game.bullets=[];StarfallApp.game.player.invincible=999;true');
   const l=await evaluate('StarfallApp.renderer.layout');
   await command('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:72,x:l.x+90*l.scale,y:l.y+180*l.scale}]});

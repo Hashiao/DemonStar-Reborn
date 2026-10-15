@@ -1,32 +1,24 @@
-// 两端实绘验证：红蓝激光共用局部红闪，亮度固定，频率递增，发射瞬间恢复。
-// Packaged Canvas checks: both laser colors use a local red blink, fixed tint, rising frequency and immediate restoration.
+// 实绘蓄能光球：明暗/大小脉动递增、加速和发射消失。 / Render charging-orb amplitude, acceleration and emission removal.
 (() => {
- const {Game,STEP}=StarfallCore,g=new Game(225);g.start(0,1);g.recordEvents=[];g.spawnRecord([200,0,40,0,1,-1,0,0]);
- const e=g.enemies[0];Object.assign(e,{x:200,y:80});const raw=e.guns.find(gun=>gun.raw[2]===9).raw;
- const r=StarfallApp.renderer,oldContext=r.c,oldShot=r.enemyShot,canvas=document.createElement('canvas');canvas.width=32;canvas.height=32;const c=canvas.getContext('2d');
- const w={offsetX:-e.def.width/2+raw[0],offsetY:-e.def.height/2+raw[1]},at={x:16,y:16},same=(a,b)=>a.every((v,i)=>v===b[i]);
- const base=()=>{c.clearRect(0,0,32,32);c.save();c.translate(at.x-w.offsetX-e.x,at.y-w.offsetY-e.y);r.objectBody(e,false);c.restore();};
- const sequences=[];r.c=c;r.enemyShot=()=>{throw new Error('Muzzle warning drew a beam');};
+ const {STEP}=StarfallCore,r=StarfallApp.renderer,oldContext=r.c,oldShot=r.enemyShot,canvas=document.createElement('canvas');canvas.width=96;canvas.height=96;const c=canvas.getContext('2d'),at={x:48,y:48},rows=[];
+ r.c=c;r.enemyShot=()=>{throw new Error('Charging orb drew a beam');};
  try{
-  base();const normal=c.getImageData(0,0,32,32).data;let reference;
   for(const shotType of [9,10]){
-   const starts=[];let previous=false;
-   for(let sample=0;sample<=200;sample++){
-    const progress=sample/200;base();r.laserWarning({...w,shotType,ticks:(1-progress)/STEP},at,0,e);
-    const pixels=c.getImageData(0,0,32,32).data,on=!same(pixels,normal);
-    if(on){
-     if(!reference)reference=pixels;else if(!same(reference,pixels))throw new Error('Warning tint fades or differs by laser color');
-     let red=0;for(let i=0;i<pixels.length;i+=4)if(pixels[i]!==normal[i]||pixels[i+1]!==normal[i+1]||pixels[i+2]!==normal[i+2]||pixels[i+3]!==normal[i+3]){
-      const x=(i/4)%32+.5-16,y=Math.floor(i/128)+.5-16;if(Math.hypot(x,y)>12.75)throw new Error('Warning escaped the muzzle');red+=pixels[i]-normal[i];
-     }if(red<=0)throw new Error('Muzzle did not become red');
-    }
-    if(on&&!previous)starts.push(progress);previous=on;
-    if(sample===200&&on)throw new Error('Muzzle remained red at emission');
+   const samples=[];
+   for(let sample=0;sample<200;sample++){
+    const time=sample/200;c.clearRect(0,0,96,96);r.laserWarning({shotType,ticks:(1-time)/STEP},at,0);const pixels=c.getImageData(0,0,96,96).data;let energy=0,extent=0,red=0,green=0;
+    for(let i=0;i<pixels.length;i+=4)if(pixels[i+3]){const distance=Math.hypot((i/4)%96+.5-48,Math.floor(i/384)+.5-48);if(distance>28.5)throw new Error('Orb escaped the muzzle region');energy+=(pixels[i]+pixels[i+1]+pixels[i+2])*pixels[i+3]/255;red+=pixels[i]*pixels[i+3];green+=pixels[i+1]*pixels[i+3];if(pixels[i+3]>20)extent=Math.max(extent,distance);}
+    if(!energy||red<=green)throw new Error('Missing red charging orb');samples.push({time,energy,extent});
    }
-   if(starts.length!==5)throw new Error('Missing warning blinks');const intervals=starts.slice(1).map((v,i)=>v-starts[i]);
-   if(intervals.some((v,i)=>i&&v>=intervals[i-1]))throw new Error('Blink frequency did not increase');sequences.push(starts);
+   const peaks=samples.filter((s,i)=>i>0&&i<samples.length-1&&s.energy>samples[i-1].energy&&s.energy>samples[i+1].energy);
+   if(peaks.length<5)throw new Error('Missing charging pulses');const intervals=peaks.slice(1).map((s,i)=>s.time-peaks[i].time);if(intervals.some((v,i)=>i&&v>=intervals[i-1]))throw new Error('Orb pulse frequency did not increase');
+   const swing=(a,b,key)=>{const values=samples.filter(s=>s.time>=a&&s.time<b).map(s=>s[key]);return Math.max(...values)-Math.min(...values);};
+   const early={light:swing(0,.35,'energy'),size:swing(0,.35,'extent')},late={light:swing(.75,1,'energy'),size:swing(.75,1,'extent')};
+   if(late.light<=early.light*3||late.size<=early.size*2)throw new Error('Orb brightness/size amplitude did not grow');
+   for(const ticks of [0,-1,30]){c.clearRect(0,0,96,96);r.laserWarning({shotType,ticks},at,0);if(c.getImageData(0,0,96,96).data.some(v=>v))throw new Error('Orb remains outside its warning window');}
+   rows.push({type:shotType,peakTimes:peaks.map(s=>s.time),early,late});
   }
-  for(const ticks of [0,-1,30]){base();r.laserWarning({...w,shotType:9,ticks},at,0,e);if(!same(normal,c.getImageData(0,0,32,32).data))throw new Error('Warning outside its time window');}
+  if(JSON.stringify(rows[0].peakTimes)!==JSON.stringify(rows[1].peakTimes)||JSON.stringify(rows[0].late)!==JSON.stringify(rows[1].late))throw new Error('Laser colors use different warning orbs');
  }finally{r.c=oldContext;r.enemyShot=oldShot;}
- return {types:2,muzzleOnly:true,fixedRedTint:true,accelerating:true,emissionRestored:true,blinkStarts:sequences};
+ return {types:2,muzzleOnly:true,growingPulse:true,accelerating:true,emissionRestored:true,samples:rows};
 })()

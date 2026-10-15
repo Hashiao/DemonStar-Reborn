@@ -57,15 +57,22 @@
       // Use original visible bounds; types 43/44 already encode diagonal poses, so do not rotate them again.
       this.cropped(im,s.crop,at.x+s.offset[0],at.y+s.offset[1],...s.size);
     }
-    // 只染红真实炮口附近的机体；一秒内由慢到快亮灭，不绘制预演光束。
-    // Tint only the body around the real muzzle; blink faster over one second without a preview beam.
-    laserWarning(w,at,fraction,enemy){
+    // 炮口蓄能光球逐渐加大明暗和大小脉动；只绘制提示，不进入弹体系统。
+    // A charging muzzle orb grows in brightness/size pulse amplitude; it never enters the projectile system.
+    laserWarning(w,at,fraction){
       const progress=1-(w.ticks-fraction)*STEP;
-      // 积分相位令频率从 2 Hz 连续升至 8 Hz；发射边界立即恢复正常。
-      // Integrated phase raises frequency continuously from 2 to 8 Hz; emission immediately restores the normal muzzle.
-      if(progress<0||progress>=1||(2*progress+3*progress*progress)%1>=.5)return;
-      const c=this.c;c.save();c.beginPath();c.arc(at.x,at.y,12,0,Math.PI*2);c.clip();
-      c.translate(at.x-w.offsetX-enemy.x,at.y-w.offsetY-enemy.y);this.objectBody(enemy,true);c.restore();
+      if(progress<0||progress>=1)return;
+      // 频率由 2 升至 10 Hz，末段大幅收缩/膨胀；发射边界光球立即消失。
+      // Frequency rises from 2 to 10 Hz with strong late contraction/expansion; the orb vanishes at emission.
+      const pulse=(1+Math.cos(Math.PI*2*(2*progress+4*progress*progress)))/2;
+      const radius=3+1.5*progress+(.75+6.75*progress*progress)*pulse;
+      const c=this.c;c.save();c.globalAlpha*=.68-.5*progress+(.12+.7*progress)*pulse;
+      const halo=c.createRadialGradient(at.x,at.y,0,at.x,at.y,radius*2.3);
+      halo.addColorStop(0,'rgba(255,90,55,.65)');halo.addColorStop(.35,'rgba(255,35,20,.4)');halo.addColorStop(1,'rgba(255,15,5,0)');
+      c.fillStyle=halo;c.beginPath();c.arc(at.x,at.y,radius*2.3,0,Math.PI*2);c.fill();
+      const core=c.createRadialGradient(at.x-radius*.24,at.y-radius*.24,radius*.05,at.x,at.y,radius);
+      core.addColorStop(0,'#fffbe8');core.addColorStop(.18,'#ffe5af');core.addColorStop(.42,'#ff7660');core.addColorStop(.75,'#ff201c');core.addColorStop(1,'rgba(180,0,0,.05)');
+      c.fillStyle=core;c.beginPath();c.arc(at.x,at.y,radius,0,Math.PI*2);c.fill();c.restore();
     }
     superCell(frame,x,y,w,h){return this.cropped(this.superWeapon,DemonStarSuperweaponArt.frames[frame],x,y,w,h);}
     showsEnemyHealth(e){return this.enemyHealthBars&&!e.scenery&&!e.boss&&!e.dead&&e.maxHp>=HEALTH_BAR_MIN_HP&&e.entered;}
@@ -180,7 +187,7 @@
         for(const item of game.pickups){const at=position(item);this.cell(this.pickups,item.id??DROPS.indexOf(item.type),4,5,at.x,at.y,32,32);}
         if(game.difficulty===0&&this.laserWarningsEnabled!==false)for(const w of game.laserWarnings||[]){
           const e=game.enemies.find(e=>e.uid===w.owner&&!e.dead&&!e.dying);if(!e)continue;
-          const at=position(e);this.laserWarning(w,{x:at.x+w.offsetX,y:at.y+w.offsetY},Math.max(0,Math.min(1,(game.pendingTime||0)/STEP)),e);
+          const at=position(e);this.laserWarning(w,{x:at.x+w.offsetX,y:at.y+w.offsetY},Math.max(0,Math.min(1,(game.pendingTime||0)/STEP)));
         }
         for(const b of game.bullets){
           if(b.playerBeam){const p=game.playerById?.(b.playerId)||game.player;if(p.mega>0&&p.lives>0){const at=position(p),frame=Math.max(0,Math.min(3,b.age)),height=Math.max(0,at.y-20-b.endY);this.superCell(4+frame,at.x,b.endY+height/2,[12,10,8,5][frame],height);}continue;}
